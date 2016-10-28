@@ -1,33 +1,23 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ReceiptDisplay.aspx.cs" Inherits="ReceiptDisplay" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="Portal2Empty.master" AutoEventWireup="true" CodeFile="ReceiptDisplay.aspx.cs" Inherits="ReceiptDisplay" %>
 
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title></title>
-    <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
-    <script type="text/javascript" src="scripts/common.js"></script>
-
-    <link rel="stylesheet" href="scripts/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="style.css" />
-
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
     <script type="text/javascript">
         $(document).ready(function () {
-            getReceiptData(84, 3, "201412251146427200227867", "3FB37D989F114841AF79932D8FC0F0BE", "3E36B6D0-A79D-4A7D-B5F3-6C016DBF5580");
+            getReceiptData(84, 3, "201412251146427200227867");
         })
 
-        function getReceiptData(thisMemberId, thisLocationId, thisParkingTransactionNumber, AT, AK)
+        function getReceiptData(thisMemberId, thisLocationId, thisParkingTransactionNumber)
         {
-            //var url = "http://api.stage.thefastpark.com:80/members/" + thisMemberId + "/print-receipt"
-            var url = "http://api.stage.thefastpark.com:80/api/v1/members/84/print-receipt";
+            var thisMemberId = 84;
+            var url = $("#apiDomain").val() + "members/" + thisMemberId + "/print-receipt";
+            alert($("#apiDomain").val() + "members/" + thisMemberId + "/print-receipt");
 
             $.ajax({
                 headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
-                    "AccessToken": AT,
-                    "ApplicationKey": AK
+                    "AccessToken": $("#userGuid").val(),
+                    "ApplicationKey": $("#AK").val()
                 },
                 type: "POST",
                 url: url,
@@ -61,11 +51,8 @@
             })
         }
     </script>
-</head>
-<body>
-    <form id="form1" runat="server">
-    <div>
-        <div id="receipt" >
+
+    <div id="receipt" >
 			<div style='border:solid 1px black;width:185px;padding:2px;'>
 				<table style='font-family:Tahoma; font-size:8pt; background-color: white;width:180px;padding:7px;'>
 					<tr>
@@ -176,7 +163,5 @@
 				</table>
 			</div>
         </div>
-    </div>
-    </form>
-</body>
-</html>
+</asp:Content>
+
