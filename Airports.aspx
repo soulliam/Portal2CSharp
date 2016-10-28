@@ -36,6 +36,7 @@
             loadGrid();
             
             $("#Save").click(function () {
+                alert("this is a change");
                 // If Airport is nothing then we are adding a new Airport and we need a post
                 if ($("#AirportId").val() == "") {
                     //get info from form to add new airport
