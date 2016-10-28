@@ -558,22 +558,11 @@
                     var thisItem = dataRecord.ParkingTransactionNumber;
                     var offset = $("#jqxMemberInfoTabs").offset();
 
-                    $("#popupReceipt").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
-                    $('#popupReceipt').jqxWindow({ maxHeight: 550, maxWidth: 350 });
-                    $('#popupReceipt').jqxWindow({ width: "950px", height: "600px" });
-                    $("#popupReceipt").css("visibility", "visible");
-                    $("#popupReceipt").jqxWindow('open');
-                    document.getElementById('receiptIframe').src = './ReceiptDisplay.aspx?codeNumber=' + thisItem;
-                    return null;
-                }
-                //This will show the Redemption
-               
-                if (isRedemption != null) {
-                    $("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
-                    $('#popupRedemption').jqxWindow({ maxHeight: 800, maxWidth: 650 });
-                    $('#popupRedemption').jqxWindow({ width: 630, height: 800 });
-                    $("#popupRedemption").css("visibility", "visible");
-                    $("#popupRedemption").jqxWindow('open');
+                $("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
+                $('#popupRedemption').jqxWindow({ maxHeight: 800, maxWidth: 650 });
+                $('#popupRedemption').jqxWindow({ width: 630, height: 800 });
+                $("#popupRedemption").css("visibility", "visible");
+                $("#popupRedemption").jqxWindow('open');
 
                     //get redemption data and send to display
                     var thisRedemptionId = dataRecord.RedemptionId
@@ -2540,7 +2529,7 @@
     <div id="popupRedemption" style="visibility: hidden">
         <div>View Reciept</div>
         <div>
-            <iframe id="redemptionIframe" style="border:none;width:620px;height:700px;" ></iframe>
+            <iframe id="redemptionIframe" style="border:none;width:422px;height:632px;" ></iframe>
         </div>
     </div>
 
