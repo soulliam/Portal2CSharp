@@ -598,7 +598,8 @@
             });
 
             // button collapse search bar
-            $("#colapseSearchBar").on("click", function (event) {
+            $("#collapseSearchBar").on("click", function (event) {
+                $(this).toggleClass('dropup dropdown');
                 $(".FPR_SearchBox").toggle();
 
             });
@@ -730,11 +731,11 @@
             $("#jqxLoader").jqxLoader({ isModal: true, width: 100, height: 60, imagePosition: 'top' });
 
             //create receipt entry calendar
-            $("#jqxReceiptEntryCalendar").jqxDateTimeInput({ formatString: 'MM-dd-yyyy', width: '100%', height: '25px' });
+            $("#jqxReceiptEntryCalendar").jqxDateTimeInput({ formatString: 'MM-dd-yyyy', width: '100%', height: '24px' });
 
             //create receipt Detail entry and exit date and time inputs
-            $("#jqxReceiptDetailEntryCalendar").jqxDateTimeInput({ formatString: 'MM-dd-yyyy HH:mm', showTimeButton: true, width: '100%', height: '25px' });
-            $("#jqxReceiptDetailExitCalendar").jqxDateTimeInput({ formatString: 'MM-dd-yyyy HH:mm', showTimeButton: true, width: '100%', height: '25px' });
+            $("#jqxReceiptDetailEntryCalendar").jqxDateTimeInput({ formatString: 'MM-dd-yyyy HH:mm', showTimeButton: true, width: '100%', height: '24px' });
+            $("#jqxReceiptDetailExitCalendar").jqxDateTimeInput({ formatString: 'MM-dd-yyyy HH:mm', showTimeButton: true, width: '100%', height: '24px' });
 
             //removes place holder tab
             $('#jqxMemberTabs').jqxTabs('removeAt', 0);
@@ -1422,7 +1423,7 @@
             //set up the receipt find location combobox
             var locationSource =
             {
-                datatype: "json",
+                datatype: "json",receiptLocationCombo
                 type: "Get",
                 root: "data",
                 datafields: [
@@ -2013,7 +2014,7 @@
                                 
                             <ul>
                                 <li>Account</li>
-                                <input type="button" value="^" style="width:20px;height:20px;margin-bottom:10px;" id="colapseSearchBar" />
+                                <div class="collaspeButton dropup" id="collapseSearchBar">Search <span class="caret"></span></div>
                             </ul>
                             <div>
                                 YO
