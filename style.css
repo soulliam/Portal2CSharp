@@ -125,9 +125,13 @@ table {
     background: #494949 url(/images/bg-pattern.png) repeat-x top center;
     background-size: auto 150px;
 }
+.wrap-search-container {
+    padding-top: 10px;
+    padding-bottom: 7px;
+}
 .wrap-search-options {
-    padding-top: 20px;
-    padding-bottom: 14px;
+    padding-top: 10px;
+    padding-bottom: 7px;
 }
 /*
 .search-size .form-group {
