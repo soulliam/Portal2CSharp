@@ -562,9 +562,9 @@
                 var thisItem = dataRecord.ParkingTransactionNumber;
                 var offset = $("#jqxMemberInfoTabs").offset();
 
-                $("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
-                $('#popupRedemption').jqxWindow({ maxHeight: 800, maxWidth: 650 });
-                $('#popupRedemption').jqxWindow({ width: 630, height: 800 });
+                $("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 50 } });
+                $('#popupRedemption').jqxWindow({ maxHeight: 700, maxWidth: 500 });
+                $('#popupRedemption').jqxWindow({ width: 434, height: 700 });
                 $("#popupRedemption").css("visibility", "visible");
                 $("#popupRedemption").jqxWindow('open');
                 document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?codeNumber=' + thisItem;;
@@ -1395,7 +1395,7 @@
             //set up the receipt find location combobox
             var locationSource =
             {
-                datatype: "json",receiptLocationCombo
+                datatype: "json",
                 type: "Get",
                 root: "data",
                 datafields: [
@@ -2477,7 +2477,7 @@
     <div id="popupRedemption" style="visibility: hidden">
         <div>View Reciept</div>
         <div>
-            <iframe id="redemptionIframe" style="border:none;width:620px;height:700px;" ></iframe>
+            <iframe id="redemptionIframe" style="border:none;width:422px;height:632px;" ></iframe>
         </div>
     </div>
 

@@ -18,7 +18,7 @@
 
 </head>
 
-<body runat="server" ID="masterBody" style="overflow-x: hidden">
+<body runat="server" ID="masterBody" class="masterbody">
     <div class="wrap-full-width">
         <form runat="server">
             <div class="hidden">
