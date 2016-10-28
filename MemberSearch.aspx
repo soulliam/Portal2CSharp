@@ -543,60 +543,65 @@
 
             // defines activity grid double click
             $("#jqxMemberActivityGrid").bind('rowdoubleclick', function (event) {
-                var thisMemberId = $("#MemberId").val();
-
-                ////This will show the Receipt
-                //var row = event.args.rowindex;
-                //var dataRecord = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
-                //var thisItem = dataRecord.ParkingTransactionNumber;
-                //var offset = $("#jqxMemberInfoTabs").offset();
-
-                //$("#popupReceipt").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
-                //$('#popupReceipt').jqxWindow({ maxHeight: 550, maxWidth: 350 });
-                //$('#popupReceipt').jqxWindow({ width: "950px", height: "600px" });
-                //$("#popupReceipt").css("visibility", "visible");
-                //$("#popupReceipt").jqxWindow('open');
-                //document.getElementById('receiptIframe').src = './ReceiptDisplay.aspx?codeNumber=' + thisItem;
-
-                //This will show the Redemption
                 var row = event.args.rowindex;
                 var dataRecord = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
-                var thisItem = dataRecord.ParkingTransactionNumber;
+                var isReceipt = dataRecord.ParkingTransactionNumber;
+                var isRedemption = dataRecord.RedemptionId;
                 var offset = $("#jqxMemberInfoTabs").offset();
 
-                $("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
-                $('#popupRedemption').jqxWindow({ maxHeight: 800, maxWidth: 650 });
-                $('#popupRedemption').jqxWindow({ width: 630, height: 800 });
-                $("#popupRedemption").css("visibility", "visible");
-                $("#popupRedemption").jqxWindow('open');
+                var thisMemberId = $("#MemberId").val();
 
-                //get redemption data and send to display
-                var thisRedemptionId = dataRecord.RedemptionId
+                if (isReceipt != null) {
+                    //This will show the Receipt
+                    var row = event.args.rowindex;
+                    var dataRecord = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
+                    var thisItem = dataRecord.ParkingTransactionNumber;
+                    var offset = $("#jqxMemberInfoTabs").offset();
 
-                $.ajax({
-                    type: 'GET',
-                    url: $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions/" + thisRedemptionId,
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json",
-                        "AccessToken": $("#userGuid").val(),
-                        "ApplicationKey": $("#AK").val()
-                    },
-                    success: function (thisData) {
-                        var thisCertificateID = thisData.result.data.CertificateID;
-                        var thisRedemptionType = thisData.result.data.RedemptionType.RedemptionType;
-                        thisRedemptionType = thisRedemptionType.replace(" ", "%20");
-                        var thisMemberName = thisData.result.data.Member.FirstName + '%20' + thisData.result.data.Member.LastName;
-                        var thisFPNumber = thisData.result.data.Member.PrimaryFPNumber;
-                        var thisQRCode = thisData.result.data.QrCodeString;
+                    $("#popupReceipt").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
+                    $('#popupReceipt').jqxWindow({ maxHeight: 550, maxWidth: 350 });
+                    $('#popupReceipt').jqxWindow({ width: "950px", height: "600px" });
+                    $("#popupReceipt").css("visibility", "visible");
+                    $("#popupReceipt").jqxWindow('open');
+                    document.getElementById('receiptIframe').src = './ReceiptDisplay.aspx?codeNumber=' + thisItem;
+                    return null;
+                }
+                //This will show the Redemption
+               
+                if (isRedemption != null) {
+                    $("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
+                    $('#popupRedemption').jqxWindow({ maxHeight: 800, maxWidth: 650 });
+                    $('#popupRedemption').jqxWindow({ width: 630, height: 800 });
+                    $("#popupRedemption").css("visibility", "visible");
+                    $("#popupRedemption").jqxWindow('open');
 
-                        document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?thisCertificateID=' + thisCertificateID + '&thisRedemptionType=' + thisRedemptionType + '&thisMemberName=' + thisMemberName + '&thisFPNumber=' + thisFPNumber + '&thisQRCode=' + thisQRCode;
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        alert("Error: " + errorThrown);
-                    }
-                });
+                    //get redemption data and send to display
+                    var thisRedemptionId = dataRecord.RedemptionId
 
+                    $.ajax({
+                        type: 'GET',
+                        url: $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions/" + thisRedemptionId,
+                        headers: {
+                            "Accept": "application/json",
+                            "Content-Type": "application/json",
+                            "AccessToken": $("#userGuid").val(),
+                            "ApplicationKey": $("#AK").val()
+                        },
+                        success: function (thisData) {
+                            var thisCertificateID = thisData.result.data.CertificateID;
+                            var thisRedemptionType = thisData.result.data.RedemptionType.RedemptionType;
+                            thisRedemptionType = thisRedemptionType.replace(" ", "%20");
+                            var thisMemberName = thisData.result.data.Member.FirstName + '%20' + thisData.result.data.Member.LastName;
+                            var thisFPNumber = thisData.result.data.Member.PrimaryFPNumber;
+                            var thisQRCode = thisData.result.data.QrCodeString;
+
+                            document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?thisCertificateID=' + thisCertificateID + '&thisRedemptionType=' + thisRedemptionType + '&thisMemberName=' + thisMemberName + '&thisFPNumber=' + thisFPNumber + '&thisQRCode=' + thisQRCode;
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Error: " + errorThrown);
+                        }
+                    });
+                }
                 
 
             });
