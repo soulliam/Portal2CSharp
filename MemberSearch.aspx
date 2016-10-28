@@ -543,6 +543,8 @@
 
             // defines activity grid double click
             $("#jqxMemberActivityGrid").bind('rowdoubleclick', function (event) {
+                var thisMemberId = $("#MemberId").val();
+
                 ////This will show the Receipt
                 //var row = event.args.rowindex;
                 //var dataRecord = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
@@ -556,18 +558,46 @@
                 //$("#popupReceipt").jqxWindow('open');
                 //document.getElementById('receiptIframe').src = './ReceiptDisplay.aspx?codeNumber=' + thisItem;
 
-                //////This will show the Redemption
-                //var row = event.args.rowindex;
-                //var dataRecord = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
-                //var thisItem = dataRecord.ParkingTransactionNumber;
-                //var offset = $("#jqxMemberInfoTabs").offset();
+                //This will show the Redemption
+                var row = event.args.rowindex;
+                var dataRecord = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
+                var thisItem = dataRecord.ParkingTransactionNumber;
+                var offset = $("#jqxMemberInfoTabs").offset();
 
-                //$("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
-                //$('#popupRedemption').jqxWindow({ maxHeight: 800, maxWidth: 650 });
-                //$('#popupRedemption').jqxWindow({ width: 630, height: 800 });
-                //$("#popupRedemption").css("visibility", "visible");
-                //$("#popupRedemption").jqxWindow('open');
-                //document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?codeNumber=' + thisItem;
+                $("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
+                $('#popupRedemption').jqxWindow({ maxHeight: 800, maxWidth: 650 });
+                $('#popupRedemption').jqxWindow({ width: 630, height: 800 });
+                $("#popupRedemption").css("visibility", "visible");
+                $("#popupRedemption").jqxWindow('open');
+
+                //get redemption data and send to display
+                var thisRedemptionId = dataRecord.RedemptionId
+
+                $.ajax({
+                    type: 'GET',
+                    url: $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions/" + thisRedemptionId,
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json",
+                        "AccessToken": $("#userGuid").val(),
+                        "ApplicationKey": $("#AK").val()
+                    },
+                    success: function (thisData) {
+                        var thisCertificateID = thisData.result.data.CertificateID;
+                        var thisRedemptionType = thisData.result.data.RedemptionType.RedemptionType;
+                        thisRedemptionType = thisRedemptionType.replace(" ", "%20");
+                        var thisMemberName = thisData.result.data.Member.FirstName + '%20' + thisData.result.data.Member.LastName;
+                        var thisFPNumber = thisData.result.data.Member.PrimaryFPNumber;
+                        var thisQRCode = thisData.result.data.QrCodeString;
+
+                        document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?thisCertificateID=' + thisCertificateID + '&thisRedemptionType=' + thisRedemptionType + '&thisMemberName=' + thisMemberName + '&thisFPNumber=' + thisFPNumber + '&thisQRCode=' + thisQRCode;
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("Error: " + errorThrown);
+                    }
+                });
+
+                
 
             });
 
@@ -943,7 +973,7 @@
                     { name: 'PointsChanged' },
                     { name: 'Description' },
                     { name: 'LocationId' },
-                    { name: 'Date' }
+                    { name: 'Date', type: 'date' }
                 ],
 
                 type: 'Get',
@@ -986,13 +1016,13 @@
                     $("#jqxMemberActivityGrid").jqxGrid('applyfilters');
                 },
                 columns:[ 
-                      { text: 'Member Id', datafield: 'MemberId', hidden: true },,
-                      { text: 'ParkingTransactionNumber', datafield: 'ParkingTransactionNumber' },
-                      { text: 'ManualEditsId', datafield: 'ManualEditsId' },
-                      { text: 'RedemptionId', datafield: 'RedemptionId' },
-                      { text: 'Points Changed', datafield: 'PointsChanged' },
-                      { text: 'Description', datafield: 'Description' },
-                      { text: 'Location', datafield: 'LocationId', width: 70, columntype: 'combobox',
+                      { text: 'Member Id', datafield: 'MemberId', hidden: true },
+                      { text: 'ParkingTransactionNumber', datafield: 'ParkingTransactionNumber', width: '20%' },
+                      { text: 'ManualEditsId', datafield: 'ManualEditsId', width: '10%' },
+                      { text: 'RedemptionId', datafield: 'RedemptionId', width: '10%' },
+                      { text: 'Points Changed', datafield: 'PointsChanged', width: '5%' },
+                      { text: 'Description', datafield: 'Description', width: '30%' },
+                      { text: 'Location', datafield: 'LocationId', width: '10%', columntype: 'combobox',
                           createeditor: function (row, column, editor) {
                               // assign a new data source to the combobox.
                               var activityLocationSource =
@@ -1019,7 +1049,7 @@
                               editor.jqxComboBox('selectItem', cellvalue);
                           }
                       },
-                  { text: 'Date', datafield: 'Date' }
+                  { text: 'Date', datafield: 'Date', width: '15%', cellsformat: 'MM/dd/yyyy HH:mm:ss' }
                 ]
             });
         }
@@ -1423,7 +1453,7 @@
             //set up the receipt find location combobox
             var locationSource =
             {
-                datatype: "json",receiptLocationCombo
+                datatype: "json",
                 type: "Get",
                 root: "data",
                 datafields: [

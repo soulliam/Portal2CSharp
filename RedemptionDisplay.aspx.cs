@@ -11,10 +11,18 @@ public partial class RedemptionDisplay : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        stayCount.InnerHtml = "3 Days";
-        //string codeNumber = Request.QueryString["codeNumber"];
+        string thisQRCode = Request.QueryString["thisQRCode"];
+        string thisCertificateID = Request.QueryString["thisCertificateID"];
+        string thisRedemptionType = Request.QueryString["thisRedemptionType"];
+        string thisFPNumber = Request.QueryString["thisFPNumber"];
+        string thisMemberName = Request.QueryString["thisMemberName"];
 
-        //GenerateQRCode(codeNumber);
+        RedemptionType.InnerHtml = thisRedemptionType;
+        CertificateID.InnerHtml = thisCertificateID;
+        FPNumber.InnerHtml = thisFPNumber;
+        MemberName.InnerHtml = thisMemberName;
+
+        GenerateQRCode(thisQRCode);
     }
 
     private void GenerateQRCode(string cert)
@@ -23,8 +31,8 @@ public partial class RedemptionDisplay : System.Web.UI.Page
         QRCodeGenerator qrGenerator = new QRCodeGenerator();
         QRCodeGenerator.QRCode qrCode = qrGenerator.CreateQrCode(code, QRCodeGenerator.ECCLevel.Q);
         System.Web.UI.WebControls.Image imgBarCode = new System.Web.UI.WebControls.Image();
-        imgBarCode.Height = 250;
-        imgBarCode.Width = 250;
+        imgBarCode.Height = 150;
+        imgBarCode.Width = 150;
         using (Bitmap bitMap = qrCode.GetGraphic(20))
         {
             using (MemoryStream ms = new MemoryStream())
