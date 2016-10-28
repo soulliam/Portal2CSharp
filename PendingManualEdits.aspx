@@ -55,22 +55,15 @@
 
             
             $("#btnSubmit").on('click', function () {
-                var ProcessList = "";
-                var first = true;
+                var ProcessList = "BA1B0B96-30D3-45AB-815D-3527F72B6442";
                 var getselectedrowindexes = $('#jqxgrid').jqxGrid('getselectedrowindexes');
+
                 if (getselectedrowindexes.length > 0) {
-                    for (var index = 0; index < getselectedrowindexes.length; index++)
-                    {
+                    for (var index = 0; index < getselectedrowindexes.length; index++) {
                         var selectedRowData = $('#jqxgrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
-                        if (first == true)
-                        {
-                            ProcessList = ProcessList + selectedRowData.ManualEditID;
-                            first = false;
-                        }
-                        else
-                        {
-                            ProcessList = ProcessList + "," + selectedRowData.ManualEditID;
-                        }
+
+                        ProcessList = ProcessList + "," + selectedRowData.ManualEditID;
+
                     }
 
 
