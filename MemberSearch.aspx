@@ -556,18 +556,18 @@
                 //$("#popupReceipt").jqxWindow('open');
                 //document.getElementById('receiptIframe').src = './ReceiptDisplay.aspx?codeNumber=' + thisItem;
 
-                ////This will show the Redemption
-                var row = event.args.rowindex;
-                var dataRecord = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
-                var thisItem = dataRecord.ParkingTransactionNumber;
-                var offset = $("#jqxMemberInfoTabs").offset();
+                //////This will show the Redemption
+                //var row = event.args.rowindex;
+                //var dataRecord = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
+                //var thisItem = dataRecord.ParkingTransactionNumber;
+                //var offset = $("#jqxMemberInfoTabs").offset();
 
-                $("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
-                $('#popupRedemption').jqxWindow({ maxHeight: 800, maxWidth: 650 });
-                $('#popupRedemption').jqxWindow({ width: 630, height: 800 });
-                $("#popupRedemption").css("visibility", "visible");
-                $("#popupRedemption").jqxWindow('open');
-                document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?codeNumber=' + thisItem;;
+                //$("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
+                //$('#popupRedemption').jqxWindow({ maxHeight: 800, maxWidth: 650 });
+                //$('#popupRedemption').jqxWindow({ width: 630, height: 800 });
+                //$("#popupRedemption").css("visibility", "visible");
+                //$("#popupRedemption").jqxWindow('open');
+                //document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?codeNumber=' + thisItem;
 
             });
 
@@ -941,6 +941,7 @@
                     { name: 'RedemptionId' },
                     { name: 'PointsChanged' },
                     { name: 'Description' },
+                    { name: 'LocationId' },
                     { name: 'Date' }
                 ],
 
@@ -969,6 +970,7 @@
                 altrows: true,
                 filterable: true,
                 columnsresize: true,
+                editable: true,
                 ready: function (){
                     // create a filter group for the FirstName column.
                     var fnameFilterGroup = new $.jqx.filter();
@@ -983,14 +985,40 @@
                     $("#jqxMemberActivityGrid").jqxGrid('applyfilters');
                 },
                 columns:[ 
-                      { text: 'Member Id', datafield: 'MemberId', hidden: true },
-                      { text: 'LocationId', datafield: 'LocationId', hidden: true },
+                      { text: 'Member Id', datafield: 'MemberId', hidden: true },,
                       { text: 'ParkingTransactionNumber', datafield: 'ParkingTransactionNumber' },
                       { text: 'ManualEditsId', datafield: 'ManualEditsId' },
                       { text: 'RedemptionId', datafield: 'RedemptionId' },
                       { text: 'Points Changed', datafield: 'PointsChanged' },
                       { text: 'Description', datafield: 'Description' },
-                      { text: 'Date', datafield: 'Date' }
+                      { text: 'Location', datafield: 'LocationId', width: 70, columntype: 'combobox',
+                          createeditor: function (row, column, editor) {
+                              // assign a new data source to the combobox.
+                              var activityLocationSource =
+                                {
+                                    datatype: "json",
+                                    type: "Get",
+                                    root: "data",
+                                    datafields: [
+                                        { name: 'LocationId' },
+                                        { name: 'NameOfLocation' }
+                                    ],
+                                    url: $("#localApiDomain").val() + "Locations/Locations/",
+                                };
+                              var activityLocationAdapter = new $.jqx.dataAdapter(activityLocationSource);
+                              editor.jqxComboBox({
+                                  autoDropDownHeight: true,
+                                  source: activityLocationAdapter,
+                                  promptText: "Please Choose:",
+                                  displayMember: "NameOfLocation",
+                                  valueMember: "LocationId"
+                              });
+                          },
+                          initeditor: function (row, cellvalue, editor, celltext, cellwidth, cellheight) {
+                              editor.jqxComboBox('selectItem', cellvalue);
+                          }
+                      },
+                  { text: 'Date', datafield: 'Date' }
                 ]
             });
         }
