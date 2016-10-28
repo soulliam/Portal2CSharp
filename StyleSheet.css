@@ -1,0 +1,328 @@
+﻿* {
+	margin: 0;
+}
+
+input[type="text"]{
+    border-radius:5px;
+    -webkit-border-radius:5px;
+}
+
+input[type="button"] {
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius:15px;
+}
+
+html, body {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 0px;
+  padding-bottom: 5px;
+  font-family: 'PT Sans', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #4f5d6e;
+  position: relative;
+  background: #598b32;
+  height:100%
+}
+
+.wrapper{
+    min-height: 100%;
+    
+    margin: 0 0 -2px; /* the bottom margin is the negative value of the footer's height */
+}
+
+.footer, .push {
+    height: 2px; /* .push must be the same height as .footer */
+    
+}
+
+/*
+
+Sticky Footer by Ryan Fait
+http://ryanfait.com/
+
+*/
+#statusMessage{padding:0px 5px 0px 25px;border-radius:5px;margin-top:5px;}
+.status {
+    font-weight:normal;color:#fff;background-color:#515151;
+}
+.warning {
+font-weight:bold;color:#0FF;background-color:#f00;
+}
+.ContentBody {margin: 10px 0px 10px 0px; background-color:#fff;border-radius:5px;}
+.ContentBodyInner {margin: 10px 10px 10px 10px; }
+
+.FPR_Content {
+    width:100%;
+    padding: 0px 8px 0px 8px;
+    height:100%;
+}
+
+/* Style the list */
+ul.tab {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Float the list items side by side */
+ul.tab li {float: left;}
+
+/* Style the links inside the list items */
+ul.tab li a {
+	display: inline-block;
+	color: black;
+	text-align: center;
+	padding: 3px 16px;
+	text-decoration: none;
+	transition: 0.3s;
+	font-size: 1.2rem;
+	border: thin inset;
+	border-radius: 8px 8px 0px 0px;
+	text-shadow: 0 1px 0 #f1f1f5;
+	background: -moz-linear-gradient(top, #ffffff 0%, #efeff1 1%, #ededf0 4%, #d2d2d8 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(1%,#efeff1), color-stop(4%,#ededf0), color-stop(100%,#d2d2d8));
+	background: -webkit-linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+	background: -o-linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+	background: -ms-linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+	background: linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+	border-bottom-color: #bbbbbb;
+	border-left-color: #000000;
+	border-right-color: #000000;
+	border-top-color: #000000;
+}
+
+/* Change background color of links on hover */
+ul.tab li a:hover {
+    background-color:#333;border-top-color: #333
+    }
+
+/* Create an active/current tablink class */
+ul.tab li a:focus, .active {
+	background-color:#d4d4da;
+	border-bottom-color: #bbbbbb;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #333;
+    border-top: none;
+    height: 600px;
+}
+
+.FPR_PageBody{
+    width:100%;
+    height:100%; 
+    background-color:#EEE;
+    border-radius:5px;
+}
+#CardInventory {width:100%;}
+
+.FPR_SearchBox {
+	padding: 5px 0px 5px 0px;
+	margin: 10px 0px 0px 0px;
+	border: thin solid;
+    background-color: rgba(0,0,0,.5);
+	border-radius: 5px;
+	display: block;
+    float:left;
+}
+#CardInventory .FPR_SearchBox{
+    width:100%;height:130px;
+}
+
+.FPR_SearchBox, #Airports, #Cities, #Locations, #LocationFeatures {
+    width:100%;height:45px;
+    margin-bottom: 10px;
+}
+
+#popupWindow, #popupFeatureWindow {
+    -moz-box-shadow: 3px 3px 4px #000;
+    -webkit-box-shadow: 3px 3px 4px #000;
+    box-shadow: 3px 3px 4px #000;
+    /* For IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000')";
+    /* For IE 5.5 - 7 */
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000');
+}
+
+.FPR_SearchLeft{
+	float: left;display: block;line-height:16px;
+}
+#CardInventory .FPR_SearchBox .FPR_SearchLeft{
+    width:80%;height:130px;
+}
+
+.FPR_SearchRight{
+	float: right;
+	display: block;width:7%;
+}
+#CardInventory .FPR_SearchBox .FPR_SearchRight{
+    width:20%;height:130px;
+}
+.FPR_SearchBox > input {
+    margin:5px 15px; 
+}
+.FPR_SearchRight > button { 
+    border-color: #8e8e97; text-shadow:0 1px 0 #f1f1f5; margin:0px auto 0px auto;
+    background: #ffffff;border-radius: 10px;margin:4px 10px 0px 0px;
+    background: -moz-linear-gradient(top, #ffffff 0%, #efeff1 1%, #ededf0 4%, #d2d2d8 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(1%,#efeff1), color-stop(4%,#ededf0), color-stop(100%,#d2d2d8));
+    background: -webkit-linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+    background: -o-linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+    background: -ms-linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+    background: linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+}
+
+.FPR_SearchRight a:link, a:visited
+{
+    color:#555; font-size:1.1rem;
+    background: #ffffff;
+    border-color: #515151;border: thin solid inset;
+    border-radius: 3px;
+    margin:4px 10px 0px 0px;
+    padding:1px 1px 1px 1px;
+    display:block;
+    line-height:20px;
+    height: 20px;
+    width:90%;
+    text-align:center;
+    text-shadow:0 1px 0 #f1f1f5;
+    text-decoration:none;
+    background: -moz-linear-gradient(top, #ffffff 0%, #efeff1 1%, #ededf0 4%, #d2d2d8 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(1%,#efeff1), color-stop(4%,#ededf0), color-stop(100%,#d2d2d8));
+    background: -webkit-linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+    background: -o-linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+    background: -ms-linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+    background: linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+}
+
+.FPR_SearchRight a:hover{
+    color:#222;
+    background: -moz-linear-gradient(top, #ededf0 0%, #eCeCC1 1%, #d2d2d8 4%, #c2c2c8 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ededf0), color-stop(1%,#eCeCC1), color-stop(4%,#d2d2d8), color-stop(100%,#c2c2c8));
+    background: -webkit-linear-gradient(top, #ededf0 0%,#eCeCC1 1%,#d2d2d8 4%,#c2c2c8 100%);
+    background: -o-linear-gradient(top, #ededf0 0%,#eCeCC1 1%,#d2d2d8 4%,#c2c2c8 100%);
+    background: -ms-linear-gradient(top, #ededf0 0%,#eCeCC1 1%,#d2d2d8 4%,#c2c2c8 100%);
+    background: linear-gradient(top, #ededf0 0%,#eCeCC1 1%,#d2d2d8 4%,#c2c2c8 100%);
+}
+
+
+
+.FPR_NavBox  {
+    float:right;
+    padding: 0px 0px 5px 10px;
+	margin: 8px 0px 10px 0px;
+}
+
+.FPR_NavBox a:link, a:visited
+{
+    float:right;overflow:hidden;
+    font-size:1.1rem;
+    color:#555; 
+    background: #ffffff;
+    border-color: #515151;border: thin solid inset;
+    border-radius: 3px;
+    margin:4px 0px 0px 10px;
+    padding:1px 1px 1px 1px;
+    display:block;
+    line-height:20px;
+    height: 20px;
+    width:98%;
+    text-align:center;
+    text-shadow:0 1px 0 #f1f1f5;
+    text-decoration:none;
+    background: -moz-linear-gradient(top, #ffffff 0%, #efeff1 1%, #ededf0 4%, #d2d2d8 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(1%,#efeff1), color-stop(4%,#ededf0), color-stop(100%,#d2d2d8));
+    background: -webkit-linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+    background: -o-linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+    background: -ms-linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+    background: linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+}
+
+.FPR_NavBox a:hover{
+    color:#222;
+    background: -moz-linear-gradient(top, #ededf0 0%, #eCeCC1 1%, #d2d2d8 4%, #c2c2c8 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ededf0), color-stop(1%,#eCeCC1), color-stop(4%,#d2d2d8), color-stop(100%,#c2c2c8));
+    background: -webkit-linear-gradient(top, #ededf0 0%,#eCeCC1 1%,#d2d2d8 4%,#c2c2c8 100%);
+    background: -o-linear-gradient(top, #ededf0 0%,#eCeCC1 1%,#d2d2d8 4%,#c2c2c8 100%);
+    background: -ms-linear-gradient(top, #ededf0 0%,#eCeCC1 1%,#d2d2d8 4%,#c2c2c8 100%);
+    background: linear-gradient(top, #ededf0 0%,#eCeCC1 1%,#d2d2d8 4%,#c2c2c8 100%);
+}
+
+.FPR_Button a:link, a:visited
+{
+    float:right;overflow:hidden;
+    font-size:1.1rem;
+    color:#555; 
+    background: #ffffff;
+    border-color: #515151;border: thin solid inset;
+    border-radius: 3px;
+    margin:4px 0px 0px 10px;
+    padding:1px 1px 1px 1px;
+    display:block;
+    line-height:20px;
+    height: 20px;
+    width:98%;
+    text-align:center;
+    text-shadow:0 1px 0 #f1f1f5;
+    text-decoration:none;
+    background: -moz-linear-gradient(top, #ffffff 0%, #efeff1 1%, #ededf0 4%, #d2d2d8 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(1%,#efeff1), color-stop(4%,#ededf0), color-stop(100%,#d2d2d8));
+    background: -webkit-linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+    background: -o-linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+    background: -ms-linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+    background: linear-gradient(top, #ffffff 0%,#efeff1 1%,#ededf0 4%,#d2d2d8 100%);
+}
+
+.FPR_Button a:hover{
+    color:#222;
+    background: -moz-linear-gradient(top, #ededf0 0%, #eCeCC1 1%, #d2d2d8 4%, #c2c2c8 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ededf0), color-stop(1%,#eCeCC1), color-stop(4%,#d2d2d8), color-stop(100%,#c2c2c8));
+    background: -webkit-linear-gradient(top, #ededf0 0%,#eCeCC1 1%,#d2d2d8 4%,#c2c2c8 100%);
+    background: -o-linear-gradient(top, #ededf0 0%,#eCeCC1 1%,#d2d2d8 4%,#c2c2c8 100%);
+    background: -ms-linear-gradient(top, #ededf0 0%,#eCeCC1 1%,#d2d2d8 4%,#c2c2c8 100%);
+    background: linear-gradient(top, #ededf0 0%,#eCeCC1 1%,#d2d2d8 4%,#c2c2c8 100%);
+}
+
+.searchblock{display:inline-block;float:left; height:30px;}
+.searchobject{float:left;font-size: 1.1rem;
+    font-weight:bold;border-radius:4px;line-height: normal;
+}
+.searchoutput{float:left;font-size: 1.1rem;
+    float: left;
+    color: #DDD;
+    margin:5px 1px 0px 5px;
+    font-size: 1.1rem;
+    font-weight:bold;
+    text-align:right;
+    border:none;background-color: rgba(89,139,50,0);line-height: normal;
+}
+.searchlabel{
+    float: left;
+    color: #DDD;
+    margin:5px 1px 0px 5px;
+    font-size: 1.1rem;
+    font-weight:bold;width:3%;text-align:right;line-height: normal;
+}
+
+#Search_FirstName, #Search_LastName, #Search_Company {width:11%;margin-right:2px;border-radius:3px;}
+#Search_CardNumber, #Search_Phone, #Search_MailerCode, #Search_CompanyCode {width:10%;margin-right:2px;border-radius:3px;}
+#Search_UserName {width:7%;margin-right:2px;border-radius:3px;}
+#Search_StreetAddress {width:19%;margin-right:2px;border-radius:3px;}
+#Search_MailerCompany, #Search_Email {width:17%;margin-right:2px;border-radius:3px;}
+
+#jqxComboBox{
+    margin:0px 5px; font-size: 1.5rem
+}
+
+/* CardInventory */ 
+#Quantity, #NumberOfCards2Ship {text-align:right}
+#OverRideButton, #OrderButton, #ShipButton {width:90px;margin-left:auto; margin-right:auto;}
+#OverRideButton{margin-top:50px;}
+#jqxFirstCard, #jqxLastCard,#jqxFirstCardReceive, #jqxLastCardReceive,#jqxFirstCardInquiry, #jqxLastCardInquiry {float:left}

@@ -1,0 +1,172 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Portal2.master.cs" Inherits="Portal2" %>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head runat="server">
+    <title></title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../scripts/common.js"></script>
+
+    <link rel="stylesheet" href="scripts/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+ 
+
+</head>
+
+<body runat="server" ID="masterBody" style="overflow-x: hidden">
+    <div class="wrap-full-width">
+        <form runat="server">
+            <div class="hidden">
+                <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
+                <asp:TextBox runat="server" ID="userGuid" style="visibility:hidden">FE6ED8680ED6441590BD65F177FAE4D6</asp:TextBox>
+                <asp:TextBox runat="server" ID="AK" style="visibility:hidden">3E36B6D0-A79D-4A7D-B5F3-6C016DBF5580</asp:TextBox>
+                <asp:TextBox runat="server" ID="apiDomain" style="visibility:hidden">http://54.197.116.15/api/v1/</asp:TextBox>
+                <asp:TextBox runat="server" ID="localApiDomain" style="visibility:hidden">http://maxdev:8181/api/</asp:TextBox>
+                <asp:TextBox runat="server" ID="userLocation" style="visibility:hidden">14</asp:TextBox>
+            </div>
+
+            <!-- NAVBAR -->
+            <nav class="navbar navbar-default navbar-fixed-top">
+              <div class="container-fluid container-970">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#myNavbar" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">
+                        <img alt="Brand" src="/images/fast-park-logo.png" />
+                    </a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse navbar-ex1-collapse" id="myNavbar">
+                    <ul class="nav nav-justified">
+                        <li class="active">
+                            <a href="#">Home</a>
+                        </li>
+                        <li runat="server" id="Manager" class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Cards/Coupons<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">CouponTracking</a></li>
+                                <li><a href="#">Coupon Zip Tracking</a></li>
+                                <li><a href="#">Coupon Tracking Cashier Form</a></li> 
+                                <li><a href="CardInventory.aspx">Card Inventory</a></li>
+                                <li><a href="#">Coupon Administration</a></li>
+                                <li><a href="#">Coupon Search</a></li>   
+                                <li><a href="#">Contract Administration</a></li>
+                                <li><a href="#">Maintain Coupon Types</a></li> 
+                                <li><a href="#">Maintain User Tiers</a></li> 
+                            </ul>
+                        </li> 
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">RfR Tools<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Articles/Company</a></li>
+                                <li><a href="MemberSearch.aspx">Search/Maintain Customer</a></li>
+                                <li><a href="FileImportStatus.aspx">View File Import Status</a></li>
+                                <li><a href="Marketing.aspx" target="_blank">Marketing mailer Page</a></li>
+                                <li><a href="PendingManualEdits.aspx">Pending Manual Edits</a></li>
+                                <li><a href="MemberReActivate.aspx">Re-Activate Member</a></li>
+                                <li><a href="MemberResend.aspx">Re-Send Users</a></li>
+                                <li><a href="#FindTransaction.aspx">Search Transactions</a></li>
+                                <li><a href="#">Search Certificates</a></li>
+                                <li><a href="#">Combine Companies</a></li>
+                                <li><a href="#">Member Article/Company Update</a></li>
+                                <li><a href="#">View/Maintain Reservations</a></li>    
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">CMS<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="Locations.aspx">Locations</a></li>
+                                <li><a href="Cities.aspx">Cities</a></li>
+                                <li><a href="Airports.aspx">Airports</a></li>
+                                <li><a href="LocationFeatures.aspx">Location Features</a></li>
+                                <li><a href="#">Reservations Maintenance</a></li> 
+                                <li><a href="#">Blog Entries</a></li>
+                                <li><a href="#">News</a></li>
+                                <li><a href="CompanyCheck.aspx">Articles</a></li>
+                                <li><a href="MemberResend.aspx">Re-Send User</a></li> 
+                                <li><a href="#">Reciews</a></li>
+                            </ul>
+                        </li> 
+                        <li>
+                            <a href="#">Reports</a>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Vehicles<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="http://192.168.0.185/portal/Restricted/VehicleSearch.aspx">Vehicle Search</a></li>
+                                <li><a href="http://192.168.0.185/portal/Restricted/VehicleDaily.aspx">Daily Tracking</a></li>
+                                <li><a href="http://192.168.0.185/portal/Restricted/VehicleAddStock.aspx">Add Stock</a></li> 
+                            </ul>
+                        </li> 
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Legal<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Coupon Tracking</a></li>
+                                <li><a href="#">Coupon Zip Tracking</a></li>
+                                <li><a href="#">Coupon Tracking Cashier Form</a></li> 
+                                <li><a href="#">Contract Administration</a></li>
+                                <li><a href="#">Coupon Administration</a></li> 
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Card Distribution<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="CardInventoryOrder.aspx">Card Order</a></li>
+                                <li><a href="CardInventoryOrderReceiving.aspx">Order Received</a></li>
+                                <li><a href="CardInventoryShipping.aspx">Card Shipping</a></li>
+                                <li><a href="CardInventoryShipmentReceiving.aspx">Card Receiving</a></li> 
+                                <li><a href="CardInventoryDistribution.aspx">Card Distribution</a></li> 
+                                <li><a href="CardInventoryHistory.aspx">Card History</a></li>
+                                <li><a href="BoothCardCount.aspx">Booth Distribution</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#"><asp:Label runat="server" ID="loginLabel" Text="test"></asp:Label></a>
+                        </li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+              </div><!-- /.container -->
+            </nav><!-- /.navbar -->
+
+            <asp:HiddenField ID="txtLoggedinUsername" runat="server" />
+            <div class="FPR_Content">
+                <div id="statusMessage"></div>
+                <asp:ContentPlaceHolder ID="MainContent" runat="server">
+                </asp:ContentPlaceHolder>
+            </div>
+
+            <!-- MAIN PAGE WRAPPER -->
+            <div class="wrap-full-width">
+            <asp:HiddenField ID="HiddenField1" runat="server" />
+                <div id="statusMessage"></div>
+                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                </asp:ContentPlaceHolder>
+            </div><!-- /.wrap-full-width -->
+
+        </form>
+    </div>
+
+    <div class="footer"></div>
+    
+   <script type="text/javascript">
+        $('ul.nav li.dropdown').hover(function () {
+            $(this).find('.dropdown-menu').stop(true, true).delay(50).fadeIn(200);
+        }, function () {
+            $(this).find('.dropdown-menu').stop(true, true).delay(50).fadeOut(200);
+        });
+    </script>
+
+</body>
+</html>
+

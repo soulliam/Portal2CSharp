@@ -1,0 +1,107 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Portal2Booth.master.cs" Inherits="Portal2Booth" %>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head runat="server">
+    <title></title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <script type="text/javascript" src="/scripts/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../scripts/common.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/StyleSheet.css">
+    <link rel="stylesheet" href="/scripts/bootstrap.min.css">
+
+   <script>
+       function logout() {
+
+           // To invalidate a basic auth login:
+           //
+           // 	1. Call this logout function.
+           //	2. It makes a GET request to an URL with false Basic Auth credentials
+           //	3. The URL returns a 401 Unauthorized
+           // 	4. Forward to some "you-are-logged-out"-page
+           // 	5. Done, the Basic Auth header is invalid now
+           alert("Logging Out!")
+
+           jQuery.ajax({
+               async: false,
+               type: "GET",
+               url: "test.html",
+               async: false,
+               username: "logmeout",
+               password: "123456",
+               headers: { "Authorization": "Basic xxx" }
+           })
+           .done(function () {
+               //this should not fire if we get logged off!
+               //logout();
+           })
+           .fail(function () {
+               // We expect to get an 401 Unauthorized error! In this case we are successfully
+               // logged out and we redirect the user.
+               window.location = "./BoothSearch.aspx";
+           });
+           return false;
+       }
+
+   </script> 
+    
+</head>
+<body runat="server" ID="masterBody" style="overflow-x: hidden">
+    <div class="wrapper">
+        <form runat="server">
+            <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
+            <asp:TextBox runat="server" ID="userGuid" style="visibility:hidden">698C76537E1B4EB4BBC8B5A3238A5B29</asp:TextBox>
+            <asp:TextBox runat="server" ID="AK" style="visibility:hidden">3E36B6D0-A79D-4A7D-B5F3-6C016DBF5580</asp:TextBox>
+            <asp:TextBox runat="server" ID="apiDomain" style="visibility:hidden">http://54.197.116.15/api/v1/</asp:TextBox>
+            <asp:TextBox runat="server" ID="localApiDomain" style="visibility:hidden">http://maxdev:8181/api/</asp:TextBox>
+            <asp:TextBox runat="server" ID="userLocation" style="visibility:hidden">3,4</asp:TextBox>
+            <table class="table1" style="margin-bottom:0px;padding:0px;width:100%;">
+                <tr>
+                    <td style="padding:0px 8px 0px 8px;">
+                        <nav class="navbar navbar-inverse" style="border-bottom:0px; border-top:0px;">
+                            <div class="container-fluid">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span> 
+                                </button>
+                                <a class="navbar-brand" href="#"><img src="/images/FastPark.png" /></a>
+                            </div>
+                            <div class="collapse navbar-collapse" id="myNavbar">
+                                <ul class="nav navbar-nav navbar-right">
+                                <li><asp:linkbutton id="logOutLabel" runat="server">Log Out</asp:linkbutton></li>
+                                <li><a href="#"><asp:Label runat="server" ID="loginLabel" Text="test"></asp:Label></a></li>
+                                </ul>
+                            </div>
+                            </div>
+                        </nav>
+                    </td>
+                </tr>
+            </table>
+            <asp:HiddenField ID="txtLoggedinUsername" runat="server" />
+            <div class="FPR_Content">
+                <div id="statusMessage"></div>
+                <asp:ContentPlaceHolder ID="MainContent" runat="server">
+                </asp:ContentPlaceHolder>
+            </div>
+        </form>
+        </div>
+        <div class="footer"></div>
+    
+    
+    
+   <script type="text/javascript">
+        $('ul.nav li.dropdown').hover(function () {
+            $(this).find('.dropdown-menu').stop(true, true).delay(50).fadeIn(200);
+        }, function () {
+            $(this).find('.dropdown-menu').stop(true, true).delay(50).fadeOut(200);
+        });
+    </script>
+</body>
+</html>
