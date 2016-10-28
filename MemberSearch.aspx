@@ -1865,9 +1865,6 @@
        
     </script>
 
-    <div style="height:5px;">
-        <input type="button" value="^" style="width:20px;height:20px;margin-bottom:10px;" id="colapseSearchBar" />
-    </div>
     <div id="MemberSearch" class="container-fluid container-970 wrap-search-options">
         <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
             <div class="row search-size FPR_SearchLeft">
@@ -1971,12 +1968,14 @@
                 <div id="MemberDetails">
                     <div>
                         <div id="jqxMemberTabs">
+                                
                             <ul>
                                 <li>Account</li>
+                                <input type="button" value="^" style="width:20px;height:20px;margin-bottom:10px;" id="colapseSearchBar" />
                             </ul>
                             <div>
                                 YO
-                            </div>       
+                            </div>    
                         </div>
                         <%--Account Tab Content --%>
                         <div id="AccountTabContent">
