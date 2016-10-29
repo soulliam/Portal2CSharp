@@ -17,11 +17,11 @@ public partial class MemberSearch : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        
+
     }
 
     [System.Web.Services.WebMethod]
-    public static string SendEmail( string ToAddress, string From, string Subject, string Body, bool IsHtml)
+    public static string SendEmail(string ToAddress, string From, string Subject, string Body, bool IsHtml)
     {
         try
         {
@@ -62,7 +62,8 @@ public partial class MemberSearch : System.Web.UI.Page
         if (Column == "")
         {
             Column = null;
-        }else
+        }
+        else
         {
             Receipt = null;
         }
@@ -128,7 +129,7 @@ public partial class MemberSearch : System.Web.UI.Page
         cn.Close();
 
         return "Error"; ;
-        
+
     }
 
 
