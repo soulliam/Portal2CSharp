@@ -8,6 +8,7 @@ function padNumber(i, l, s) {
     }
     return o;
 }
+
 //formats date to 10/16/2016 type
 function DateFormat(dateObject) {
     var d = new Date(dateObject);
@@ -47,6 +48,7 @@ function DateTimeFormat(dateObject) {
     return date;
 }
 
+//formats Json dates to MM/dd/yyyy HH:mm
 function JsonDateTimeFormat(dateObject) {
     var thisDate = String(dateObject);
 
@@ -60,8 +62,6 @@ function JsonDateTimeFormat(dateObject) {
 
     return date;
 }
-
-
 
 //Display PageMethod Results
 function DisplayPageMethodResults(ResultString) {
