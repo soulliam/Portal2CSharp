@@ -369,6 +369,7 @@
                 if (getselectedrowindexes.length > 0) {
                     for (var index = 0; index < getselectedrowindexes.length; index++) {
                         var selectedRowData = $('#jqxCardGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
+
                         var url = $("#apiDomain").val() + "cards/" + selectedRowData.CardId;
 
                         $.ajax({

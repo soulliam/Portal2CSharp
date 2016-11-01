@@ -103,6 +103,7 @@
                         url: PostUrl,
                         type: 'POST',
                         data: JSON.stringify({
+                            "LocationHighlights": newLocationHighlights,
                             "NameOfLocation": newNameOfLocation,
                             "DisplayName": newDisplayName,
                             "ShortLocationName": newShortLocationName,
@@ -137,7 +138,7 @@
                             "ManagerImageUrl": newManagerImageUrl,
                             "MemberRateText": newMemberRateText,
                             "ImageUrl": newImageUrl,
-                            "LocationHighlights": newLocationHighlights
+                            
                         }),
                         success: function (response) {
                             alert("Saved!");
@@ -190,7 +191,7 @@
                         var newCityId = $("#cityCombo").jqxComboBox('getSelectedItem').value;
                         var newLocationStateId = $("#stateCombo").jqxComboBox('getSelectedItem').value;
                         var newDistanceFromAirport = $("#DistanceFromAirport").val();
-                        var newAirportId = $("#airportCombo").jqxComboBox('getSelectedItem').value;;
+                        var newAirportId = $("#airportCombo").jqxComboBox('getSelectedItem').value;
                         var newRateQualifications = $("#RateQualifications").val();
                         var newRateText = $("#RateText").val();
                         var newMemberRateText = $("#MemberRateText").val();
@@ -241,8 +242,7 @@
                                 "IsActiveFlag": newIsActiveFlag,
                                 "ManagerImageUrl": newManagerImageUrl,
                                 "MemberRateText": newMemberRateText,
-                                "ImageUrl": newImageUrl,
-                                "LocationHighlights": LocationHighlights
+                                "ImageUrl": newImageUrl
                             }),
                             
                             success: function (response) {
