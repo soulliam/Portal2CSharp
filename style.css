@@ -174,7 +174,8 @@ table {
 .search-size .jqx-combobox {
     margin-bottom: 6px;
 }
-.tab-body .jqx-widget {
+.tab-body .jqx-widget,
+.modal-body .jqx-widget {
     margin-bottom: 10px;
 }
 .tab-body .jqx-radiobutton,
