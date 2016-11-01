@@ -1,4 +1,14 @@
-﻿//formats date to 10/16/2016 type
+﻿//Pad number
+function padNumber(i, l, s) {
+    //leave s blank to return zeros
+    var o = i.toString();
+    if (!s) { s = '0'; }
+    while (o.length < l) {
+        o = s + o;
+    }
+    return o;
+}
+//formats date to 10/16/2016 type
 function DateFormat(dateObject) {
     var d = new Date(dateObject);
     var day = d.getDate();

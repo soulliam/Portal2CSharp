@@ -901,7 +901,6 @@
             // create jqxCardGrid
             $("#jqxCardGrid").jqxGrid(
             {
-                theme: 'shinyblack',
                 width: '100%',
                 height: 450,
                 selectionmode: 'checkbox',
@@ -910,10 +909,28 @@
                 sortable: true,
                 altrows: true,
                 filterable: true,
+                enablebrowserselection: true,
                 columns: [
                       { text: 'Card Id', datafield: 'CardId', hidden: true },
                       { text: 'Member Id', datafield: 'MemberId', hidden: true },
-                      { text: 'FPNumber', datafield: 'FPNumber' },
+                      {
+                          text: 'FPNumber', datafield: 'FPNumber', cellsalign: 'right',
+                          cellsrenderer: function (row, column, value) {
+                              var orig = value;
+                              var firstThree = "";
+                              var lastFive = "";
+
+                              //checks to see if the number is 8 digits if not it pads with zeros
+                              if (orig.length < 8) {
+                                  orig = padNumber(orig, 8)
+                              }
+
+                              //breaks the fpnumber into three digits then 5 digits then returns the number to the grid
+                              firstThree = orig.substring(0, 3);
+                              lastFive = orig.substring(3, 8);
+                              return "<div style='margin-top:10px;margin-left:5px;'>" + firstThree + "-" + lastFive + "</div>";
+                          }
+                      },
                       { text: 'Primary', datafield: 'IsPrimary' },
                       { text: 'Active', datafield: 'IsActive' }
                 ]
