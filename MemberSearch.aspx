@@ -319,7 +319,8 @@
                 var thisMarketingCode = $("#MailerCode").val();
                 var thisMemberId = $("#MemberId").val();homeLocationCombo
                 var thisLocationId = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
-                
+                var thisCompanyId = $("#MailerCompanyCombo").jqxComboBox('getSelectedItem').value;
+                var thisGetEmail = $("#GetEmail").prop("checked");
 
                 var first = true;
                 var rows = $('#phoneGrid').jqxGrid('getrows');
@@ -339,7 +340,7 @@
                 }
 
                 saveUpdateMemberInfo(phoneType, phoneNumber, thisMemberId, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2,
-                                     thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId);
+                                     thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail);
 
                 
             });
@@ -900,7 +901,6 @@
             // create jqxCardGrid
             $("#jqxCardGrid").jqxGrid(
             {
-                theme: 'shinyblack',
                 width: '100%',
                 height: 450,
                 selectionmode: 'checkbox',
@@ -909,10 +909,28 @@
                 sortable: true,
                 altrows: true,
                 filterable: true,
+                enablebrowserselection: true,
                 columns: [
-                      { text: 'Card Id', datafield: 'CardId' },
-                      { text: 'Member Id', datafield: 'MemberId' },
-                      { text: 'FPNumber', datafield: 'FPNumber' },
+                      { text: 'Card Id', datafield: 'CardId', hidden: true },
+                      { text: 'Member Id', datafield: 'MemberId', hidden: true },
+                      {
+                          text: 'FPNumber', datafield: 'FPNumber', cellsalign: 'right',
+                          cellsrenderer: function (row, column, value) {
+                              var orig = value;
+                              var firstThree = "";
+                              var lastFive = "";
+
+                              //checks to see if the number is 8 digits if not it pads with zeros
+                              if (orig.length < 8) {
+                                  orig = padNumber(orig, 8)
+                              }
+
+                              //breaks the fpnumber into three digits then 5 digits then returns the number to the grid
+                              firstThree = orig.substring(0, 3);
+                              lastFive = orig.substring(3, 8);
+                              return "<div style='margin-top:10px;margin-left:5px;'>" + firstThree + "-" + lastFive + "</div>";
+                          }
+                      },
                       { text: 'Primary', datafield: 'IsPrimary' },
                       { text: 'Active', datafield: 'IsActive' }
                 ]
@@ -992,11 +1010,69 @@
                 },
                 root: 'result>data>ActivityHistory'
             };
-
-            // create jqxCardGrid
+            var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+                switch (value) {
+                    case 1:
+                        return 'Albuquerque';
+                        break;
+                    case 2:
+                        return 'Austin';
+                        break;
+                    case 3:
+                        return 'Baltimore Elkridge Landing';
+                        break;
+                    case 4:
+                        return 'Baltimore W. Nursery Road';
+                        break;
+                    case 5:
+                        return 'Cincinnati';
+                        break;
+                    case 6:
+                        return 'Cleveland';
+                        break;
+                    case 7:
+                        return 'Cleveland PP';
+                        break;
+                    case 9:
+                        return 'Cincinnati';
+                        break;
+                    case 10:
+                        return 'Raleigh';
+                        break;
+                    case 11:
+                        return 'Tucson';
+                        break;
+                    case 12:
+                        return 'Orlando';
+                        break;
+                    case 13:
+                        return 'Milwaukee';
+                        break;
+                    case 14:
+                        return 'Miami';
+                        break;
+                    case 15:
+                        return 'Memphis';
+                        break;
+                    case 16:
+                        return 'Houston';
+                        break;
+                    case 17:
+                        return 'Indianapolis';
+                        break;
+                    case 18:
+                        return 'Atlanta';
+                        break;
+                    case 20:
+                        return 'Houston';
+                        break;
+                    default:
+                        return 'Error';
+                }
+            }
+            // create member Activity Grid
             $("#jqxMemberActivityGrid").jqxGrid(
             {
-
                 pageable: true,
                 pagermode: 'simple',
                 pagesize: 12,
@@ -1008,7 +1084,6 @@
                 altrows: true,
                 filterable: true,
                 columnsresize: true,
-                editable: true,
                 ready: function (){
                     // create a filter group for the FirstName column.
                     var fnameFilterGroup = new $.jqx.filter();
@@ -1025,11 +1100,11 @@
                 columns:[ 
                       { text: 'Member Id', datafield: 'MemberId', hidden: true },
                       { text: 'ParkingTransactionNumber', datafield: 'ParkingTransactionNumber', width: '20%' },
-                      { text: 'ManualEditsId', datafield: 'ManualEditsId', width: '10%' },
-                      { text: 'RedemptionId', datafield: 'RedemptionId', width: '10%' },
-                      { text: 'Points Changed', datafield: 'PointsChanged', width: '5%' },
-                      { text: 'Description', datafield: 'Description', width: '30%' },
-                      { text: 'Location', datafield: 'LocationId', width: '10%', columntype: 'combobox',
+                      { text: 'ManualEditsId', datafield: 'ManualEditsId', hidden: true },
+                      { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
+                      { text: 'Points Changed', datafield: 'PointsChanged', width: '10%' },
+                      { text: 'Description', datafield: 'Description', width: '50%' },
+                      { text: 'Location', datafield: 'LocationId', width: '20%', columntype: 'combobox',
                           createeditor: function (row, column, editor) {
                               // assign a new data source to the combobox.
                               var activityLocationSource =
@@ -1054,7 +1129,13 @@
                           },
                           initeditor: function (row, cellvalue, editor, celltext, cellwidth, cellheight) {
                               editor.jqxComboBox('selectItem', cellvalue);
-                          }
+                          },
+                          // update the editor's value before saving it.
+                          cellvaluechanging: function (row, column, columntype, oldvalue, newvalue) {
+                              // return the old value, if the new value is empty.
+                              if (newvalue == "") return oldvalue;
+                          },
+                          cellsrenderer: cellsrenderer
                       },
                   { text: 'Date', datafield: 'Date', width: '15%', cellsformat: 'MM/dd/yyyy HH:mm:ss' }
                 ]
@@ -1073,8 +1154,10 @@
                     { name: 'ParkingTransactionNumber' },
                     { name: 'ManualEditsId' },
                     { name: 'RedemptionId' },
+                    { name: 'PointsChanged' },
                     { name: 'Description' },
-                    { name: 'Date' }
+                    { name: 'LocationId' },
+                    { name: 'Date', type: 'date' }
                 ],
 
                 type: 'Get',
@@ -1086,8 +1169,67 @@
                 },
                 root: 'result>data>ActivityHistory'
             };
-
-            // create jqxCardGrid
+            var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+                switch (value) {
+                    case 1:
+                        return 'Albuquerque';
+                        break;
+                    case 2:
+                        return 'Austin';
+                        break;
+                    case 3:
+                        return 'Baltimore Elkridge Landing';
+                        break;
+                    case 4:
+                        return 'Baltimore W. Nursery Road';
+                        break;
+                    case 5:
+                        return 'Cincinnati';
+                        break;
+                    case 6:
+                        return 'Cleveland';
+                        break;
+                    case 7:
+                        return 'Cleveland PP';
+                        break;
+                    case 9:
+                        return 'Cincinnati';
+                        break;
+                    case 10:
+                        return 'Raleigh';
+                        break;
+                    case 11:
+                        return 'Tucson';
+                        break;
+                    case 12:
+                        return 'Orlando';
+                        break;
+                    case 13:
+                        return 'Milwaukee';
+                        break;
+                    case 14:
+                        return 'Miami';
+                        break;
+                    case 15:
+                        return 'Memphis';
+                        break;
+                    case 16:
+                        return 'Houston';
+                        break;
+                    case 17:
+                        return 'Indianapolis';
+                        break;
+                    case 18:
+                        return 'Atlanta';
+                        break;
+                    case 20:
+                        return 'Houston';
+                        break;
+                    default:
+                        return 'Error';
+                }
+            }
+            // create Account Activity Grid
             $("#jqxAccountActivityGrid").jqxGrid(
             {
 
@@ -1103,12 +1245,47 @@
                 filterable: true,
                 columnsresize: true,
                 columns: [
-                      { text: 'Member Id', datafield: 'MemberId' },
-                      { text: 'ParkingTransactionNumber', datafield: 'ParkingTransactionNumber' },
-                      { text: 'ManualEditsId', datafield: 'ManualEditsId' },
-                      { text: 'RedemptionId', datafield: 'RedemptionId' },
-                      { text: 'Description', datafield: 'Description' },
-                      { text: 'Date', datafield: 'Date' }
+                      { text: 'Member Id', datafield: 'MemberId', hidden: true },
+                      { text: 'ParkingTransactionNumber', datafield: 'ParkingTransactionNumber', width: '20%' },
+                      { text: 'ManualEditsId', datafield: 'ManualEditsId', hidden: true },
+                      { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
+                      { text: 'Points Changed', datafield: 'PointsChanged', width: '10%' },
+                      { text: 'Description', datafield: 'Description', width: '50%' },
+                      {
+                          text: 'Location', datafield: 'LocationId', width: '20%', columntype: 'combobox',
+                          createeditor: function (row, column, editor) {
+                              // assign a new data source to the combobox.
+                              var activityLocationSource =
+                                {
+                                    datatype: "json",
+                                    type: "Get",
+                                    root: "data",
+                                    datafields: [
+                                        { name: 'LocationId' },
+                                        { name: 'NameOfLocation' }
+                                    ],
+                                    url: $("#localApiDomain").val() + "Locations/Locations/",
+                                };
+                              var activityLocationAdapter = new $.jqx.dataAdapter(activityLocationSource);
+                              editor.jqxComboBox({
+                                  autoDropDownHeight: true,
+                                  source: activityLocationAdapter,
+                                  promptText: "Please Choose:",
+                                  displayMember: "NameOfLocation",
+                                  valueMember: "LocationId"
+                              });
+                          },
+                          initeditor: function (row, cellvalue, editor, celltext, cellwidth, cellheight) {
+                              editor.jqxComboBox('selectItem', cellvalue);
+                          },
+                          // update the editor's value before saving it.
+                          cellvaluechanging: function (row, column, columntype, oldvalue, newvalue) {
+                              // return the old value, if the new value is empty.
+                              if (newvalue == "") return oldvalue;
+                          },
+                          cellsrenderer: cellsrenderer
+                      },
+                  { text: 'Date', datafield: 'Date', width: '15%', cellsformat: 'MM/dd/yyyy HH:mm:ss' }
                 ]
             });
         }
@@ -1199,7 +1376,7 @@
             var source =
             {
                 datafields: [
-                    { name: 'Date' },
+                    { name: 'Date', type: 'date' },
                     { name: 'Note' },
                     { name: 'SubmittedBy' }
                 ],
@@ -1222,7 +1399,7 @@
                 altrows: true,
                 filterable: true,
                 columns: [
-                      { text: 'Date', datafield: 'Date', width: '20%' },
+                      { text: 'Date', datafield: 'Date', width: '20%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
                       { text: 'Note', datafield: 'Note', width: '60%' },
                       { text: 'SubmittedBy', datafield: 'SubmittedBy', width: '20%' }
                 ]
@@ -1237,7 +1414,7 @@
             {
                 datafields: [
                     { name: 'CertificateID' },
-                    { name: 'RedeemDate' },
+                    { name: 'RedeemDate', type: 'date' },
                     { name: 'BeenUsed' },
                     { name: 'DateUsed' }
                 ],
@@ -1253,7 +1430,7 @@
                 root: "data"
             };
 
-            // create jqxCardGrid
+            // create Redemption Grid
             $("#jqxRedemptionGrid").jqxGrid(
             {
                 theme: 'shinyblack',
@@ -1266,7 +1443,7 @@
                 filterable: true,
                 columns: [
                       { text: 'CertificateID', datafield: 'CertificateID' },
-                      { text: 'Redeem Date', datafield: 'RedeemDate' },
+                      { text: 'Redeem Date', datafield: 'RedeemDate', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
                       { text: 'BeenUsed', datafield: 'BeenUsed' },
                       { text: 'DateUsed', datafield: 'DateUsed' }
                 ]
@@ -1274,7 +1451,7 @@
         }
 
         function loadReservations(PageMemberID) {
-            //Loads card list
+            // load reservations to list
             var url = $("#apiDomain").val() + "members/" + PageMemberID + "/reservations";
 
             var source =
@@ -1282,7 +1459,9 @@
                 datafields: [
                     { name: 'ReservationId' },
                     { name: 'ReservationNumber' },
-                    { name: 'EstimatedCost' },
+                    { name: 'CreateDatetime', type: 'date' },
+                    { name: 'StartDatetime', type: 'date' },
+                    { name: 'EndDatetime', type: 'date' },
                     { name: 'ReservationStatusName', map: 'ReservationStatus>ReservationStatusName' },
                     { name: 'MemberNote' }
                 ],
@@ -1298,7 +1477,7 @@
                 root: "data"
             };
 
-            // create jqxCardGrid
+            // create Reservation Grid
             $("#jqxReservationGrid").jqxGrid(
             {
                 theme: 'shinyblack',
@@ -1311,11 +1490,13 @@
                 altrows: true,
                 filterable: true,
                 columns: [
-                      { text: 'ReservationId', datafield: 'ReservationId' },
-                      { text: 'Reservation Number', datafield: 'ReservationNumber' },
-                      { text: 'EstimatedCost', datafield: 'BeenUsed' },
-                      { text: 'ReservationStatusName', datafield: 'ReservationStatusName' },
-                      { text: 'MemberNote', datafield: 'MemberNote' }
+                      { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
+                      { text: 'Reservation Number', datafield: 'ReservationNumber', width: '15%' },
+                      { text: 'Create Date', datafield: 'CreateDatetime', width: '15%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
+                      { text: 'Start Date', datafield: 'StartDatetime', width: '15%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
+                      { text: 'End Date', datafield: 'EndDatetime', width: '15%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
+                      { text: 'Status', datafield: 'ReservationStatusName', width: '15%' },
+                      { text: 'Note', datafield: 'MemberNote', width: '25%' }
                 ]
             });
         }
@@ -1340,7 +1521,7 @@
             var companyDataAdapter = new $.jqx.dataAdapter(companySource);
             $("#MailerCompanyCombo").jqxComboBox(
             {
-                width: 250,
+                width: '100%',
                 height: 24,
                 source: companyDataAdapter,
                 selectedIndex: 0,
@@ -1869,6 +2050,8 @@
                     $("#homeLocationCombo").jqxComboBox('selectItem', thisData.result.data.LocationId);
                     $("#MarketingCode").val(thisData.result.data.MarketingCode);
                     $("#MarketingMailerCode").val(thisData.result.data.MarketingMailerCode);
+                    $("#MailerCompanyCombo").jqxComboBox('selectItem', thisData.result.data.CompanyId);
+                    $("#GetEmail").prop("checked", thisData.result.data.GetEmail);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     alert("Error: " + errorThrown);
@@ -2208,7 +2391,7 @@
                                         <div class="form-group">
                                             <label for="MailerCo" class="col-sm-3 col-md-4 control-label">Mailer Company:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <div class="form-control" id="MailerCompanyCombo"></div>
+                                                <div id="MailerCompanyCombo"></div>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -2255,6 +2438,12 @@
                                             <label for="Zip" class="col-sm-3 col-md-4 control-label">Zip:</label>
                                             <div class="col-sm-9 col-md-8">
                                                 <input type="text" class="form-control" id="Zip" placeholder="Zip Code">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="GetEmail" class="col-sm-3 col-md-4 control-label">Get Email:</label>
+                                            <div class="col-sm-9 col-md-8">
+                                                <input type="checkbox" id="GetEmail">
                                             </div>
                                         </div>
                                     </div>

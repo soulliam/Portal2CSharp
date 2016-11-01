@@ -1,5 +1,5 @@
 ﻿function saveUpdateMemberInfo(phoneType, phoneNumber, thisMemberId, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2,
-                                     thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId) {
+                                     thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail) {
     switch (phoneType.length) {
         case 1:
             $.ajax({
@@ -34,7 +34,7 @@
                         "PhoneTypeId": phoneType[0]
                     }
                     ],
-                    "GetEmail": true,
+                    "GetEmail": thisGetEmail,
                     "EmailReceiptsFlag": true
                 }),
                 dataType: "json",
