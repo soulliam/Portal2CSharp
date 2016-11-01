@@ -319,6 +319,7 @@
                 var thisMarketingCode = $("#MailerCode").val();
                 var thisMemberId = $("#MemberId").val();homeLocationCombo
                 var thisLocationId = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
+                
 
                 var first = true;
                 var rows = $('#phoneGrid').jqxGrid('getrows');
@@ -793,6 +794,7 @@
             loadHomeLocationCombo();
             loadReceiptLocationCombo();
             loadmanualEditTypesCombo();
+            loadCompaniesCombo();
 
             // setup reservation popup these are in Member/Scripts/MemberReservation.js
             loadReservationLocationCombo();
@@ -1321,6 +1323,67 @@
 
         //#region LoadComboBoxes
 
+        function loadCompaniesCombo() {
+            //set manualedit type combobox
+            var companySource =
+            {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'id' },
+                    { name: 'name' }
+                ],
+                url: $("#localApiDomain").val() + "CompanyDropDowns/GetCompanies/",
+
+            };
+            var companyDataAdapter = new $.jqx.dataAdapter(companySource);
+            $("#MailerCompanyCombo").jqxComboBox(
+            {
+                width: 250,
+                height: 24,
+                source: companyDataAdapter,
+                selectedIndex: 0,
+                displayMember: "name",
+                valueMember: "id"
+            });
+        }
+
+
+        function loadmanualEditTypesCombo() {
+            //set manualedit type combobox
+            var metSource =
+            {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'ExplanationID' },
+                    { name: 'Explanation' }
+                ],
+                url: $("#localApiDomain").val() + "ManualEdits/GetManualEditTypes",
+
+            };
+            var metDataAdapter = new $.jqx.dataAdapter(metSource);
+            $("#manualEditTypesCombo").jqxComboBox(
+            {
+                width: 200,
+                height: 24,
+                source: metDataAdapter,
+                selectedIndex: 0,
+                displayMember: "Explanation",
+                valueMember: "ExplanationID"
+            });
+            $("#manualEditTypesCombo").on('select', function (event) {
+                if (event.args) {
+                    var item = event.args.item;
+                    if (item) {
+
+                    }
+                }
+            });
+        }
+
         function loadmanualEditTypesCombo() {
             //set manualedit type combobox
             var metSource =
@@ -1578,41 +1641,6 @@
             loadNotes($("#MemberId").val());
         }
 
-        function saveMember(PageMemberID) {
-
-            var FirstName = $("#ShortLocationName").val();
-            var LastName = $("#FacilityNumber").val();
-            var Suffix = $("#SkiDataVersion").val();
-            var EmailAddress = $("#SkiDataLocation").val();
-            var StreetAddress = $("#LocationAddress").val();
-            var StreetAddress2 = $("#LocationCity").val();
-            var CityName = $("#LocationZipCode").val();
-            var StateId = $("#LocationPhoneNumber").val();
-            var Zip = $("#LocationFaxNumber").val();
-            var Company = $("#Capacity").val();
-            var LocationId = $("#Description").val();
-            
-
-            var putUrl = $("#apiDomain").val() + "members/:memberId" + PageMemberID
-
-            $.ajax({
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                    "AccessToken": $("#userGuid").val(),
-                    "ApplicationKey": $("#AK").val()
-                },
-                url: putUrl,
-                type: 'PUT',
-                data: "{'NameOfLocation': '" + newNameOfLocation + "',  'DisplayName': '" + newDisplayName + "',  'ShortLocationName': '" + newShortLocationName + "',  'FacilityNumber': '" + newFacilityNumber + "',  'SkiDataVersion': " + newSkiDataVersion + ",  'SkiDataLocation': " + newSkiDataLocation + ",  'LocationAddress': '" + newLocationAddress + "',  'LocationCity': '" + newLocationCity + "',  'BrandId': " + newBrandId + ",  'AirportId': 1004,  'Capacity': " + newCapacity + ",  'CityId': " + newCityId + ",  'LocationStateId': " + newStateId + ",  'LocationZipCode': '" + newLocationZipCode + "',  'LocationPhoneNumber': '" + newLocationPhoneNumber + "',  'LocationFaxNumber': '" + newLocationFaxNumber + "',  'Description': '" + newDescription + "',  'Alert': '" + newAlert + "',  'DailyRate': '" + newDailyRate + "',  'Slug': '" + newSlug + "',  'Qualifications': '" + newQualifications + "',  'Manager': '" + newManager + "',  'ManagerEmail': '" + newManagerEmail + "',  'RateDetail': '" + newRateDetail + "',  'DistanceFromAirport': '" + newDistanceFromAirport + "',  'Latitude': '" + newLatitude + "',  'Longitude': '" + newLongitude + "',  'GoogleLink': '" + newGoogleLink + "',  'IsActiveFlag': " + newIsActive + "}",
-                success: function (response) {
-                    alert("Saved!");
-                },
-                error: function (jqXHR, textStatus, errorThrown, data) {
-                    alert(textStatus); alert(errorThrown);
-                }
-            });
-        }
         //#endregion
 
         //#region ShowPopups
@@ -1831,7 +1859,6 @@
                     $("#LastName").val(thisData.result.data.LastName);
                     $("#EmailAddress").val(thisData.result.data.EmailAddress);
                     $("#UserName").val(thisData.result.data.UserName);
-                    $("#HomePhone").val(thisData.result.data.UserName);
                     $("#IsActive").val(thisData.result.data.IsActive);
                     $("#StreetAddress").val(thisData.result.data.StreetAddress);
                     $("#StreetAddress2").val(thisData.result.data.StreetAddress2);
@@ -1840,7 +1867,8 @@
                     $("#Zip").val(thisData.result.data.Zip);
                     $("#Company").val(thisData.result.data.Company);
                     $("#homeLocationCombo").jqxComboBox('selectItem', thisData.result.data.LocationId);
-                    $("#topMemberSince").html(DateFormat(thisData.result.data.MemberSince)); 
+                    $("#MarketingCode").val(thisData.result.data.MarketingCode);
+                    $("#MarketingMailerCode").val(thisData.result.data.MarketingMailerCode);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     alert("Error: " + errorThrown);
@@ -2174,19 +2202,19 @@
                                         <div class="form-group">
                                             <label for="RepCode" class="col-sm-3 col-md-4 control-label">Rep Code:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="RepCode" placeholder="">
+                                                <input type="text" class="form-control" id="MarketingCode" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="MailerCo" class="col-sm-3 col-md-4 control-label">Mailer Co:</label>
+                                            <label for="MailerCo" class="col-sm-3 col-md-4 control-label">Mailer Company:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="MailerCo" placeholder="">
+                                                <div class="form-control" id="MailerCompanyCombo"></div>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="MailerCode" class="col-sm-3 col-md-4 control-label">Mailer Code:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="MailerCode" placeholder="">
+                                                <input type="text" class="form-control" id="MarketingMailerCode" placeholder="">
                                             </div>
                                         </div>
                                     </div>
@@ -2197,12 +2225,6 @@
                                             <label for="AddressType" class="col-sm-3 col-md-4 control-label">Address Type:</label>
                                             <div class="col-sm-9 col-md-8">
                                                 <input type="text" class="form-control" id="AddressType" placeholder="">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="Country" class="col-sm-3 col-md-4 control-label">Country:</label>
-                                            <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="Country" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">

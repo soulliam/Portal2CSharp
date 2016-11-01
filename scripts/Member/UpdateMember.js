@@ -26,7 +26,7 @@
                     "VerifyPassword": "",
                     "Company": thisCompany,
                     "TitleId": thisTitleId,
-                    "MarketingCode": thisMarketingCode,
+                    "CorporateDiscountCode": thisMarketingCode,
                     "LocationId": thisLocationId,
                     "PhoneList": [
                     {
@@ -71,7 +71,7 @@
                     "VerifyPassword": "",
                     "Company": thisCompany,
                     "TitleId": thisTitleId,
-                    "MarketingCode": thisMarketingCode,
+                    "CorporateDiscountCode": thisMarketingCode,
                     "LocationId": thisLocationId,
                     "PhoneList": [
                     {
@@ -120,7 +120,7 @@
                     "VerifyPassword": "",
                     "Company": thisCompany,
                     "TitleId": thisTitleId,
-                    "MarketingCode": thisMarketingCode,
+                    "CorporateDiscountCode": thisMarketingCode,
                     "LocationId": thisLocationId,
                     "PhoneList": [
                     {
@@ -173,7 +173,7 @@
                     "VerifyPassword": "",
                     "Company": thisCompany,
                     "TitleId": thisTitleId,
-                    "MarketingCode": thisMarketingCode,
+                    "CorporateDiscountCode": thisMarketingCode,
                     "LocationId": thisLocationId,
                     "PhoneList": [
                     {

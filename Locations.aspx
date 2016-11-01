@@ -89,6 +89,7 @@
                     var newRateQualifications = $("#RateQualifications").val();
                     var newRateText = $("#RateText").val();
                     var newMemberRateText = $("#MemberRateText").val();
+                    var newLocationHighlights = $("#LocationHighlights").val();
 
                     var postUrl = $("#apiDomain").val() + "locations"
 
@@ -135,7 +136,8 @@
                             "IsActiveFlag": newIsActiveFlag,
                             "ManagerImageUrl": newManagerImageUrl,
                             "MemberRateText": newMemberRateText,
-                            "ImageUrl": newImageUrl
+                            "ImageUrl": newImageUrl,
+                            "LocationHighlights": newLocationHighlights
                         }),
                         success: function (response) {
                             alert("Saved!");
@@ -192,6 +194,7 @@
                         var newRateQualifications = $("#RateQualifications").val();
                         var newRateText = $("#RateText").val();
                         var newMemberRateText = $("#MemberRateText").val();
+                        var newLocationHighlights = $("#LocationHighlights").val();
 
                         var putUrl = $("#apiDomain").val() + "locations/" + selectedLocationId //ID of the location to update
 
@@ -238,7 +241,8 @@
                                 "IsActiveFlag": newIsActiveFlag,
                                 "ManagerImageUrl": newManagerImageUrl,
                                 "MemberRateText": newMemberRateText,
-                                "ImageUrl": newImageUrl
+                                "ImageUrl": newImageUrl,
+                                "LocationHighlights": LocationHighlights
                             }),
                             
                             success: function (response) {
@@ -1077,6 +1081,10 @@
                         <td>&nbsp;&nbsp;</td>
                         <td>
                             <table>
+                                <tr>
+                                    <td>Location Highlights:</td>
+                                    <td><input type="text" id="LocationHighlights" /></td>
+                                </tr>
                                 <tr>
                                     <td>Qualifications:</td>
                                     <td><input type="text" id="RateQualifications" /></td>
