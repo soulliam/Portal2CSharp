@@ -1401,7 +1401,7 @@
             var metDataAdapter = new $.jqx.dataAdapter(metSource);
             $("#manualEditTypesCombo").jqxComboBox(
             {
-                width: 200,
+                width: '100%',
                 height: 24,
                 source: metDataAdapter,
                 selectedIndex: 0,
@@ -2400,17 +2400,56 @@
                                     </div>
                                 </div>
                                 <div id="tabAddRedemption" class="tab-body">
-
                                 </div>
+
+
+
                                 <div id="tabPoints" class="tab-body">
-                                    <div id="manualEditTypesCombo" style="position:absolute; margin-top:10px;margin-left:10px;"></div>
-                                    <input type="text" id="manualEditPoints" style="position:absolute; margin-top:60px; width:150px;margin-left:10px;" />
-                                    <textarea rows="4" cols="60" id="manualEditNote" style="position: absolute; margin-top: 100px;margin-left:10px;"></textarea>
-                                    <input type="button" value="Submit Manual Edit" id="manualEditSubmit"style="position:absolute; margin-top:175px;margin-left:10px;" />
-                                    <input type="button" value="Goto Pending ManualEdits" id="manualEditPending"style="position:absolute; margin-top:175px;margin-left:195px;" />
+                                    <div class="row">
+                                        <div class="col-sm-6 col-md-5">
+                                            <div class="form-horizontal">
+                                                <div class="form-group">
+                                                    <label for="manualEditTypesCombo" class="col-sm-3 col-md-4 control-label">Edit Type:</label>
+                                                    <div class="col-sm-9 col-md-8">
+                                                        <div id="manualEditTypesCombo"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="manualEditPoints" class="col-sm-3 col-md-4 control-label">Points:</label>
+                                                    <div class="col-sm-9 col-md-8">
+                                                        <input type="text" id="manualEditPoints" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-3 col-md-4 control-label"></label>
+                                                    <div class="col-sm-9 col-md-8">
+                                                        <input type="button" value="Submit Manual Edit" id="manualEditSubmit" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-3 col-md-4 control-label"></label>
+                                                    <div class="col-sm-9 col-md-8">
+                                                        <input type="button" value="View Pending Manual Edits" id="manualEditPending" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6 col-md-5">
+                                            <div class="form-horizontal">
+                                                <div class="form-group">
+                                                    <label for="manualEditNote" class="col-sm-3 col-md-4 control-label">Add Note:</label>
+                                                    <div class="col-sm-9 col-md-8">
+                                                        <textarea rows="8" id="manualEditNote"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-0 col-md-2">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div id="tabCoupons" class="tab-body">
 
+                                <div id="tabCoupons" class="tab-body">
                                 </div>
                             </div>
                         </div>
