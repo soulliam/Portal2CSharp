@@ -348,7 +348,7 @@
             //show add card popup
             $("#addCard").on("click", function (event) {
                 var offset = $("#jqxMemberInfoTabs").offset();
-                $('#addCardWindow').jqxWindow({ width: "200px", height: "250px" });
+                $('#addCardWindow').jqxWindow({ width: "250px", height: "235px" });
                 $("#addCardWindow").css("visibility", "visible");
                 $("#addCardWindow").jqxWindow({ position: { x: parseInt(offset.left) + 50, y: parseInt(offset.top) - 50 } });
                 $('#addCardWindow').jqxWindow({ resizable: false });
@@ -572,8 +572,8 @@
                
                 if (isRedemption != null) {
                     $("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
-                    $('#popupRedemption').jqxWindow({ maxHeight: 800, maxWidth: 650 });
-                    $('#popupRedemption').jqxWindow({ width: 630, height: 800 });
+                    $('#popupRedemption').jqxWindow({ maxHeight: 610, maxWidth: 450 });
+                    $('#popupRedemption').jqxWindow({ width: 450, height: 610 });
                     $("#popupRedemption").css("visibility", "visible");
                     $("#popupRedemption").jqxWindow('open');
 
@@ -2703,13 +2703,45 @@
     </div>
 
 
+    <%-- html for popup Add Card --%>
+    <%-- html for popup Add Card --%>
     <div id="addCardWindow" style="visibility:hidden">
-        <div id="test">
-            <input type="text" id="addCardFPNumber" style="margin-top:15px;" placeholder="FPNumber" />
-            <div style="margin-top:15px;">Is Primary <input type="checkbox" id="addCardIsPrimary" /></div>
-            <div style="margin-top:15px;">Is Active <input type="checkbox" id="addCardIsActive" /></div>
-            <div style="margin-top:15px;">Create Digital <input type="checkbox" id="addCardCreateDigitalCard" /></div>
-            <input type="button" id="addCardSubmit" value="Add" style="margin-top:15px;" />
+        <div>Add Card</div>
+        <div style="overflow: hidden;">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <input type="text" id="addCardFPNumber" placeholder="FPNumber" />
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="addCardIsPrimary" value="">
+                                Is Primary
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="addCardIsActive" value="">
+                                Is Active
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="addCardCreateDigitalCard" value="">
+                                Create Digital
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <input type="button" id="addCardSubmit" value="Add" />
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2787,10 +2819,10 @@
         </div>
     </div>
 
-    <div id="popupRedemption" style="visibility: hidden">
+    <div id="popupRedemption" style="visibility: hidden;">
         <div>View Reciept</div>
         <div>
-            <iframe id="redemptionIframe" style="border:none;width:620px;height:700px;" ></iframe>
+            <iframe id="redemptionIframe" style="border:none;width:420px;height:570px;" ></iframe>
         </div>
     </div>
 
