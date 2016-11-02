@@ -65,7 +65,7 @@
             $("#addFeature").jqxButton({ width: 120, height: 25 });
             $("#deleteFeature").jqxButton({ width: 120, height: 25 });
             $("#updateFeature").jqxButton({ width: 120, height: 25 });
-            $("#btnShowFeatures").jqxButton();
+
             //$("#btnNew").jqxLinkButton({ width: '100%', height: 26 });
             //#endregion
 
@@ -1269,11 +1269,6 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-4 col-md-2">
-                            <input id="btnShowFeatures" type="button" value="Show Features" />
-                        </div>
-                        <div class="col-sm-0 col-md-6">
-                        </div>
-                        <div class="col-sm-4 col-md-2">
                             <input type="button" id="Save" value="Save" />
                         </div>
                         <div class="col-sm-4 col-md-2">
@@ -1281,7 +1276,7 @@
                         </div>
                     </div>
             </div>
-            <div id=skiDataTab" class="tab-body">
+            <div id="skiDataTab" class="tab-body">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-horizontal">
