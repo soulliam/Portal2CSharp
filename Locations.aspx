@@ -60,12 +60,12 @@
             loadLocationGrid();
 
             //#region SetupButtons
-            $("#Save").jqxButton({ width: 120 });
-            $("#Cancel").jqxButton({ width: 120 });
-            $("#addFeature").jqxButton({ width: 120 });
-            $("#deleteFeature").jqxButton({ width: 120 });
-            $("#updateFeature").jqxButton({ width: 120 });
-            $("#updateLocationImages").jqxButton({ width: 120 });
+            $("#Save").jqxButton();
+            $("#Cancel").jqxButton();
+            $("#addFeature").jqxButton();
+            $("#deleteFeature").jqxButton();
+            $("#updateFeature").jqxButton();
+            $("#updateLocationImages").jqxButton();
 
             //$("#btnNew").jqxLinkButton({ width: '100%', height: 26 });
             //#endregion
@@ -1308,15 +1308,22 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-2 col-md-3">
-                            </div>
-                            <div class="col-sm-4 col-md-3">
-                                <input type="button" id="Save" value="Save" />
-                            </div>
-                            <div class="col-sm-4 col-md-3">
-                                <input id="Cancel" type="button" value="Cancel" />
-                            </div>
-                            <div class="col-sm-2 col-md-3">
+                            <div class="col-sm-12">
+                                <div class="top-divider">
+
+                                    
+                                    <div class="col-sm-2 col-md-3">
+                                    </div>
+                                    <div class="col-sm-4 col-md-3">
+                                        <input type="button" id="Save" value="Save" />
+                                    </div>
+                                    <div class="col-sm-4 col-md-3">
+                                        <input id="Cancel" type="button" value="Cancel" />
+                                    </div>
+                                    <div class="col-sm-2 col-md-3">
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>
