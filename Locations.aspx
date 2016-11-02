@@ -654,10 +654,12 @@
                               // open the popup window when the user clicks a button.
                               editrow = row;
                               var offset = $("#jqxgrid").offset();
-                              $("#popupLocation").jqxWindow({ position: { x: parseInt(offset.left) + 100, y: parseInt(offset.top) - 50 } });
+                              $("#popupLocation").jqxWindow({ position: { x: '5%', y: '10%' } });
                               $('#popupLocation').jqxWindow({ resizable: false });
+                              $('#popupLocation').jqxWindow({ draggable: false });
+                              $('#popupLocation').jqxWindow({ isModal: true });
                               $("#popupLocation").css("visibility", "visible");
-                              $('#popupLocation').jqxWindow({ height: '75%', width: '75%' });
+                              $('#popupLocation').jqxWindow({ height: '80%', width: '90%' });
                               $('#popupLocation').jqxWindow({ minHeight: '320px', minWidth: '320px' });
                               $('#popupLocation').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
                               $('#popupLocation').jqxWindow({ showCloseButton: false });
