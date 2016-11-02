@@ -1639,8 +1639,24 @@
                         </div>
                     </div>
                     <div id="locationImagesTab" class="tab-body">
-                        <div id="jqxLocationImagesGrid"></div>
-                        <div><input id="updateLocationImages" type="button" value="Update" /></div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div id="jqxLocationImagesGrid"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="top-divider">
+                                    <div class="col-sm-4 col-md-4">
+                                    </div>
+                                    <div class="col-sm-4 col-md-4">
+                                        <input id="updateLocationImages" type="button" value="Update" />
+                                    </div>
+                                    <div class="col-sm-4 col-md-4">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                    </div>
                 </div>
            </div>
