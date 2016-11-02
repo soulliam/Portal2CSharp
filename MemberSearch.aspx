@@ -1415,8 +1415,9 @@
             {
                 datafields: [
                     { name: 'CertificateID' },
+                    { name: 'RedemptionType', map: 'RedemptionType>RedemptionType' },
                     { name: 'RedeemDate', type: 'date' },
-                    { name: 'BeenUsed' },
+                    { name: 'IsReturned' },
                     { name: 'DateUsed' }
                 ],
 
@@ -1444,8 +1445,9 @@
                 filterable: true,
                 columns: [
                       { text: 'CertificateID', datafield: 'CertificateID' },
+                      { text: 'Redemption Type', datafield: 'RedemptionType' },
                       { text: 'Redeem Date', datafield: 'RedeemDate', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
-                      { text: 'BeenUsed', datafield: 'BeenUsed' },
+                      { text: 'Returned', datafield: 'IsReturned' },
                       { text: 'DateUsed', datafield: 'DateUsed' }
                 ]
             });
