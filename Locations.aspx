@@ -60,12 +60,12 @@
             loadLocationGrid();
 
             //#region SetupButtons
-            $("#Save").jqxButton();
-            $("#Cancel").jqxButton();
-            $("#addFeature").jqxButton({ width: 120, height: 25 });
-            $("#deleteFeature").jqxButton({ width: 120, height: 25 });
-            $("#updateFeature").jqxButton({ width: 120, height: 25 });
-            $("#updateLocationImages").jqxButton({ width: 120, height: 25 });
+            $("#Save").jqxButton({ width: 120 });
+            $("#Cancel").jqxButton({ width: 120 });
+            $("#addFeature").jqxButton({ width: 120 });
+            $("#deleteFeature").jqxButton({ width: 120 });
+            $("#updateFeature").jqxButton({ width: 120 });
+            $("#updateLocationImages").jqxButton({ width: 120 });
 
             //$("#btnNew").jqxLinkButton({ width: '100%', height: 26 });
             //#endregion
@@ -1137,7 +1137,7 @@
         </div>
     </div><!-- /.container-fluid -->
     
-                                    <div style="visibility:hidden">
+                                    <div style="display:none;">
                                         <input id="LocationId" type="text" value="0"  />
                                     </div>
     <div class="container-fluid container-970">
@@ -1150,7 +1150,7 @@
 
 
     <%-- html for popup edit box --%>
-    <div id="popupLocation" style="visibility:hidden">
+    <div id="popupLocation" style="visibility:hidden;">
         <div>Location Details</div>
         <div>
             <div class="modal-body">
@@ -1308,11 +1308,15 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-4 col-md-2">
+                            <div class="col-sm-2 col-md-3">
+                            </div>
+                            <div class="col-sm-4 col-md-3">
                                 <input type="button" id="Save" value="Save" />
                             </div>
-                            <div class="col-sm-4 col-md-2">
+                            <div class="col-sm-4 col-md-3">
                                 <input id="Cancel" type="button" value="Cancel" />
+                            </div>
+                            <div class="col-sm-2 col-md-3">
                             </div>
                         </div>
                     </div>
@@ -1471,15 +1475,18 @@
                         </div>
                     </div>
                     <div id="editfeatureTab" class="tab-body">
-
-                        <div id="jqxFeatureGrid"></div>
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-12">
+                                <div id="jqxFeatureGrid"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="SortOrder" class="col-sm-3 col-md-4 control-label">Sort Order:</label>
                                     <div class="col-sm-9 col-md-8">
                                         <input type="text" class="form-control" id="FeatureSortOrder" />
-                                        <input type="text" id="LocationHasFeatureId" style="visibility:hidden" />
+                                        <input type="text" id="LocationHasFeatureId" style="display:none;" />
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -1500,6 +1507,8 @@
                                         <input type="text" class="form-control" id="FeatureOptionalExtrasName" />
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="OptionalExtrasDescription" class="col-sm-3 col-md-4 control-label">Optional Extras Description:</label>
                                     <div class="col-sm-9 col-md-8">
@@ -1526,80 +1535,80 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-9 col-md-8">
-                                        <input type="button" class="form-control" id="updateFeature" value="update" />
+                                        <input type="button" class="form-control" id="updateFeature" value="Update" />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-9 col-md-8">
-                                        <input type="button" class="form-control" id="deleteFeature" value="update" />
+                                        <input type="button" class="form-control" id="deleteFeature" value="Delete" />
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div id="addFeatureTab" class="tab-body">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <div class="col-sm-9 col-md-8">
-                                            <div id="featureCombo"></div>
-                                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <div class="col-sm-9 col-md-8">
+                                        <div id="featureCombo"></div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="addSortOrder" class="col-sm-3 col-md-4 control-label">Sort Order:</label>
-                                        <div class="col-sm-9 col-md-8">
-                                            <input type="text" class="form-control" id="addFeatureSortOrder" />
-                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="addSortOrder" class="col-sm-3 col-md-4 control-label">Sort Order:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <input type="text" class="form-control" id="addFeatureSortOrder" />
                                     </div>
-                                    <div class="form-group">
-                                        <label for="addChargeAmount" class="col-sm-3 col-md-4 control-label">Charge Amount:</label>
-                                        <div class="col-sm-9 col-md-8">
-                                            <input type="text" class="form-control" id="addFeatureChargeAmount" />
-                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="addChargeAmount" class="col-sm-3 col-md-4 control-label">Charge Amount:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <input type="text" class="form-control" id="addFeatureChargeAmount" />
                                     </div>
-                                    <div class="form-group">
-                                        <label for="addEffectiveDate" class="col-sm-3 col-md-4 control-label">Effective Date:</label>
-                                        <div class="col-sm-9 col-md-8">
-                                            <input type="text" class="form-control" id="addFeatureEffectiveDatetime" />
-                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="addEffectiveDate" class="col-sm-3 col-md-4 control-label">Effective Date:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <input type="text" class="form-control" id="addFeatureEffectiveDatetime" />
                                     </div>
-                                    <div class="form-group">
-                                        <label for="addOptionalExtrasName" class="col-sm-3 col-md-4 control-label"> Optional Extras Name:</label>
-                                        <div class="col-sm-9 col-md-8">
-                                            <input type="text" class="form-control" id="addFeatureOptionalExtrasName" />
-                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="addOptionalExtrasName" class="col-sm-3 col-md-4 control-label"> Optional Extras Name:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <input type="text" class="form-control" id="addFeatureOptionalExtrasName" />
                                     </div>
-                                    <div class="form-group">
-                                        <label for="addOptionalExtrasDescription" class="col-sm-3 col-md-4 control-label">Optional Extras Description:</label>
-                                        <div class="col-sm-9 col-md-8">
-                                            <input type="text" class="form-control" id="addFeatureOptionalExtrasDescription" />
-                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="addOptionalExtrasDescription" class="col-sm-3 col-md-4 control-label">Optional Extras Description:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <input type="text" class="form-control" id="addFeatureOptionalExtrasDescription" />
                                     </div>
-                                    <div class="form-group">
-                                        <label for="addMaxAvailable" class="col-sm-3 col-md-4 control-label">Max Available:</label>
-                                        <div class="col-sm-9 col-md-8">
-                                            <input type="text" class="form-control" id="addMaxAvailable" />
-                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="addMaxAvailable" class="col-sm-3 col-md-4 control-label">Max Available:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <input type="text" class="form-control" id="addMaxAvailable" />
                                     </div>
-                                    <div class="form-group">
-                                        <label for="addDateAvailable" class="col-sm-3 col-md-4 control-label">Date Available:</label>
-                                        <div class="col-sm-9 col-md-8">
-                                            <input type="text" class="form-control" id="addFeatureAvailableDatetime" />
-                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="addDateAvailable" class="col-sm-3 col-md-4 control-label">Date Available:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <input type="text" class="form-control" id="addFeatureAvailableDatetime" />
                                     </div>
-                                    <div class="form-group">
-                                        <label for="addDisplay" class="col-sm-3 col-md-4 control-label">Display:</label>
-                                        <div class="col-sm-9 col-md-8">
-                                            <input type="checkbox" class="form-control" id="addIsDisplayed" />
-                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="addDisplay" class="col-sm-3 col-md-4 control-label">Display:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <input type="checkbox" class="form-control" id="addIsDisplayed" />
                                     </div>
-                                    <div class="form-group">
-                                        <div class="col-sm-9 col-md-8">
-                                            <input type="button" class="form-control" id="addFeature" value="Add" />
-                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-9 col-md-8">
+                                        <input type="button" class="form-control" id="addFeature" value="Add" />
                                     </div>
                                 </div>
                             </div>
+                        </div>
                     </div>
                     <div id="locationImagesTab" class="tab-body">
                             <div id="jqxLocationImagesGrid"></div>
