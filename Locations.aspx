@@ -125,9 +125,7 @@
                 }
                 if (error == false) {
                     alert("Saved!")
-                    var parent = $("#jqxLocationImagesGrid").parent();
-                    $("#jqxLocationImagesGrid").jqxGrid('destroy');
-                    $("<div id='jqxLocationImagesGrid'></div>").appendTo(parent);
+
                     loadLocationImagesGrid(selectedLocationId);
                 }
             });
@@ -685,6 +683,7 @@
 
         //loads main location grid
         function loadLocationGrid() {
+
             var url = $("#apiDomain").val() + "locations/";
 
             var source =
@@ -834,7 +833,9 @@
                               //sets the current selected location
                               selectedLocationId = dataRecord.LocationId;
                               loadFeatureGrid(selectedLocationId);
+
                               loadLocationImagesGrid(selectedLocationId);
+
                               // show the popup window.
                               $("#popupLocation").jqxWindow('open');
                           }
@@ -971,6 +972,11 @@
         }
 
         function loadLocationImagesGrid(thisLocationId) {
+
+            //destroying images grid and recreating 
+            var parent = $("#jqxLocationImagesGrid").parent();
+            $("#jqxLocationImagesGrid").jqxGrid('destroy');
+            $("<div id='jqxLocationImagesGrid'></div>").appendTo(parent);
 
             var url = $("#apiDomain").val() + "images/" + thisLocationId;
 

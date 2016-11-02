@@ -257,14 +257,14 @@
                           }
                       },
                       //loading the rest of the columns
-                      { text: 'City', datafield: 'CityName' },
-                      { text: 'Abbreviation', datafield: 'AirportAbbreviation' },
-                      { text: 'Airport Name', datafield: 'AirportName' },
-                      { text: 'Location Text', datafield: 'LocationText' },
-                      { text: 'City Text', datafield: 'CityText' },
-                      { text: 'City Caption', datafield: 'CityCaption' },
-                      { text: 'Image URL', datafield: 'ImageUrl' },
-                      { text: 'Banner Text', datafield: 'BannerText' },
+                      { text: 'City', datafield: 'CityName', width: '8%' },
+                      { text: 'Abbr', datafield: 'AirportAbbreviation', width: '3%' },
+                      { text: 'Airport Name', datafield: 'AirportName', width: '7%' },
+                      { text: 'Location Text', datafield: 'LocationText', width: '7%' },
+                      { text: 'City Text', datafield: 'CityText', width: '10%' },
+                      { text: 'City Caption', datafield: 'CityCaption', width: '10%' },
+                      { text: 'Image URL', datafield: 'ImageUrl', width: '45%' },
+                      { text: 'Banner Text', datafield: 'BannerText', width: '11%' },
                       { text: 'AirportId', datafield: 'AirportId', hidden: true },
                       { text: 'CityId', datafield: 'CityId', hidden: true }
                 ]
