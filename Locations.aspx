@@ -65,11 +65,53 @@
             $("#addFeature").jqxButton({ width: 120, height: 25 });
             $("#deleteFeature").jqxButton({ width: 120, height: 25 });
             $("#updateFeature").jqxButton({ width: 120, height: 25 });
+            $("#updateLocationImages").jqxButton({ width: 120, height: 25 });
 
             //$("#btnNew").jqxLinkButton({ width: '100%', height: 26 });
             //#endregion
 
             //#region ButtonClick
+
+            //updateLocationImages
+
+            $("#updateLocationImages").on("click", function (event) {
+                var putURL = $("#apiDomain").val() + "locations/" + selectedLocationId + "/features"
+
+                $.ajax({
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json",
+                        "AccessToken": $("#userGuid").val(),
+                        "ApplicationKey": $("#AK").val()
+                    },
+                    type: "POST",
+                    url: putURL,
+                    data: JSON.stringify({
+                        "FeatureId": newFeatureId,
+                        "FeatureAvailableDatetime": newFeatureAvailableDatetime,
+                        "MaxAvailable": newMaxAvailable,
+                        "IsDisplayed": newIsDisplayed,
+                        "SortOrder": newSortOrder,
+                        "ChargeAmount": Number(newChargeAmount),
+                        "ChargeNote": newChargeNote,
+                        "EffectiveDatetime": newFeatureEffectiveDatetime,
+                        "OptionalExtrasName": newOptionalExtrasName,
+                        "OptionalExtrasDescription": newOptionalExtrasDescription
+                    }),
+                    dataType: "json",
+                    success: function (response) {
+                        alert("Saved!");
+                        clearFeatureForm();
+                        //refreshes feature grid after succesful save
+                        loadFeatureGrid(selectedLocationId);
+                    },
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
+                })
+            });
+
+            //Save main location
             $("#Save").click(function () {
                 // If LocationId is nothing then we are adding a new Location and we need a post
                 if ($("#LocationId").val() == "") {
@@ -1122,7 +1164,7 @@
                 <li>Add Feature</li>
                 <li>Location Images</li>
             </ul>
-            <div id=locationTab" class="tab-body">
+            <div id="locationTab" class="tab-body">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-horizontal">
@@ -1308,7 +1350,7 @@
                         </div>
                     </div>
             </div>
-            <div id=websiteTab" class="tab-body">
+            <div id="websiteTab" class="tab-body">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-horizontal">
@@ -1388,7 +1430,7 @@
                         </div>
                     </div>
             </div>
-            <div id=managerTab" class="tab-body">
+            <div id="managerTab" class="tab-body">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-horizontal">
@@ -1420,7 +1462,7 @@
                         </div>
                     </div>
             </div>
-            <div id=editFeatureTab" class="tab-body">
+            <div id="editfeatureTab" class="tab-body">
                     <div id="jqxFeatureGrid"></div>
                     <div class="row">
                         <div class="col-sm-4">
@@ -1486,7 +1528,7 @@
                         </div>
                     </div>
             </div>
-            <div id=addFeatureTab" class="tab-body">
+            <div id="addFeatureTab" class="tab-body">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
@@ -1550,8 +1592,9 @@
                         </div>
                     </div>
             </div>
-            <div id=locationImagesTab" class="tab-body">
+            <div id="locationImagesTab" class="tab-body">
                     <div id="jqxLocationImagesGrid"></div>
+                    <div><input id="updateLocationImages" type="button" value="Update" /></div>
            </div>
         </div>
            </div>
