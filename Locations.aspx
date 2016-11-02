@@ -751,13 +751,13 @@
                               // open the popup window when the user clicks a button.
                               editrow = row;
                               var offset = $("#jqxgrid").offset();
-                              $("#popupLocation").jqxWindow({ position: { x: '5%', y: '10%' } });
+                              $("#popupLocation").jqxWindow({ position: { x: '5%', y: '7.5%' } });
                               $('#popupLocation').jqxWindow({ resizable: false });
                               $('#popupLocation').jqxWindow({ draggable: false });
                               $('#popupLocation').jqxWindow({ isModal: true });
                               $("#popupLocation").css("visibility", "visible");
-                              $('#popupLocation').jqxWindow({ height: '80%', width: '90%' });
-                              $('#popupLocation').jqxWindow({ minHeight: '80%', minWidth: '90%' });
+                              $('#popupLocation').jqxWindow({ height: '85%', width: '90%' });
+                              $('#popupLocation').jqxWindow({ minHeight: '85%', minWidth: '90%' });
                               $('#popupLocation').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
                               $('#popupLocation').jqxWindow({ showCloseButton: true });
                               $('#popupLocation').jqxWindow({ animationType: 'combined' });
@@ -1310,8 +1310,6 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="top-divider">
-
-                                    
                                     <div class="col-sm-2 col-md-3">
                                     </div>
                                     <div class="col-sm-4 col-md-3">
@@ -1322,7 +1320,6 @@
                                     </div>
                                     <div class="col-sm-2 col-md-3">
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -1540,14 +1537,20 @@
                                         <input type="checkbox" class="form-control" id="IsDisplayed" />
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <div class="col-sm-9 col-md-8">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="top-divider">
+                                    <div class="col-sm-2 col-md-3">
+                                    </div>
+                                    <div class="col-sm-4 col-md-3">
                                         <input type="button" class="form-control" id="updateFeature" value="Update" />
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-9 col-md-8">
+                                    <div class="col-sm-4 col-md-3">
                                         <input type="button" class="form-control" id="deleteFeature" value="Delete" />
+                                    </div>
+                                    <div class="col-sm-2 col-md-3">
                                     </div>
                                 </div>
                             </div>
@@ -1557,6 +1560,7 @@
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="form-group">
+                                    <label for="featureCombo" class="col-sm-3 col-md-4 control-label">Brand:</label>
                                     <div class="col-sm-9 col-md-8">
                                         <div id="featureCombo"></div>
                                     </div>
@@ -1580,13 +1584,13 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="addOptionalExtrasName" class="col-sm-3 col-md-4 control-label"> Optional Extras Name:</label>
+                                    <label for="addOptionalExtrasName" class="col-sm-3 col-md-4 control-label">Extras Name:</label>
                                     <div class="col-sm-9 col-md-8">
                                         <input type="text" class="form-control" id="addFeatureOptionalExtrasName" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="addOptionalExtrasDescription" class="col-sm-3 col-md-4 control-label">Optional Extras Description:</label>
+                                    <label for="addOptionalExtrasDescription" class="col-sm-3 col-md-4 control-label">Extras Description:</label>
                                     <div class="col-sm-9 col-md-8">
                                         <input type="text" class="form-control" id="addFeatureOptionalExtrasDescription" />
                                     </div>
