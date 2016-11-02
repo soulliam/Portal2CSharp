@@ -36,7 +36,7 @@
 
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
-
+            
             //set up the tabs
             $('#jqxTabs').jqxTabs({ width: 400, position: 'top' });
             $('#jqxTabs').css('margin-bottom', '10px');
