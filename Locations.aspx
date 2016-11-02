@@ -98,7 +98,7 @@
                     putURL = $("#apiDomain").val() + "images/" + ImageId;
 
                     $.ajax({
-                        async: true,
+                        async: false,
                         headers: {
                             "Accept": "application/json",
                             "Content-Type": "application/json",
@@ -125,6 +125,10 @@
                 }
                 if (error == false) {
                     alert("Saved!")
+                    var parent = $("#jqxLocationImagesGrid").parent();
+                    $("#jqxLocationImagesGrid").jqxGrid('destroy');
+                    $("<div id='jqxLocationImagesGrid'></div>").appendTo(parent);
+                    loadLocationImagesGrid(selectedLocationId);
                 }
             });
 
@@ -1631,8 +1635,8 @@
                         </div>
                     </div>
                     <div id="locationImagesTab" class="tab-body">
-                            <div id="jqxLocationImagesGrid"></div>
-                            <div><input id="updateLocationImages" type="button" value="Update" /></div>
+                        <div id="jqxLocationImagesGrid"></div>
+                        <div><input id="updateLocationImages" type="button" value="Update" /></div>
                    </div>
                 </div>
            </div>
