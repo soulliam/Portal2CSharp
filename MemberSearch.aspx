@@ -738,8 +738,29 @@
 
             //#region pageSetup
 
-
+            // set key press in search bar to initiate search
             $("div.FPR_SearchLeft input:text").keypress(function (e) {
+
+                if (e.keyCode == 13) {
+                    var thisParameters = GetSearchParameters();
+
+                    if ($("#jqxSearchGrid").is(":visible")) {
+                        if (thisParameters != "") {
+                            loadSearchResults(thisParameters);
+                        }
+                    }
+                    else {
+                        if (thisParameters != "") {
+                            $("#MemberDetails").toggle();
+                            $("#jqxSearchGrid").toggle();
+                            loadSearchResults(thisParameters);
+                        }
+                    }
+
+                }
+            });
+
+            $("#SearchFPNumber").keypress(function (e) {
 
                 if (e.keyCode == 13) {
                     var thisParameters = GetSearchParameters();
@@ -791,6 +812,10 @@
             $("#jqxRadioTypeNormal").jqxRadioButton({ groupName: 'ReceiptEntryDetail', width: 100, height: 24, checked: true });
             $("#jqxRadioTypeLost").jqxRadioButton({ groupName: 'ReceiptEntryDetail', width: 100, height: 24 });
             $("#jqxRadioTypeDamaged").jqxRadioButton({ groupName: 'ReceiptEntryDetail', width: 100, height: 24 });
+
+            //mask fpnumber in search bar
+            $("#SearchFPNumber").jqxMaskedInput({ width: '100%', height: 25, mask: '###-#####' });
+            $('#SearchFPNumber').jqxMaskedInput({ textAlign: "right" });
 
             loadStateCombo();
             loadHomeLocationCombo();
@@ -2085,11 +2110,17 @@
                     thisReturn = thisReturn + "&LastName=" + $("#SearchLastName").val();
                 }
             }
-            if ($("#SearchFPNumber").val() != "") {
+            if ($("#SearchFPNumber").jqxMaskedInput('value') != null && $("#SearchFPNumber").jqxMaskedInput('value') != "___-_____") {
+                var thisFPNumber = $("#SearchFPNumber").jqxMaskedInput('value');
+
+                thisFPNumber = thisFPNumber.replace("-", "");
+
+                thisFPNumber = thisFPNumber.replace(/^(0+)/g, '');
+
                 if (thisReturn == "") {
-                    thisReturn = thisReturn + "FPNumber=" + $("#SearchFPNumber").val();
+                    thisReturn = thisReturn + "FPNumber=" + thisFPNumber;
                 } else {
-                    thisReturn = thisReturn + "&FPNumber=" + $("#SearchFPNumber").val();
+                    thisReturn = thisReturn + "&FPNumber=" + thisFPNumber;
                 }
             }
             if ($("#SearchPhoneNumber").val() != "") {
@@ -2170,7 +2201,7 @@
                                     <div id="LocationCombo"></div>
                                 </div>
                                 <div class="col-sm-15">
-                                    <input type="text" id="SearchFPNumber" placeholder="Card Number" />
+                                    <div id="SearchFPNumber"></div>
                                 </div>
                                 <div class="col-sm-15">
                                     <input type="text" id="SearchFirstName" placeholder="First Name" />
