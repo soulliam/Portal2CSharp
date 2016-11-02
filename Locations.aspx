@@ -759,7 +759,7 @@
                               $('#popupLocation').jqxWindow({ height: '80%', width: '90%' });
                               $('#popupLocation').jqxWindow({ minHeight: '80%', minWidth: '90%' });
                               $('#popupLocation').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
-                              $('#popupLocation').jqxWindow({ showCloseButton: false });
+                              $('#popupLocation').jqxWindow({ showCloseButton: true });
                               $('#popupLocation').jqxWindow({ animationType: 'combined' });
                               $('#popupLocation').jqxWindow({ showAnimationDuration: 300 });
                               $('#popupLocation').jqxWindow({ closeAnimationDuration: 500 });
@@ -1154,459 +1154,458 @@
         <div>Location Details</div>
         <div>
             <div class="modal-body">
-        <div id="jqxTabs" class="tab-system">
-            <ul>
-                <li>Location</li>
-                <li>SkiData</li>
-                <li>Website</li>
-                <li>Manager</li>
-                <li>Edit Feature</li>
-                <li>Add Feature</li>
-                <li>Location Images</li>
-            </ul>
-            <div id="locationTab" class="tab-body">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label for="thisLocationId" class="col-sm-3 col-md-4 control-label">LocationId:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="thisLocationId" disabled />
+                <div id="jqxTabs" class="tab-system">
+                    <ul>
+                        <li>Location</li>
+                        <li>SkiData</li>
+                        <li>Website</li>
+                        <li>Manager</li>
+                        <li>Edit Feature</li>
+                        <li>Add Feature</li>
+                        <li>Location Images</li>
+                    </ul>
+                    <div id="locationTab" class="tab-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="thisLocationId" class="col-sm-3 col-md-4 control-label">LocationId:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="thisLocationId" disabled />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="NameOfLocation" class="col-sm-3 col-md-4 control-label">Location Name:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="NameOfLocation" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="DisplayName" class="col-sm-3 col-md-4 control-label">Display Name:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="DisplayName" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ShortLocationName" class="col-sm-3 col-md-4 control-label">Short Name:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="ShortLocationName" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="airportCombo" class="col-sm-3 col-md-4 control-label">Airport:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <div id="airportCombo"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="LocationAddress" class="col-sm-3 col-md-4 control-label">Address:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="LocationAddress" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="LocationZipCode" class="col-sm-3 col-md-4 control-label">Zip:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="LocationZipCode" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="LocationPhoneNumber" class="col-sm-3 col-md-4 control-label">Phone:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="LocationPhoneNumber"  />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="LocationFaxNumber" class="col-sm-3 col-md-4 control-label">Fax:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="LocationFaxNumber" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Capacity" class="col-sm-3 col-md-4 control-label">Capacity:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="Capacity" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="City" class="col-sm-3 col-md-4 control-label">City:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <div id="cityCombo"></div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="NameOfLocation" class="col-sm-3 col-md-4 control-label">Location Name:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="NameOfLocation" />
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="IsActive" class="col-sm-3 col-md-4 control-label">Active:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="IsActive" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="DisplayName" class="col-sm-3 col-md-4 control-label">Display Name:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="DisplayName" />
+                                    <div class="form-group">
+                                        <label for="SpecialFlagsText" class="col-sm-3 col-md-4 control-label">Special Flags Text:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="SpecialFlagsText" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="ShortLocationName" class="col-sm-3 col-md-4 control-label">Short Name:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="ShortLocationName" />
+                                    <div class="form-group">
+                                        <label for="SpecialFlagsInformation" class="col-sm-3 col-md-4 control-label">Special Flags Information:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="SpecialFlagsInformation" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="airportCombo" class="col-sm-3 col-md-4 control-label">Airport:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <div id="airportCombo"></div>
+                                    <div class="form-group">
+                                        <label for="DistanceFromAirport" class="col-sm-3 col-md-4 control-label">Distance From Airport:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="DistanceFromAirport" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="LocationAddress" class="col-sm-3 col-md-4 control-label">Address:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="LocationAddress" />
+                                    <div class="form-group">
+                                        <label for="HourlyRate" class="col-sm-3 col-md-4 control-label">Hourly Rate:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="HourlyRate" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="LocationZipCode" class="col-sm-3 col-md-4 control-label">Zip:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="LocationZipCode" />
+                                    <div class="form-group">
+                                        <label for="ImageUrl" class="col-sm-3 col-md-4 control-label">Image Url:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="ImageUrl" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="LocationPhoneNumber" class="col-sm-3 col-md-4 control-label">Phone:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="LocationPhoneNumber"  />
+                                    <div class="form-group">
+                                        <label for="EstimatedCharges" class="col-sm-3 col-md-4 control-label">Est. Charges:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="EstimatedCharges" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="LocationFaxNumber" class="col-sm-3 col-md-4 control-label">Fax:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="LocationFaxNumber" />
+                                    <div class="form-group">
+                                        <label for="EstimatedSavings" class="col-sm-3 col-md-4 control-label">Est. Savings:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="EstimatedSavings" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="Capacity" class="col-sm-3 col-md-4 control-label">Capacity:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="Capacity" />
+                                    <div class="form-group">
+                                        <label for="brandCombo" class="col-sm-3 col-md-4 control-label">Brand:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <div id="brandCombo"></div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="City" class="col-sm-3 col-md-4 control-label">City:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <div id="cityCombo"></div>
+                                    <div class="form-group">
+                                        <label for="LocationCity" class="col-sm-3 col-md-4 control-label">City:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="LocationCity" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stateCombo" class="col-sm-3 col-md-4 control-label">State:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <div id="stateCombo"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-sm-4 col-md-2">
+                                <input type="button" id="Save" value="Save" />
+                            </div>
+                            <div class="col-sm-4 col-md-2">
+                                <input id="Cancel" type="button" value="Cancel" />
+                            </div>
+                        </div>
+                    </div>
+                    <div id="skiDataTab" class="tab-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="FacilityNumber" class="col-sm-3 col-md-4 control-label">Facility Number:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="FacilityNumber"  />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="SkiDataVersion" class="col-sm-3 col-md-4 control-label">SkiDataVersion:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="SkiDataVersion" />
+                                        </div>
+                                    </div>
+                                        <div class="form-group">
+                                        <label for="SkiDataLocation" class="col-sm-3 col-md-4 control-label">SkiDataLocation:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="SkiDataLocation"  />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="SkiDataIMP" class="col-sm-3 col-md-4 control-label">IMP:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="SkiDataIMP"  />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="websiteTab" class="tab-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="Description" class="col-sm-3 col-md-2 control-label">Description:</label>
+                                        <div class="col-sm-9 col-md-10">
+                                            <textarea rows="5" class="form-control" id="Description"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Alert" class="col-sm-3 col-md-2 control-label">Alert:</label>
+                                        <div class="col-sm-9 col-md-10">
+                                            <input type="text" class="form-control" id="Alert" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="DailyRate" class="col-sm-3 col-md-4 control-label">Daily Rate:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="DailyRate" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="RateText" class="col-sm-3 col-md-4 control-label">Rate Text:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <textarea rows="5" class="form-control" id="RateText"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="MemberRateText" class="col-sm-3 col-md-4 control-label">Member Rate Text:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <textarea rows="5" class="form-control" id="MemberRateText"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="LocationHighlights" class="col-sm-3 col-md-4 control-label">Location Highlights:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="LocationHighlights" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="RateQualifications" class="col-sm-3 col-md-4 control-label">Qualifications:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="RateQualifications" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Latitude" class="col-sm-3 col-md-4 control-label">Latitude:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="Latitude" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Longitude" class="col-sm-3 col-md-4 control-label">Longitude:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="Longitude" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="GoogleLink" class="col-sm-3 col-md-4 control-label">Google Link:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="GoogleLink" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="SiteURL" class="col-sm-3 col-md-4 control-label">SiteURL:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="SiteURL" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Slug" class="col-sm-3 col-md-4 control-label">Slug:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="Slug" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="managerTab" class="tab-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="siteManager" class="col-sm-3 col-md-4 control-label">Manager:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="siteManager" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ManagerEmail" class="col-sm-3 col-md-4 control-label">Manager Email:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="ManagerEmail" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ManagerImageUrl" class="col-sm-3 col-md-4 control-label">Manager Image Url:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="ManagerImageUrl" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="LocationContactEmail" class="col-sm-3 col-md-4 control-label">Location Contact Email:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="LocationContactEmail" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="editfeatureTab" class="tab-body">
 
-                        <div class="col-sm-4">
-                            <div class="form-horizontal">
+                        <div id="jqxFeatureGrid"></div>
+                        <div class="row">
+                            <div class="col-sm-4">
                                 <div class="form-group">
-                                    <label for="IsActive" class="col-sm-3 col-md-4 control-label">Active:</label>
+                                    <label for="SortOrder" class="col-sm-3 col-md-4 control-label">Sort Order:</label>
                                     <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="IsActive" />
+                                        <input type="text" class="form-control" id="FeatureSortOrder" />
+                                        <input type="text" id="LocationHasFeatureId" style="visibility:hidden" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="SpecialFlagsText" class="col-sm-3 col-md-4 control-label">Special Flags Text:</label>
+                                    <label for="ChargeAmount" class="col-sm-3 col-md-4 control-label">Charge Amount:</label>
                                     <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="SpecialFlagsText" />
+                                        <input type="text" class="form-control" id="FeatureChargeAmount" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="SpecialFlagsInformation" class="col-sm-3 col-md-4 control-label">Special Flags Information:</label>
+                                    <label for="EffectiveDate" class="col-sm-3 col-md-4 control-label">Effective Date:</label>
                                     <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="SpecialFlagsInformation" />
+                                        <input type="text" class="form-control" id="FeatureEffectiveDatetime" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="DistanceFromAirport" class="col-sm-3 col-md-4 control-label">Distance From Airport:</label>
+                                    <label for="OptionalExtrasName" class="col-sm-3 col-md-4 control-label"> Optional Extras Name:</label>
                                     <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="DistanceFromAirport" />
+                                        <input type="text" class="form-control" id="FeatureOptionalExtrasName" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="HourlyRate" class="col-sm-3 col-md-4 control-label">Hourly Rate:</label>
+                                    <label for="OptionalExtrasDescription" class="col-sm-3 col-md-4 control-label">Optional Extras Description:</label>
                                     <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="HourlyRate" />
+                                        <input type="text" class="form-control" id="FeatureOptionalExtrasDescription" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="ImageUrl" class="col-sm-3 col-md-4 control-label">Image Url:</label>
+                                    <label for="MaxAvailable" class="col-sm-3 col-md-4 control-label">Max Available:</label>
                                     <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="ImageUrl" />
+                                        <input type="text" class="form-control" id="MaxAvailable" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="EstimatedCharges" class="col-sm-3 col-md-4 control-label">Est. Charges:</label>
+                                    <label for="DateAvailable" class="col-sm-3 col-md-4 control-label">Date Available:</label>
                                     <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="EstimatedCharges" />
+                                        <input type="text" class="form-control" id="FeatureAvailableDatetime" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="EstimatedSavings" class="col-sm-3 col-md-4 control-label">Est. Savings:</label>
+                                    <label for="Display" class="col-sm-3 col-md-4 control-label">Display:</label>
                                     <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="EstimatedSavings" />
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="brandCombo" class="col-sm-3 col-md-4 control-label">Brand:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <div id="brandCombo"></div>
+                                        <input type="checkbox" class="form-control" id="IsDisplayed" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="LocationCity" class="col-sm-3 col-md-4 control-label">City:</label>
                                     <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="LocationCity" />
+                                        <input type="button" class="form-control" id="updateFeature" value="update" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="stateCombo" class="col-sm-3 col-md-4 control-label">State:</label>
                                     <div class="col-sm-9 col-md-8">
-                                        <div id="stateCombo"></div>
+                                        <input type="button" class="form-control" id="deleteFeature" value="update" />
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-sm-4 col-md-2">
-                            <input type="button" id="Save" value="Save" />
-                        </div>
-                        <div class="col-sm-4 col-md-2">
-                            <input id="Cancel" type="button" value="Cancel" />
-                        </div>
+                    <div id="addFeatureTab" class="tab-body">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <div class="col-sm-9 col-md-8">
+                                            <div id="featureCombo"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addSortOrder" class="col-sm-3 col-md-4 control-label">Sort Order:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="addFeatureSortOrder" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addChargeAmount" class="col-sm-3 col-md-4 control-label">Charge Amount:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="addFeatureChargeAmount" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addEffectiveDate" class="col-sm-3 col-md-4 control-label">Effective Date:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="addFeatureEffectiveDatetime" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addOptionalExtrasName" class="col-sm-3 col-md-4 control-label"> Optional Extras Name:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="addFeatureOptionalExtrasName" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addOptionalExtrasDescription" class="col-sm-3 col-md-4 control-label">Optional Extras Description:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="addFeatureOptionalExtrasDescription" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addMaxAvailable" class="col-sm-3 col-md-4 control-label">Max Available:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="addMaxAvailable" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addDateAvailable" class="col-sm-3 col-md-4 control-label">Date Available:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="addFeatureAvailableDatetime" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addDisplay" class="col-sm-3 col-md-4 control-label">Display:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="checkbox" class="form-control" id="addIsDisplayed" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="button" class="form-control" id="addFeature" value="Add" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                     </div>
-            </div>
-            <div id="skiDataTab" class="tab-body">
-                    <div class="row">
-                        <div class="col-sm-8">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label for="FacilityNumber" class="col-sm-3 col-md-2 control-label">Facility Number:</label>
-                                    <div class="col-sm-9 col-md-10">
-                                        <input type="text" class="form-control" id="FacilityNumber"  />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="SkiDataVersion" class="col-sm-3 col-md-2 control-label">SkiDataVersion:</label>
-                                    <div class="col-sm-9 col-md-10">
-                                        <input type="text" class="form-control" id="SkiDataVersion" />
-                                    </div>
-                                </div>
-                                 <div class="form-group">
-                                    <label for="SkiDataLocation" class="col-sm-3 col-md-2 control-label">SkiDataLocation:</label>
-                                    <div class="col-sm-9 col-md-10">
-                                        <input type="text" class="form-control" id="SkiDataLocation"  />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="SkiDataIMP" class="col-sm-3 col-md-2 control-label">IMP:</label>
-                                    <div class="col-sm-9 col-md-10">
-                                        <input type="text" class="form-control" id="SkiDataIMP"  />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            </div>
-            <div id="websiteTab" class="tab-body">
-                    <div class="row">
-                        <div class="col-sm-8">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label for="Description" class="col-sm-3 col-md-2 control-label">Description:</label>
-                                    <div class="col-sm-9 col-md-10">
-                                        <textarea rows="5" class="form-control" id="Description"></textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="Alert" class="col-sm-3 col-md-2 control-label">Alert:</label>
-                                    <div class="col-sm-9 col-md-10">
-                                        <input type="text" class="form-control" id="Alert" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label for="DailyRate" class="col-sm-3 col-md-4 control-label">Daily Rate:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="DailyRate" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="RateText" class="col-sm-3 col-md-4 control-label">Rate Text:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <textarea rows="5" class="form-control" id="RateText"></textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="MemberRateText" class="col-sm-3 col-md-4 control-label">Member Rate Text:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <textarea rows="5" class="form-control" id="MemberRateText"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label for="LocationHighlights" class="col-sm-3 col-md-4 control-label">Location Highlights:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="LocationHighlights" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="RateQualifications" class="col-sm-3 col-md-4 control-label">Qualifications:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="RateQualifications" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="Latitude" class="col-sm-3 col-md-4 control-label">Latitude:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="Latitude" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="Longitude" class="col-sm-3 col-md-4 control-label">Longitude:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="Longitude" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="GoogleLink" class="col-sm-3 col-md-4 control-label">Google Link:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="GoogleLink" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="SiteURL" class="col-sm-3 col-md-4 control-label">SiteURL:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="SiteURL" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="Slug" class="col-sm-3 col-md-4 control-label">Slug:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="Slug" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            </div>
-            <div id="managerTab" class="tab-body">
-                    <div class="row">
-                        <div class="col-sm-8">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label for="siteManager" class="col-sm-3 col-md-2 control-label">Manager:</label>
-                                    <div class="col-sm-9 col-md-10">
-                                        <input type="text" class="form-control" id="siteManager" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="ManagerEmail" class="col-sm-3 col-md-2 control-label">Manager Email:</label>
-                                    <div class="col-sm-9 col-md-10">
-                                        <input type="text" class="form-control" id="ManagerEmail" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="ManagerImageUrl" class="col-sm-3 col-md-2 control-label">Manager Image Url:</label>
-                                    <div class="col-sm-9 col-md-10">
-                                        <input type="text" class="form-control" id="ManagerImageUrl" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="LocationContactEmail" class="col-sm-3 col-md-2 control-label">Location Contact Email:</label>
-                                    <div class="col-sm-9 col-md-10">
-                                        <input type="text" class="form-control" id="LocationContactEmail" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            </div>
-            <div id="editfeatureTab" class="tab-body">
-                    <div id="jqxFeatureGrid"></div>
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label for="SortOrder" class="col-sm-3 col-md-4 control-label">Sort Order:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" class="form-control" id="FeatureSortOrder" />
-                                    <input type="text" id="LocationHasFeatureId" style="visibility:hidden" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="ChargeAmount" class="col-sm-3 col-md-4 control-label">Charge Amount:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" class="form-control" id="FeatureChargeAmount" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="EffectiveDate" class="col-sm-3 col-md-4 control-label">Effective Date:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" class="form-control" id="FeatureEffectiveDatetime" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="OptionalExtrasName" class="col-sm-3 col-md-4 control-label"> Optional Extras Name:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" class="form-control" id="FeatureOptionalExtrasName" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="OptionalExtrasDescription" class="col-sm-3 col-md-4 control-label">Optional Extras Description:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" class="form-control" id="FeatureOptionalExtrasDescription" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="MaxAvailable" class="col-sm-3 col-md-4 control-label">Max Available:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" class="form-control" id="MaxAvailable" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="DateAvailable" class="col-sm-3 col-md-4 control-label">Date Available:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" class="form-control" id="FeatureAvailableDatetime" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="Display" class="col-sm-3 col-md-4 control-label">Display:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="checkbox" class="form-control" id="IsDisplayed" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="button" class="form-control" id="updateFeature" value="update" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="button" class="form-control" id="deleteFeature" value="update" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            </div>
-            <div id="addFeatureTab" class="tab-body">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <div class="col-sm-9 col-md-8">
-                                    <div id="featureCombo"></div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="addSortOrder" class="col-sm-3 col-md-4 control-label">Sort Order:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" class="form-control" id="addFeatureSortOrder" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="addChargeAmount" class="col-sm-3 col-md-4 control-label">Charge Amount:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" class="form-control" id="addFeatureChargeAmount" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="addEffectiveDate" class="col-sm-3 col-md-4 control-label">Effective Date:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" class="form-control" id="addFeatureEffectiveDatetime" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="addOptionalExtrasName" class="col-sm-3 col-md-4 control-label"> Optional Extras Name:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" class="form-control" id="addFeatureOptionalExtrasName" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="addOptionalExtrasDescription" class="col-sm-3 col-md-4 control-label">Optional Extras Description:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" class="form-control" id="addFeatureOptionalExtrasDescription" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="addMaxAvailable" class="col-sm-3 col-md-4 control-label">Max Available:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" class="form-control" id="addMaxAvailable" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="addDateAvailable" class="col-sm-3 col-md-4 control-label">Date Available:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" class="form-control" id="addFeatureAvailableDatetime" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="addDisplay" class="col-sm-3 col-md-4 control-label">Display:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="checkbox" class="form-control" id="addIsDisplayed" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="button" class="form-control" id="addFeature" value="Add" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            </div>
-            <div id="locationImagesTab" class="tab-body">
-                    <div id="jqxLocationImagesGrid"></div>
-                    <div><input id="updateLocationImages" type="button" value="Update" /></div>
-           </div>
-        </div>
+                    <div id="locationImagesTab" class="tab-body">
+                            <div id="jqxLocationImagesGrid"></div>
+                            <div><input id="updateLocationImages" type="button" value="Update" /></div>
+                   </div>
+                </div>
            </div>
         </div>
    </div>
