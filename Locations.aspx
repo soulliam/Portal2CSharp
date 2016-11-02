@@ -654,11 +654,12 @@
                               // open the popup window when the user clicks a button.
                               editrow = row;
                               var offset = $("#jqxgrid").offset();
-                              $("#popupLocation").jqxWindow({ position: { x: parseInt(offset.left) + 5, y: parseInt(offset.top) - 50 } });
-                              $('#popupLocation').jqxWindow({ resizable: true });
+                              $("#popupLocation").jqxWindow({ position: { x: parseInt(offset.left) + 100, y: parseInt(offset.top) - 50 } });
+                              $('#popupLocation').jqxWindow({ resizable: false });
                               $("#popupLocation").css("visibility", "visible");
-                              $('#popupLocation').jqxWindow({ maxHeight: 600, maxWidth: 1300 });
-                              $('#popupLocation').jqxWindow({ width: 1300, height: 600 });
+                              $('#popupLocation').jqxWindow({ height: '75%', width: '75%' });
+                              $('#popupLocation').jqxWindow({ minHeight: '320px', minWidth: '320px' });
+                              $('#popupLocation').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
                               $('#popupLocation').jqxWindow({ showCloseButton: false });
                               $('#popupLocation').jqxWindow({ animationType: 'combined' });
                               $('#popupLocation').jqxWindow({ showAnimationDuration: 300 });
