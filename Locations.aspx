@@ -65,10 +65,10 @@
             //#region SetupButtons
             $("#Save").jqxButton();
             $("#Cancel").jqxButton();
-            $("#addFeature").jqxButton({ width: 120, height: 25 });
-            $("#deleteFeature").jqxButton({ width: 120, height: 25 });
-            $("#updateFeature").jqxButton({ width: 120, height: 25 });
-            $("#updateLocationImages").jqxButton({ width: 120, height: 25 });
+            $("#addFeature").jqxButton();
+            $("#deleteFeature").jqxButton();
+            $("#updateFeature").jqxButton();
+            $("#updateLocationImages").jqxButton();
 
             //$("#btnNew").jqxLinkButton({ width: '100%', height: 26 });
             //#endregion
@@ -657,7 +657,7 @@
             var featureDataAdapter = new $.jqx.dataAdapter(FeatureComboSource);
             $("#featureCombo").jqxComboBox(
             {
-                width: 590,
+                width: '100%',
                 height: 25,
                 source: featureDataAdapter,
                 selectedIndex: 0,
@@ -771,13 +771,13 @@
                               // open the popup window when the user clicks a button.
                               editrow = row;
                               var offset = $("#jqxgrid").offset();
-                              $("#popupLocation").jqxWindow({ position: { x: '5%', y: '10%' } });
+                              $("#popupLocation").jqxWindow({ position: { x: '5%', y: '7.5%' } });
                               $('#popupLocation').jqxWindow({ resizable: false });
                               $('#popupLocation').jqxWindow({ draggable: true });
                               $('#popupLocation').jqxWindow({ isModal: true });
                               $("#popupLocation").css("visibility", "visible");
-                              $('#popupLocation').jqxWindow({ height: '80%', width: '90%' });
-                              $('#popupLocation').jqxWindow({ minHeight: '80%', minWidth: '90%' });
+                              $('#popupLocation').jqxWindow({ height: '85%', width: '90%' });
+                              $('#popupLocation').jqxWindow({ minHeight: '85%', minWidth: '90%' });
                               $('#popupLocation').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
                               $('#popupLocation').jqxWindow({ showCloseButton: true });
                               $('#popupLocation').jqxWindow({ animationType: 'combined' });
@@ -1333,8 +1333,6 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="top-divider">
-
-                                    
                                     <div class="col-sm-2 col-md-3">
                                     </div>
                                     <div class="col-sm-4 col-md-3">
@@ -1345,7 +1343,6 @@
                                     </div>
                                     <div class="col-sm-2 col-md-3">
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -1563,14 +1560,20 @@
                                         <input type="checkbox" class="form-control" id="IsDisplayed" />
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <div class="col-sm-9 col-md-8">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="top-divider">
+                                    <div class="col-sm-2 col-md-3">
+                                    </div>
+                                    <div class="col-sm-4 col-md-3">
                                         <input type="button" class="form-control" id="updateFeature" value="Update" />
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-9 col-md-8">
+                                    <div class="col-sm-4 col-md-3">
                                         <input type="button" class="form-control" id="deleteFeature" value="Delete" />
+                                    </div>
+                                    <div class="col-sm-2 col-md-3">
                                     </div>
                                 </div>
                             </div>
@@ -1578,71 +1581,102 @@
                     </div>
                     <div id="addFeatureTab" class="tab-body">
                         <div class="row">
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <div class="col-sm-9 col-md-8">
-                                        <div id="featureCombo"></div>
+                            <div class="col-sm-6">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="featureCombo" class="col-sm-3 col-md-4 control-label">Brand:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <div id="featureCombo"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addSortOrder" class="col-sm-3 col-md-4 control-label">Sort Order:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="addFeatureSortOrder" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addChargeAmount" class="col-sm-3 col-md-4 control-label">Charge Amount:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="addFeatureChargeAmount" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addEffectiveDate" class="col-sm-3 col-md-4 control-label">Effective Date:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="addFeatureEffectiveDatetime" />
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="addSortOrder" class="col-sm-3 col-md-4 control-label">Sort Order:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="addFeatureSortOrder" />
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="addOptionalExtrasName" class="col-sm-3 col-md-4 control-label">Extras Name:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="addFeatureOptionalExtrasName" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addOptionalExtrasDescription" class="col-sm-3 col-md-4 control-label">Extras Description:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="addFeatureOptionalExtrasDescription" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addMaxAvailable" class="col-sm-3 col-md-4 control-label">Max Available:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="addMaxAvailable" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addDateAvailable" class="col-sm-3 col-md-4 control-label">Date Available:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="addFeatureAvailableDatetime" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addDisplay" class="col-sm-3 col-md-4 control-label">Display:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="checkbox" class="form-control" id="addIsDisplayed" />
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="addChargeAmount" class="col-sm-3 col-md-4 control-label">Charge Amount:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="addFeatureChargeAmount" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="top-divider">
+                                    <div class="col-sm-4 col-md-4">
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="addEffectiveDate" class="col-sm-3 col-md-4 control-label">Effective Date:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="addFeatureEffectiveDatetime" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="addOptionalExtrasName" class="col-sm-3 col-md-4 control-label"> Optional Extras Name:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="addFeatureOptionalExtrasName" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="addOptionalExtrasDescription" class="col-sm-3 col-md-4 control-label">Optional Extras Description:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="addFeatureOptionalExtrasDescription" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="addMaxAvailable" class="col-sm-3 col-md-4 control-label">Max Available:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="addMaxAvailable" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="addDateAvailable" class="col-sm-3 col-md-4 control-label">Date Available:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="addFeatureAvailableDatetime" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="addDisplay" class="col-sm-3 col-md-4 control-label">Display:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="checkbox" class="form-control" id="addIsDisplayed" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-9 col-md-8">
+                                    <div class="col-sm-4 col-md-4">
                                         <input type="button" class="form-control" id="addFeature" value="Add" />
+                                    </div>
+                                    <div class="col-sm-4 col-md-4">
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div id="locationImagesTab" class="tab-body">
-                        <div id="jqxLocationImagesGrid"></div>
-                        <div><input id="updateLocationImages" type="button" value="Update" /></div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div id="jqxLocationImagesGrid"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="top-divider">
+                                    <div class="col-sm-4 col-md-4">
+                                    </div>
+                                    <div class="col-sm-4 col-md-4">
+                                        <input id="updateLocationImages" type="button" value="Update" />
+                                    </div>
+                                    <div class="col-sm-4 col-md-4">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                    </div>
                 </div>
            </div>
