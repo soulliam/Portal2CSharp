@@ -38,7 +38,7 @@
         $(document).ready(function () {
             
             //set up the tabs
-            $('#jqxTabs').jqxTabs({ width: 400, position: 'top' });
+            $('#jqxTabs').jqxTabs({ width: '100%', position: 'top' });
             $('#jqxTabs').css('margin-bottom', '10px');
             $('#settings div').css('margin-top', '10px');
             $('#animation').on('change', function (event) {
@@ -709,11 +709,14 @@
                               // open the popup window when the user clicks a button.
                               editrow = row;
                               var offset = $("#jqxgrid").offset();
-                              $("#popupLocation").jqxWindow({ position: { x: parseInt(offset.left) + 5, y: parseInt(offset.top) - 50 } });
-                              $('#popupLocation').jqxWindow({ resizable: true });
+                              $("#popupLocation").jqxWindow({ position: { x: '5%', y: '10%' } });
+                              $('#popupLocation').jqxWindow({ resizable: false });
+                              $('#popupLocation').jqxWindow({ draggable: false });
+                              $('#popupLocation').jqxWindow({ isModal: true });
                               $("#popupLocation").css("visibility", "visible");
-                              $('#popupLocation').jqxWindow({ maxHeight: 600, maxWidth: 1300 });
-                              $('#popupLocation').jqxWindow({ width: 1300, height: 600 });
+                              $('#popupLocation').jqxWindow({ height: '80%', width: '90%' });
+                              $('#popupLocation').jqxWindow({ minHeight: '320px', minWidth: '320px' });
+                              $('#popupLocation').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
                               $('#popupLocation').jqxWindow({ showCloseButton: false });
                               $('#popupLocation').jqxWindow({ animationType: 'combined' });
                               $('#popupLocation').jqxWindow({ showAnimationDuration: 300 });
@@ -1107,18 +1110,19 @@
     <%-- html for popup edit box --%>
     <div id="popupLocation" style="visibility:hidden">
         <div>Location Details</div>
-        <div id='jqxTabs'>
+        <div>
+            <div class="modal-body">
+        <div id="jqxTabs" class="tab-system">
             <ul>
-                <li style="margin-left: 30px;">Location</li>
-                <li style="margin-left: 30px;">SkiData</li>
-                <li style="margin-left: 30px;">Website</li>
-                <li style="margin-left: 30px;">Manager</li>
-                <li style="margin-left: 30px;">Edit Feature</li>
-                <li style="margin-left: 30px;">Add Feature</li>
-                <li style="margin-left: 30px;">Location Images</li>
+                <li>Location</li>
+                <li>SkiData</li>
+                <li>Website</li>
+                <li>Manager</li>
+                <li>Edit Feature</li>
+                <li>Add Feature</li>
+                <li>Location Images</li>
             </ul>
-            <div style="overflow: hidden;" id="locationTab">
-                <div class="modal-body">
+            <div id=locationTab" class="tab-body">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-horizontal">
@@ -1276,10 +1280,8 @@
                             <input id="Cancel" type="button" value="Cancel" />
                         </div>
                     </div>
-                </div>
             </div>
-            <div style="overflow: hidden;" id="skiDataTab">
-                <div class="modal-body">
+            <div id=skiDataTab" class="tab-body">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-horizontal">
@@ -1310,10 +1312,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
-            <div style="overflow: hidden;" id="websiteTab">
-                <div class="modal-body">
+            <div id=websiteTab" class="tab-body">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-horizontal">
@@ -1392,10 +1392,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
-            <div style="overflow: hidden;" id="managerTab">
-                <div class="modal-body">
+            <div id=managerTab" class="tab-body">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-horizontal">
@@ -1426,10 +1424,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
-            <div style="overflow: hidden;" id="editFeatureTab">
-                <div class="modal-body">
+            <div id=editFeatureTab" class="tab-body">
                     <div id="jqxFeatureGrid"></div>
                     <div class="row">
                         <div class="col-sm-4">
@@ -1494,10 +1490,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
-            <div style="overflow: hidden;" id="addFeatureTab">
-                <div class="modal-body">
+            <div id=addFeatureTab" class="tab-body">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
@@ -1560,12 +1554,11 @@
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
-            <div style="overflow: hidden;" id="locationImagesTab">
-                <div class="modal-body">
+            <div id=locationImagesTab" class="tab-body">
                     <div id="jqxLocationImagesGrid"></div>
-                </div>
+           </div>
+        </div>
            </div>
         </div>
    </div>

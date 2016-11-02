@@ -409,3 +409,7 @@ label {
     margin-left: 16px;
 }
 
+.jqx-widget-header > div:first-of-type {
+    margin-right: 15px;
+    margin-left: 15px;
+}
