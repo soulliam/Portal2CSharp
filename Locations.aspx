@@ -1360,18 +1360,18 @@
                                         <textarea rows="5" class="form-control" id="Description"></textarea>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label for="Alert" class="col-sm-3 col-md-2 control-label">Alert:</label>
+                                    <div class="col-sm-9 col-md-10">
+                                        <input type="text" class="form-control" id="Alert" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label for="Alert" class="col-sm-3 col-md-4 control-label">Alert:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="Alert" />
-                                    </div>
-                                </div>
                                 <div class="form-group">
                                     <label for="DailyRate" class="col-sm-3 col-md-4 control-label">Daily Rate:</label>
                                     <div class="col-sm-9 col-md-8">
@@ -1381,19 +1381,13 @@
                                 <div class="form-group">
                                     <label for="RateText" class="col-sm-3 col-md-4 control-label">Rate Text:</label>
                                     <div class="col-sm-9 col-md-8">
-                                        <textarea rows="2" class="form-control" id="RateText"></textarea>
+                                        <textarea rows="5" class="form-control" id="RateText"></textarea>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="MemberRateText" class="col-sm-3 col-md-4 control-label">Member Rate Text:</label>
                                     <div class="col-sm-9 col-md-8">
-                                        <textarea rows="2" class="form-control" id="MemberRateText"></textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="Slug" class="col-sm-3 col-md-4 control-label">Slug:</label>
-                                    <div class="col-sm-9 col-md-8">
-                                        <input type="text" class="form-control" id="Slug" />
+                                        <textarea rows="5" class="form-control" id="MemberRateText"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -1434,6 +1428,12 @@
                                     <label for="SiteURL" class="col-sm-3 col-md-4 control-label">SiteURL:</label>
                                     <div class="col-sm-9 col-md-8">
                                         <input type="text" class="form-control" id="SiteURL" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Slug" class="col-sm-3 col-md-4 control-label">Slug:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <input type="text" class="form-control" id="Slug" />
                                     </div>
                                 </div>
                             </div>
@@ -1545,7 +1545,8 @@
                                 <div class="col-sm-9 col-md-8">
                                     <div id="featureCombo"></div>
                                 </div>
-                                <div class="form-group">
+                            </div>
+                            <div class="form-group">
                                 <label for="addSortOrder" class="col-sm-3 col-md-4 control-label">Sort Order:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <input type="text" class="form-control" id="addFeatureSortOrder" />
@@ -1597,7 +1598,6 @@
                                 <div class="col-sm-9 col-md-8">
                                     <input type="button" class="form-control" id="addFeature" value="Add" />
                                 </div>
-                            </div>
                             </div>
                         </div>
                     </div>
