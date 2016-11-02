@@ -814,7 +814,15 @@
             $("#jqxRadioTypeDamaged").jqxRadioButton({ groupName: 'ReceiptEntryDetail', width: 100, height: 24 });
 
             //mask fpnumber in search bar
-            $("#SearchFPNumber").jqxMaskedInput({ width: '100%', height: 25, mask: '###-#####' });
+            $("#SearchFPNumber").jqxMaskedInput(
+            {
+                theme: 'shinyblack',
+                width: '100%',
+                height: 24,
+                mask: '###-#####'
+            });
+
+
             $('#SearchFPNumber').jqxMaskedInput({ textAlign: "right" });
 
             loadStateCombo();
