@@ -34,9 +34,12 @@
         var selectedLocationId = 0; //is set to the ID of the location that is selected from the main grid
         var thisNewLocation = false; //determines whether a new Location is being made so the feature grid doesn't get set 
 
+        
+
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
             
+
             //set up the tabs
             $('#jqxTabs').jqxTabs({ width: '100%', position: 'top' });
             $('#jqxTabs').css('margin-bottom', '10px');
@@ -66,8 +69,7 @@
             $("#deleteFeature").jqxButton({ width: 120, height: 25 });
             $("#updateFeature").jqxButton({ width: 120, height: 25 });
             $("#updateLocationImages").jqxButton({ width: 120, height: 25 });
-
-            //$("#btnNew").jqxLinkButton({ width: '100%', height: 26 });
+           
             //#endregion
 
             //#region ButtonClick
@@ -75,40 +77,54 @@
             //updateLocationImages
 
             $("#updateLocationImages").on("click", function (event) {
-                var putURL = $("#apiDomain").val() + "locations/" + selectedLocationId + "/features"
+                var putURL = "";
+                var ImageId = "";
+                var LocationId = "";
+                var ImageUrl = "";
+                var Caption = "";
+                var SortOrder = "";
+                var error = false;
 
-                $.ajax({
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json",
-                        "AccessToken": $("#userGuid").val(),
-                        "ApplicationKey": $("#AK").val()
-                    },
-                    type: "POST",
-                    url: putURL,
-                    data: JSON.stringify({
-                        "FeatureId": newFeatureId,
-                        "FeatureAvailableDatetime": newFeatureAvailableDatetime,
-                        "MaxAvailable": newMaxAvailable,
-                        "IsDisplayed": newIsDisplayed,
-                        "SortOrder": newSortOrder,
-                        "ChargeAmount": Number(newChargeAmount),
-                        "ChargeNote": newChargeNote,
-                        "EffectiveDatetime": newFeatureEffectiveDatetime,
-                        "OptionalExtrasName": newOptionalExtrasName,
-                        "OptionalExtrasDescription": newOptionalExtrasDescription
-                    }),
-                    dataType: "json",
-                    success: function (response) {
-                        alert("Saved!");
-                        clearFeatureForm();
-                        //refreshes feature grid after succesful save
-                        loadFeatureGrid(selectedLocationId);
-                    },
-                    error: function (request, status, error) {
-                        alert(request.responseText);
-                    }
-                })
+                var rows = $("#jqxLocationImagesGrid").jqxGrid('getrows');
+
+                for (i = 0; i < rows.length; i++) {
+                    row = rows[i];
+                    ImageId = row.ImageId;
+                    LocationId = row.LocationId;
+                    ImageUrl = row.ImageUrl;
+                    Caption = row.Caption;
+                    SortOrder = row.SortOrder;
+                    putURL = $("#apiDomain").val() + "images/" + ImageId;
+
+                    $.ajax({
+                        async: true,
+                        headers: {
+                            "Accept": "application/json",
+                            "Content-Type": "application/json",
+                            "AccessToken": $("#userGuid").val(),
+                            "ApplicationKey": $("#AK").val()
+                        },
+                        type: "PUT",
+                        url: putURL,
+                        data: JSON.stringify({
+                            "LocationId": LocationId,
+                            "ImageUrl": ImageUrl,
+                            "Caption": Caption,
+                            "SortOrder": SortOrder
+                        }),
+                        dataType: "json",
+                        success: function (response) {
+                            
+                        },
+                        error: function (request, status, error) {
+                            error = true;
+                            alert(request.responseText);
+                        }
+                    })
+                }
+                if (error == false) {
+                    alert("Saved!")
+                }
             });
 
             //Save main location
@@ -753,13 +769,13 @@
                               var offset = $("#jqxgrid").offset();
                               $("#popupLocation").jqxWindow({ position: { x: '5%', y: '10%' } });
                               $('#popupLocation').jqxWindow({ resizable: false });
-                              $('#popupLocation').jqxWindow({ draggable: false });
+                              $('#popupLocation').jqxWindow({ draggable: true });
                               $('#popupLocation').jqxWindow({ isModal: true });
                               $("#popupLocation").css("visibility", "visible");
                               $('#popupLocation').jqxWindow({ height: '80%', width: '90%' });
                               $('#popupLocation').jqxWindow({ minHeight: '320px', minWidth: '320px' });
                               $('#popupLocation').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
-                              $('#popupLocation').jqxWindow({ showCloseButton: false });
+                              $('#popupLocation').jqxWindow({ showCloseButton: true });
                               $('#popupLocation').jqxWindow({ animationType: 'combined' });
                               $('#popupLocation').jqxWindow({ showAnimationDuration: 300 });
                               $('#popupLocation').jqxWindow({ closeAnimationDuration: 500 });
@@ -979,17 +995,15 @@
                 width: '100%',
                 height: 300,
                 source: locationImagesSource,
-                rowsheight: 35,
-                selectionmode: 'none',
                 altrows: true,
                 editable: true,
                 columns: [
                             //  uncomment below to show the what you want
-                            { text: 'ImageId', datafield: 'ImageId', editable: false },
-                            { text: 'LocationId', datafield: 'FeatureName', editable: false },
-                            { text: 'ImageUrl', datafield: 'ImageUrl' },
-                            { text: 'Caption', datafield: 'Caption' },
-                            { text: 'SortOrder', datafield: 'SortOrder' }
+                            { text: 'ImageId', datafield: 'ImageId', editable: false, width: '7%' },
+                            { text: 'LocationId', datafield: 'LocationId', editable: false, width: '7%' },
+                            { text: 'ImageUrl', datafield: 'ImageUrl', width: '49%' },
+                            { text: 'Caption', datafield: 'Caption', width: '30%' },
+                            { text: 'SortOrder', datafield: 'SortOrder', width: '7%' }
 
                 ]
             });
@@ -997,8 +1011,6 @@
         }
 
         //#endregion
-
-
 
         //#region Functions
 
