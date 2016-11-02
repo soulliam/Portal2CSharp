@@ -65,7 +65,7 @@
             $("#addFeature").jqxButton({ width: 120, height: 25 });
             $("#deleteFeature").jqxButton({ width: 120, height: 25 });
             $("#updateFeature").jqxButton({ width: 120, height: 25 });
-            $("#btnShowFeatures").jqxButton();
+
             //$("#btnNew").jqxLinkButton({ width: '100%', height: 26 });
             //#endregion
 
@@ -109,6 +109,10 @@
                     var newRateText = $("#RateText").val();
                     var newMemberRateText = $("#MemberRateText").val();
                     var newLocationHighlights = $("#LocationHighlights").val();
+                    var newLocationContactEmail = $("#LocationContactEmail").val();
+                    var newSkiDataIMP = $("#SkiDataIMP").val();
+                    var newSiteURL = $("#SiteURL").val();
+                    var newCityId = $("#cityCombo").jqxComboBox('getSelectedItem').value;
 
                     var postUrl = $("#apiDomain").val() + "locations"
 
@@ -122,41 +126,44 @@
                         url: PostUrl,
                         type: 'POST',
                         data: JSON.stringify({
-                            "LocationHighlights": newLocationHighlights,
-                            "NameOfLocation": newNameOfLocation,
-                            "DisplayName": newDisplayName,
-                            "ShortLocationName": newShortLocationName,
-                            "FacilityNumber": newFacilityNumber,
-                            "SkiDataVersion": newSkiDataVersion,
-                            "SkiDataLocation": newSkiDataLocation,
-                            "LocationAddress": newLocationAddress,
-                            "LocationCity": newLocationCity,
-                            "BrandId": newBrandId,
-                            "AirportId": newAirportId,
-                            "Capacity": newCapacity,
-                            "LocationStateId": newLocationStateId,
-                            "LocationZipCode": newLocationZipCode,
-                            "LocationPhoneNumber": newLocationPhoneNumber,
-                            "LocationFaxNumber": newLocationFaxNumber,
-                            "Description": newDescription,
-                            "Alert": newAlert,
-                            "DailyRate": newDailyRate,
-                            "Slug": newSlug,
-                            "RateQualifications": newRateQualifications,
-                            "Manager": newManager,
-                            "ManagerEmail": newManagerEmail,
-                            "RateText": newRateText,
-                            "DistanceFromAirport": newDistanceFromAirport,
-                            "Latitude": newLatitude,
-                            "Longitude": newLongitude,
-                            "SpecialFlagsText": newSpecialFlagsText,
-                            "SpecialFlagsInformation": newSpecialFlagsInformation,
-                            "GoogleLink": newGoogleLink,
-                            "IsActiveFlag": newIsActiveFlag,
-                            "ManagerImageUrl": newManagerImageUrl,
-                            "MemberRateText": newMemberRateText,
-                            "ImageUrl": newImageUrl,
-                            
+                            "NameOfLocation": "sample string 1",
+                            "DisplayName": "sample string 2",
+                            "ShortLocationName": "sample string 3",
+                            "FacilityNumber": "sample string 4",
+                            "SkiDataVersion": 1,
+                            "SkiDataLocation": true,
+                            "LocationAddress": "sample string 5",
+                            "LocationCity": "sample string 6",
+                            "BrandId": 7,
+                            "AirportId": 8,
+                            "Capacity": 9,
+                            "CityId": 10,
+                            "LocationStateId": 11,
+                            "LocationZipCode": "samp",
+                            "LocationPhoneNumber": "sample string 13",
+                            "LocationFaxNumber": "string 14",
+                            "Description": "sample string 15",
+                            "Alert": "sample string 16",
+                            "DailyRate": "sample string 17",
+                            "Slug": "sample string 18",
+                            "RateQualifications": "sample string 19",
+                            "Manager": "prashant.nidagunid@costrategix.com",
+                            "ManagerEmail": "prashant.nidagunid@costrategix.com",
+                            "LocationContactEmail": "prashant.nidagunid@costrategix.com",
+                            "LocationHighlights": "sample string 23",
+                            "RateText": "sample string 24",
+                            "DistanceFromAirport": "sample string 25",
+                            "Latitude": "sample string 26",
+                            "Longitude": "sample string 27",
+                            "SpecialFlagsText": "sample string 28",
+                            "SpecialFlagsInformation": "sample string 29",
+                            "GoogleLink": "sample string 30",
+                            "IsActiveFlag": true,
+                            "ManagerImageUrl": "sample string 32",
+                            "MemberRateText": "sample string 33",
+                            "ImageUrl": "sample string 34",
+                            "Imp": "sample 35",
+                            "SiteURL": "sample string 36"
                         }),
                         success: function (response) {
                             alert("Saved!");
@@ -213,6 +220,10 @@
                         var newRateText = $("#RateText").val();
                         var newMemberRateText = $("#MemberRateText").val();
                         var newLocationHighlights = $("#LocationHighlights").val();
+                        var newLocationContactEmail = $("#LocationContactEmail").val();
+                        var newIMP = $("#SkiDataIMP").val();
+                        var newSiteURL = $("#SiteURL").val();
+                        var newCityId = $("#cityCombo").jqxComboBox('getSelectedItem').value;
 
                         var putUrl = $("#apiDomain").val() + "locations/" + selectedLocationId //ID of the location to update
 
@@ -249,6 +260,8 @@
                                 "RateQualifications": newRateQualifications,
                                 "Manager": newManager,
                                 "ManagerEmail": newManagerEmail,
+                                "LocationContactEmail": newLocationContactEmail,
+                                "LocationHighlights": newLocationHighlights,
                                 "RateText": newRateText,
                                 "DistanceFromAirport": newDistanceFromAirport,
                                 "Latitude": newLatitude,
@@ -259,7 +272,9 @@
                                 "IsActiveFlag": newIsActiveFlag,
                                 "ManagerImageUrl": newManagerImageUrl,
                                 "MemberRateText": newMemberRateText,
-                                "ImageUrl": newImageUrl
+                                "ImageUrl": newImageUrl,
+                                "Imp": newIMP,
+                                "SiteURL": newSiteURL
                             }),
                             
                             success: function (response) {
@@ -282,6 +297,7 @@
                 //clears all of the inputs in the location edit window\
                 $("div#popupLocation input:text").val("");
                 $("#stateCombo").jqxComboBox('selectItem', 0);
+                $("#cityCombo").jqxComboBox('selectItem', 0);
                 $("#brandCombo").jqxComboBox('selectItem', 0);
                 $("#popupLocation").jqxWindow('hide');
             });
@@ -420,6 +436,42 @@
             //#endregion
 
             //#region SetupComboBoxes
+
+            //setup the city combobox
+            var citySource =
+           {
+               datatype: "json",
+               type: "Get",
+               root: "data",
+               datafields: [
+                   { name: 'CityName' },
+                   { name: 'CityId' }
+               ],
+               beforeSend: function (jqXHR, settings) {
+                   jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+               },
+               url: $("#apiDomain").val() + "Cities",
+
+           };
+            var cityDataAdapter = new $.jqx.dataAdapter(citySource);
+            $("#cityCombo").jqxComboBox(
+            {
+                width: '100%',
+                height: 25,
+                source: cityDataAdapter,
+                selectedIndex: 0,
+                displayMember: "CityName",
+                valueMember: "CityId"
+            });
+            $("#cityCombo").on('select', function (event) {
+                if (event.args) {
+                    var item = event.args.item;
+                    if (item) {
+
+                    }
+                }
+            });
+
             //set up the state combobox
             var stateSource =
             {
@@ -616,7 +668,10 @@
                     { name: 'CityName', map: 'City>CityName' },
                     { name: 'StateId', map: 'State>StateId' },
                     { name: 'StateName', map: 'State>StateName' },
-                    { name: 'LocationHasFeatureId' }
+                    { name: 'LocationContactEmail' },
+                    { name: 'IMP' },
+                    { name: 'LocationHasFeatureId' },
+                    { name: 'SiteURL' }
                 ],
 
                 id: 'LocationId',
@@ -709,6 +764,9 @@
                               $("#stateCombo").jqxComboBox('selectItem', dataRecord.StateId);
                               $("#brandCombo").jqxComboBox('selectItem', dataRecord.BrandId);
                               $("#airportCombo").jqxComboBox('selectItem', dataRecord.AirportId);
+                              $("#LocationContactEmail").val(dataRecord.LocationContactEmail);
+                              $("#SkiDataIMP").val(dataRecord.IMP);
+                              $("#SiteURL").val(dataRecord.SiteURL);
 
                               //sets the current selected location
                               selectedLocationId = dataRecord.LocationId;
@@ -755,6 +813,9 @@
                       { text: 'Estimated Charges', datafield: 'EstimatedCharges', hidden: true },
                       { text: 'Estimated Savings', datafield: 'EstimatedSavings', hidden: true },
                       { text: 'BrandName', datafield: 'BrandName', hidden: true },
+                      { text: 'LocationContactEmail', datafield: 'LocationContactEmail', hidden: true },
+                      { text: 'SiteURL', datafield: 'SiteURL', hidden: true },
+                      { text: 'IMP', datafield: 'IMP', hidden: true },
                       { text: 'City', datafield: 'CityName' },
                       { text: 'State', datafield: 'StateName' }
                 ]
@@ -1125,8 +1186,15 @@
                                         <input type="text" class="form-control" id="Capacity" />
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label for="City" class="col-sm-3 col-md-4 control-label">City:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <div id="cityCombo"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
                         <div class="col-sm-4">
                             <div class="form-horizontal">
                                 <div class="form-group">
@@ -1201,11 +1269,6 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-4 col-md-2">
-                            <input id="btnShowFeatures" type="button" value="Show Features" />
-                        </div>
-                        <div class="col-sm-0 col-md-6">
-                        </div>
-                        <div class="col-sm-4 col-md-2">
                             <input type="button" id="Save" value="Save" />
                         </div>
                         <div class="col-sm-4 col-md-2">
@@ -1213,7 +1276,7 @@
                         </div>
                     </div>
             </div>
-            <div id=skiDataTab" class="tab-body">
+            <div id="skiDataTab" class="tab-body">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-horizontal">
@@ -1233,6 +1296,12 @@
                                     <label for="SkiDataLocation" class="col-sm-3 col-md-4 control-label">SkiDataLocation:</label>
                                     <div class="col-sm-9 col-md-8">
                                         <input type="text" class="form-control" id="SkiDataLocation"  />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="SkiDataIMP" class="col-sm-3 col-md-4 control-label">IMP:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <input type="text" class="form-control" id="SkiDataIMP"  />
                                     </div>
                                 </div>
                             </div>
@@ -1319,6 +1388,12 @@
                                         <input type="text" class="form-control" id="GoogleLink" />
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label for="SiteURL" class="col-sm-3 col-md-4 control-label">SiteURL:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <input type="text" class="form-control" id="SiteURL" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1343,6 +1418,12 @@
                                     <label for="ManagerImageUrl" class="col-sm-3 col-md-4 control-label">Manager Image Url:</label>
                                     <div class="col-sm-9 col-md-8">
                                         <input type="text" class="form-control" id="ManagerImageUrl" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="LocationContactEmail" class="col-sm-3 col-md-4 control-label">Location Contact Email:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <input type="text" class="form-control" id="LocationContactEmail" />
                                     </div>
                                 </div>
                             </div>
