@@ -1241,7 +1241,7 @@
             </div>
             <div id=websiteTab" class="tab-body">
                     <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-8">
                             <div class="form-horizontal">
                                 <div class="form-group">
                                     <label for="Description" class="col-sm-3 col-md-4 control-label">Description:</label>
@@ -1249,6 +1249,12 @@
                                         <textarea rows="5" class="form-control" id="Description"></textarea>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
                                 <div class="form-group">
                                     <label for="Alert" class="col-sm-3 col-md-4 control-label">Alert:</label>
                                     <div class="col-sm-9 col-md-8">
@@ -1279,6 +1285,10 @@
                                         <input type="text" class="form-control" id="Slug" />
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
                                 <div class="form-group">
                                     <label for="LocationHighlights" class="col-sm-3 col-md-4 control-label">Location Highlights:</label>
                                     <div class="col-sm-9 col-md-8">
