@@ -38,7 +38,7 @@
         $(document).ready(function () {
 
             //set up the tabs
-            $('#jqxTabs').jqxTabs({ width: 400, height: 300, position: 'top' });
+            $('#jqxTabs').jqxTabs({ width: 400, position: 'top' });
             $('#jqxTabs').css('margin-bottom', '10px');
             $('#settings div').css('margin-top', '10px');
             $('#animation').on('change', function (event) {
