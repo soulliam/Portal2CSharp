@@ -715,7 +715,7 @@
                               $('#popupLocation').jqxWindow({ isModal: true });
                               $("#popupLocation").css("visibility", "visible");
                               $('#popupLocation').jqxWindow({ height: '80%', width: '90%' });
-                              $('#popupLocation').jqxWindow({ minHeight: '320px', minWidth: '320px' });
+                              $('#popupLocation').jqxWindow({ minHeight: '80%', minWidth: '90%' });
                               $('#popupLocation').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
                               $('#popupLocation').jqxWindow({ showCloseButton: false });
                               $('#popupLocation').jqxWindow({ animationType: 'combined' });
@@ -1278,29 +1278,29 @@
             </div>
             <div id="skiDataTab" class="tab-body">
                     <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-8">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label for="FacilityNumber" class="col-sm-3 col-md-4 control-label">Facility Number:</label>
-                                    <div class="col-sm-9 col-md-8">
+                                    <label for="FacilityNumber" class="col-sm-3 col-md-2 control-label">Facility Number:</label>
+                                    <div class="col-sm-9 col-md-10">
                                         <input type="text" class="form-control" id="FacilityNumber"  />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="SkiDataVersion" class="col-sm-3 col-md-4 control-label">SkiDataVersion:</label>
-                                    <div class="col-sm-9 col-md-8">
+                                    <label for="SkiDataVersion" class="col-sm-3 col-md-2 control-label">SkiDataVersion:</label>
+                                    <div class="col-sm-9 col-md-10">
                                         <input type="text" class="form-control" id="SkiDataVersion" />
                                     </div>
                                 </div>
                                  <div class="form-group">
-                                    <label for="SkiDataLocation" class="col-sm-3 col-md-4 control-label">SkiDataLocation:</label>
-                                    <div class="col-sm-9 col-md-8">
+                                    <label for="SkiDataLocation" class="col-sm-3 col-md-2 control-label">SkiDataLocation:</label>
+                                    <div class="col-sm-9 col-md-10">
                                         <input type="text" class="form-control" id="SkiDataLocation"  />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="SkiDataIMP" class="col-sm-3 col-md-4 control-label">IMP:</label>
-                                    <div class="col-sm-9 col-md-8">
+                                    <label for="SkiDataIMP" class="col-sm-3 col-md-2 control-label">IMP:</label>
+                                    <div class="col-sm-9 col-md-10">
                                         <input type="text" class="form-control" id="SkiDataIMP"  />
                                     </div>
                                 </div>
@@ -1313,8 +1313,8 @@
                         <div class="col-sm-8">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label for="Description" class="col-sm-3 col-md-4 control-label">Description:</label>
-                                    <div class="col-sm-9 col-md-8">
+                                    <label for="Description" class="col-sm-3 col-md-2 control-label">Description:</label>
+                                    <div class="col-sm-9 col-md-10">
                                         <textarea rows="5" class="form-control" id="Description"></textarea>
                                     </div>
                                 </div>
@@ -1400,29 +1400,29 @@
             </div>
             <div id=managerTab" class="tab-body">
                     <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-8">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label for="siteManager" class="col-sm-3 col-md-4 control-label">Manager:</label>
-                                    <div class="col-sm-9 col-md-8">
+                                    <label for="siteManager" class="col-sm-3 col-md-2 control-label">Manager:</label>
+                                    <div class="col-sm-9 col-md-10">
                                         <input type="text" class="form-control" id="siteManager" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="ManagerEmail" class="col-sm-3 col-md-4 control-label">Manager Email:</label>
-                                    <div class="col-sm-9 col-md-8">
+                                    <label for="ManagerEmail" class="col-sm-3 col-md-2 control-label">Manager Email:</label>
+                                    <div class="col-sm-9 col-md-10">
                                         <input type="text" class="form-control" id="ManagerEmail" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="ManagerImageUrl" class="col-sm-3 col-md-4 control-label">Manager Image Url:</label>
-                                    <div class="col-sm-9 col-md-8">
+                                    <label for="ManagerImageUrl" class="col-sm-3 col-md-2 control-label">Manager Image Url:</label>
+                                    <div class="col-sm-9 col-md-10">
                                         <input type="text" class="form-control" id="ManagerImageUrl" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="LocationContactEmail" class="col-sm-3 col-md-4 control-label">Location Contact Email:</label>
-                                    <div class="col-sm-9 col-md-8">
+                                    <label for="LocationContactEmail" class="col-sm-3 col-md-2 control-label">Location Contact Email:</label>
+                                    <div class="col-sm-9 col-md-10">
                                         <input type="text" class="form-control" id="LocationContactEmail" />
                                     </div>
                                 </div>
