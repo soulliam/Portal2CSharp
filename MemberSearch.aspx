@@ -515,9 +515,18 @@
             $("#DisplayQA").on("click", function (event) {
                 loadDisplayQA();
                 var offset = $("#jqxMemberInfoTabs").offset();
-                $('#popupDisplayQA').jqxWindow({ width: "900px", height: "550px" });
+                $("#popupDisplayQA").jqxWindow({ position: { x: '5%', y: '10%' } });
+                $('#popupDisplayQA').jqxWindow({ resizable: false });
+                $('#popupDisplayQA').jqxWindow({ draggable: true });
+                $('#popupDisplayQA').jqxWindow({ isModal: true });
                 $("#popupDisplayQA").css("visibility", "visible");
-                $("#popupDisplayQA").jqxWindow({ position: { x: parseInt(offset.left) + 50, y: parseInt(offset.top) - 50 } });
+                $('#popupDisplayQA').jqxWindow({ height: '80%', width: '90%' });
+                $('#popupDisplayQA').jqxWindow({ minHeight: '80%', minWidth: '90%' });
+                $('#popupDisplayQA').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
+                $('#popupDisplayQA').jqxWindow({ showCloseButton: true });
+                $('#popupDisplayQA').jqxWindow({ animationType: 'combined' });
+                $('#popupDisplayQA').jqxWindow({ showAnimationDuration: 300 });
+                $('#popupDisplayQA').jqxWindow({ closeAnimationDuration: 500 });
                 $("#popupDisplayQA").jqxWindow('open');
             });
 
@@ -1868,8 +1877,8 @@
             $('#popupNote').jqxWindow({ draggable: true });
             $('#popupNote').jqxWindow({ isModal: true });
             $("#popupNote").css("visibility", "visible");
-            $('#popupNote').jqxWindow({ height: '190px', width: '50%' });
-            $('#popupNote').jqxWindow({ minHeight: '190px', minWidth: '50%' });
+            $('#popupNote').jqxWindow({ height: '195px', width: '50%' });
+            $('#popupNote').jqxWindow({ minHeight: '195px', minWidth: '50%' });
             $('#popupNote').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
             $('#popupNote').jqxWindow({ showCloseButton: true });
             $('#popupNote').jqxWindow({ animationType: 'combined' });
@@ -2763,10 +2772,9 @@
 
 
     <%-- html for popup Add Card --%>
-    <%-- html for popup Add Card --%>
     <div id="addCardWindow" style="visibility:hidden">
         <div>Add Card</div>
-        <div style="overflow: hidden;">
+        <div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
@@ -2852,7 +2860,7 @@
     <%-- html for popup QA box --%>
     <div id="popupDisplayQA" style="visibility:hidden">
         <div>Questions &amp; Answers</div>
-        <div style="overflow: hidden;">
+        <div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
