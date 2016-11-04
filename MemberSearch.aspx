@@ -701,7 +701,6 @@
                 findMember(dataRecord.MemberId);
                 $("#jqxSearchGrid").toggle();
                 $("#MemberDetails").toggle();
-
             });
 
             //Loads member from hidden field in member name tab labels
@@ -746,14 +745,14 @@
                 //    $("#MemberDetails").toggle();
                 //}
 
+                $('#jqxMemberInfoTabs').jqxTabs('select', 0);
+
                 var thisParameters = GetSearchParameters();
 
                 if ($("#jqxSearchGrid").is(":visible")) {
                     if (thisParameters != "") {
                         loadSearchResults(thisParameters);
-                    }
-
-                    
+                    }       
                 }
                 else {
                     if (thisParameters != "") {
@@ -767,6 +766,7 @@
 
             $("#btnClear").on("click", function (event) {
                 $("div.FPR_SearchLeft input:text").val("");
+                $("#SearchFPNumber").jqxMaskedInput('clear');
             });
 
             $("#saveNote").on("click", function (event) {
@@ -1019,6 +1019,10 @@
             // create jqxCardGrid
             $("#jqxCardGrid").jqxGrid(
             {
+                pageable: true,
+                pagermode: 'advanced',
+                pagesize: 50,
+                pagesizeoptions: ['10', '20', '50', '100'],
                 width: '100%',
                 height: 450,
                 selectionmode: 'checkbox',
@@ -1192,8 +1196,9 @@
             $("#jqxMemberActivityGrid").jqxGrid(
             {
                 pageable: true,
-                pagermode: 'simple',
-                pagesize: 12,
+                pagermode: 'advanced',
+                pagesize: 50,
+                pagesizeoptions: ['10', '20', '50', '100'],
                 width: '100%',
                 height: 500,
                 source: source,
@@ -1421,6 +1426,7 @@
                     { name: 'MemberId' },
                     { name: 'FirstName' },
                     { name: 'LastName' },
+                    { name: 'StreetAddress' },
                     { name: 'Company' },
                     { name: 'EmailAddress' }
                 ],
@@ -1439,10 +1445,10 @@
             // create Searchlist Grid
             $("#jqxSearchGrid").jqxGrid(
             {
-
                 pageable: true,
-                pagermode: 'simple',
-                pagesize: 12,
+                pagermode: 'advanced',
+                pagesize: 50,
+                pagesizeoptions: ['10', '20', '50', '100'],
                 width: '100%',
                 height: 500,
                 source: source,
@@ -1479,13 +1485,16 @@
 
                           }
                       },
-                      { text: 'MemberId', datafield: 'MemberId' },
+                      { text: 'MemberId', datafield: 'MemberId', hidden: true },
                       { text: 'First Name', datafield: 'FirstName' },
                       { text: 'Last Name', datafield: 'LastName' },
+                      { text: 'Address', datafield: 'StreetAddress' },
                       { text: 'Company', datafield: 'Company' },
                       { text: 'Email', datafield: 'EmailAddress' }
                 ]
             });
+
+           
         }
 
         function loadNotes(PageMemberID) {
@@ -1553,7 +1562,10 @@
             // create Redemption Grid
             $("#jqxRedemptionGrid").jqxGrid(
             {
-                theme: 'shinyblack',
+                pageable: true,
+                pagermode: 'advanced',
+                pagesize: 50,
+                pagesizeoptions: ['10', '20', '50', '100'],
                 width: '100%',
                 height: 450,
                 source: source,
@@ -1604,7 +1616,10 @@
             // create Reservation Grid
             $("#jqxReservationGrid").jqxGrid(
             {
-                theme: 'shinyblack',
+                pageable: true,
+                pagermode: 'advanced',
+                pagesize: 50,
+                pagesizeoptions: ['10', '20', '50', '100'],
                 width: '100%',
                 height: 450,
                 source: source,

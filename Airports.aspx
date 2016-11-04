@@ -229,6 +229,10 @@
             // creage jqxgrid
             $("#jqxgrid").jqxGrid(
             {
+                pageable: true,
+                pagermode: 'advanced',
+                pagesize: 50,
+                pagesizeoptions: ['10', '20', '50', '100'],
                 width: '100%',
                 height: 500,
                 source: source,
@@ -245,11 +249,7 @@
                           }, buttonclick: function (row) {
                               // open the popup window when the user clicks a button.
                               editrow = row;
-                              var offset = $("#jqxgrid").offset();
-                              $("#popupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 400, y: parseInt(offset.top) + 60 } });
-                              $("#popupWindow").css("visibility", "visible");
-                              $('#popupWindow').jqxWindow({ width: '600', height: '400' });
-                              $('#popupWindow').jqxWindow({ showCloseButton: false });
+                              
 
                               // get the clicked row's data and initialize the input fields.
                               var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
@@ -263,6 +263,14 @@
                               $("#BannerText").val(dataRecord.BannerText);
                               $("#CityCaption").val(dataRecord.CityCaption);
                               // show the popup window.
+                              $("#popupWindow").css('display', 'block');
+                              $("#popupWindow").css('visibility', 'hidden');
+
+                              var offset = $("#jqxgrid").offset();
+                              $("#popupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 400, y: parseInt(offset.top) + 60 } });
+                              $("#popupWindow").css("visibility", "visible");
+                              $('#popupWindow').jqxWindow({ width: '600', height: '400' });
+                              $('#popupWindow').jqxWindow({ showCloseButton: false });
                               $("#popupWindow").jqxWindow('open');
                               $("#cityCombo").jqxComboBox('selectItem', dataRecord.CityId);
                           }, width: '4%'
@@ -285,6 +293,9 @@
 
         //opens the airport pop out form empty
         function newAirport() {
+            $("#popupWindow").css('display', 'block');
+            $("#popupWindow").css('visibility', 'hidden');
+
             var offset = $("#jqxgrid").offset();
             $("#popupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 400, y: parseInt(offset.top) + 60 } });
             $("#popupWindow").css("visibility", "visible");
@@ -316,9 +327,8 @@
     </div>
 
     <%-- html for popup edit box --%>
-    <div id="popupWindow" style="visibility:hidden">
-        <div>Edit</div>
-        <div style="overflow: hidden;">
+    <div id="popupWindow" style="display: none">
+        <div>
             <table width="100%">
                 <tr>
                     <td>AirportId:</td>
@@ -363,7 +373,6 @@
                 </tr>
             </table>
         </div>
-
     </div>
     <%-- html for popup edit box END --%>
 
