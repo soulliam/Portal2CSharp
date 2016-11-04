@@ -583,9 +583,18 @@
                 $("#popupDisplayQA").css('visibility', 'hidden');
 
                 var offset = $("#jqxMemberInfoTabs").offset();
-                $('#popupDisplayQA').jqxWindow({ width: "900px", height: "550px" });
+                $("#popupDisplayQA").jqxWindow({ position: { x: '5%', y: '10%' } });
+                $('#popupDisplayQA').jqxWindow({ resizable: false });
+                $('#popupDisplayQA').jqxWindow({ draggable: true });
+                $('#popupDisplayQA').jqxWindow({ isModal: true });
                 $("#popupDisplayQA").css("visibility", "visible");
-                $("#popupDisplayQA").jqxWindow({ position: { x: parseInt(offset.left) + 50, y: parseInt(offset.top) - 50 } });
+                $('#popupDisplayQA').jqxWindow({ height: '80%', width: '90%' });
+                $('#popupDisplayQA').jqxWindow({ minHeight: '80%', minWidth: '90%' });
+                $('#popupDisplayQA').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
+                $('#popupDisplayQA').jqxWindow({ showCloseButton: true });
+                $('#popupDisplayQA').jqxWindow({ animationType: 'combined' });
+                $('#popupDisplayQA').jqxWindow({ showAnimationDuration: 300 });
+                $('#popupDisplayQA').jqxWindow({ closeAnimationDuration: 500 });
                 $("#popupDisplayQA").jqxWindow('open');
             });
 
@@ -1947,10 +1956,23 @@
             $("#popupNote").css('visibility', 'hidden');
 
             var offset = $("#jqxMemberInfoTabs").offset();
-            $("#popupNote").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) + 150 } });
-            $('#popupNote').jqxWindow({ width: "420px" });
+            $("#popupNote").jqxWindow({ position: { x: '25%', y: '30%' } });
+            $('#popupNote').jqxWindow({ resizable: false });
+            $('#popupNote').jqxWindow({ draggable: true });
+            $('#popupNote').jqxWindow({ isModal: true });
             $("#popupNote").css("visibility", "visible");
+            $('#popupNote').jqxWindow({ height: '195px', width: '50%' });
+            $('#popupNote').jqxWindow({ minHeight: '195px', minWidth: '50%' });
+            $('#popupNote').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+            $('#popupNote').jqxWindow({ showCloseButton: true });
+            $('#popupNote').jqxWindow({ animationType: 'combined' });
+            $('#popupNote').jqxWindow({ showAnimationDuration: 300 });
+            $('#popupNote').jqxWindow({ closeAnimationDuration: 500 });
             $("#popupNote").jqxWindow('open');
+
+
+
+
         }
         //#endregion
 
@@ -2569,7 +2591,11 @@
                                         <div class="form-group">
                                             <label for="GetEmail" class="col-sm-3 col-md-4 control-label">Get Email:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="checkbox" id="GetEmail">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" class="form-control" id="GetEmail" />
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -2817,11 +2843,11 @@
     <%-- html for popup Note box --%>
     <div id="popupNote" style="display:none">
         <div>Add Note</div>
-        <div style="overflow: hidden;">
+        <div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
-                        <textarea rows="4" cols="50" id="txtNote"></textarea>
+                        <textarea rows="5" cols="50" id="txtNote"></textarea>
                     </div>
                     <div class="col-sm-6">
                         <input id="saveNote" type="button" value="Save" />
@@ -2837,7 +2863,7 @@
     <%-- html for popup Add Card --%>
     <div id="addCardWindow" style="display:none">
         <div>Add Card</div>
-        <div style="overflow: hidden;">
+        <div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
