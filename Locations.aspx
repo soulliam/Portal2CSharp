@@ -84,12 +84,6 @@
             //#region SetupButtons
             $("#Save").jqxButton();
             $("#Cancel").jqxButton();
-            $("#Save2").jqxButton();
-            $("#Cancel2").jqxButton();
-            $("#Save3").jqxButton();
-            $("#Cancel3").jqxButton();
-            $("#Save4").jqxButton();
-            $("#Cancel4").jqxButton();
             $("#addFeature").jqxButton();
             $("#deleteFeature").jqxButton();
             $("#updateFeature").jqxButton();
@@ -184,7 +178,7 @@
             });
 
             //Save main location
-            $("#Save, #Save2, #Save3, #Save4").click(function () {
+            $("#Save").click(function () {
                 // If LocationId is nothing then we are adding a new Location and we need a post
                 if ($("#LocationId").val() == "") {
                     var newNameOfLocation = $("#NameOfLocation").val();
@@ -407,7 +401,7 @@
                 }
             });
 
-            $("#Cancel, #Cancel2, #Cancel3, #Cancel4").click(function () {
+            $("#Cancel").click(function () {
                 //clears all of the inputs in the location edit window\
                 $("div#popupLocation input:text").val("");
                 $("#stateCombo").jqxComboBox('selectItem', 0);
@@ -839,6 +833,7 @@
                               $("#popupLocation").jqxWindow({ position: { x: '5%', y: '7.5%' } });
                               $('#popupLocation').jqxWindow({ resizable: false });
                               $('#popupLocation').jqxWindow({ draggable: true });
+                              $('#popupLocation').jqxWindow({ isModal: true });
                               $("#popupLocation").css("visibility", "visible");
                               $('#popupLocation').jqxWindow({ height: '85%', width: '90%' });
                               $('#popupLocation').jqxWindow({ minHeight: '85%', minWidth: '90%' });
@@ -1357,12 +1352,6 @@
                                                     <input type="text" class="form-control" id="Capacity" />
                                                 </div>
                                             </div>
-                                            <div class="form-group">
-                                                <label for="cityCombo" class="col-sm-3 col-md-4 control-label">City:</label>
-                                                <div class="col-sm-9 col-md-8">
-                                                    <div id="cityCombo"></div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
@@ -1404,18 +1393,6 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label for="EstimatedCharges" class="col-sm-3 col-md-4 control-label">Est. Charges:</label>
-                                                <div class="col-sm-9 col-md-8">
-                                                    <input type="text" class="form-control" id="EstimatedCharges" />
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="EstimatedSavings" class="col-sm-3 col-md-4 control-label">Est. Savings:</label>
-                                                <div class="col-sm-9 col-md-8">
-                                                    <input type="text" class="form-control" id="EstimatedSavings" />
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
                                                 <label for="brandCombo" class="col-sm-3 col-md-4 control-label">Brand:</label>
                                                 <div class="col-sm-9 col-md-8">
                                                     <div id="brandCombo"></div>
@@ -1428,26 +1405,16 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
+                                                <label for="cityCombo" class="col-sm-3 col-md-4 control-label">City (Legacy):</label>
+                                                <div class="col-sm-9 col-md-8">
+                                                    <div id="cityCombo"></div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <label for="stateCombo" class="col-sm-3 col-md-4 control-label">State:</label>
                                                 <div class="col-sm-9 col-md-8">
                                                     <div id="stateCombo"></div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="top-divider">
-                                            <div class="col-sm-2 col-md-3">
-                                            </div>
-                                            <div class="col-sm-4 col-md-3">
-                                                <input type="button" id="Save" value="Save" />
-                                            </div>
-                                            <div class="col-sm-4 col-md-3">
-                                                <input type="button" id="Cancel" value="Cancel" />
-                                            </div>
-                                            <div class="col-sm-2 col-md-3">
                                             </div>
                                         </div>
                                     </div>
@@ -1484,22 +1451,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="top-divider">
-                                            <div class="col-sm-2 col-md-3">
-                                            </div>
-                                            <div class="col-sm-4 col-md-3">
-                                                <input type="button" id="Save2" value="Save" />
-                                            </div>
-                                            <div class="col-sm-4 col-md-3">
-                                                <input type="button" id="Cancel2" value="Cancel" />
-                                            </div>
-                                            <div class="col-sm-2 col-md-3">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                             <div id="websiteTab" class="tab-body">
                                 <div class="row">
@@ -1530,15 +1481,21 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
+                                                <label for="HourlyRate" class="col-sm-3 col-md-4 control-label">Hourly Rate:</label>
+                                                <div class="col-sm-9 col-md-8">
+                                                    <input type="text" class="form-control" id="HourlyRate" />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <label for="RateText" class="col-sm-3 col-md-4 control-label">Rate Text:</label>
                                                 <div class="col-sm-9 col-md-8">
-                                                    <textarea rows="5" class="form-control" id="RateText"></textarea>
+                                                    <textarea rows="3" class="form-control" id="RateText"></textarea>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="MemberRateText" class="col-sm-3 col-md-4 control-label">Member Rate Text:</label>
                                                 <div class="col-sm-9 col-md-8">
-                                                    <textarea rows="5" class="form-control" id="MemberRateText"></textarea>
+                                                    <textarea rows="3" class="form-control" id="MemberRateText"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -1576,32 +1533,10 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label for="SiteURL" class="col-sm-3 col-md-4 control-label">SiteURL:</label>
-                                                <div class="col-sm-9 col-md-8">
-                                                    <input type="text" class="form-control" id="SiteURL" />
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
                                                 <label for="Slug" class="col-sm-3 col-md-4 control-label">Slug:</label>
                                                 <div class="col-sm-9 col-md-8">
                                                     <input type="text" class="form-control" id="Slug" />
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="top-divider">
-                                            <div class="col-sm-2 col-md-3">
-                                            </div>
-                                            <div class="col-sm-4 col-md-3">
-                                                <input type="button" id="Save3" value="Save" />
-                                            </div>
-                                            <div class="col-sm-4 col-md-3">
-                                                <input type="button" id="Cancel3" value="Cancel" />
-                                            </div>
-                                            <div class="col-sm-2 col-md-3">
                                             </div>
                                         </div>
                                     </div>
@@ -1638,20 +1573,20 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="top-divider">
-                                            <div class="col-sm-2 col-md-3">
-                                            </div>
-                                            <div class="col-sm-4 col-md-3">
-                                                <input type="button" id="Save4" value="Save" />
-                                            </div>
-                                            <div class="col-sm-4 col-md-3">
-                                                <input type="button" id="Cancel4" value="Cancel" />
-                                            </div>
-                                            <div class="col-sm-2 col-md-3">
-                                            </div>
-                                        </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="top-divider">
+                                    <div class="col-sm-2 col-md-3">
+                                    </div>
+                                    <div class="col-sm-4 col-md-3">
+                                        <input type="button" id="Save" value="Save" />
+                                    </div>
+                                    <div class="col-sm-4 col-md-3">
+                                        <input type="button" id="Cancel" value="Cancel" />
+                                    </div>
+                                    <div class="col-sm-2 col-md-3">
                                     </div>
                                 </div>
                             </div>
@@ -1744,7 +1679,7 @@
                             <div class="col-sm-6">
                                 <div class="form-horizontal">
                                     <div class="form-group">
-                                        <label for="featureCombo" class="col-sm-3 col-md-4 control-label">Brand:</label>
+                                        <label for="featureCombo" class="col-sm-3 col-md-4 control-label">Feature:</label>
                                         <div class="col-sm-9 col-md-8">
                                             <div id="featureCombo"></div>
                                         </div>
