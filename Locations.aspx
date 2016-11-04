@@ -101,6 +101,9 @@
 
                     alert("https://stage.thefastpark.com" + source);
 
+                    $("#popupImage").css('display', 'block');
+                    $("#popupImage").css('visibility', 'hidden');
+
                     $("#popupImage").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) + 10 } });
                     $('#popupImage').jqxWindow({ maxHeight: 500, maxWidth: 700 });
                     $('#popupImage').jqxWindow({ width: "700px", height: "300px" });
@@ -804,10 +807,10 @@
             // creage jqxgrid
             $("#jqxgrid").jqxGrid(
             {
-                //pageable: true,
-                //pagermode: 'simple',
+                pageable: true,
                 pagermode: 'advanced',
-                pagesize: 12,
+                pagesize: 50,
+                pagesizeoptions: ['10', '20', '50', '100'],
                 width: '100%',
                 height: 500,
                 source: source,
@@ -993,7 +996,9 @@
                 source: featureSource,
                 rowsheight: 35,
                 selectionmode: 'none',
+                sortable: true,
                 altrows: true,
+                filterable: true,
                 editable: true,
                 columns: [{
                                 //creates the edit button
@@ -1032,6 +1037,10 @@
                       
                       
                 ]
+            });
+
+            $("#jqxFeatureGrid").bind('bindingcomplete', function () {
+                $("#jqxFeatureGrid").jqxGrid('sortby', 'SortOrder', 'asc');
             });
 
         }
@@ -1784,16 +1793,10 @@
    </div>
    <%-- html for popup edit box END --%>
 
-    <div id='Menu' style="visibility: hidden">
-        <ul>
-            <li>Edit Selected Row</li>
-            <li>Delete Selected Row</li>
-        </ul>
-    </div>
 
     <%-- html for popup edit box END --%>
 
-    <div id='popupImage' style="visibility: hidden">
+    <div id='popupImage' style="display: none">
         <div>
             <iframe id="showImage" style="width:700px;height:300px;"></iframe>
         </div>

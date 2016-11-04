@@ -177,21 +177,23 @@
                 type: 'Get',
                 datatype: "json",
                 url: url,
-                pagesize: 12,
                 root: "data"
             };
 
             // creage jqxgrid
             $("#jqxgrid").jqxGrid(
             {
+                pageable: true,
+                pagermode: 'advanced',
+                pagesize: 50,
+                pagesizeoptions: ['10', '20', '50', '100'],
                 width: '100%',
                 height: 500,
                 source: source,
                 rowsheight: 35,
                 sortable: true,
                 altrows: true,
-                pageable: true,
-                pagermode: 'simple',
+
                 filterable: true,
                 columns: [
                       {
