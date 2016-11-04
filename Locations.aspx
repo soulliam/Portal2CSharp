@@ -89,7 +89,28 @@
             $("#updateFeature").jqxButton();
             $("#updateLocationImages").jqxButton();
 
-            //$("#btnNew").jqxLinkButton({ width: '100%', height: 26 });
+            $('#jqxLocationImagesGrid').on('rowclick', function (event) {
+
+                var rightclick = args.rightclick;
+                
+                if (rightclick == true) {
+                    var row = event.args.rowindex;
+                    var datarow = $("#jqxLocationImagesGrid").jqxGrid('getrowdata', row);
+                    var source = datarow.ImageUrl;
+                    var offset = $("#jqxLocationTabs").offset();
+
+                    alert("https://stage.thefastpark.com" + source);
+
+                    $("#popupImage").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) + 10 } });
+                    $('#popupImage').jqxWindow({ maxHeight: 500, maxWidth: 700 });
+                    $('#popupImage').jqxWindow({ width: "700px", height: "300px" });
+                    $('#popupImage').jqxWindow({ modalZIndex: 99999 });
+                    $("#popupImage").css("visibility", "visible");
+                    $("#popupImage").jqxWindow('open');
+                    document.getElementById('showImage').src = "https://stage.thefastpark.com" + source;
+                }
+
+            });
             //#endregion
 
             //#region ButtonClick
@@ -700,6 +721,12 @@
 
         //#region LoadGridFunctions
 
+        //show image in location images
+        function showImage(imageURL) {
+            alert(imageURL);
+        }
+
+
         //loads main location grid
         function loadLocationGrid() {
 
@@ -799,7 +826,6 @@
                               $("#popupLocation").jqxWindow({ position: { x: '5%', y: '7.5%' } });
                               $('#popupLocation').jqxWindow({ resizable: false });
                               $('#popupLocation').jqxWindow({ draggable: true });
-                              $('#popupLocation').jqxWindow({ isModal: true });
                               $("#popupLocation").css("visibility", "visible");
                               $('#popupLocation').jqxWindow({ height: '85%', width: '90%' });
                               $('#popupLocation').jqxWindow({ minHeight: '85%', minWidth: '90%' });
@@ -1043,7 +1069,10 @@
                             //  uncomment below to show the what you want
                             { text: 'ImageId', datafield: 'ImageId', editable: false, width: '7%' },
                             { text: 'LocationId', datafield: 'LocationId', editable: false, width: '7%' },
-                            { text: 'ImageUrl', datafield: 'ImageUrl', width: '49%' },
+                            { text: 'ImageUrl', datafield: 'ImageUrl', cellsrenderer: function(row, column, value, defaultSettings, columnSettings, rowdata )
+                            {
+                                return "<a href='http://google.com'><div>" + value + "</div></a>";
+                            }, width: '49%'},
                             { text: 'Caption', datafield: 'Caption', width: '30%' },
                             { text: 'SortOrder', datafield: 'SortOrder', width: '7%' }
 
@@ -1735,6 +1764,14 @@
             <li>Edit Selected Row</li>
             <li>Delete Selected Row</li>
         </ul>
+    </div>
+
+    <%-- html for popup edit box END --%>
+
+    <div id='popupImage' style="visibility: hidden">
+        <div>
+            <iframe id="showImage" style="width:700px;height:300px;"></iframe>
+        </div>
     </div>
 
 </asp:Content>
