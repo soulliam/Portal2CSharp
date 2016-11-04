@@ -58,6 +58,26 @@
                 }
             });
 
+
+            //set up the location Detail tabs
+            $('#jqxLocationTabs').jqxTabs({ width: '100%', position: 'top' });
+            $('#jqxLocationTabs').css('margin-bottom', '10px');
+            $('#settings div').css('margin-top', '10px');
+            $('#animation').on('change', function (event) {
+                var checked = event.args.checked;
+                $('#jqxLocationTabs').jqxTabs({ selectionTracker: checked });
+            });
+
+            $('#contentAnimation').on('change', function (event) {
+                var checked = event.args.checked;
+                if (checked) {
+                    $('#jqxLocationTabs').jqxTabs({ animationType: 'fade' });
+                }
+                else {
+                    $('#jqxLocationTabs').jqxTabs({ animationType: 'none' });
+                }
+            });
+
             //Loads main location grid
             loadLocationGrid();
 
@@ -1191,14 +1211,19 @@
                 <div id="jqxTabs" class="tab-system">
                     <ul>
                         <li>Location</li>
-                        <li>SkiData</li>
-                        <li>Website</li>
-                        <li>Manager</li>
                         <li>Edit Feature</li>
                         <li>Add Feature</li>
                         <li>Location Images</li>
                     </ul>
-                    <div id="locationTab" class="tab-body">
+                    <div id="LocationTab">
+                        <div id="jqxLocationTabs" class="tab-system">
+                            <ul>
+                                <li style="margin-left:50px;">Location</li>>
+                                <li>Skidata</li>
+                                <li>Website</li>
+                                <li>Contact</li>
+                            </ul>
+                            <div id="locationTab" class="tab-body">
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-horizontal">
@@ -1510,6 +1535,8 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
                         </div>
                     </div>
                     <div id="editfeatureTab" class="tab-body">
