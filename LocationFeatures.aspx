@@ -216,16 +216,16 @@
                               $("#popupWindow").jqxWindow('open');
                               
 
-                          }
+                          }, width: '4%'
                       },
-                      { text: 'Feature Id', datafield: 'FeatureId' },
-                      { text: 'Feature Name', datafield: 'FeatureName' },
-                      { text: 'Detail', datafield: 'Detail' },
-                      { text: 'Sort Order', datafield: 'SortOrder' },
-                      { text: 'IconCSSClass', datafield: 'IconCSSClass' },
-                      { text: 'Image Url', datafield: 'ImageUrl' },
-                      { text: 'Sub-Text', datafield: 'Subtext' },
-                      { text: 'DisplayOnLandingPage', datafield: 'DisplayOnLandingPage', threestatecheckbox: true, columntype: 'checkbox', width: 70 }
+                      { text: 'Feature Id', datafield: 'FeatureId', width: '5%' },
+                      { text: 'Feature Name', datafield: 'FeatureName', width: '14%' },
+                      { text: 'Detail', datafield: 'Detail', width: '14%' },
+                      { text: 'Sort Order', datafield: 'SortOrder', width: '5%' },
+                      { text: 'IconCSSClass', datafield: 'IconCSSClass', width: '9%' },
+                      { text: 'Image Url', datafield: 'ImageUrl', width: '22%' },
+                      { text: 'Sub-Text', datafield: 'Subtext', width: '22%' },
+                      { text: 'Display', datafield: 'DisplayOnLandingPage', threestatecheckbox: true, columntype: 'checkbox', width: '5%' }
                 ]
             });
 

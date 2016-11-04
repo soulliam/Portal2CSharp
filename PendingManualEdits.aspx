@@ -74,7 +74,8 @@
                     var jsonText = JSON.stringify(processingList);
 
                     $.ajax({
-                        url: $("#localApiDomain").val() + "ProcessPendingManualEditsController/SubmitManualEdits",
+                        //url: $("#localApiDomain").val() + "ProcessPendingManualEditsController/SubmitManualEdits",
+                        url: "http://localhost:52839/api/ProcessPendingManualEditsController/SubmitManualEdits",
                         type: 'POST',
                         data: processingList,
                         success: function (response) {
@@ -203,7 +204,7 @@
         }
 
 
-        function loadLocationCombo(loading) {
+        function loadLocationCombo() {
             //set up the location combobox
             var locationSource =
             {
@@ -211,43 +212,23 @@
                 type: "Get",
                 root: "data",
                 datafields: [
-                    { name: 'DisplayName' },
+                    { name: 'NameOfLocation' },
                     { name: 'LocationId' }
                 ],
-                beforeSend: function (jqXHR, settings) {
-                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
-                },
-                url: $("#apiDomain").val() + "locations",
+                url: $("#localApiDomain").val() + "Locations/Locations/",
 
             };
             var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
             $("#LocationCombo").jqxComboBox(
             {
                 theme: 'shinyblack',
-                width: 270,
-                height: 25,
+                width: '100%',
+                height: 24,
                 source: locationDataAdapter,
                 selectedIndex: 0,
-                displayMember: "DisplayName",
+                displayMember: "NameOfLocation",
                 valueMember: "LocationId"
             });
-            $("#LocationCombo").on('select', function (event) {
-                if (event.args) {
-                    
-                    var item = event.args.item;
-                    if (item) {
-                        var valueelement = $("<div></div>");
-                        valueelement.text("Value: " + item.value);
-                        var labelelement = $("<div></div>");
-                        labelelement.text("Label: " + item.label);
-                        $("#selectionlog").children().remove();
-                        $("#selectionlog").append(labelelement);
-                        $("#selectionlog").append(valueelement);
-                    }
-                }
-            });
-            
-           
         }
 
     </script>
