@@ -29,6 +29,16 @@
     <script type="text/javascript" src="jqwidgets/jqxscrollbar.js"></script>    
     <script type="text/javascript" src="jqwidgets/jqxwindow.js"></script>
 
+    <style>
+        .jqx-chart-tooltip-text
+        {
+            fill: #333333;
+            color: #333333;
+            font-size: 14px;
+            font-family: Verdana;
+        }
+    </style>
+
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
@@ -226,6 +236,7 @@
                 sortable: true,
                 altrows: true,
                 filterable: true,
+                enabletooltips: true,
                 columns: [
                       {
                           //creates edit button in grid for each row
@@ -254,17 +265,17 @@
                               // show the popup window.
                               $("#popupWindow").jqxWindow('open');
                               $("#cityCombo").jqxComboBox('selectItem', dataRecord.CityId);
-                          }
+                          }, width: '4%'
                       },
                       //loading the rest of the columns
-                      { text: 'City', datafield: 'CityName', width: '8%' },
+                      { text: 'City', datafield: 'CityName', hidden: true },
                       { text: 'Abbr', datafield: 'AirportAbbreviation', width: '3%' },
                       { text: 'Airport Name', datafield: 'AirportName', width: '7%' },
-                      { text: 'Location Text', datafield: 'LocationText', width: '7%' },
-                      { text: 'City Text', datafield: 'CityText', width: '10%' },
-                      { text: 'City Caption', datafield: 'CityCaption', width: '10%' },
-                      { text: 'Image URL', datafield: 'ImageUrl', width: '45%' },
-                      { text: 'Banner Text', datafield: 'BannerText', width: '11%' },
+                      { text: 'Location Text', datafield: 'LocationText', width: '11%' },
+                      { text: 'City Text', datafield: 'CityText', width: '15%' },
+                      { text: 'City Caption', datafield: 'CityCaption', width: '15%' },
+                      { text: 'Image URL', datafield: 'ImageUrl', width: '25%' },
+                      { text: 'Banner Text', datafield: 'BannerText', width: '20%' },
                       { text: 'AirportId', datafield: 'AirportId', hidden: true },
                       { text: 'CityId', datafield: 'CityId', hidden: true }
                 ]

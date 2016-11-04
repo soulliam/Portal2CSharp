@@ -583,9 +583,18 @@
                 $("#popupDisplayQA").css('visibility', 'hidden');
 
                 var offset = $("#jqxMemberInfoTabs").offset();
-                $('#popupDisplayQA').jqxWindow({ width: "900px", height: "550px" });
+                $("#popupDisplayQA").jqxWindow({ position: { x: '5%', y: '10%' } });
+                $('#popupDisplayQA').jqxWindow({ resizable: false });
+                $('#popupDisplayQA').jqxWindow({ draggable: true });
+                $('#popupDisplayQA').jqxWindow({ isModal: true });
                 $("#popupDisplayQA").css("visibility", "visible");
-                $("#popupDisplayQA").jqxWindow({ position: { x: parseInt(offset.left) + 50, y: parseInt(offset.top) - 50 } });
+                $('#popupDisplayQA').jqxWindow({ height: '80%', width: '90%' });
+                $('#popupDisplayQA').jqxWindow({ minHeight: '80%', minWidth: '90%' });
+                $('#popupDisplayQA').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
+                $('#popupDisplayQA').jqxWindow({ showCloseButton: true });
+                $('#popupDisplayQA').jqxWindow({ animationType: 'combined' });
+                $('#popupDisplayQA').jqxWindow({ showAnimationDuration: 300 });
+                $('#popupDisplayQA').jqxWindow({ closeAnimationDuration: 500 });
                 $("#popupDisplayQA").jqxWindow('open');
             });
 
@@ -2569,7 +2578,11 @@
                                         <div class="form-group">
                                             <label for="GetEmail" class="col-sm-3 col-md-4 control-label">Get Email:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="checkbox" id="GetEmail">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" class="form-control" id="GetEmail" />
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -2817,7 +2830,7 @@
     <%-- html for popup Note box --%>
     <div id="popupNote" style="display:none">
         <div>Add Note</div>
-        <div style="overflow: hidden;">
+        <div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
@@ -2837,7 +2850,7 @@
     <%-- html for popup Add Card --%>
     <div id="addCardWindow" style="display:none">
         <div>Add Card</div>
-        <div style="overflow: hidden;">
+        <div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
@@ -2874,47 +2887,150 @@
             </div>
         </div>
     </div>
-
-    <div id="popupReservation" class="popupReservation" style="display:none">
+    
+    <%-- html for popup Add Reservation --%>
+    <div id="popupReservation" class="popupReservation" style="visibility:hidden">
+        <div>Add Reservation</div>
         <div>
-            <div id="reservationInfo" style="float:left;">
-                <div>Location: <div id="reservationLocationCombo"></div></div>
-                <div>Start Date: <div id="reservationStartDate"></div></div>
-                <div>End Date: <div id="reservationEndDate"></div></div>
-                <div>Reservation Fee: <div id="reservationFeeIdCombo"></div></div>
-                <div>Features: <div id="reservationFeatures"></div></div>
-                <div>Payment Method: <div id="reservationPaymentMethodId"></div></div>
-                <div><input type="text" id="reservationFeeDollars" value="4.95" style="display:none !important;" /></div>
-                <div><input type="text" id="reservationFeePoints" value="8" style="display:none !important;" /></div>
-                <div><input type="text" id="reservationFeeCreditId" placeholder="Reservation Fee Credit" style="display:none !important;" disabled /></div>
-                <div>
-                    <div id="reservationFeeDiscountIdDDB" style="display:none !important;">
-                        <div style="border-color: transparent;" id="reservationFeeDiscountIdGrid"></div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label for="reservationLocationCombo" class="col-sm-3 col-md-4 control-label">Location:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div id="reservationLocationCombo"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reservationStartDate" class="col-sm-3 col-md-4 control-label">Start Date:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div id="reservationStartDate"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reservationEndDate" class="col-sm-3 col-md-4 control-label">End Date:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div id="reservationEndDate"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reservationFeeIdCombo" class="col-sm-3 col-md-4 control-label">Reservation Fee:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div id="reservationFeeIdCombo"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reservationFeatures" class="col-sm-3 col-md-4 control-label">Features:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div id="reservationFeatures"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reservationPaymentMethodId" class="col-sm-3 col-md-4 control-label">Payment Method:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div id="reservationPaymentMethodId"></div>
+                                </div>
+                            </div>
+                            <div class="form-group" style="display:none !important;">
+                                <label for="reservationFeeDollars" class="col-sm-3 col-md-4 control-label">Fee Dollars:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" id="reservationFeeDollars" value="4.95" />
+                                </div>
+                            </div>
+                            <div class="form-group" style="display:none !important;">
+                                <label for="reservationFeePoints" class="col-sm-3 col-md-4 control-label">Fee Points:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" id="reservationFeePoints" value="8" />
+                                </div>
+                            </div>
+                            <div class="form-group" style="display:none !important;">
+                                <label for="reservationFeeCreditId" class="col-sm-3 col-md-4 control-label">Fee Points:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" id="reservationFeeCreditId" value="4.95" placeholder="Reservation Fee Credit" disabled />
+                                </div>
+                            </div>
+                            <div id="reservationFeeDiscountIdGrid" style="display:none !important;"></div>
+                            <div id="reservationCreditCardId"></div>
+                            <div class="form-group" style="display:none !important;">
+                                <label for="EstimatedReservationCost" class="col-sm-3 col-md-4 control-label">Fee Points:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" id="EstimatedReservationCost" value="Estimated Reservation Cost" />
+                                </div>
+                            </div>
+                            <div class="form-group" style="display:none !important;">
+                                <label for="MemberNote" class="col-sm-3 col-md-4 control-label">Fee Points:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" id="MemberNote" value="Member Note" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reservationTermsAndConditionsFlag" class="col-sm-3 col-md-4 control-label">Terms:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="form-control" id="reservationTermsAndConditionsFlag" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="SendNotificationsFlag" class="col-sm-3 col-md-4 control-label">Send Notification:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="form-control" id="SendNotificationsFlag" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                                
+                            <div id="reservationCreditCardInfo" style="float:right;display:none !important;">
+                                <div>Save: <input type="checkbox" id="reservationCreditCardIsSave" /></div>
+                                <div><input type="text" id="reservationCreditCardNameOnCard" placeholder="Name On Card" /></div>
+                                <div><input type="text" id="reservationCreditCardCardNo" placeholder="Card Number" /></div>
+                                <div><input type="text" id="reservationCreditZipCode" placeholder="Zip Code" /></div>
+                                <div><input type="text" id="reservationCreditExpirationMonth" placeholder="Exp Month" /></div>
+                                <div><input type="text" id="reservationCreditExpirationYear" placeholder="Exp Year" /></div>
+                                <div><input type="text" id="reservationCreditCVVNumber" placeholder="CVVN" /></div>
+                                <div>Primary: <input type="Checkbox" id="reservationIsPrimary" /></div>
+                            </div>
+                            <div id="reservationSavedCreditCardInfo" style="float:right;display:none !important;">
+                                <div><div id="reservationSavedCreditCards"></div></div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
-                <div><div id="reservationCreditCardId"></div></div>
-                <div><input type="text" id="EstimatedReservationCost" value="EstimatedReservationCost" /></div>
-                <div><input type="text" id="MemberNote" value="MemberNote" /></div>
-                <div>Terms: <input type="checkbox" id="reservationTermsAndConditionsFlag" /></div>
-                <div>Send Notification: <input type="checkbox" id="SendNotificationsFlag" /></div>
-                
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="top-divider">
+                            <div class="col-sm-2 col-md-3">
+                            </div>
+                            <div class="col-sm-4 col-md-3">
+                                <input type="button" id="saveReservation" value="Save" />
+                            </div>
+                            <div class="col-sm-4 col-md-3">
+                                <input type="button" id="cancelReservationForm" value="Cancel" />
+                            </div>
+                            <div class="col-sm-2 col-md-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div id="reservationCreditCardInfo" style="float:right;display:none !important;">
-                <div>Save: <input type="checkbox" id="reservationCreditCardIsSave" /></div>
-                <div><input type="text" id="reservationCreditCardNameOnCard" placeholder="Name On Card" /></div>
-                <div><input type="text" id="reservationCreditCardCardNo" placeholder="Card Number" /></div>
-                <div><input type="text" id="reservationCreditZipCode" placeholder="Zip Code" /></div>
-                <div><input type="text" id="reservationCreditExpirationMonth" placeholder="Exp Month" /></div>
-                <div><input type="text" id="reservationCreditExpirationYear" placeholder="Exp Year" /></div>
-                <div><input type="text" id="reservationCreditCVVNumber" placeholder="CVVN" /></div>
-                <div>Primary: <input type="Checkbox" id="reservationIsPrimary" /></div>
-            </div>
-            <div id="reservationSavedCreditCardInfo" style="float:right;display:none !important;">
-                <div><div id="reservationSavedCreditCards"></div></div>
-            </div>
-            <div style="float:left;margin-top:65px;width:100%;">
-                <input style="margin-right: 5px;float:left;" type="button" id="saveReservation" value="Save" /><input id="cancelReservationForm" type="button" style="float:right;" value="Cancel" />
-            </div>
+
+
+
+
+
+
+
+
+
+
+
         </div>
     </div>
 
@@ -2923,7 +3039,7 @@
     <%-- html for popup QA box --%>
     <div id="popupDisplayQA" style="display:none">
         <div>Questions &amp; Answers</div>
-        <div style="overflow: hidden;">
+        <div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">

@@ -80,7 +80,8 @@
                                 <li><a href="#">Search Certificates</a></li>
                                 <li><a href="#">Combine Companies</a></li>
                                 <li><a href="#">Member Article/Company Update</a></li>
-                                <li><a href="#">View/Maintain Reservations</a></li>    
+                                <li><a href="#">View/Maintain Reservations</a></li> 
+                                <li><a href="ReservationList.aspx">List Reservations For Today</a></li>   
                             </ul>
                         </li>
                         <li class="dropdown">

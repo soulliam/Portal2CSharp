@@ -5,6 +5,64 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
+    <script type="text/javascript">
+        var data = generatedata(500);
+        var source =
+        {
+            localdata: data,
+            datafields:
+            [
+                { name: 'available', type: 'bool' },
+                { name: 'date', type: 'date' },
+                { name: 'range', map: 'date', type: 'date' },
+
+            ],
+            datatype: "array"
+        };
+        var addDefaultfilter = function () {
+            var datefiltergroup = new $.jqx.filter();
+            var operator = 0;
+            var today = new Date();
+
+            var weekago = new Date();
+
+            weekago.setDate((today.getDate() - 10));
+
+            var filtervalue = weekago;
+            var filtercondition = 'GREATER_THAN_OR_EQUAL';
+            var filter4 = datefiltergroup.createfilter('datefilter', filtervalue, filtercondition);
+
+            filtervalue = today;
+            filtercondition = 'LESS_THAN_OR_EQUAL';
+            var filter5 = datefiltergroup.createfilter('datefilter', filtervalue, filtercondition);
+
+            datefiltergroup.addfilter(operator, filter4);
+            datefiltergroup.addfilter(operator, filter5);
+
+            //$("#jqxProgress").jqxGrid('addfilter', 'Status', statusfiltergroup);
+            $("#jqxgrid").jqxGrid('addfilter', 'range', datefiltergroup);
+            $("#jqxgrid").jqxGrid('applyfilters');
+        }
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        $("#jqxgrid").jqxGrid(
+        {
+            width: 850,
+            source: dataAdapter,
+            showfilterrow: true,
+            filterable: true,
+            selectionmode: 'multiplecellsextended',
+            ready: function () {
+                addDefaultfilter();
+            },
+            columns: [
+              { text: 'Range', datafield: 'range', filtertype: 'range', cellsalign: 'right', width: '35%', cellsformat: 'd' }
+            ]
+        });
+        $('#clearfilteringbutton').jqxButton({ height: 25 });
+        $('#clearfilteringbutton').click(function () {
+            $("#jqxgrid").jqxGrid('clearfilters');
+        });
+    </script>
 </head>
 <body>
     <form id="form1" runat="server">
