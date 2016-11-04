@@ -172,13 +172,16 @@
                 type: 'Get',
                 datatype: "json",
                 url: url,
-                pagesize: 12,
                 root: "data"
             };
 
             // creage jqxgrid
             $("#jqxgrid").jqxGrid(
             {
+                pageable: true,
+                pagermode: 'advanced',
+                pagesize: 50,
+                pagesizeoptions: ['10', '20', '50', '100'],
                 width: '100%',
                 height: 500,
                 source: source,
@@ -194,12 +197,6 @@
                           }, buttonclick: function (row) {
                               // open the popup window when the user clicks a button.
                               editrow = row;
-                              var offset = $("#jqxgrid").offset();
-                              $("#popupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 400, y: parseInt(offset.top) + 60 } });
-                              $("#popupWindow").css("visibility", "visible");
-                              $('#popupWindow').jqxWindow({ width: '700', height: '400' });
-                              $('#popupWindow').jqxWindow({ showCloseButton: false });
-
                               
                               // get the clicked row's data and initialize the input fields.
                               var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
@@ -213,6 +210,14 @@
                               $("#SortOrder").val(dataRecord.SortOrder);
                               $("#IconCSSClass").val(dataRecord.IconCSSClass);
                               // show the popup window.
+                              $("#popupImage").css('display', 'block');
+                              $("#popupImage").css('visibility', 'hidden');
+
+                              var offset = $("#jqxgrid").offset();
+                              $("#popupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 400, y: parseInt(offset.top) + 60 } });
+                              $("#popupWindow").css("visibility", "visible");
+                              $('#popupWindow').jqxWindow({ width: '700', height: '400' });
+                              $('#popupWindow').jqxWindow({ showCloseButton: false });
                               $("#popupWindow").jqxWindow('open');
                               
 
@@ -266,7 +271,7 @@
     </div>
 
     <%-- html for popup edit box --%>
-    <div id="popupWindow" style="visibility:hidden">
+    <div id="popupWindow" style="display:none">
             <div>Edit</div>
             <div style="overflow: hidden;">
                 <table>
