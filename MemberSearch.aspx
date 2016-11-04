@@ -1863,10 +1863,23 @@
         //#region ShowPopups
         function newNote() {
             var offset = $("#jqxMemberInfoTabs").offset();
-            $("#popupNote").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) + 150 } });
-            $('#popupNote').jqxWindow({ width: "420px" });
+            $("#popupNote").jqxWindow({ position: { x: '25%', y: '30%' } });
+            $('#popupNote').jqxWindow({ resizable: false });
+            $('#popupNote').jqxWindow({ draggable: true });
+            $('#popupNote').jqxWindow({ isModal: true });
             $("#popupNote").css("visibility", "visible");
+            $('#popupNote').jqxWindow({ height: '190px', width: '50%' });
+            $('#popupNote').jqxWindow({ minHeight: '190px', minWidth: '50%' });
+            $('#popupNote').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+            $('#popupNote').jqxWindow({ showCloseButton: true });
+            $('#popupNote').jqxWindow({ animationType: 'combined' });
+            $('#popupNote').jqxWindow({ showAnimationDuration: 300 });
+            $('#popupNote').jqxWindow({ closeAnimationDuration: 500 });
             $("#popupNote").jqxWindow('open');
+
+
+
+
         }
         //#endregion
 
@@ -2485,7 +2498,11 @@
                                         <div class="form-group">
                                             <label for="GetEmail" class="col-sm-3 col-md-4 control-label">Get Email:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="checkbox" id="GetEmail">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" class="form-control" id="GetEmail" />
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -2727,11 +2744,11 @@
     <%-- html for popup Note box --%>
     <div id="popupNote" style="visibility:hidden">
         <div>Add Note</div>
-        <div style="overflow: hidden;">
+        <div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
-                        <textarea rows="4" cols="50" id="txtNote"></textarea>
+                        <textarea rows="5" cols="50" id="txtNote"></textarea>
                     </div>
                     <div class="col-sm-6">
                         <input id="saveNote" type="button" value="Save" />
