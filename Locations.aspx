@@ -117,6 +117,11 @@
                 }
 
             });
+
+            $("#jqxLocationImagesGrid").bind('bindingcomplete', function () {
+                $("#jqxLocationImagesGrid").jqxGrid('sortby', 'SortOrder', 'asc');
+            });
+
             //#endregion
 
             //#region ButtonClick
@@ -124,6 +129,8 @@
             //updateLocationImages
 
             $("#updateLocationImages").on("click", function (event) {
+
+
                 var putURL = "";
                 var ImageId = "";
                 var LocationId = "";
@@ -1041,6 +1048,7 @@
             $("#jqxLocationImagesGrid").jqxGrid('destroy');
             $("<div id='jqxLocationImagesGrid'></div>").appendTo(parent);
 
+
             var url = $("#apiDomain").val() + "images/" + thisLocationId;
 
             var locationImagesSource =
@@ -1083,6 +1091,33 @@
                             { text: 'SortOrder', datafield: 'SortOrder', width: '7%' }
 
                 ]
+            });
+
+            $('#jqxLocationImagesGrid').on('rowclick', function (event) {
+
+                var rightclick = args.rightclick;
+
+                if (rightclick == true) {
+                    var row = event.args.rowindex;
+                    var datarow = $("#jqxLocationImagesGrid").jqxGrid('getrowdata', row);
+                    var source = datarow.ImageUrl;
+                    var offset = $("#jqxLocationTabs").offset();
+
+                    alert("https://stage.thefastpark.com" + source);
+
+                    $("#popupImage").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) + 10 } });
+                    $('#popupImage').jqxWindow({ maxHeight: 500, maxWidth: 700 });
+                    $('#popupImage').jqxWindow({ width: "700px", height: "300px" });
+                    $('#popupImage').jqxWindow({ modalZIndex: 99999 });
+                    $("#popupImage").css("visibility", "visible");
+                    $("#popupImage").jqxWindow('open');
+                    document.getElementById('showImage').src = "https://stage.thefastpark.com" + source;
+                }
+
+            });
+
+            $("#jqxLocationImagesGrid").bind('bindingcomplete', function () {
+                $("#jqxLocationImagesGrid").jqxGrid('sortby', 'SortOrder', 'asc');
             });
 
         }
