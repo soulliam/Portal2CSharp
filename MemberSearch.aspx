@@ -2947,7 +2947,7 @@
     </div>
     
     <%-- html for popup Add Reservation --%>
-    <div id="popupReservation" class="popupReservation" style="visibility:hidden">
+    <div id="popupReservation" class="popupReservation" style="display:none">
         <div>Add Reservation</div>
         <div>
             <div class="modal-body">
