@@ -1256,9 +1256,10 @@
         </div>
     </div><!-- /.container-fluid -->
     
-                                    <div style="display:none;">
-                                        <input id="LocationId" type="text" value="0"  />
-                                    </div>
+    <div style="display:none;">
+        <input id="LocationId" type="text" value="0"  />
+    </div>
+
     <div class="container-fluid container-970">
         <div class="row ">
             <div class="col-sm-12">
