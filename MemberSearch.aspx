@@ -35,6 +35,7 @@
     <script type="text/javascript" src="jqwidgets/jqxtabs.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxloader.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxradiobutton.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxdatetimeinput.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxcheckbox.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxgrid.edit.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxdropdownbutton.js"></script>
@@ -154,8 +155,6 @@
                 $("#cancelReservation").jqxButton();
                 $("#addReservation").jqxButton();
 
-                $("#returnRedemption").jqxButton();
-
                 $("#transferCard").jqxButton();
                 $("#addCard").jqxButton();
                 $("#deleteCard").jqxButton(); 
@@ -232,10 +231,6 @@
 
             //Add Reservation
             $("#addReservation").on("click", function (event) {
-
-                $("#popupReservation").css('display', 'block');
-                $("#popupReservation").css('visibility', 'hidden');
-
                 var offset = $("#jqxMemberInfoTabs").offset();
                 $('#popupReservation').jqxWindow({ maxHeight: 600, maxWidth: 950 });
                 $('#popupReservation').jqxWindow({ width: "950px", height: "600px" });
@@ -246,55 +241,8 @@
                 $("#popupReservation").jqxWindow('open');
             });
 
-            //return redemption
-            $("#returnRedemption").on("click", function (event) {
-                var result = confirm("Do you want to return this redemption!");
-                if (result != true) {
-                    return null;
-                }
-
-                //Get the selected rows RedemptionID
-                var thisMemberId = $("#MemberId").val();
-                var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
-                if (getselectedrowindexes.length > 0) {
-                    // returns the selected row's data.
-                    var selectedRowData = $('#jqxRedemptionGrid').jqxGrid('getrowdata', getselectedrowindexes[0]);
-                    var thisRedemptionId = selectedRowData.RedemptionId;
-                }
-
-                var putUrl = $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions/" + thisRedemptionId;
-
-                $.ajax({
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json",
-                        "AccessToken": $("#userGuid").val(),
-                        "ApplicationKey": $("#AK").val()
-                    },
-                    type: "PUT",
-                    url: putUrl,
-                    dataType: "json",
-                    success: function (response) {
-                        alert("Returned!  Check activity for returned points.");
-                        //Clear the redemption grid and reload
-                        $('#jqxRedemptionGrid').jqxGrid('clearselection');
-                        $('#jqxRedemptionGrid').jqxGrid('clear');
-                        loadRedemptions(thisMemberId);
-                        loadMemberActivity(thisMemberId);
-                    },
-                    error: function (request, status, error) {
-                        alert(request.responseText);
-                    }
-                })
-            });
-
             // Cancel Reservation
             $("#cancelReservation").on("click", function (event) {
-                var result = confirm("Do you want to cancel this reservation!");
-                if (result != true) {
-                    return null;
-                }
-
                 var ProcessList = "";
                 var first = true;
                 var getselectedrowindexes = $('#jqxReservationGrid').jqxGrid('getselectedrowindexes');
@@ -333,7 +281,7 @@
                         url: $("#apiDomain").val() + "/reservations/" + thisReservationList[i],
                         dataType: "json",
                         success: function () {
-                            alert("Canceled!");
+                            alert("Deleted!");
                         },
                         error: function (request, status, error) {
                             alert(error);
@@ -399,14 +347,10 @@
 
             //show add card popup
             $("#addCard").on("click", function (event) {
-
-                $("#addCardWindow").css('display', 'block');
-                $("#addCardWindow").css('visibility', 'hidden');
-
                 var offset = $("#jqxMemberInfoTabs").offset();
                 $('#addCardWindow').jqxWindow({ width: "250px", height: "235px" });
                 $("#addCardWindow").css("visibility", "visible");
-                $("#addCardWindow").jqxWindow({ position: { x: parseInt(offset.left) + 300, y: parseInt(offset.top) - 50 } });
+                $("#addCardWindow").jqxWindow({ position: { x: parseInt(offset.left) + 50, y: parseInt(offset.top) - 50 } });
                 $('#addCardWindow').jqxWindow({ resizable: false });
                 $('#addCardWindow').jqxWindow({ title: 'Add a Card' });
                 $("#addCardWindow").jqxWindow('open');
@@ -419,10 +363,6 @@
 
             //Delte Card from Member
             $("#deleteCard").on("click", function (event) {
-                var result = confirm("Do you want to delete this card!");
-                if (result != true) {
-                    return null;
-                }
 
                 var getselectedrowindexes = $('#jqxCardGrid').jqxGrid('getselectedrowindexes');
 
@@ -430,7 +370,7 @@
                     for (var index = 0; index < getselectedrowindexes.length; index++) {
                         var selectedRowData = $('#jqxCardGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
 
-                        var url = $("#apiDomain").val() + "members/cards/" + selectedRowData.CardId;
+                        var url = $("#apiDomain").val() + "cards/" + selectedRowData.CardId;
 
                         $.ajax({
                             headers: {
@@ -445,10 +385,6 @@
                             dataType: "json",
                             success: function () {
                                 alert("Deleted!");
-                                thisMemberId = $("#MemberId").val();
-                                $('#jqxCardGrid').jqxGrid('clearselection');
-                                $('#jqxCardGrid').jqxGrid('clear');
-                                loadCards(thisMemberId);
                             },
                             error: function (request, status, error) {
                                 alert(error);
@@ -464,7 +400,7 @@
 
                 //var PageMemberID = Number($("#MemberId").val());
                 var PageMemberID = $("#MemberId").val();
-                var thisLocationId = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
+                var thisLocationId = 1;
                 var thisManualEditDate = new Date().toMMDDYYYYString();
                 var thisSubmittedDate = "1/1/1900";
                 var thisPerformedBy = $("#txtLoggedinUsername").val();
@@ -578,10 +514,6 @@
 
             $("#DisplayQA").on("click", function (event) {
                 loadDisplayQA();
-
-                $("#popupDisplayQA").css('display', 'block');
-                $("#popupDisplayQA").css('visibility', 'hidden');
-
                 var offset = $("#jqxMemberInfoTabs").offset();
                 $("#popupDisplayQA").jqxWindow({ position: { x: '5%', y: '10%' } });
                 $('#popupDisplayQA').jqxWindow({ resizable: false });
@@ -636,10 +568,6 @@
                     var row = event.args.rowindex;
                     var dataRecord = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
                     var thisItem = dataRecord.ParkingTransactionNumber;
-
-                    $("#popupReceipt").css('display', 'block');
-                    $("#popupReceipt").css('visibility', 'hidden');
-
                     var offset = $("#jqxMemberInfoTabs").offset();
 
                     $("#popupReceipt").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
@@ -653,11 +581,7 @@
                 //This will show the Redemption
                
                 if (isRedemption != null) {
-
-                    $("#popupRedemption").css('display', 'block');
-                    $("#popupRedemption").css('visibility', 'hidden');
-
-                    $("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 90 } });
+                    $("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
                     $('#popupRedemption').jqxWindow({ maxHeight: 610, maxWidth: 450 });
                     $('#popupRedemption').jqxWindow({ width: 450, height: 610 });
                     $("#popupRedemption").css("visibility", "visible");
@@ -870,7 +794,7 @@
             loadLocationCombo();
            
             $("#AccountTabContent").toggle();
-            $("#updateMemberInfo").css("visibility", "hidden");
+
             //create loader Icon
             $("#jqxLoader").jqxLoader({ isModal: true, width: 100, height: 60, imagePosition: 'top' });
 
@@ -906,6 +830,7 @@
                 height: 24,
                 mask: '###-#####'
             });
+
 
             $('#SearchFPNumber').jqxMaskedInput({ textAlign: "right" });
 
@@ -1531,7 +1456,6 @@
             var source =
             {
                 datafields: [
-                    { name: 'RedemptionId' },
                     { name: 'CertificateID' },
                     { name: 'RedemptionType', map: 'RedemptionType>RedemptionType' },
                     { name: 'RedeemDate', type: 'date' },
@@ -1555,15 +1479,13 @@
             {
                 theme: 'shinyblack',
                 width: '100%',
-                height: 450,
+                height: 500,
                 source: source,
                 rowsheight: 35,
                 sortable: true,
                 altrows: true,
                 filterable: true,
-                selectionmode: 'checkbox',
                 columns: [
-                      { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
                       { text: 'CertificateID', datafield: 'CertificateID' },
                       { text: 'Redemption Type', datafield: 'RedemptionType' },
                       { text: 'Redeem Date', datafield: 'RedeemDate', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
@@ -1582,7 +1504,6 @@
                 datafields: [
                     { name: 'ReservationId' },
                     { name: 'ReservationNumber' },
-                    { name: 'NameOfLocation', map: 'LocationInformation>NameOfLocation' },
                     { name: 'CreateDatetime', type: 'date' },
                     { name: 'StartDatetime', type: 'date' },
                     { name: 'EndDatetime', type: 'date' },
@@ -1615,13 +1536,12 @@
                 filterable: true,
                 columns: [
                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
-                      { text: 'Reservation Number', datafield: 'ReservationNumber', width: '10%' },
-                      { text: 'Location', datafield: 'NameOfLocation', width: '10%' },
-                      { text: 'Create Date', datafield: 'CreateDatetime', width: '13%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
-                      { text: 'Start Date', datafield: 'StartDatetime', width: '13%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
-                      { text: 'End Date', datafield: 'EndDatetime', width: '13%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
+                      { text: 'Reservation Number', datafield: 'ReservationNumber', width: '15%' },
+                      { text: 'Create Date', datafield: 'CreateDatetime', width: '15%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
+                      { text: 'Start Date', datafield: 'StartDatetime', width: '15%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
+                      { text: 'End Date', datafield: 'EndDatetime', width: '15%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
                       { text: 'Status', datafield: 'ReservationStatusName', width: '15%' },
-                      { text: 'Note', datafield: 'MemberNote', width: '26%' }
+                      { text: 'Note', datafield: 'MemberNote', width: '25%' }
                 ]
             });
         }
@@ -1951,10 +1871,6 @@
 
         //#region ShowPopups
         function newNote() {
-
-            $("#popupNote").css('display', 'block');
-            $("#popupNote").css('visibility', 'hidden');
-
             var offset = $("#jqxMemberInfoTabs").offset();
             $("#popupNote").jqxWindow({ position: { x: '25%', y: '30%' } });
             $('#popupNote').jqxWindow({ resizable: false });
@@ -2312,6 +2228,9 @@
                         <div class="col-sm-9">
                             <div class="row search-size">
                                 <div class="col-sm-15">
+                                    <div id="LocationCombo"></div>
+                                </div>
+                                <div class="col-sm-15">
                                     <div id="SearchFPNumber"></div>
                                 </div>
                                 <div class="col-sm-15">
@@ -2323,11 +2242,11 @@
                                 <div class="col-sm-15">
                                     <input type="text" id="SearchEmail" placeholder="Email" />
                                 </div>
+                            </div>
+                            <div class="row search-size">
                                 <div class="col-sm-15">
                                     <input type="text" id="SearchSteetAddress" placeholder="Street Address" />
                                 </div>
-                            </div>
-                            <div class="row search-size">
                                 <div class="col-sm-15">
                                     <input type="text" id="SearchPhoneNumber" placeholder="Phone" />
                                 </div>
@@ -2340,13 +2259,10 @@
                                 <div class="col-sm-15">
                                     <input type="text" id="SearchMailerCode" placeholder="Mailer Code"  />
                                 </div>
-                                <div class="col-sm-15">
-                                    <input type="text" id="SearchUserName" placeholder="User Name"  />
-                                </div>
                             </div>
                             <div class="row search-size">
                                 <div class="col-sm-15">
-                                    <div id="LocationCombo" style="visibility:hidden;"></div>
+                                    <input type="text" id="SearchUserName" placeholder="User Name"  />
                                 </div>
                                 <div class="col-sm-15">
                                 </div>
@@ -2744,6 +2660,7 @@
                                 </div>
 
 
+
                                 <div id="tabPoints" class="tab-body">
                                     <div class="row">
                                         <div class="col-sm-6 col-md-5">
@@ -2794,14 +2711,7 @@
                             </div>
                         </div>
                         <div id="tabRedemptions" class="tab-body">
-                            <div class="row">
-                                <div class="col-sm-9 col-md-10">
-                                    <div id="jqxRedemptionGrid"></div>
-                                </div>
-                                <div class="col-sm-3 col-md-2">
-                                <input type="button" id="returnRedemption" value="Return Redemption" />
-                                </div>
-                            </div>
+                            <div id="jqxRedemptionGrid"></div>
                         </div>
                         <div id="tabReservations" class="tab-body">
                             <div class="row">
@@ -2841,7 +2751,7 @@
     <div id="jqxLoader"></div>
 
     <%-- html for popup Note box --%>
-    <div id="popupNote" style="display:none">
+    <div id="popupNote" style="visibility:hidden">
         <div>Add Note</div>
         <div>
             <div class="modal-body">
@@ -2860,8 +2770,9 @@
         </div>
     </div>
 
+
     <%-- html for popup Add Card --%>
-    <div id="addCardWindow" style="display:none">
+    <div id="addCardWindow" style="visibility:hidden">
         <div>Add Card</div>
         <div>
             <div class="modal-body">
@@ -2900,57 +2811,159 @@
             </div>
         </div>
     </div>
-
-    <%-- html for Reservation --%>
-    <div id="popupReservation" class="popupReservation" style="display:none">
+    
+    <%-- html for popup Add Reservation --%>
+    <div id="popupReservation" class="popupReservation" style="visibility:hidden">
+        <div>Add Reservation</div>
         <div>
-            <div id="reservationInfo" style="float:left;">
-                <div>Location: <div id="reservationLocationCombo"></div></div>
-                <div>Start Date: <div id="reservationStartDate"></div></div>
-                <div>End Date: <div id="reservationEndDate"></div></div>
-                <div>Reservation Fee: <div id="reservationFeeIdCombo"></div></div>
-                <div>Features: <div id="reservationFeatures"></div></div>
-                <div>Payment Method: <div id="reservationPaymentMethodId"></div></div>
-                <div><input type="text" id="reservationFeeDollars" value="4.95" style="display:none !important;" /></div>
-                <div><input type="text" id="reservationFeePoints" value="8" style="display:none !important;" /></div>
-                <div><input type="text" id="reservationFeeCreditId" placeholder="Reservation Fee Credit" style="display:none !important;" disabled /></div>
-                <div>
-                    <div id="reservationFeeDiscountIdDDB" style="display:none !important;">
-                        <div style="border-color: transparent;" id="reservationFeeDiscountIdGrid"></div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label for="reservationLocationCombo" class="col-sm-3 col-md-4 control-label">Location:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div id="reservationLocationCombo"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reservationStartDate" class="col-sm-3 col-md-4 control-label">Start Date:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div id="reservationStartDate"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reservationEndDate" class="col-sm-3 col-md-4 control-label">End Date:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div id="reservationEndDate"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reservationFeeIdCombo" class="col-sm-3 col-md-4 control-label">Reservation Fee:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div id="reservationFeeIdCombo"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reservationFeatures" class="col-sm-3 col-md-4 control-label">Features:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div id="reservationFeatures"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reservationPaymentMethodId" class="col-sm-3 col-md-4 control-label">Payment Method:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div id="reservationPaymentMethodId"></div>
+                                </div>
+                            </div>
+                            <div class="form-group" style="display:none !important;">
+                                <label for="reservationFeeDollars" class="col-sm-3 col-md-4 control-label">Fee Dollars:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" id="reservationFeeDollars" value="4.95" />
+                                </div>
+                            </div>
+                            <div class="form-group" style="display:none !important;">
+                                <label for="reservationFeePoints" class="col-sm-3 col-md-4 control-label">Fee Points:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" id="reservationFeePoints" value="8" />
+                                </div>
+                            </div>
+                            <div class="form-group" style="display:none !important;">
+                                <label for="reservationFeeCreditId" class="col-sm-3 col-md-4 control-label">Fee Points:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" id="reservationFeeCreditId" value="4.95" placeholder="Reservation Fee Credit" disabled />
+                                </div>
+                            </div>
+                            <div id="reservationFeeDiscountIdGrid" style="display:none !important;"></div>
+                            <div id="reservationCreditCardId"></div>
+                            <div class="form-group" style="display:none !important;">
+                                <label for="EstimatedReservationCost" class="col-sm-3 col-md-4 control-label">Fee Points:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" id="EstimatedReservationCost" value="Estimated Reservation Cost" />
+                                </div>
+                            </div>
+                            <div class="form-group" style="display:none !important;">
+                                <label for="MemberNote" class="col-sm-3 col-md-4 control-label">Fee Points:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" id="MemberNote" value="Member Note" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reservationTermsAndConditionsFlag" class="col-sm-3 col-md-4 control-label">Terms:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="form-control" id="reservationTermsAndConditionsFlag" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="SendNotificationsFlag" class="col-sm-3 col-md-4 control-label">Send Notification:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="form-control" id="SendNotificationsFlag" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                                
+                            <div id="reservationCreditCardInfo" style="float:right;display:none !important;">
+                                <div>Save: <input type="checkbox" id="reservationCreditCardIsSave" /></div>
+                                <div><input type="text" id="reservationCreditCardNameOnCard" placeholder="Name On Card" /></div>
+                                <div><input type="text" id="reservationCreditCardCardNo" placeholder="Card Number" /></div>
+                                <div><input type="text" id="reservationCreditZipCode" placeholder="Zip Code" /></div>
+                                <div><input type="text" id="reservationCreditExpirationMonth" placeholder="Exp Month" /></div>
+                                <div><input type="text" id="reservationCreditExpirationYear" placeholder="Exp Year" /></div>
+                                <div><input type="text" id="reservationCreditCVVNumber" placeholder="CVVN" /></div>
+                                <div>Primary: <input type="Checkbox" id="reservationIsPrimary" /></div>
+                            </div>
+                            <div id="reservationSavedCreditCardInfo" style="float:right;display:none !important;">
+                                <div><div id="reservationSavedCreditCards"></div></div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
-                <div><div id="reservationCreditCardId"></div></div>
-                <div><input type="text" id="EstimatedReservationCost" value="EstimatedReservationCost" /></div>
-                <div><input type="text" id="MemberNote" value="MemberNote" /></div>
-                <div>Terms: <input type="checkbox" id="reservationTermsAndConditionsFlag" /></div>
-                <div>Send Notification: <input type="checkbox" id="SendNotificationsFlag" /></div>
-                
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="top-divider">
+                            <div class="col-sm-2 col-md-3">
+                            </div>
+                            <div class="col-sm-4 col-md-3">
+                                <input type="button" id="saveReservation" value="Save" />
+                            </div>
+                            <div class="col-sm-4 col-md-3">
+                                <input type="button" id="cancelReservationForm" value="Cancel" />
+                            </div>
+                            <div class="col-sm-2 col-md-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div id="reservationCreditCardInfo" style="float:right;display:none !important;">
-                <div>Save: <input type="checkbox" id="reservationCreditCardIsSave" /></div>
-                <div><input type="text" id="reservationCreditCardNameOnCard" placeholder="Name On Card" /></div>
-                <div><input type="text" id="reservationCreditCardCardNo" placeholder="Card Number" /></div>
-                <div><input type="text" id="reservationCreditZipCode" placeholder="Zip Code" /></div>
-                <div><input type="text" id="reservationCreditExpirationMonth" placeholder="Exp Month" /></div>
-                <div><input type="text" id="reservationCreditExpirationYear" placeholder="Exp Year" /></div>
-                <div><input type="text" id="reservationCreditCVVNumber" placeholder="CVVN" /></div>
-                <div>Primary: <input type="Checkbox" id="reservationIsPrimary" /></div>
-            </div>
-            <div id="reservationSavedCreditCardInfo" style="float:right;display:none !important;">
-                <div><div id="reservationSavedCreditCards"></div></div>
-            </div>
-            <div style="float:left;margin-top:65px;width:100%;">
-                <input style="margin-right: 5px;float:left;" type="button" id="saveReservation" value="Save" /><input id="cancelReservationForm" type="button" style="float:right;" value="Cancel" />
-            </div>
+
+
+
+
+
+
+
+
+
+
+
         </div>
     </div>
 
 
     <!--Not Used right now.  this popup would display a jquery created QRCode-->
     <%-- html for popup QA box --%>
-    <div id="popupDisplayQA" style="display:none">
+    <div id="popupDisplayQA" style="visibility:hidden">
         <div>Questions &amp; Answers</div>
-        <div style="overflow: hidden;">
+        <div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
@@ -2963,20 +2976,20 @@
 
 
 
-    <div id='phoneContextMenu' style="display: none">
+    <div id='phoneContextMenu' style="visibility: hidden">
         <ul>
             <li>Delete Selected Row</li>
         </ul>
     </div>
 
-    <div id="popupReceipt" style="display: none">
+    <div id="popupReceipt" style="visibility: hidden">
         <div>View Reciept</div>
         <div>
             <iframe id="receiptIframe" style="border:none;width:255px;height:475px;" ></iframe>
         </div>
     </div>
 
-    <div id="popupRedemption" style="display: none;">
+    <div id="popupRedemption" style="visibility: hidden;">
         <div>View Reciept</div>
         <div>
             <iframe id="redemptionIframe" style="border:none;width:420px;height:570px;" ></iframe>
