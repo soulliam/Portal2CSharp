@@ -89,35 +89,6 @@
             $("#updateFeature").jqxButton();
             $("#updateLocationImages").jqxButton();
 
-            $('#jqxLocationImagesGrid').on('rowclick', function (event) {
-
-                var rightclick = args.rightclick;
-                
-                if (rightclick == true) {
-                    var row = event.args.rowindex;
-                    var datarow = $("#jqxLocationImagesGrid").jqxGrid('getrowdata', row);
-                    var source = datarow.ImageUrl;
-                    var offset = $("#jqxLocationTabs").offset();
-
-                    alert("https://stage.thefastpark.com" + source);
-
-                    $("#popupImage").css('display', 'block');
-                    $("#popupImage").css('visibility', 'hidden');
-
-                    $("#popupImage").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) + 10 } });
-                    $('#popupImage').jqxWindow({ maxHeight: 500, maxWidth: 700 });
-                    $('#popupImage').jqxWindow({ width: "700px", height: "300px" });
-                    $('#popupImage').jqxWindow({ modalZIndex: 99999 });
-                    $("#popupImage").css("visibility", "visible");
-                    $("#popupImage").jqxWindow('open');
-                    document.getElementById('showImage').src = "https://stage.thefastpark.com" + source;
-                }
-
-            });
-
-            $("#jqxLocationImagesGrid").bind('bindingcomplete', function () {
-                $("#jqxLocationImagesGrid").jqxGrid('sortby', 'SortOrder', 'asc');
-            });
 
             //#endregion
 
@@ -1109,11 +1080,18 @@
 
                     alert("https://stage.thefastpark.com" + source);
 
-                    $("#popupImage").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) + 10 } });
-                    $('#popupImage').jqxWindow({ maxHeight: 500, maxWidth: 700 });
-                    $('#popupImage').jqxWindow({ width: "700px", height: "300px" });
-                    $('#popupImage').jqxWindow({ modalZIndex: 99999 });
+                    $("#popupImage").jqxWindow({ position: { x: '25%', y: '30%' } });
+                    $('#popupImage').jqxWindow({ resizable: false });
+                    $('#popupImage').jqxWindow({ draggable: true });
+                    $('#popupImage').jqxWindow({ isModal: true });
                     $("#popupImage").css("visibility", "visible");
+                    $('#popupImage').jqxWindow({ height: '320px', width: '50%' });
+                    $('#popupImage').jqxWindow({ minHeight: '320px', minWidth: '50%' });
+                    $('#popupImage').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+                    $('#popupImage').jqxWindow({ showCloseButton: true });
+                    $('#popupImage').jqxWindow({ animationType: 'combined' });
+                    $('#popupImage').jqxWindow({ showAnimationDuration: 300 });
+                    $('#popupImage').jqxWindow({ closeAnimationDuration: 500 });
                     $("#popupImage").jqxWindow('open');
                     document.getElementById('showImage').src = "https://stage.thefastpark.com" + source;
                 }
@@ -1265,9 +1243,10 @@
         </div>
     </div><!-- /.container-fluid -->
     
-                                    <div style="display:none;">
-                                        <input id="LocationId" type="text" value="0"  />
-                                    </div>
+    <div style="display:none;">
+        <input id="LocationId" type="text" value="0"  />
+    </div>
+
     <div class="container-fluid container-970">
         <div class="row ">
             <div class="col-sm-12">
@@ -1785,21 +1764,26 @@
                                 </div>
                             </div>
                         </div>
-                   </div>
+                    </div>
                 </div>
-           </div>
-        </div>
-   </div>
-   <%-- html for popup edit box END --%>
-
-
-    <%-- html for popup edit box END --%>
-
-    <div id='popupImage' style="display: none">
-        <div>
-            <iframe id="showImage" style="width:700px;height:300px;"></iframe>
+            </div>
         </div>
     </div>
+
+
+    <%-- html for popup edit box --%>
+    <div id="popupImage" style="display:none;">
+        <div>Location Image</div>
+        <div>
+            <div class="modal-body">
+                <iframe id="showImage" style="width:640px;height:250px;border:none;text-align:center;"></iframe>
+            </div>
+        </div>
+    </div>
+
+
+
+
 
 </asp:Content>
 

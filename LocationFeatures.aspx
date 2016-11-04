@@ -247,28 +247,79 @@
 
     </script>
     
-
-    <style>
-
-    </style>
-
-    <div id="LocationFeatures">      
-        <div class="FPR_SearchBox" style="display:block;">
-            <div class="FPR_SearchLeft">
-            
-
-            </div>
-            <div class="FPR_SearchRight">
-                <a href="javascript:" onclick="newFeature();" id="btnNew">New Feature</a>     
+    <div id="LocationFeatures" class="container-fluid container-970 wrap-search-options">
+        <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
+            <div class="row search-size FPR_SearchLeft">
+                <div class="col-sm-12 col-md-1">
+                </div>
+                <div class="col-sm-12 col-md-10">
+                    <div class="row search-size">
+                        <div class="col-sm-9">
+                            <div class="row search-size">
+                                <div class="col-sm-15">
+                                    <a href="javascript:" onclick="newFeature();" id="btnNew">New Feature</a>
+                                </div>
+                                <div class="col-sm-15">
+                                </div>
+                                <div class="col-sm-15">
+                                </div>
+                                <div class="col-sm-15">
+                                </div>
+                                <div class="col-sm-15">
+                                </div>
+                            </div>
+                            <div class="row search-size">
+                                <div class="col-sm-15">
+                                </div>
+                                <div class="col-sm-15">
+                                </div>
+                                <div class="col-sm-15">
+                                </div>
+                                <div class="col-sm-15">
+                                </div>
+                                <div class="col-sm-15">
+                                </div>
+                            </div>
+                            <div class="row search-size">
+                                <div class="col-sm-15">
+                                </div>
+                                <div class="col-sm-15">
+                                </div>
+                                <div class="col-sm-15">
+                                </div>
+                                <div class="col-sm-15">
+                                </div>
+                                <div class="col-sm-15">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="row search-size">
+                                <div class="col-sm-4">
+                                </div>
+                                <div class="col-sm-8">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-1">
+                </div>
             </div>
         </div>
-        <div style="visibility:hidden">
-            <input id="LocationId" type="text" value="0"  />
-        </div>
-    </div>      
+    </div><!-- /.container-fluid -->
     
-    <div id="jqxgrid">
+    <div style="display:none;">
+        <input id="LocationId" type="text" value="0"  />
     </div>
+    
+    <div class="container-fluid container-970">
+        <div class="row ">
+            <div class="col-sm-12">
+                <div id="jqxgrid"></div>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
 
     <%-- html for popup edit box --%>
     <div id="popupWindow" style="display:none">
