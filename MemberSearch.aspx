@@ -35,7 +35,6 @@
     <script type="text/javascript" src="jqwidgets/jqxtabs.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxloader.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxradiobutton.js"></script>
-    <script type="text/javascript" src="jqwidgets/jqxdatetimeinput.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxcheckbox.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxgrid.edit.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxdropdownbutton.js"></script>
@@ -155,6 +154,8 @@
                 $("#cancelReservation").jqxButton();
                 $("#addReservation").jqxButton();
 
+                $("#returnRedemption").jqxButton();
+
                 $("#transferCard").jqxButton();
                 $("#addCard").jqxButton();
                 $("#deleteCard").jqxButton(); 
@@ -231,6 +232,10 @@
 
             //Add Reservation
             $("#addReservation").on("click", function (event) {
+
+                $("#popupReservation").css('display', 'block');
+                $("#popupReservation").css('visibility', 'hidden');
+
                 var offset = $("#jqxMemberInfoTabs").offset();
                 $('#popupReservation').jqxWindow({ maxHeight: 600, maxWidth: 950 });
                 $('#popupReservation').jqxWindow({ width: "950px", height: "600px" });
@@ -241,8 +246,55 @@
                 $("#popupReservation").jqxWindow('open');
             });
 
+            //return redemption
+            $("#returnRedemption").on("click", function (event) {
+                var result = confirm("Do you want to return this redemption!");
+                if (result != true) {
+                    return null;
+                }
+
+                //Get the selected rows RedemptionID
+                var thisMemberId = $("#MemberId").val();
+                var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
+                if (getselectedrowindexes.length > 0) {
+                    // returns the selected row's data.
+                    var selectedRowData = $('#jqxRedemptionGrid').jqxGrid('getrowdata', getselectedrowindexes[0]);
+                    var thisRedemptionId = selectedRowData.RedemptionId;
+                }
+
+                var putUrl = $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions/" + thisRedemptionId;
+
+                $.ajax({
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json",
+                        "AccessToken": $("#userGuid").val(),
+                        "ApplicationKey": $("#AK").val()
+                    },
+                    type: "PUT",
+                    url: putUrl,
+                    dataType: "json",
+                    success: function (response) {
+                        alert("Returned!  Check activity for returned points.");
+                        //Clear the redemption grid and reload
+                        $('#jqxRedemptionGrid').jqxGrid('clearselection');
+                        $('#jqxRedemptionGrid').jqxGrid('clear');
+                        loadRedemptions(thisMemberId);
+                        loadMemberActivity(thisMemberId);
+                    },
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
+                })
+            });
+
             // Cancel Reservation
             $("#cancelReservation").on("click", function (event) {
+                var result = confirm("Do you want to cancel this reservation!");
+                if (result != true) {
+                    return null;
+                }
+
                 var ProcessList = "";
                 var first = true;
                 var getselectedrowindexes = $('#jqxReservationGrid').jqxGrid('getselectedrowindexes');
@@ -281,7 +333,7 @@
                         url: $("#apiDomain").val() + "/reservations/" + thisReservationList[i],
                         dataType: "json",
                         success: function () {
-                            alert("Deleted!");
+                            alert("Canceled!");
                         },
                         error: function (request, status, error) {
                             alert(error);
@@ -347,10 +399,14 @@
 
             //show add card popup
             $("#addCard").on("click", function (event) {
+
+                $("#addCardWindow").css('display', 'block');
+                $("#addCardWindow").css('visibility', 'hidden');
+
                 var offset = $("#jqxMemberInfoTabs").offset();
                 $('#addCardWindow').jqxWindow({ width: "250px", height: "235px" });
                 $("#addCardWindow").css("visibility", "visible");
-                $("#addCardWindow").jqxWindow({ position: { x: parseInt(offset.left) + 50, y: parseInt(offset.top) - 50 } });
+                $("#addCardWindow").jqxWindow({ position: { x: parseInt(offset.left) + 300, y: parseInt(offset.top) - 50 } });
                 $('#addCardWindow').jqxWindow({ resizable: false });
                 $('#addCardWindow').jqxWindow({ title: 'Add a Card' });
                 $("#addCardWindow").jqxWindow('open');
@@ -363,6 +419,10 @@
 
             //Delte Card from Member
             $("#deleteCard").on("click", function (event) {
+                var result = confirm("Do you want to delete this card!");
+                if (result != true) {
+                    return null;
+                }
 
                 var getselectedrowindexes = $('#jqxCardGrid').jqxGrid('getselectedrowindexes');
 
@@ -370,7 +430,7 @@
                     for (var index = 0; index < getselectedrowindexes.length; index++) {
                         var selectedRowData = $('#jqxCardGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
 
-                        var url = $("#apiDomain").val() + "cards/" + selectedRowData.CardId;
+                        var url = $("#apiDomain").val() + "members/cards/" + selectedRowData.CardId;
 
                         $.ajax({
                             headers: {
@@ -385,6 +445,10 @@
                             dataType: "json",
                             success: function () {
                                 alert("Deleted!");
+                                thisMemberId = $("#MemberId").val();
+                                $('#jqxCardGrid').jqxGrid('clearselection');
+                                $('#jqxCardGrid').jqxGrid('clear');
+                                loadCards(thisMemberId);
                             },
                             error: function (request, status, error) {
                                 alert(error);
@@ -400,7 +464,7 @@
 
                 //var PageMemberID = Number($("#MemberId").val());
                 var PageMemberID = $("#MemberId").val();
-                var thisLocationId = 1;
+                var thisLocationId = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
                 var thisManualEditDate = new Date().toMMDDYYYYString();
                 var thisSubmittedDate = "1/1/1900";
                 var thisPerformedBy = $("#txtLoggedinUsername").val();
@@ -514,6 +578,10 @@
 
             $("#DisplayQA").on("click", function (event) {
                 loadDisplayQA();
+
+                $("#popupDisplayQA").css('display', 'block');
+                $("#popupDisplayQA").css('visibility', 'hidden');
+
                 var offset = $("#jqxMemberInfoTabs").offset();
                 $("#popupDisplayQA").jqxWindow({ position: { x: '5%', y: '10%' } });
                 $('#popupDisplayQA').jqxWindow({ resizable: false });
@@ -568,6 +636,10 @@
                     var row = event.args.rowindex;
                     var dataRecord = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
                     var thisItem = dataRecord.ParkingTransactionNumber;
+
+                    $("#popupReceipt").css('display', 'block');
+                    $("#popupReceipt").css('visibility', 'hidden');
+
                     var offset = $("#jqxMemberInfoTabs").offset();
 
                     $("#popupReceipt").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
@@ -581,7 +653,11 @@
                 //This will show the Redemption
                
                 if (isRedemption != null) {
-                    $("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
+
+                    $("#popupRedemption").css('display', 'block');
+                    $("#popupRedemption").css('visibility', 'hidden');
+
+                    $("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 90 } });
                     $('#popupRedemption').jqxWindow({ maxHeight: 610, maxWidth: 450 });
                     $('#popupRedemption').jqxWindow({ width: 450, height: 610 });
                     $("#popupRedemption").css("visibility", "visible");
@@ -794,7 +870,7 @@
             loadLocationCombo();
            
             $("#AccountTabContent").toggle();
-
+            $("#updateMemberInfo").css("visibility", "hidden");
             //create loader Icon
             $("#jqxLoader").jqxLoader({ isModal: true, width: 100, height: 60, imagePosition: 'top' });
 
@@ -830,7 +906,6 @@
                 height: 24,
                 mask: '###-#####'
             });
-
 
             $('#SearchFPNumber').jqxMaskedInput({ textAlign: "right" });
 
@@ -1456,6 +1531,7 @@
             var source =
             {
                 datafields: [
+                    { name: 'RedemptionId' },
                     { name: 'CertificateID' },
                     { name: 'RedemptionType', map: 'RedemptionType>RedemptionType' },
                     { name: 'RedeemDate', type: 'date' },
@@ -1479,13 +1555,15 @@
             {
                 theme: 'shinyblack',
                 width: '100%',
-                height: 500,
+                height: 450,
                 source: source,
                 rowsheight: 35,
                 sortable: true,
                 altrows: true,
                 filterable: true,
+                selectionmode: 'checkbox',
                 columns: [
+                      { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
                       { text: 'CertificateID', datafield: 'CertificateID' },
                       { text: 'Redemption Type', datafield: 'RedemptionType' },
                       { text: 'Redeem Date', datafield: 'RedeemDate', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
@@ -1504,6 +1582,7 @@
                 datafields: [
                     { name: 'ReservationId' },
                     { name: 'ReservationNumber' },
+                    { name: 'NameOfLocation', map: 'LocationInformation>NameOfLocation' },
                     { name: 'CreateDatetime', type: 'date' },
                     { name: 'StartDatetime', type: 'date' },
                     { name: 'EndDatetime', type: 'date' },
@@ -1536,12 +1615,13 @@
                 filterable: true,
                 columns: [
                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
-                      { text: 'Reservation Number', datafield: 'ReservationNumber', width: '15%' },
-                      { text: 'Create Date', datafield: 'CreateDatetime', width: '15%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
-                      { text: 'Start Date', datafield: 'StartDatetime', width: '15%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
-                      { text: 'End Date', datafield: 'EndDatetime', width: '15%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
+                      { text: 'Reservation Number', datafield: 'ReservationNumber', width: '10%' },
+                      { text: 'Location', datafield: 'NameOfLocation', width: '10%' },
+                      { text: 'Create Date', datafield: 'CreateDatetime', width: '13%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
+                      { text: 'Start Date', datafield: 'StartDatetime', width: '13%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
+                      { text: 'End Date', datafield: 'EndDatetime', width: '13%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
                       { text: 'Status', datafield: 'ReservationStatusName', width: '15%' },
-                      { text: 'Note', datafield: 'MemberNote', width: '25%' }
+                      { text: 'Note', datafield: 'MemberNote', width: '26%' }
                 ]
             });
         }
@@ -1871,6 +1951,10 @@
 
         //#region ShowPopups
         function newNote() {
+
+            $("#popupNote").css('display', 'block');
+            $("#popupNote").css('visibility', 'hidden');
+
             var offset = $("#jqxMemberInfoTabs").offset();
             $("#popupNote").jqxWindow({ position: { x: '25%', y: '30%' } });
             $('#popupNote').jqxWindow({ resizable: false });
@@ -2228,9 +2312,6 @@
                         <div class="col-sm-9">
                             <div class="row search-size">
                                 <div class="col-sm-15">
-                                    <div id="LocationCombo"></div>
-                                </div>
-                                <div class="col-sm-15">
                                     <div id="SearchFPNumber"></div>
                                 </div>
                                 <div class="col-sm-15">
@@ -2242,11 +2323,11 @@
                                 <div class="col-sm-15">
                                     <input type="text" id="SearchEmail" placeholder="Email" />
                                 </div>
-                            </div>
-                            <div class="row search-size">
                                 <div class="col-sm-15">
                                     <input type="text" id="SearchSteetAddress" placeholder="Street Address" />
                                 </div>
+                            </div>
+                            <div class="row search-size">
                                 <div class="col-sm-15">
                                     <input type="text" id="SearchPhoneNumber" placeholder="Phone" />
                                 </div>
@@ -2259,10 +2340,13 @@
                                 <div class="col-sm-15">
                                     <input type="text" id="SearchMailerCode" placeholder="Mailer Code"  />
                                 </div>
+                                <div class="col-sm-15">
+                                    <input type="text" id="SearchUserName" placeholder="User Name"  />
+                                </div>
                             </div>
                             <div class="row search-size">
                                 <div class="col-sm-15">
-                                    <input type="text" id="SearchUserName" placeholder="User Name"  />
+                                    <div id="LocationCombo" style="visibility:hidden;"></div>
                                 </div>
                                 <div class="col-sm-15">
                                 </div>
@@ -2660,7 +2744,6 @@
                                 </div>
 
 
-
                                 <div id="tabPoints" class="tab-body">
                                     <div class="row">
                                         <div class="col-sm-6 col-md-5">
@@ -2711,7 +2794,14 @@
                             </div>
                         </div>
                         <div id="tabRedemptions" class="tab-body">
-                            <div id="jqxRedemptionGrid"></div>
+                            <div class="row">
+                                <div class="col-sm-9 col-md-10">
+                                    <div id="jqxRedemptionGrid"></div>
+                                </div>
+                                <div class="col-sm-3 col-md-2">
+                                <input type="button" id="returnRedemption" value="Return Redemption" />
+                                </div>
+                            </div>
                         </div>
                         <div id="tabReservations" class="tab-body">
                             <div class="row">
@@ -2751,7 +2841,7 @@
     <div id="jqxLoader"></div>
 
     <%-- html for popup Note box --%>
-    <div id="popupNote" style="visibility:hidden">
+    <div id="popupNote" style="display:none">
         <div>Add Note</div>
         <div>
             <div class="modal-body">
@@ -2770,9 +2860,8 @@
         </div>
     </div>
 
-
     <%-- html for popup Add Card --%>
-    <div id="addCardWindow" style="visibility:hidden">
+    <div id="addCardWindow" style="display:none">
         <div>Add Card</div>
         <div>
             <div class="modal-body">
@@ -2812,7 +2901,8 @@
         </div>
     </div>
 
-    <div id="popupReservation" class="popupReservation" style="visibility:hidden">
+    <%-- html for Reservation --%>
+    <div id="popupReservation" class="popupReservation" style="display:none">
         <div>
             <div id="reservationInfo" style="float:left;">
                 <div>Location: <div id="reservationLocationCombo"></div></div>
@@ -2858,9 +2948,9 @@
 
     <!--Not Used right now.  this popup would display a jquery created QRCode-->
     <%-- html for popup QA box --%>
-    <div id="popupDisplayQA" style="visibility:hidden">
+    <div id="popupDisplayQA" style="display:none">
         <div>Questions &amp; Answers</div>
-        <div>
+        <div style="overflow: hidden;">
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
@@ -2873,20 +2963,20 @@
 
 
 
-    <div id='phoneContextMenu' style="visibility: hidden">
+    <div id='phoneContextMenu' style="display: none">
         <ul>
             <li>Delete Selected Row</li>
         </ul>
     </div>
 
-    <div id="popupReceipt" style="visibility: hidden">
+    <div id="popupReceipt" style="display: none">
         <div>View Reciept</div>
         <div>
             <iframe id="receiptIframe" style="border:none;width:255px;height:475px;" ></iframe>
         </div>
     </div>
 
-    <div id="popupRedemption" style="visibility: hidden;">
+    <div id="popupRedemption" style="display: none;">
         <div>View Reciept</div>
         <div>
             <iframe id="redemptionIframe" style="border:none;width:420px;height:570px;" ></iframe>

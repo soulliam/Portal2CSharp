@@ -4,6 +4,7 @@ using System.Web.UI;
 using System.Security.Principal;
 using System.DirectoryServices;
 using System.Collections;
+using System.DirectoryServices.AccountManagement;
 
 public partial class Portal2 : System.Web.UI.MasterPage
 {
@@ -29,12 +30,13 @@ public partial class Portal2 : System.Web.UI.MasterPage
             Page.Title = "Portal for guest user.";
         }
 
-        //Get member Guid and place in hidden textbox
+        //Get member SID and place in hidden textbox
         IPrincipal userPrincipal = HttpContext.Current.User;
         WindowsIdentity windowsId = userPrincipal.Identity as WindowsIdentity;
         if (windowsId != null)
         {
             SecurityIdentifier sid = windowsId.User;
+
 
             using (DirectoryEntry userDe = new DirectoryEntry("LDAP://<SID=" + sid.Value + ">"))
             {
@@ -43,6 +45,8 @@ public partial class Portal2 : System.Web.UI.MasterPage
                 //userGuid.Text = Convert.ToString(objectGuid);
             }
         }
+
+
 
         //Create session variable with members groups
         string groupList = "";

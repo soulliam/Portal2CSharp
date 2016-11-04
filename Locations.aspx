@@ -7,7 +7,6 @@
         }
     </style>
 
-
     <link rel="stylesheet" href="jqwidgets/styles/jqx.base.css" type="text/css" />
     <script type="text/javascript" src="jqwidgets/jqxcore.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxbuttons.js"></script>
@@ -38,7 +37,7 @@
 
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
-            
+
 
             //set up the tabs
             $('#jqxTabs').jqxTabs({ width: '100%', position: 'top' });
@@ -56,6 +55,26 @@
                 }
                 else {
                     $('#jqxTabs').jqxTabs({ animationType: 'none' });
+                }
+            });
+
+
+            //set up the location Detail tabs
+            $('#jqxLocationTabs').jqxTabs({ width: '100%', position: 'top' });
+            $('#jqxLocationTabs').css('margin-bottom', '10px');
+            $('#settings div').css('margin-top', '10px');
+            $('#animation').on('change', function (event) {
+                var checked = event.args.checked;
+                $('#jqxLocationTabs').jqxTabs({ selectionTracker: checked });
+            });
+
+            $('#contentAnimation').on('change', function (event) {
+                var checked = event.args.checked;
+                if (checked) {
+                    $('#jqxLocationTabs').jqxTabs({ animationType: 'fade' });
+                }
+                else {
+                    $('#jqxLocationTabs').jqxTabs({ animationType: 'none' });
                 }
             });
 
@@ -733,7 +752,9 @@
                     { name: 'LocationContactEmail' },
                     { name: 'IMP' },
                     { name: 'LocationHasFeatureId' },
-                    { name: 'SiteURL' }
+                    { name: 'SiteURL' },
+                    { name: 'FirstName', map: 'MarketingRep>FirstName' },
+                    { name: 'LastName', map: 'MarketingRep>LastName' }
                 ],
 
                 id: 'LocationId',
@@ -749,9 +770,9 @@
             // creage jqxgrid
             $("#jqxgrid").jqxGrid(
             {
-                pageable: true,
-                pagermode: 'simple',
-                //pagermode: 'advanced',
+                //pageable: true,
+                //pagermode: 'simple',
+                pagermode: 'advanced',
                 pagesize: 12,
                 width: '100%',
                 height: 500,
@@ -769,6 +790,10 @@
                               return "Edit";
                           }, buttonclick: function (row) {
                               // open the popup window when the user clicks a button.
+
+                              $("#popupLocation").css('display', 'block');
+                              $("#popupLocation").css('visibility', 'hidden');
+
                               editrow = row;
                               var offset = $("#jqxgrid").offset();
                               $("#popupLocation").jqxWindow({ position: { x: '5%', y: '7.5%' } });
@@ -829,6 +854,7 @@
                               $("#LocationContactEmail").val(dataRecord.LocationContactEmail);
                               $("#SkiDataIMP").val(dataRecord.IMP);
                               $("#SiteURL").val(dataRecord.SiteURL);
+                              $("#cityCombo").jqxComboBox('selectItem', dataRecord.CityId);
 
                               //sets the current selected location
                               selectedLocationId = dataRecord.LocationId;
@@ -838,29 +864,29 @@
 
                               // show the popup window.
                               $("#popupLocation").jqxWindow('open');
-                          }
+                          }, width: '5%'
                       },
                       // loads the rest of the columns for the location grid
                       { text: 'LocationId', datafield: 'LocationId', hidden: true },
-                      { text: 'Name', datafield: 'NameOfLocation' },
+                      { text: 'Name', datafield: 'NameOfLocation', width: '20%' },
                       { text: 'Display Name', datafield: 'DisplayName', hidden: true },
-                      { text: 'Short Name', datafield: 'ShortLocationName' },
+                      { text: 'Short Name', datafield: 'ShortLocationName', hidden: true },
                       { text: 'Facility #', datafield: 'FacilityNumber', hidden: true },
                       { text: 'SkiData Version', datafield: 'SkiDataVersion', hidden: true },
                       { text: 'SkiData Location', datafield: 'SkiDataLocation', hidden: true },
-                      { text: 'Address', datafield: 'LocationAddress' },
+                      { text: 'Address', datafield: 'LocationAddress', width: '15%' },
                       { text: 'City', datafield: 'LocationCity', hidden: true },
-                      { text: 'Zip', datafield: 'LocationZipCode' },
-                      { text: 'Phone', datafield: 'LocationPhoneNumber' },
+                      { text: 'Zip', datafield: 'LocationZipCode', width: '5%' },
+                      { text: 'Phone', datafield: 'LocationPhoneNumber', width: '10%' },
                       { text: 'Fax', datafield: 'LocationFaxNumber', hidden: true },
-                      { text: 'Capacity', datafield: 'Capacity' },
+                      { text: 'Capacity', datafield: 'Capacity', width: '5%' },
                       { text: 'Description', datafield: 'Description', hidden: true },
                       { text: 'Alert', datafield: 'Alert', hidden: true },
                       { text: 'Slug', datafield: 'Slug', hidden: true },
-                      { text: 'Manager', datafield: 'Manager' },
+                      { text: 'Manager', datafield: 'Manager', width: '15%' },
                       { text: 'Manager Email', datafield: 'ManagerEmail', hidden: true },
-                      { text: 'Daily Rate', datafield: 'DailyRate' },
-                      { text: 'Hourly Rate', datafield: 'HourlyRate' },
+                      { text: 'Daily Rate', datafield: 'DailyRate', width: '5%' },
+                      { text: 'Hourly Rate', datafield: 'HourlyRate', width: '5%' },
                       { text: 'RateQualifications', datafield: 'RateQualifications', hidden: true },
                       { text: 'RateText', datafield: 'RateText', hidden: true },
                       { text: 'MemberRateText', datafield: 'MemberRateText', hidden: true },
@@ -880,8 +906,13 @@
                       { text: 'LocationContactEmail', datafield: 'LocationContactEmail', hidden: true },
                       { text: 'SiteURL', datafield: 'SiteURL', hidden: true },
                       { text: 'IMP', datafield: 'IMP', hidden: true },
-                      { text: 'City', datafield: 'CityName' },
-                      { text: 'State', datafield: 'StateName' }
+                      { text: 'City', datafield: 'CityName', hidden: true },
+                      { text: 'State', datafield: 'StateName', hidden: true },
+                      { text: 'Marketing Rep', datafield: 'FirstName', cellsrenderer: function(row, column, value, defaultSettings, columnSettings, rowdata )
+                            {
+                                return "<div style='margin-left: 4px;margin-top:10px;'>" + value + ' ' + rowdata.LastName +"</div>";
+                            }, width: '15%'
+                      }
                 ]
             });
         }
@@ -952,7 +983,7 @@
                                 }
                             },
                             //  uncomment below to show the what you want
-                            { text: 'LocationHasFeatureId', datafield: 'LocationHasFeatureId', editable: false },
+                            { text: 'LocationHasFeatureId', datafield: 'LocationHasFeatureId', hidden: true, editable: false },
                             { text: 'Feature Name', datafield: 'FeatureName', editable: false },
                             { text: 'FeatureId', datafield: 'FeatureId', hidden: true, editable: false },
                             { text: 'FeatureSortOrder', datafield: 'SortOrder', editable: false },
@@ -1173,21 +1204,26 @@
 
 
     <%-- html for popup edit box --%>
-    <div id="popupLocation" style="visibility:hidden;">
+    <div id="popupLocation" style="display:none;">
         <div>Location Details</div>
         <div>
             <div class="modal-body">
                 <div id="jqxTabs" class="tab-system">
                     <ul>
                         <li>Location</li>
-                        <li>SkiData</li>
-                        <li>Website</li>
-                        <li>Manager</li>
                         <li>Edit Feature</li>
                         <li>Add Feature</li>
                         <li>Location Images</li>
                     </ul>
-                    <div id="locationTab" class="tab-body">
+                    <div id="LocationTab">
+                        <div id="jqxLocationTabs" class="tab-system">
+                            <ul>
+                                <li style="margin-left:50px;">Location</li>>
+                                <li>Skidata</li>
+                                <li>Website</li>
+                                <li>Contact</li>
+                            </ul>
+                            <div id="locationTab" class="tab-body">
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-horizontal">
@@ -1499,6 +1535,8 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
                         </div>
                     </div>
                     <div id="editfeatureTab" class="tab-body">
