@@ -237,12 +237,18 @@
                 $("#popupReservation").css('visibility', 'hidden');
 
                 var offset = $("#jqxMemberInfoTabs").offset();
-                $('#popupReservation').jqxWindow({ maxHeight: 600, maxWidth: 950 });
-                $('#popupReservation').jqxWindow({ width: "950px", height: "600px" });
-                $("#popupReservation").css("visibility", "visible");
-                $("#popupReservation").jqxWindow({ position: { x: parseInt(offset.left) + 50, y: parseInt(offset.top) - 100 } });
+                $("#popupReservation").jqxWindow({ position: { x: '5%', y: '10%' } });
                 $('#popupReservation').jqxWindow({ resizable: false });
-                $('#popupReservation').jqxWindow({ title: 'Add a Card' });
+                $('#popupReservation').jqxWindow({ draggable: true });
+                $('#popupReservation').jqxWindow({ isModal: true });
+                $("#popupReservation").css("visibility", "visible");
+                $('#popupReservation').jqxWindow({ height: '80%', width: '90%' });
+                $('#popupReservation').jqxWindow({ minHeight: '80%', minWidth: '90%' });
+                $('#popupReservation').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
+                $('#popupReservation').jqxWindow({ showCloseButton: true });
+                $('#popupReservation').jqxWindow({ animationType: 'combined' });
+                $('#popupReservation').jqxWindow({ showAnimationDuration: 300 });
+                $('#popupReservation').jqxWindow({ closeAnimationDuration: 500 });
                 $("#popupReservation").jqxWindow('open');
             });
 
@@ -399,16 +405,21 @@
 
             //show add card popup
             $("#addCard").on("click", function (event) {
-
                 $("#addCardWindow").css('display', 'block');
                 $("#addCardWindow").css('visibility', 'hidden');
-
                 var offset = $("#jqxMemberInfoTabs").offset();
-                $('#addCardWindow').jqxWindow({ width: "250px", height: "235px" });
-                $("#addCardWindow").css("visibility", "visible");
-                $("#addCardWindow").jqxWindow({ position: { x: parseInt(offset.left) + 300, y: parseInt(offset.top) - 50 } });
+                $("#addCardWindow").jqxWindow({ position: { x: '25%', y: '30%' } });
                 $('#addCardWindow').jqxWindow({ resizable: false });
-                $('#addCardWindow').jqxWindow({ title: 'Add a Card' });
+                $('#addCardWindow').jqxWindow({ draggable: true });
+                $('#addCardWindow').jqxWindow({ isModal: true });
+                $("#addCardWindow").css("visibility", "visible");
+                $('#addCardWindow').jqxWindow({ height: '250px', width: '50%' });
+                $('#addCardWindow').jqxWindow({ minHeight: '250px', minWidth: '50%' });
+                $('#addCardWindow').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+                $('#addCardWindow').jqxWindow({ showCloseButton: true });
+                $('#addCardWindow').jqxWindow({ animationType: 'combined' });
+                $('#addCardWindow').jqxWindow({ showAnimationDuration: 300 });
+                $('#addCardWindow').jqxWindow({ closeAnimationDuration: 500 });
                 $("#addCardWindow").jqxWindow('open');
             });
 
@@ -1971,9 +1982,18 @@
             $("#popupNote").css('visibility', 'hidden');
 
             var offset = $("#jqxMemberInfoTabs").offset();
-            $("#popupNote").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) + 150 } });
-            $('#popupNote').jqxWindow({ width: "420px" });
+            $("#popupNote").jqxWindow({ position: { x: '25%', y: '30%' } });
+            $('#popupNote').jqxWindow({ resizable: false });
+            $('#popupNote').jqxWindow({ draggable: true });
+            $('#popupNote').jqxWindow({ isModal: true });
             $("#popupNote").css("visibility", "visible");
+            $('#popupNote').jqxWindow({ height: '195px', width: '50%' });
+            $('#popupNote').jqxWindow({ minHeight: '195px', minWidth: '50%' });
+            $('#popupNote').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+            $('#popupNote').jqxWindow({ showCloseButton: true });
+            $('#popupNote').jqxWindow({ animationType: 'combined' });
+            $('#popupNote').jqxWindow({ showAnimationDuration: 300 });
+            $('#popupNote').jqxWindow({ closeAnimationDuration: 500 });
             $("#popupNote").jqxWindow('open');
         }
         //#endregion
@@ -2869,34 +2889,57 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
-                        <input type="text" id="addCardFPNumber" placeholder="FPNumber" />
-                    </div>
-                    <div class="col-sm-12">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" id="addCardIsPrimary" value="">
-                                Is Primary
-                            </label>
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label for="addCardFPNumber" class="col-sm-3 col-md-4 control-label">FP Number:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="addCardFPNumber" placeholder="FPNumber" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="addCardIsPrimary" class="col-sm-3 col-md-4 control-label">Is Primary:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="form-control" id="addCardIsPrimary" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="addCardIsActive" class="col-sm-3 col-md-4 control-label">Is Active:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="form-control" id="addCardIsActive" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="addCardCreateDigitalCard" class="col-sm-3 col-md-4 control-label">Create Digital:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="form-control" id="addCardCreateDigitalCard" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-sm-12">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" id="addCardIsActive" value="">
-                                Is Active
-                            </label>
+                        <div class="top-divider">
+                            <div class="col-sm-3 col-md-4">
+                            </div>
+                            <div class="col-sm-6 col-md-4">
+                                <input type="button" class="form-control" id="addCardSubmit" value="Add" />
+                            </div>
+                            <div class="col-sm-3 col-md-4">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-12">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" id="addCardCreateDigitalCard" value="">
-                                Create Digital
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-sm-12">
-                        <input type="button" id="addCardSubmit" value="Add" />
                     </div>
                 </div>
             </div>

@@ -164,7 +164,8 @@ table {
     margin-bottom: 10px;
 }
 .tab-body .jqx-max-size input,
-.tab-nested-body .jqx-max-size input {
+.tab-nested-body .jqx-max-size input,
+.modal-body .jqx-max-size input {
     height: initial;
 }
 .modal-body textarea {
