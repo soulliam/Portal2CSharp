@@ -985,6 +985,9 @@
                 altrows: true,
                 filterable: true,
                 editable: true,
+                ready: function(){
+                    $("#jqxFeatureGrid").jqxGrid('sortby', 'SortOrder', 'asc');
+                },
                 columns: [{
                                 //creates the edit button
                             text: '', pinned: true, datafield: 'Edit', width: 50, columntype: 'button', cellsrenderer: function () {
@@ -1023,11 +1026,6 @@
                       
                 ]
             });
-
-            $("#jqxFeatureGrid").bind('bindingcomplete', function () {
-                $("#jqxFeatureGrid").jqxGrid('sortby', 'SortOrder', 'asc');
-            });
-
         }
 
         function loadLocationImagesGrid(thisLocationId) {
@@ -1068,6 +1066,9 @@
                 source: locationImagesSource,
                 altrows: true,
                 editable: true,
+                ready: function(){
+                    $("#jqxLocationImagesGrid").jqxGrid('sortby', 'SortOrder', 'asc');
+                },
                 columns: [
                             //  uncomment below to show the what you want
                             { text: 'ImageId', datafield: 'ImageId', editable: false, width: '7%' },
@@ -1108,10 +1109,6 @@
                     document.getElementById('showImage').src = "https://stage.thefastpark.com" + source;
                 }
 
-            });
-
-            $("#jqxLocationImagesGrid").bind('bindingcomplete', function () {
-                $("#jqxLocationImagesGrid").jqxGrid('sortby', 'SortOrder', 'asc');
             });
 
         }
