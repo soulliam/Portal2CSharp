@@ -285,6 +285,7 @@
                         //Clear the redemption grid and reload
                         $('#jqxRedemptionGrid').jqxGrid('clearselection');
                         $('#jqxRedemptionGrid').jqxGrid('clear');
+                        $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
                         loadRedemptions(thisMemberId);
                         loadMemberActivity(thisMemberId);
                     },
@@ -370,14 +371,31 @@
                 var thisStreetAddress = $("#StreetAddress").val();
                 var thisStreetAddress2 = $("#StreetAddress2").val();
                 var thisCityName = $("#CityName").val();
-                var thisStateId = $("#stateCombo").jqxComboBox('getSelectedItem').value;
+
+                if ($("#stateCombo").jqxComboBox('getSelectedIndex') == -1) {
+                    var thisStateId = 0;
+                } else {
+                    var thisStateId = $("#stateCombo").jqxComboBox('getSelectedItem').value;
+                }
+
                 var thisZip = $("#Zip").val();
                 var thisCompany = $("#Company").val();
                 var thisTitleId = 1;
                 var thisMarketingCode = $("#MailerCode").val();
-                var thisMemberId = $("#MemberId").val();homeLocationCombo
-                var thisLocationId = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
-                var thisCompanyId = $("#MailerCompanyCombo").jqxComboBox('getSelectedItem').value;
+                var thisMemberId = $("#MemberId").val(); homeLocationCombo
+
+                if ($("#homeLocationCombo").jqxComboBox('getSelectedIndex') == -1) {
+                    var thisLocationId = 0;
+                } else {
+                    var thisLocationId = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
+                }
+
+                if ($("#MailerCompanyCombo").jqxComboBox('getSelectedIndex') == -1) {
+                    var thisCompanyId = 0;
+                } else {
+                    var thisCompanyId = $("#MailerCompanyCombo").jqxComboBox('getSelectedItem').value;
+                }
+               
                 var thisGetEmail = $("#GetEmail").prop("checked");
 
                 var first = true;
@@ -514,6 +532,7 @@
                     dataType: "json",
                     success: function (Response) {
                         alert("Saved!");
+                        $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
                     },
                     error: function (request, status, error) {
                         alert(error);
@@ -1003,6 +1022,11 @@
         }
 
         function loadCards(PageMemberID) {
+
+            var parent = $("#jqxCardGrid").parent();
+            $("#jqxCardGrid").jqxGrid('destroy');
+            $("<div id='jqxCardGrid'></div>").appendTo(parent);
+
             //Loads card list
             var url = $("#apiDomain").val() + "Members/" + PageMemberID + "/Cards";
 
@@ -1510,6 +1534,10 @@
 
         function loadNotes(PageMemberID) {
             //Loads card list
+            var parent = $("#jqxNotesGrid").parent();
+            $("#jqxNotesGrid").jqxGrid('destroy');
+            $("<div id='jqxNotesGrid'></div>").appendTo(parent);
+
             var url = $("#localApiDomain").val() + "MemberNotes/NotesByMemberId/" + PageMemberID;
             var source =
             {
@@ -1955,22 +1983,23 @@
 
             $.ajax({
                 type: "POST",
-                //url: $("#localApiDomain").val() + "MemberNotes/AddNote/",
-                url: "http://localhost:52839/api/MemberNotes/AddNote/",
+                url: $("#localApiDomain").val() + "MemberNotes/AddNote/",
+                //url: "http://localhost:52839/api/MemberNotes/AddNote/",
 
                 data: { "MemberId": memberId, "Note": note, "Date": thisDate, "SubmittedBy": submittedBy },
                 dataType: "json",
                 success: function () {
                     alert("Saved!");
+                    loadNotes($("#MemberId").val());
                 },
                 error: function (request, status, error) {
-
+                    alert(error);
                 }
             });
 
             $("#txtNote").val('');
             $("#popupNote").jqxWindow('hide');
-            loadNotes($("#MemberId").val());
+            
         }
 
         //#endregion
@@ -2014,6 +2043,7 @@
             $("#topMemberSince").html("");
             $("#topLastLogin").html
             $("#topName").html("");
+            
         }
 
         function findMember(PageMemberID) {
@@ -2057,6 +2087,9 @@
         }
 
         function loadMember(PageMemberID) {
+            clearMemberInfo();
+            
+
             //load member Phone lit
             var MemberSource =
             {
@@ -2176,7 +2209,7 @@
 
             var locationId = 0;
 
-            clearMemberInfo();
+
 
             $.ajax({
                 type: 'GET',

@@ -1,6 +1,46 @@
 ﻿function saveUpdateMemberInfo(phoneType, phoneNumber, thisMemberId, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2,
                                      thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail) {
     switch (phoneType.length) {
+        case 0:
+            $.ajax({
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "AccessToken": $("#userGuid").val(),
+                    "ApplicationKey": $("#AK").val()
+                },
+                type: "PUT",
+                url: $("#apiDomain").val() + "members/" + thisMemberId,
+                data: JSON.stringify({
+                    "UserName": thisUserName,
+                    "FirstName": thisFirstName,
+                    "LastName": thisLastName,
+                    "Suffix": "",
+                    "EmailAddress": thisEmailAddress,
+                    "StreetAddress": thisStreetAddress,
+                    "StreetAddress2": thisStreetAddress2,
+                    "CityName": thisCityName,
+                    "StateId": thisStateId,
+                    "Zip": thisZip,
+                    "Password": "",
+                    "VerifyPassword": "",
+                    "Company": thisCompany,
+                    "TitleId": thisTitleId,
+                    "CorporateDiscountCode": thisMarketingCode,
+                    "LocationId": thisLocationId,
+                    "PhoneList": [],
+                    "GetEmail": thisGetEmail,
+                    "EmailReceiptsFlag": true
+                }),
+                dataType: "json",
+                success: function () {
+                    alert("Saved!");
+                },
+                error: function (request, status, error) {
+                    alert(status);
+                }
+            });
+            break;
         case 1:
             $.ajax({
                 headers: {

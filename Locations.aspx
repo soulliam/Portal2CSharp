@@ -38,6 +38,21 @@
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
 
+            $("#masterBody").on('contextmenu', function () {
+                return false;
+            });
+
+            $(".imageLink").on('contextmenu', function () {
+                return false;
+            });
+
+            $("#jqxLocationImagesGrid").on('contextmenu', function () {
+                return false;
+            });
+
+            $("#locationImagesTab").on('contextmenu', function () {
+                return false;
+            });
 
             //set up the tabs
             $('#jqxTabs').jqxTabs({ width: '100%', position: 'top' });
@@ -105,7 +120,7 @@
                 var ImageUrl = "";
                 var Caption = "";
                 var SortOrder = "";
-                var error = false;
+                var thisError = false;
 
                 var rows = $("#jqxLocationImagesGrid").jqxGrid('getrows');
 
@@ -139,12 +154,12 @@
                             
                         },
                         error: function (request, status, error) {
-                            error = true;
-                            alert(request.responseText);
+                            thisError = true;
+                            alert(error);
                         }
                     })
                 }
-                if (error == false) {
+                if (thisError == false) {
                     alert("Saved!")
 
                     loadLocationImagesGrid(selectedLocationId);
@@ -1060,7 +1075,7 @@
                             { text: 'LocationId', datafield: 'LocationId', editable: false, width: '7%' },
                             { text: 'ImageUrl', datafield: 'ImageUrl', cellsrenderer: function(row, column, value, defaultSettings, columnSettings, rowdata )
                             {
-                                return "<a href='http://google.com'><div>" + value + "</div></a>";
+                                return "<a class='imageLink'><div>" + value + "</div></a>";
                             }, width: '49%'},
                             { text: 'Caption', datafield: 'Caption', width: '30%' },
                             { text: 'SortOrder', datafield: 'SortOrder', width: '7%' }
@@ -1077,8 +1092,6 @@
                     var datarow = $("#jqxLocationImagesGrid").jqxGrid('getrowdata', row);
                     var source = datarow.ImageUrl;
                     var offset = $("#jqxLocationTabs").offset();
-
-                    alert("https://stage.thefastpark.com" + source);
 
                     $("#popupImage").jqxWindow({ position: { x: '25%', y: '30%' } });
                     $('#popupImage').jqxWindow({ resizable: false });
