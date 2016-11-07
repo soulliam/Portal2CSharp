@@ -39,6 +39,8 @@
 
             //#region SetupButtons
             $("#btnNew").jqxLinkButton({ width: '100%', height: '26' });
+            $("#Save").jqxButton();
+            $("#Cancel").jqxButton();
             //#endregion
             
             $("#Save").click(function () {
@@ -217,10 +219,18 @@
                               $("#popupImage").css('visibility', 'hidden');
 
                               var offset = $("#jqxgrid").offset();
-                              $("#popupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 400, y: parseInt(offset.top) + 60 } });
+                              $("#popupWindow").jqxWindow({ position: { x: '5%', y: '30%' } });
+                              $('#popupWindow').jqxWindow({ resizable: false });
+                              $('#popupWindow').jqxWindow({ draggable: true });
+                              $('#popupWindow').jqxWindow({ isModal: true });
                               $("#popupWindow").css("visibility", "visible");
-                              $('#popupWindow').jqxWindow({ width: '700', height: '400' });
-                              $('#popupWindow').jqxWindow({ showCloseButton: false });
+                              $('#popupWindow').jqxWindow({ height: '320px', width: '90%' });
+                              $('#popupWindow').jqxWindow({ minHeight: '320px', minWidth: '90%' });
+                              $('#popupWindow').jqxWindow({ maxHeight: '500px', maxWidth: '90%' });
+                              $('#popupWindow').jqxWindow({ showCloseButton: true });
+                              $('#popupWindow').jqxWindow({ animationType: 'combined' });
+                              $('#popupWindow').jqxWindow({ showAnimationDuration: 300 });
+                              $('#popupWindow').jqxWindow({ closeAnimationDuration: 500 });
                               $("#popupWindow").jqxWindow('open');
                               
 
@@ -240,10 +250,18 @@
         }
 
         function newFeature() {
-            var offset = $("#jqxgrid").offset();
-            $("#popupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 400, y: parseInt(offset.top) + 60 } });
-            $("#popupWindow").jqxWindow({ width: '700', height: '300' });
+            var offset = $("#jqxgrid").offset();$("#popupWindow").jqxWindow({ position: { x: '5%', y: '30%' } });
+            $('#popupWindow').jqxWindow({ resizable: false });
+            $('#popupWindow').jqxWindow({ draggable: true });
+            $('#popupWindow').jqxWindow({ isModal: true });
             $("#popupWindow").css("visibility", "visible");
+            $('#popupWindow').jqxWindow({ height: '320px', width: '90%' });
+            $('#popupWindow').jqxWindow({ minHeight: '320px', minWidth: '90%' });
+            $('#popupWindow').jqxWindow({ maxHeight: '500px', maxWidth: '90%' });
+            $('#popupWindow').jqxWindow({ showCloseButton: true });
+            $('#popupWindow').jqxWindow({ animationType: 'combined' });
+            $('#popupWindow').jqxWindow({ showAnimationDuration: 300 });
+            $('#popupWindow').jqxWindow({ closeAnimationDuration: 500 });
             $("#popupWindow").jqxWindow('open');
         }
 
@@ -283,52 +301,94 @@
         </div>
     </div><!-- /.container-fluid -->
 
-    <%-- html for popup edit box --%>
+    <%-- html for popup Edit box --%>
     <div id="popupWindow" style="display:none">
-            <div>Edit</div>
-            <div style="overflow: hidden;">
-                <table>
-                    <tr>
-                        <td>Feature Id:</td>
-                        <td><input id="FeatureId" style="width:500px;" disabled /></td>
-                    </tr>
-                    <tr>
-                        <td>Feature Name:</td>
-                        <td><input id="FeatureName" style="width:500px;"  /></td>
-                    </tr>
-                    <tr>
-                        <td>Image Url:</td>
-                        <td><input id="ImageUrl" style="width:500px;" /></td>
-                    </tr>
-                    <tr>
-                        <td>Sub-Text:</td>
-                        <td><textarea rows="4" cols="55" id="Subtext"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>Detail:</td>
-                        <td><textarea rows="4" cols="55" id="Detail"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td>Sort Order:</td>
-                        <td><input id="SortOrder" style="width:500px;" /></td>
-                    </tr>
-                    <tr>
-                        <td>IconCSSClass:</td>
-                        <td><input id="IconCSSClass" style="width:500px;" /></td>
-                    </tr>
-                    <tr>
-                        <td>DisplayOnLandingPage:</td>
-                        <td><input id="DisplayOnLandingPage" style="width:500px;" /></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td style="padding-top: 10px;"><input style="margin-right: 5px;" type="button" id="Save" value="Save" /><input id="Cancel" type="button" value="Cancel" /></td>
-                    </tr>
-                </table>
+        <div>Feature Details</div>
+        <div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label for="FeatureId" class="col-sm-3 col-md-4 control-label">Feature Id:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="FeatureId" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="FeatureName" class="col-sm-3 col-md-4 control-label">Feature Name:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="FeatureName" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ImageUrl" class="col-sm-3 col-md-4 control-label">Image Url:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="ImageUrl" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="Subtext" class="col-sm-3 col-md-4 control-label">Sub-Text:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <textarea rows="4" class="form-control" id="Subtext" /></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label for="Detail" class="col-sm-3 col-md-4 control-label">Detail:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <textarea rows="4" class="form-control" id="Detail" /></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="SortOrder" class="col-sm-3 col-md-4 control-label">Sort Order:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="SortOrder" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="IconCSSClass" class="col-sm-3 col-md-4 control-label">Icon CSS Class:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="IconCSSClass" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="DisplayOnLandingPage" class="col-sm-3 col-md-4 control-label">Display On Landing Page:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="form-control" id="DisplayOnLandingPage" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="top-divider">
+                            <div class="col-sm-2 col-md-3">
+                            </div>
+                            <div class="col-sm-4 col-md-3">
+                                <input type="button" id="Save" value="Save" />
+                            </div>
+                            <div class="col-sm-4 col-md-3">
+                                <input type="button" id="Cancel" value="Cancel" />
+                            </div>
+                            <div class="col-sm-2 col-md-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
+    <%-- html for popup edit box END --%>
 
-       </div>
-       <%-- html for popup edit box END --%>
 </asp:Content>
 
 

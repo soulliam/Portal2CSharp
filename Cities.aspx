@@ -220,8 +220,8 @@
                               $('#popupWindow').jqxWindow({ draggable: true });
                               $('#popupWindow').jqxWindow({ isModal: true });
                               $("#popupWindow").css("visibility", "visible");
-                              $('#popupWindow').jqxWindow({ height: '250px', width: '50%' });
-                              $('#popupWindow').jqxWindow({ minHeight: '250px', minWidth: '50%' });
+                              $('#popupWindow').jqxWindow({ height: '235px', width: '50%' });
+                              $('#popupWindow').jqxWindow({ minHeight: '235px', minWidth: '50%' });
                               $('#popupWindow').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
                               $('#popupWindow').jqxWindow({ showCloseButton: true });
                               $('#popupWindow').jqxWindow({ animationType: 'combined' });
@@ -260,8 +260,8 @@
             $('#popupWindow').jqxWindow({ draggable: true });
             $('#popupWindow').jqxWindow({ isModal: true });
             $("#popupWindow").css("visibility", "visible");
-            $('#popupWindow').jqxWindow({ height: '250px', width: '50%' });
-            $('#popupWindow').jqxWindow({ minHeight: '250px', minWidth: '50%' });
+            $('#popupWindow').jqxWindow({ height: '235px', width: '50%' });
+            $('#popupWindow').jqxWindow({ minHeight: '235px', minWidth: '50%' });
             $('#popupWindow').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
             $('#popupWindow').jqxWindow({ showCloseButton: true });
             $('#popupWindow').jqxWindow({ animationType: 'combined' });

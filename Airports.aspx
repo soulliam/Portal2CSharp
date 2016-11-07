@@ -47,6 +47,8 @@
 
             //#region SetupButtons
             $("#btnNew").jqxLinkButton({ width: '100%', height: '26' });
+            $("#Save").jqxButton();
+            $("#Cancel").jqxButton();
             //#endregion
             
             $("#Save").click(function () {
@@ -174,7 +176,7 @@
             var cityDataAdapter = new $.jqx.dataAdapter(citySource);
             $("#cityCombo").jqxComboBox(
             {
-                width: 180,
+                width: '100%',
                 height: 25,
                 source: cityDataAdapter,
                 selectedIndex: 0,
@@ -271,14 +273,14 @@
                               $("#popupWindow").css('visibility', 'hidden');
 
                               var offset = $("#jqxgrid").offset();
-                              $("#popupWindow").jqxWindow({ position: { x: '25%', y: '30%' } });
+                              $("#popupWindow").jqxWindow({ position: { x: '5%', y: '30%' } });
                               $('#popupWindow').jqxWindow({ resizable: false });
                               $('#popupWindow').jqxWindow({ draggable: true });
                               $('#popupWindow').jqxWindow({ isModal: true });
                               $("#popupWindow").css("visibility", "visible");
-                              $('#popupWindow').jqxWindow({ height: '250px', width: '50%' });
-                              $('#popupWindow').jqxWindow({ minHeight: '250px', minWidth: '50%' });
-                              $('#popupWindow').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+                              $('#popupWindow').jqxWindow({ height: '310px', width: '90%' });
+                              $('#popupWindow').jqxWindow({ minHeight: '310px', minWidth: '90%' });
+                              $('#popupWindow').jqxWindow({ maxHeight: '500px', maxWidth: '90%' });
                               $('#popupWindow').jqxWindow({ showCloseButton: true });
                               $('#popupWindow').jqxWindow({ animationType: 'combined' });
                               $('#popupWindow').jqxWindow({ showAnimationDuration: 300 });
@@ -308,14 +310,14 @@
             $("#popupWindow").css('visibility', 'hidden');
 
             var offset = $("#jqxgrid").offset();
-            $("#popupWindow").jqxWindow({ position: { x: '25%', y: '30%' } });
+            $("#popupWindow").jqxWindow({ position: { x: '5%', y: '30%' } });
             $('#popupWindow').jqxWindow({ resizable: false });
             $('#popupWindow').jqxWindow({ draggable: true });
             $('#popupWindow').jqxWindow({ isModal: true });
             $("#popupWindow").css("visibility", "visible");
-            $('#popupWindow').jqxWindow({ height: '250px', width: '50%' });
-            $('#popupWindow').jqxWindow({ minHeight: '250px', minWidth: '50%' });
-            $('#popupWindow').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+            $('#popupWindow').jqxWindow({ height: '310px', width: '90%' });
+            $('#popupWindow').jqxWindow({ minHeight: '310px', minWidth: '90%' });
+            $('#popupWindow').jqxWindow({ maxHeight: '500px', maxWidth: '90%' });
             $('#popupWindow').jqxWindow({ showCloseButton: true });
             $('#popupWindow').jqxWindow({ animationType: 'combined' });
             $('#popupWindow').jqxWindow({ showAnimationDuration: 300 });
@@ -361,11 +363,11 @@
     
     <%-- html for popup Edit box --%>
     <div id="popupWindow" style="display:none">
-        <div>City Details</div>
+        <div>Airport Details</div>
         <div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-sm-12">
+                    <div class="col-sm-6">
                         <div class="form-horizontal">
                             <div class="form-group">
                                 <label for="AirportId" class="col-sm-3 col-md-4 control-label">AirportId:</label>
@@ -397,6 +399,10 @@
                                     <input type="text" class="form-control" id="LocationText" />
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-horizontal">
                             <div class="form-group">
                                 <label for="CityCaption" class="col-sm-3 col-md-4 control-label">City Caption:</label>
                                 <div class="col-sm-9 col-md-8">
