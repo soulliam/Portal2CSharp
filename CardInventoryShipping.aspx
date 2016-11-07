@@ -34,20 +34,30 @@
         $(document).ready(function () {
             loadGrid();
 
-            $("#lastShipped").val(GetLastCardShipped());
-            $("#jqxdatetimeinputShip").jqxDateTimeInput({ width: '150px', height: '19px', formatString: 'MM/dd/yyyy' }); 
-            $("#jqxdatetimeinputSpecShip").jqxDateTimeInput({ width: '150px', height: '19px', formatString: 'MM/dd/yyyy' });
-            
-
-            $("#showSpecShip").on("click", function (event) {
+            //#region SetupButtons
+            $("#placeShip").jqxButton({ width: '100%', height: 26 });
+            $("#shipType").jqxToggleButton({ width: '100%', height: 26, toggled: false });
+            $("#shipType").on('click', function () {
                 $("#regShip").toggle();
                 $("#specShip").toggle();
+                var toggled = $("#shipType").jqxToggleButton('toggled');
+                if (toggled) {
+                    $("#shipType")[0].value = 'Ship: Special';
+                }
+                else $("#shipType")[0].value = 'Ship: Regular';
             });
+            //#endregion
 
+            $("#lastShipped").val(GetLastCardShipped());
+            $("#jqxdatetimeinputShip").jqxDateTimeInput({ width: '100%', height: '24px', formatString: 'MM/dd/yyyy' });
+            $("#jqxdatetimeinputSpecShip").jqxDateTimeInput({ width: '100%', height: '24px', formatString: 'MM/dd/yyyy' });
+            
             $("#placeShip").on("click", function (event) {
                 placeShip();
                 loadGrid();
             });
+
+            $("#specShip").toggle();
 
             $("#confirmShip").on("click", function (event) {
                
@@ -109,7 +119,6 @@
 
 
 
-            $("#specShip").toggle();
         });
 
 
@@ -263,30 +272,57 @@
         }
 
     </script>
-
-    <div id="CardInventoryShipping">      
-        <div class="FPR_SearchBox" style="display:block;">
-            <div class="FPR_SearchLeft" style="margin-left:10px;">
-                <div id="LocationCombo" style="float:left;" ></div>
-                <div id="regShip" style="float:right;">
-                    <span style="color:white;">Last Card Shipped:</span>
-                    <input type="text" id="lastShipped" />
-                    <input type="text" id="ShipAmount" placeholder="Amout to Ship" />
-                    <div id='jqxdatetimeinputShip' style="float:right;" ></div>
+    
+    <div id="CardInventoryShipping" class="container-fluid container-970 wrap-search-options">
+        <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
+            <div class="row search-size FPR_SearchLeft">
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
+                    <div class="row search-size">
+                        <div class="col-sm-9">
+                            <div class="row search-size">
+                                <div class="col-sm-15">
+                                    <input type="button" id="shipType" value="Ship: Regular" />
+                                </div>
+                                <div id="regShip" class="swapfields">
+                                    <div class="col-sm-15">
+                                        <input type="text" id="lastShipped" placeholder="Last Card Shipped" />
+                                    </div>
+                                    <div class="col-sm-15">
+                                        <input type="text" id="shipAmount" placeholder="Amount to Ship"  />
+                                    </div>
+                                    <div class="col-sm-15">
+                                        <div id="jqxdatetimeinputShip"></div>
+                                    </div>
+                                </div>
+                                <div id="specShip" class="swapfields">
+                                    <div class="col-sm-15">
+                                        <input type="text" id="firstCard" placeholder="First Card" />
+                                    </div>
+                                    <div class="col-sm-15">
+                                        <input type="text" id="lastCard" placeholder="Last Card"  />
+                                    </div>
+                                    <div class="col-sm-15">
+                                        <div id="jqxdatetimeinputSpecShip"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="row search-size">
+                                <div class="col-sm-8 col-sm-offset-4">
+                                    <div class="row search-size">
+                                        <div class="col-sm-12">
+                                            <input type="button" id="placeShip" value="Place Shipping" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div id="specShip" style="float:right;">
-                    <input type="text" id="firstCard" placeholder="First Card" />
-                    <input type="text" id="lastCard" placeholder="Last Card" />
-                    <div id='jqxdatetimeinputSpecShip' style="float:right;" ></div>
-                </div>
-            </div>
-            <div class="FPR_SearchRight" style="width:20%;">
-                <input type="button" id="showSpecShip" value="Special Shipping" style="float:left;" />
-                <input type="button" id="placeShip" value="Place Shipping" style="float:right;" />
             </div>
         </div>
-        
-    </div> 
+    </div><!-- /.container-fluid -->
     
     <div class="container-fluid container-970">
         <div class="row ">

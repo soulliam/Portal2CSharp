@@ -36,19 +36,15 @@
 
             //#region SetupButtons
             $("#placeOrder").jqxButton({ width: '100%', height: 26 });
-            //#endregion
-
-
-            //#region SetupButtons
             $("#orderType").jqxToggleButton({ width: '100%', height: 26, toggled: false });
             $("#orderType").on('click', function () {
                 $("#regOrder").toggle();
                 $("#specOrder").toggle();
                 var toggled = $("#orderType").jqxToggleButton('toggled');
                 if (toggled) {
-                    $("#orderType")[0].value = 'Type: Special';
+                    $("#orderType")[0].value = 'Order: Special';
                 }
-                else $("#orderType")[0].value = 'Type: Regular';
+                else $("#orderType")[0].value = 'Order: Regular';
             });
             //#endregion
 
@@ -56,8 +52,6 @@
             $("#jqxdatetimeinputOrder").jqxDateTimeInput({ width: '100%', height: '24px', formatString: 'MM/dd/yyyy' });
             $("#jqxdatetimeinputSpecOrder").jqxDateTimeInput({ width: '100%', height: '24px', formatString: 'MM/dd/yyyy' });
             
-
-
             $("#placeOrder").on("click", function (event) {
                 placeOrder();
                 loadGrid();
@@ -209,9 +203,9 @@
                         <div class="col-sm-9">
                             <div class="row search-size">
                                 <div class="col-sm-15">
-                                    <input type="button" id="orderType" value="Type: Regular" />
+                                    <input type="button" id="orderType" value="Order: Regular" />
                                 </div>
-                                <div id="regOrder">
+                                <div id="regOrder" class="swapfields">
                                     <div class="col-sm-15">
                                         <input type="text" id="lastOrdered" placeholder="Last Card Ordered" />
                                     </div>
@@ -222,7 +216,7 @@
                                         <div id="jqxdatetimeinputOrder"></div>
                                     </div>
                                 </div>
-                                <div id="specOrder">
+                                <div id="specOrder" class="swapfields">
                                     <div class="col-sm-15">
                                         <input type="text" id="firstCard" placeholder="First Card" />
                                     </div>

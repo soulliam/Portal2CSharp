@@ -148,6 +148,14 @@ table {
     padding-right: 3px;
     padding-left: 3px;
 }
+.search-size > .swapfields {
+    padding-right: 0px;
+    padding-left: 0px;
+}
+.search-size > .swapfields > div {
+    padding-right: 3px;
+    padding-left: 3px;
+}
 .search-size .form-control,
 .search-size .btn,
 .search-size .button,
