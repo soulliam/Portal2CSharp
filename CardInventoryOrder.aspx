@@ -207,8 +207,7 @@
                 <input type="button" id="placeOrder" value="Place Order" style="float:right;" />
             </div>
         </div>
-        
-    </div> 
+    </div>
    
     <div class="container-fluid container-970">
         <div class="row ">

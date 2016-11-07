@@ -33,6 +33,10 @@
 
         $(document).ready(function () {
 
+            //#region SetupButtons
+            $("#btnSearch").jqxButton({ width: '100%', height: 26 });
+            //#endregion
+
             $("#btnSearch").on("click", function (event) {
                 if ($("#cardNumber").val() != "") {
                     loadGrid();
@@ -184,19 +188,34 @@
 
     </script>
 
-    <div id="CardInventoryShipping">      
-        <div class="FPR_SearchBox" style="display:block;">
-            <div class="FPR_SearchLeft" style="margin-left:10px;">
-                <div>
-                    <input type="text" id="cardNumber" />
+    <div id="CardInventoryShipping" class="container-fluid container-970 wrap-search-options">
+        <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
+            <div class="row search-size FPR_SearchLeft">
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
+                    <div class="row search-size">
+                        <div class="col-sm-9">
+                            <div class="row search-size">
+                                <div class="col-sm-12">
+                                    <input type="text" id="cardNumber" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="row search-size">
+                                <div class="col-sm-8 col-sm-offset-4">
+                                    <div class="row search-size">
+                                        <div class="col-sm-12">
+                                            <input type="button" id="btnSearch" value="Search" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="FPR_SearchRight" style="width:20%;">
-                <input type="button" id="btnSearch" value="Search" style="float:left;" />
-            </div>
         </div>
-        
-    </div> 
+    </div><!-- /.container-fluid -->
    
     <div class="container-fluid container-970">
         <div class="row ">
