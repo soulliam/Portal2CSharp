@@ -103,8 +103,7 @@
             $("#deleteFeature").jqxButton();
             $("#updateFeature").jqxButton();
             $("#updateLocationImages").jqxButton();
-
-
+            $("#btnNew").jqxLinkButton({ width: '100%', height: '26' });
             //#endregion
 
             //#region ButtonClick
@@ -1165,11 +1164,15 @@
             var offset = $("#jqxgrid").offset();
             //sets the varialbe to true so form doesn't try to load feature grid
             thisNewLocation = true;
-            $("#popupLocation").jqxWindow({ position: { x: parseInt(offset.left) + 75, y: parseInt(offset.top) + 1 } });
+            $("#popupLocation").jqxWindow({ position: { x: '5%', y: '7.5%' } });
             $('#popupLocation').jqxWindow({ resizable: false });
+            $('#popupLocation').jqxWindow({ draggable: true });
+            $('#popupLocation').jqxWindow({ isModal: true });
             $("#popupLocation").css("visibility", "visible");
-            $('#popupLocation').jqxWindow({ width: '800', height: '500' });
-            $('#popupLocation').jqxWindow({ showCloseButton: false });
+            $('#popupLocation').jqxWindow({ height: '85%', width: '90%' });
+            $('#popupLocation').jqxWindow({ minHeight: '85%', minWidth: '90%' });
+            $('#popupLocation').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
+            $('#popupLocation').jqxWindow({ showCloseButton: true });
             $('#popupLocation').jqxWindow({ animationType: 'combined' });
             $('#popupLocation').jqxWindow({ showAnimationDuration: 300 });
             $('#popupLocation').jqxWindow({ closeAnimationDuration: 500 });
@@ -1193,64 +1196,24 @@
         //#endregion
 
     </script>
-
+    
     <div id="Locations" class="container-fluid container-970 wrap-search-options">
         <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
             <div class="row search-size FPR_SearchLeft">
-                <div class="col-sm-12 col-md-1">
-                </div>
-                <div class="col-sm-12 col-md-10">
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
                     <div class="row search-size">
-                        <div class="col-sm-9">
+                        <div class="col-sm-3 col-sm-offset-9">
                             <div class="row search-size">
-                                <div class="col-sm-15">
-                                    <a href="javascript:" onclick="newLocation();" id="btnNew">New Location</a>
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                            </div>
-                            <div class="row search-size">
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                            </div>
-                            <div class="row search-size">
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="row search-size">
-                                <div class="col-sm-4">
-                                </div>
-                                <div class="col-sm-8">
+                                <div class="col-sm-8 col-sm-offset-4">
+                                    <div class="row search-size">
+                                        <div class="col-sm-12">
+                                            <a href="javascript:newLocation();" id="btnNew">New Location</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-12 col-md-1">
                 </div>
             </div>
         </div>

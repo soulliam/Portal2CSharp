@@ -44,6 +44,10 @@
         $(document).ready(function () {
             //load main airport grid
             loadGrid();
+
+            //#region SetupButtons
+            $("#btnNew").jqxLinkButton({ width: '100%', height: '26' });
+            //#endregion
             
             $("#Save").click(function () {
                 // If Airport is nothing then we are adding a new Airport and we need a post
@@ -267,13 +271,20 @@
                               $("#popupWindow").css('visibility', 'hidden');
 
                               var offset = $("#jqxgrid").offset();
-                              $("#popupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 400, y: parseInt(offset.top) + 60 } });
+                              $("#popupWindow").jqxWindow({ position: { x: '25%', y: '30%' } });
+                              $('#popupWindow').jqxWindow({ resizable: false });
+                              $('#popupWindow').jqxWindow({ draggable: true });
+                              $('#popupWindow').jqxWindow({ isModal: true });
                               $("#popupWindow").css("visibility", "visible");
-                              $('#popupWindow').jqxWindow({ width: '600', height: '400' });
-                              $('#popupWindow').jqxWindow({ showCloseButton: false });
+                              $('#popupWindow').jqxWindow({ height: '250px', width: '50%' });
+                              $('#popupWindow').jqxWindow({ minHeight: '250px', minWidth: '50%' });
+                              $('#popupWindow').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+                              $('#popupWindow').jqxWindow({ showCloseButton: true });
+                              $('#popupWindow').jqxWindow({ animationType: 'combined' });
+                              $('#popupWindow').jqxWindow({ showAnimationDuration: 300 });
+                              $('#popupWindow').jqxWindow({ closeAnimationDuration: 500 });
                               $("#popupWindow").jqxWindow('open');
-                              $("#cityCombo").jqxComboBox('selectItem', dataRecord.CityId);
-                          }, width: '4%'
+                          }
                       },
                       //loading the rest of the columns
                       { text: 'City', datafield: 'CityName', hidden: true },
@@ -297,8 +308,18 @@
             $("#popupWindow").css('visibility', 'hidden');
 
             var offset = $("#jqxgrid").offset();
-            $("#popupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 400, y: parseInt(offset.top) + 60 } });
+            $("#popupWindow").jqxWindow({ position: { x: '25%', y: '30%' } });
+            $('#popupWindow').jqxWindow({ resizable: false });
+            $('#popupWindow').jqxWindow({ draggable: true });
+            $('#popupWindow').jqxWindow({ isModal: true });
             $("#popupWindow").css("visibility", "visible");
+            $('#popupWindow').jqxWindow({ height: '250px', width: '50%' });
+            $('#popupWindow').jqxWindow({ minHeight: '250px', minWidth: '50%' });
+            $('#popupWindow').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+            $('#popupWindow').jqxWindow({ showCloseButton: true });
+            $('#popupWindow').jqxWindow({ animationType: 'combined' });
+            $('#popupWindow').jqxWindow({ showAnimationDuration: 300 });
+            $('#popupWindow').jqxWindow({ closeAnimationDuration: 500 });
             $("#popupWindow").jqxWindow('open');
         }
 
@@ -307,60 +328,20 @@
     <div id="Airports" class="container-fluid container-970 wrap-search-options">
         <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
             <div class="row search-size FPR_SearchLeft">
-                <div class="col-sm-12 col-md-1">
-                </div>
-                <div class="col-sm-12 col-md-10">
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
                     <div class="row search-size">
-                        <div class="col-sm-9">
+                        <div class="col-sm-3 col-sm-offset-9">
                             <div class="row search-size">
-                                <div class="col-sm-15">
-                                    <a href="javascript:" onclick="newAirport();" id="btnNew">New Airport</a>
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                            </div>
-                            <div class="row search-size">
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                            </div>
-                            <div class="row search-size">
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="row search-size">
-                                <div class="col-sm-4">
-                                </div>
-                                <div class="col-sm-8">
+                                <div class="col-sm-8 col-sm-offset-4">
+                                    <div class="row search-size">
+                                        <div class="col-sm-12">
+                                            <a href="javascript:newAirport();" id="btnNew">New Airport</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-12 col-md-1">
                 </div>
             </div>
         </div>
@@ -377,53 +358,89 @@
             </div>
         </div>
     </div><!-- /.container-fluid -->
-
-    <%-- html for popup edit box --%>
-    <div id="popupWindow" style="display: none">
+    
+    <%-- html for popup Edit box --%>
+    <div id="popupWindow" style="display:none">
+        <div>City Details</div>
         <div>
-            <table width="100%">
-                <tr>
-                    <td>AirportId:</td>
-                    <td><input id="AirportId" disabled /></td>
-                </tr>
-                <tr>
-                    <td>City:</td>
-                    <td><div id="cityCombo"></div></td>
-                </tr>
-                <tr>
-                    <td>Abbreviation:</td>
-                    <td><input id="AirportAbbreviation" /></td>
-                </tr>
-                <tr>
-                    <td>Airport Name:</td>
-                    <td><input id="AirportName" /></td>
-                </tr>
-                <tr>
-                    <td>Location Text:</td>
-                    <td><input id="LocationText"  /></td>
-                </tr>
-                <tr>
-                    <td>City Caption:</td>
-                    <td><input id="CityCaption" /></td>
-                </tr>
-                    <tr>
-                    <td>City Text:</td>
-                    <td><textarea rows="4" cols="55" id="CityText"></textarea></td>
-                </tr>
-                </tr>
-                    <tr>
-                    <td>Banner Text:</td>
-                    <td><textarea rows="4" cols="55" id="BannerText"></textarea></td>
-                </tr>
-                <tr>
-                    <td>Image Url:</td>
-                    <td><input id="ImageUrl" /></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td style="padding-top: 10px;"><input style="margin-right: 5px;" type="button" id="Save" value="Save" /><input id="Cancel" type="button" value="Cancel" /></td>
-                </tr>
-            </table>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label for="AirportId" class="col-sm-3 col-md-4 control-label">AirportId:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="AirportId" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="cityCombo" class="col-sm-3 col-md-4 control-label">City:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div id="cityCombo"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="AirportAbbreviation" class="col-sm-3 col-md-4 control-label">Abbreviation:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="AirportAbbreviation" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="AirportName" class="col-sm-3 col-md-4 control-label">Airport Name:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="AirportName" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="LocationText" class="col-sm-3 col-md-4 control-label">Location Text:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="LocationText" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="CityCaption" class="col-sm-3 col-md-4 control-label">City Caption:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="CityCaption" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="CityText" class="col-sm-3 col-md-4 control-label">City Text:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="CityText" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="BannerText" class="col-sm-3 col-md-4 control-label">Banner Text:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="BannerText" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ImageUrl" class="col-sm-3 col-md-4 control-label">Image Url:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input class="form-control" id="ImageUrl" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="top-divider">
+                            <div class="col-sm-2 col-md-3">
+                            </div>
+                            <div class="col-sm-4 col-md-3">
+                                <input type="button" id="Save" value="Save" />
+                            </div>
+                            <div class="col-sm-4 col-md-3">
+                                <input type="button" id="Cancel" value="Cancel" />
+                            </div>
+                            <div class="col-sm-2 col-md-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <%-- html for popup edit box END --%>

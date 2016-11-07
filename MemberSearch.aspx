@@ -2360,9 +2360,7 @@
     <div id="MemberSearch" class="container-fluid container-970 wrap-search-options">
         <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
             <div class="row search-size FPR_SearchLeft">
-                <div class="col-sm-12 col-md-1">
-                </div>
-                <div class="col-sm-12 col-md-10">
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
                     <div class="row search-size">
                         <div class="col-sm-9">
                             <div class="row search-size">
@@ -2417,9 +2415,7 @@
                         </div>
                         <div class="col-sm-3">
                             <div class="row search-size">
-                                <div class="col-sm-4">
-                                </div>
-                                <div class="col-sm-8">
+                                <div class="col-sm-8 col-sm-offset-4">
                                     <div class="row search-size">
                                         <div class="col-sm-12">
                                             <input type="button" id="btnMarketing" value="Marketing" />
@@ -2439,8 +2435,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-12 col-md-1">
                 </div>
             </div>
         </div>

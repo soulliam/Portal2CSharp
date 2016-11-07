@@ -30,10 +30,21 @@
     <script type="text/javascript" src="jqwidgets/jqxwindow.js"></script>
 
     <script type="text/javascript">
+
+
+        var thisNewCity = false; //determines whether a new City is being made so the feature grid doesn't get set 
+
+
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
             // load main city grid
             loadGrid();
+
+            //#region SetupButtons
+            $("#btnNew").jqxLinkButton({ width: '100%', height: '26' });
+            $("#Save").jqxButton();
+            $("#Cancel").jqxButton();
+            //#endregion
 
             // load state combobox
             var stateSource =
@@ -53,8 +64,8 @@
             var stateDataAdapter = new $.jqx.dataAdapter(stateSource);
             $("#stateCombo").jqxComboBox(
             {
-                width: 180,
-                height: 25,
+                width: '100%',
+                height: 24,
                 source: stateDataAdapter,
                 selectedIndex: 0,
                 displayMember: "StateName",
@@ -204,10 +215,19 @@
                               // open the popup window when the user clicks a button.
                               editrow = row;
                               var offset = $("#jqxgrid").offset();
-                              $("#popupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 400, y: parseInt(offset.top) + 60 } });
+                              $("#popupWindow").jqxWindow({ position: { x: '25%', y: '30%' } });
+                              $('#popupWindow').jqxWindow({ resizable: false });
+                              $('#popupWindow').jqxWindow({ draggable: true });
+                              $('#popupWindow').jqxWindow({ isModal: true });
                               $("#popupWindow").css("visibility", "visible");
-                              $('#popupWindow').jqxWindow({ width: '325', height: '200' });
-                              $('#popupWindow').jqxWindow({ showCloseButton: false });
+                              $('#popupWindow').jqxWindow({ height: '250px', width: '50%' });
+                              $('#popupWindow').jqxWindow({ minHeight: '250px', minWidth: '50%' });
+                              $('#popupWindow').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+                              $('#popupWindow').jqxWindow({ showCloseButton: true });
+                              $('#popupWindow').jqxWindow({ animationType: 'combined' });
+                              $('#popupWindow').jqxWindow({ showAnimationDuration: 300 });
+                              $('#popupWindow').jqxWindow({ closeAnimationDuration: 500 });
+                              $("#popupWindow").jqxWindow('open');
 
                               // get the clicked row's data and initialize the input fields.
                               var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
@@ -233,8 +253,20 @@
         //clears city form for new city
         function newCity() {
             var offset = $("#jqxgrid").offset();
-            $("#popupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 400, y: parseInt(offset.top) + 60 } });
+            //sets the varialbe to true so form doesn't try to load feature grid
+            thisnewCity = true;
+            $("#popupWindow").jqxWindow({ position: { x: '25%', y: '30%' } });
+            $('#popupWindow').jqxWindow({ resizable: false });
+            $('#popupWindow').jqxWindow({ draggable: true });
+            $('#popupWindow').jqxWindow({ isModal: true });
             $("#popupWindow").css("visibility", "visible");
+            $('#popupWindow').jqxWindow({ height: '250px', width: '50%' });
+            $('#popupWindow').jqxWindow({ minHeight: '250px', minWidth: '50%' });
+            $('#popupWindow').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+            $('#popupWindow').jqxWindow({ showCloseButton: true });
+            $('#popupWindow').jqxWindow({ animationType: 'combined' });
+            $('#popupWindow').jqxWindow({ showAnimationDuration: 300 });
+            $('#popupWindow').jqxWindow({ closeAnimationDuration: 500 });
             $("#popupWindow").jqxWindow('open');
         }
 
@@ -243,60 +275,20 @@
     <div id="Cities" class="container-fluid container-970 wrap-search-options">
         <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
             <div class="row search-size FPR_SearchLeft">
-                <div class="col-sm-12 col-md-1">
-                </div>
-                <div class="col-sm-12 col-md-10">
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
                     <div class="row search-size">
-                        <div class="col-sm-9">
+                        <div class="col-sm-3 col-sm-offset-9">
                             <div class="row search-size">
-                                <div class="col-sm-15">
-                                    <a href="javascript:" onclick="newCity();" id="btnNew">New City</a>
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                            </div>
-                            <div class="row search-size">
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                            </div>
-                            <div class="row search-size">
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="row search-size">
-                                <div class="col-sm-4">
-                                </div>
-                                <div class="col-sm-8">
+                                <div class="col-sm-8 col-sm-offset-4">
+                                    <div class="row search-size">
+                                        <div class="col-sm-12">
+                                            <a href="javascript:newCity();" id="btnNew">New City</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-12 col-md-1">
                 </div>
             </div>
         </div>
@@ -314,31 +306,56 @@
         </div>
     </div><!-- /.container-fluid -->
 
-    <%-- html for popup edit box --%>
-    <div id="popupWindow" style="visibility:hidden">
-            <div>Edit</div>
-            <div style="overflow: hidden;">
-                <table>
-                    <tr>
-                        <td>CityId:</td>
-                        <td><input id="CityId" disabled /></td>
-                    </tr>
-                    <tr>
-                        <td>City Name:</td>
-                        <td><input id="CityName"  /></td>
-                    </tr>
-                    <tr>
-                        <td>State:</td>
-                        <td><div id="stateCombo"></div></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td style="padding-top: 10px;"><input style="margin-right: 5px;" type="button" id="Save" value="Save" /><input id="Cancel" type="button" value="Cancel" /></td>
-                    </tr>
-                </table>
-            </div>
 
-       </div>
-       <%-- html for popup edit box END --%>
+    <%-- html for popup Edit box --%>
+    <div id="popupWindow" style="display:none">
+        <div>City Details</div>
+        <div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label for="CityId" class="col-sm-3 col-md-4 control-label">CityId:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="CityId" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="CityName" class="col-sm-3 col-md-4 control-label">City Name:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="CityName" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="stateCombo" class="col-sm-3 col-md-4 control-label">State:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div id="stateCombo"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="top-divider">
+                            <div class="col-sm-2 col-md-3">
+                            </div>
+                            <div class="col-sm-4 col-md-3">
+                                <input type="button" id="Save" value="Save" />
+                            </div>
+                            <div class="col-sm-4 col-md-3">
+                                <input type="button" id="Cancel" value="Cancel" />
+                            </div>
+                            <div class="col-sm-2 col-md-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%-- html for popup edit box END --%>
+
 </asp:Content>
 

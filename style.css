@@ -8,6 +8,7 @@ body.masterbody {
     font-family: 'Roboto', sans-serif;
     background-color: #494949;
     overflow-x: hidden;
+    overflow-y: scroll;
 }
 @media (min-width: 1200px) {
     .container-970 {

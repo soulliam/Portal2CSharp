@@ -37,6 +37,9 @@
 
             loadGrid();
 
+            //#region SetupButtons
+            $("#btnNew").jqxLinkButton({ width: '100%', height: '26' });
+            //#endregion
             
             $("#Save").click(function () {
                 if ($("#FeatureId").val() == "") {
@@ -236,7 +239,6 @@
 
         }
 
-
         function newFeature() {
             var offset = $("#jqxgrid").offset();
             $("#popupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 400, y: parseInt(offset.top) + 60 } });
@@ -250,60 +252,20 @@
     <div id="LocationFeatures" class="container-fluid container-970 wrap-search-options">
         <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
             <div class="row search-size FPR_SearchLeft">
-                <div class="col-sm-12 col-md-1">
-                </div>
-                <div class="col-sm-12 col-md-10">
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
                     <div class="row search-size">
-                        <div class="col-sm-9">
+                        <div class="col-sm-3 col-sm-offset-9">
                             <div class="row search-size">
-                                <div class="col-sm-15">
-                                    <a href="javascript:" onclick="newFeature();" id="btnNew">New Feature</a>
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                            </div>
-                            <div class="row search-size">
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                            </div>
-                            <div class="row search-size">
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                                <div class="col-sm-15">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="row search-size">
-                                <div class="col-sm-4">
-                                </div>
-                                <div class="col-sm-8">
+                                <div class="col-sm-8 col-sm-offset-4">
+                                    <div class="row search-size">
+                                        <div class="col-sm-12">
+                                            <a href="javascript:newFeature();" id="btnNew">New Feature</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-12 col-md-1">
                 </div>
             </div>
         </div>
