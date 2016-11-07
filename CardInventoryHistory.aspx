@@ -198,7 +198,13 @@
         
     </div> 
    
-    <div id="jqxHistory"></div>
+    <div class="container-fluid container-970">
+        <div class="row ">
+            <div class="col-sm-12">
+                <div id="jqxHistory"></div>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
 
 </asp:Content>
 

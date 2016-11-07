@@ -35,6 +35,10 @@
         $(document).ready(function () {
             loadGrid();
 
+            //#region SetupButtons
+            $("#btnReceive").jqxButton({ width: '100%', height: 26 });
+            //#endregion
+
             $("#btnReceive").on("click", function (event) {
                 var getselectedrowindexes = $('#jqxOrders').jqxGrid('getselectedrowindexes');
                 if (getselectedrowindexes.length > 0) {
@@ -155,19 +159,35 @@
 
     </script>
 
-    <div id="CardInventoryShipmentReceiving">      
-        <div class="FPR_SearchBox" style="display:block;">
-            <div class="FPR_SearchLeft" style="margin-left:10px;">
-
-            </div>
-            <div class="FPR_SearchRight" style="width:20%;">
-                <input type="button" id="btnReceive" value="Receive Selected Shipments" style="float:right;" />
+    <div id="CardInventoryShipmentReceiving" class="container-fluid container-970 wrap-search-options">
+        <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
+            <div class="row search-size FPR_SearchLeft">
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
+                    <div class="row search-size">
+                        <div class="col-sm-3 col-sm-offset-9">
+                            <div class="row search-size">
+                                <div class="col-sm-8 col-sm-offset-4">
+                                    <div class="row search-size">
+                                        <div class="col-sm-12">
+                                            <input type="button" id="btnReceive" value="Receive Shipments" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        
-    </div> 
+    </div><!-- /.container-fluid -->
    
-    <div id="jqxOrders"></div>
+    <div class="container-fluid container-970">
+        <div class="row ">
+            <div class="col-sm-12">
+                <div id="jqxOrders"></div>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
 
 </asp:Content>
 

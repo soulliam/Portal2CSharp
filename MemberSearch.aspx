@@ -237,14 +237,14 @@
                 $("#popupReservation").css('visibility', 'hidden');
 
                 var offset = $("#jqxMemberInfoTabs").offset();
-                $("#popupReservation").jqxWindow({ position: { x: '5%', y: '10%' } });
+                $("#popupReservation").jqxWindow({ position: { x: '25%', y: '30%' } });
                 $('#popupReservation').jqxWindow({ resizable: false });
                 $('#popupReservation').jqxWindow({ draggable: true });
                 $('#popupReservation').jqxWindow({ isModal: true });
                 $("#popupReservation").css("visibility", "visible");
-                $('#popupReservation').jqxWindow({ height: '80%', width: '90%' });
-                $('#popupReservation').jqxWindow({ minHeight: '80%', minWidth: '90%' });
-                $('#popupReservation').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
+                $('#popupReservation').jqxWindow({ height: '400px', width: '50%' });
+                $('#popupReservation').jqxWindow({ minHeight: '400px', minWidth: '50%' });
+                $('#popupReservation').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
                 $('#popupReservation').jqxWindow({ showCloseButton: true });
                 $('#popupReservation').jqxWindow({ animationType: 'combined' });
                 $('#popupReservation').jqxWindow({ showAnimationDuration: 300 });
@@ -687,10 +687,18 @@
                     $("#popupRedemption").css('display', 'block');
                     $("#popupRedemption").css('visibility', 'hidden');
 
-                    $("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 90 } });
-                    $('#popupRedemption').jqxWindow({ maxHeight: 610, maxWidth: 450 });
-                    $('#popupRedemption').jqxWindow({ width: 450, height: 610 });
+                    $("#popupRedemption").jqxWindow({ position: { x: '25%', y: '30%' } });
+                    $('#popupRedemption').jqxWindow({ resizable: false });
+                    $('#popupRedemption').jqxWindow({ draggable: true });
+                    $('#popupRedemption').jqxWindow({ isModal: true });
                     $("#popupRedemption").css("visibility", "visible");
+                    $('#popupRedemption').jqxWindow({ height: '270px', width: '50%' });
+                    $('#popupRedemption').jqxWindow({ minHeight: '270px', minWidth: '50%' });
+                    $('#popupRedemption').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+                    $('#popupRedemption').jqxWindow({ showCloseButton: true });
+                    $('#popupRedemption').jqxWindow({ animationType: 'combined' });
+                    $('#popupRedemption').jqxWindow({ showAnimationDuration: 300 });
+                    $('#popupRedemption').jqxWindow({ closeAnimationDuration: 500 });
                     $("#popupRedemption").jqxWindow('open');
 
                     //get redemption data and send to display
@@ -2911,7 +2919,7 @@
 
     <%-- html for popup Add Card --%>
     <div id="addCardWindow" style="display:none">
-        <div>Add Card</div>
+        <div>Card Details</div>
         <div>
             <div class="modal-body">
                 <div class="row">
@@ -2975,7 +2983,8 @@
     
     <%-- html for popup Add Reservation --%>
     <div id="popupReservation" class="popupReservation" style="display:none">
-        <div>Add Reservation</div>
+        <div>Reservation Details
+        </div>
         <div>
             <div class="modal-body">
                 <div class="row">
@@ -3105,17 +3114,6 @@
                     </div>
                 </div>
             </div>
-
-
-
-
-
-
-
-
-
-
-
         </div>
     </div>
 
@@ -3144,14 +3142,14 @@
     </div>
 
     <div id="popupReceipt" style="display: none">
-        <div>View Reciept</div>
+        <div>Reciept Details</div>
         <div>
             <iframe id="receiptIframe" style="border:none;width:255px;height:475px;" ></iframe>
         </div>
     </div>
 
     <div id="popupRedemption" style="display: none;">
-        <div>View Reciept</div>
+        <div>Redemption Details</div>
         <div>
             <iframe id="redemptionIframe" style="border:none;width:420px;height:570px;" ></iframe>
         </div>

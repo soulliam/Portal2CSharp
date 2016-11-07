@@ -33,15 +33,27 @@
         $(document).ready(function () {
             // load main city grid
             loadGrid();
-            
-            $("#newCount").jqxButton({ width: 80, height: 25 });
+
+            //#region SetupButtons
+            $("#newCount").jqxButton({ width: '100%', height: 26 });
+            $("#Save").jqxButton();
+            $("#Cancel").jqxButton();
+            //#endregion
 
             $("#newCount").on("click", function (event) {
                 var offset = $("#jqxgrid").offset();
-                $("#popupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 400, y: parseInt(offset.top) + 60 } });
+                $("#popupWindow").jqxWindow({ position: { x: '25%', y: '30%' } });
                 $('#popupWindow').jqxWindow({ resizable: false });
+                $('#popupWindow').jqxWindow({ draggable: true });
+                $('#popupWindow').jqxWindow({ isModal: true });
                 $("#popupWindow").css("visibility", "visible");
-                $("#popupWindow").jqxWindow({ width: '300', height: '200' });
+                $('#popupWindow').jqxWindow({ height: '270px', width: '50%' });
+                $('#popupWindow').jqxWindow({ minHeight: '270px', minWidth: '50%' });
+                $('#popupWindow').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+                $('#popupWindow').jqxWindow({ showCloseButton: true });
+                $('#popupWindow').jqxWindow({ animationType: 'combined' });
+                $('#popupWindow').jqxWindow({ showAnimationDuration: 300 });
+                $('#popupWindow').jqxWindow({ closeAnimationDuration: 500 });
                 $("#popupWindow").jqxWindow('open');
             });
 
@@ -146,66 +158,115 @@
         //clears city form for new city
         function newCount() {
             var offset = $("#jqxgrid").offset();
-            $("#popupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 400, y: parseInt(offset.top) + 60 } });
+            $("#popupWindow").jqxWindow({ position: { x: '25%', y: '30%' } });
+            $('#popupWindow').jqxWindow({ resizable: false });
+            $('#popupWindow').jqxWindow({ draggable: true });
+            $('#popupWindow').jqxWindow({ isModal: true });
             $("#popupWindow").css("visibility", "visible");
+            $('#popupWindow').jqxWindow({ height: '270px', width: '50%' });
+            $('#popupWindow').jqxWindow({ minHeight: '270px', minWidth: '50%' });
+            $('#popupWindow').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+            $('#popupWindow').jqxWindow({ showCloseButton: true });
+            $('#popupWindow').jqxWindow({ animationType: 'combined' });
+            $('#popupWindow').jqxWindow({ showAnimationDuration: 300 });
+            $('#popupWindow').jqxWindow({ closeAnimationDuration: 500 });
             $("#popupWindow").jqxWindow('open');
         }
 
     </script>
-    
-
-    <style>
+        <style>
 
     </style>
 
-    <div id="Cities">      
-        <div class="FPR_SearchBox" style="display:block;">
-            <div class="FPR_SearchLeft">
-            
-
-            </div>
-            <div class="FPR_SearchRight">
-                <input type="button" id="newCount" value="New Count" />    
+    <div id="BoothCardCount" class="container-fluid container-970 wrap-search-options">
+        <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
+            <div class="row search-size FPR_SearchLeft">
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
+                    <div class="row search-size">
+                        <div class="col-sm-3 col-sm-offset-9">
+                            <div class="row search-size">
+                                <div class="col-sm-8 col-sm-offset-4">
+                                    <div class="row search-size">
+                                        <div class="col-sm-12">
+                                            <input type="button" id="newCount" value="New Count" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div style="visibility:hidden">
-            <input id="LocationId" type="text" value="0"  />
-        </div>
-    </div>      
+    </div><!-- /.container-fluid -->
     
-    <div id="jqxgrid">
-    </div>
-
-    <%-- html for popup edit box --%>
-    <div id="popupWindow" style="visibility:hidden">
-            <div>Edit</div>
-            <div style="overflow: hidden;">
-                <table>
-                    <tr>
-                        <td>Shift 1:</td>
-                        <td><input id="Shift1" class="countPost" /></td>
-                    </tr>
-                    <tr>
-                        <td>Shift 2:</td>
-                        <td><input id="Shift2" class="countPost"  /></td>
-                    </tr>
-                    <tr>
-                        <td>Shift 3:</td>
-                        <td><input id="Shift3" class="countPost"  /></td>
-                    </tr>
-
-                    <tr>
-                        <td>Total:</td>
-                        <td><input id="Total"  /></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td style="padding-top: 10px;"><input style="margin-right: 5px;" type="button" id="Save" value="Save" /><input id="Cancel" type="button" value="Cancel" /></td>
-                    </tr>
-                </table>
+    <div style="display:none;">
+        <input id="LocationId" type="text" value="0"  />
+    </div>  
+    
+    <div class="container-fluid container-970">
+        <div class="row ">
+            <div class="col-sm-12">
+                <div id="jqxgrid"></div>
             </div>
+        </div>
+    </div><!-- /.container-fluid -->
 
-       </div>
-       <%-- html for popup edit box END --%>
+    <%-- html for popup Edit box --%>
+    <div id="popupWindow" style="display:none">
+        <div>Count Details</div>
+        <div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label for="Shift1" class="col-sm-3 col-md-4 control-label">Shift 1:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control countPost" id="Shift1" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="Shift2" class="col-sm-3 col-md-4 control-label">Shift 2:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control countPost" id="Shift2" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="Shift3" class="col-sm-3 col-md-4 control-label">Shift 3:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control countPost" id="Shift3" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="Total" class="col-sm-3 col-md-4 control-label">Total:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="Total" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="top-divider">
+                            <div class="col-sm-2 col-md-3">
+                            </div>
+                            <div class="col-sm-4 col-md-3">
+                                <input type="button" id="Save" value="Save" />
+                            </div>
+                            <div class="col-sm-4 col-md-3">
+                                <input type="button" id="Cancel" value="Cancel" />
+                            </div>
+                            <div class="col-sm-2 col-md-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%-- html for popup edit box END --%>
+
 </asp:Content>
 

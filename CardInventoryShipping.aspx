@@ -287,8 +287,14 @@
         </div>
         
     </div> 
-   
-    <div id="jqxShipping"></div>
-
+    
+    <div class="container-fluid container-970">
+        <div class="row ">
+            <div class="col-sm-12">
+                <div id="jqxShipping"></div>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+    
 </asp:Content>
 
