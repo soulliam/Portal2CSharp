@@ -34,6 +34,10 @@
         $(document).ready(function () {
             loadGrid();
 
+            //#region SetupButtons
+            $("#btnSaveDistribution").jqxButton({ width: '100%', height: 26 });
+            //#endregion
+
             $("#btnSaveDistribution").on("click", function (event) {
                 DistributCards();
             });
@@ -45,7 +49,7 @@
                     "Bus",
                     "Rep"];
 
-            $("#jqxDistPoint").jqxComboBox({ source: source, selectedIndex: 0, width: '200', height: '21' });
+            $("#jqxDistPoint").jqxComboBox({ source: source, selectedIndex: 0, width: '100%', height: '24' });
 
             $('#jqxDistPoint').on('select', function (event) {
                 var args = event.args;
@@ -93,8 +97,8 @@
 
             $("#jqxRep").jqxComboBox(
             {
-                width: 200,
-                height: 21,
+                width: '100%',
+                height: 24,
                 source: RepDataAdapter,
                 selectedIndex: 0,
                 displayMember: "RepName",
@@ -110,7 +114,7 @@
             });
 
             $("#jqxRep").on('bindingComplete', function (event) {
-                $("#jqxRep").jqxComboBox('insertAt', 'Pick a Rep', 0);
+                $("#jqxRep").jqxComboBox('insertAt', 'Pick Rep', 0);
                 $("#jqxRep").on('change', function (event) {
                     //Do nothing for now
                 });
@@ -135,8 +139,8 @@
             var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
             $("#LocationCombo").jqxComboBox(
             {
-                width: 200,
-                height: 21,
+                width: '100%',
+                height: 24,
                 source: locationDataAdapter,
                 selectedIndex: 0,
                 displayMember: "DisplayName",
@@ -153,7 +157,7 @@
             });
 
             $("#LocationCombo").on('bindingComplete', function (event) {
-                $("#LocationCombo").jqxComboBox('insertAt', 'Pick a Location', 0);
+                $("#LocationCombo").jqxComboBox('insertAt', 'Pick Location', 0);
                 $("#LocationCombo").on('change', function (event) {
                     loadBuses();
                 });
@@ -336,8 +340,8 @@
 
             $("#jqxBus").jqxComboBox(
             {
-                width: 200,
-                height: 21,
+                width: '100%',
+                height: 24,
                 source: busDataAdapter,
                 selectedIndex: 0,
                 displayMember: "VehicleNumber",
@@ -362,25 +366,49 @@
 
     </script>
 
-    <div id="CardInventoryShipping">      
-        <div class="FPR_SearchBox" style="display:block;">
-            <div class="FPR_SearchLeft" style="margin-left:10px;">
-                <div>
-                    <div id="LocationCombo" style="float:left;" ></div>
-                    <input type="text" id="firstCard" placeholder="First Card" />
-                    <input type="text" id="lastCard" placeholder="Last Card" />
-                    <div id='jqxBus' style="float:right;" ></div>
-                    <div id='jqxRep' style="float:right;" ></div>
-                    <div id='jqxDistPoint' style="float:right;" ></div>
+    <div id="CardInventoryShipping" class="container-fluid container-970 wrap-search-options">
+        <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
+            <div class="row search-size FPR_SearchLeft">
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
+                    <div class="row search-size">
+                        <div class="col-sm-9">
+                            <div class="row search-size">
+                                <div class="col-sm-15">
+                                    <div id="LocationCombo"></div>
+                                </div>
+                                <div class="col-sm-15">
+                                    <input type="text" id="firstCard" placeholder="First Card" />
+                                </div>
+                                <div class="col-sm-15">
+                                    <input type="text" id="lastCard" placeholder="Last Card"  />
+                                </div>
+                                <div class="col-sm-15">
+                                    <div id="jqxDistPoint"></div>
+                                </div>
+                                <div class="col-sm-15">
+                                    <div id="jqxBus"></div>
+                                    <div id="jqxRep"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="row search-size">
+                                <div class="col-sm-8 col-sm-offset-4">
+                                    <div class="row search-size">
+                                        <div class="col-sm-12">
+                                            <input type="button" id="btnSaveDistribution" value="Save Distribution" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="FPR_SearchRight" style="width:20%;">
-                <input type="button" id="btnSaveDistribution" value="Save Distribution" style="float:right;" />
-            </div>
         </div>
-        
-    </div> 
-   
+    </div><!-- /.container-fluid -->
+
+
     <div class="container-fluid container-970">
         <div class="row ">
             <div class="col-sm-12">
