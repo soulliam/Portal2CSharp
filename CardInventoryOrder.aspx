@@ -34,15 +34,29 @@
         $(document).ready(function () {
             loadGrid();
 
-            $("#lastOrdered").val(GetLastCardOrdered());
-            $("#jqxdatetimeinputOrder").jqxDateTimeInput({ width: '150px', height: '19px', formatString: 'MM/dd/yyyy' }); 
-            $("#jqxdatetimeinputSpecOrder").jqxDateTimeInput({ width: '150px', height: '19px', formatString: 'MM/dd/yyyy' });
-            
+            //#region SetupButtons
+            $("#placeOrder").jqxButton({ width: '100%', height: 26 });
+            //#endregion
 
-            $("#showSpecOrder").on("click", function (event) {
+
+            //#region SetupButtons
+            $("#orderType").jqxToggleButton({ width: '100%', height: 26, toggled: false });
+            $("#orderType").on('click', function () {
                 $("#regOrder").toggle();
                 $("#specOrder").toggle();
+                var toggled = $("#orderType").jqxToggleButton('toggled');
+                if (toggled) {
+                    $("#orderType")[0].value = 'Type: Special';
+                }
+                else $("#orderType")[0].value = 'Type: Regular';
             });
+            //#endregion
+
+            $("#lastOrdered").val(GetLastCardOrdered());
+            $("#jqxdatetimeinputOrder").jqxDateTimeInput({ width: '100%', height: '24px', formatString: 'MM/dd/yyyy' });
+            $("#jqxdatetimeinputSpecOrder").jqxDateTimeInput({ width: '100%', height: '24px', formatString: 'MM/dd/yyyy' });
+            
+
 
             $("#placeOrder").on("click", function (event) {
                 placeOrder();
@@ -187,27 +201,56 @@
 
     </script>
 
-    <div id="CardInventoryOrder">      
-        <div class="FPR_SearchBox" style="display:block;">
-            <div class="FPR_SearchLeft" style="margin-left:10px;">
-                <div id="regOrder">
-                    <span style="color:white;">Last Card Ordered:</span>
-                    <input type="text" id="lastOrdered" />
-                    <input type="text" id="orderAmount" placeholder="Amout to Order" />
-                    <div id='jqxdatetimeinputOrder' style="float:right;" ></div>
+    <div id="CardInventoryOrder" class="container-fluid container-970 wrap-search-options">
+        <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
+            <div class="row search-size FPR_SearchLeft">
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
+                    <div class="row search-size">
+                        <div class="col-sm-9">
+                            <div class="row search-size">
+                                <div class="col-sm-15">
+                                    <input type="button" id="orderType" value="Type: Regular" />
+                                </div>
+                                <div id="regOrder">
+                                    <div class="col-sm-15">
+                                        <input type="text" id="lastOrdered" placeholder="Last Card Ordered" />
+                                    </div>
+                                    <div class="col-sm-15">
+                                        <input type="text" id="orderAmount" placeholder="Amount to Order"  />
+                                    </div>
+                                    <div class="col-sm-15">
+                                        <div id="jqxdatetimeinputOrder"></div>
+                                    </div>
+                                </div>
+                                <div id="specOrder">
+                                    <div class="col-sm-15">
+                                        <input type="text" id="firstCard" placeholder="First Card" />
+                                    </div>
+                                    <div class="col-sm-15">
+                                        <input type="text" id="lastCard" placeholder="Last Card"  />
+                                    </div>
+                                    <div class="col-sm-15">
+                                        <div id="jqxdatetimeinputSpecOrder"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="row search-size">
+                                <div class="col-sm-8 col-sm-offset-4">
+                                    <div class="row search-size">
+                                        <div class="col-sm-12">
+                                            <input type="button" id="placeOrder" value="Place Order" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div id="specOrder">
-                    <input type="text" id="firstCard" placeholder="First Card" />
-                    <input type="text" id="lastCard" placeholder="Last Card" />
-                    <div id='jqxdatetimeinputSpecOrder' style="float:right;" ></div>
-                </div>
-            </div>
-            <div class="FPR_SearchRight" style="width:20%;">
-                <input type="button" id="showSpecOrder" value="Special Order" style="float:left;" />
-                <input type="button" id="placeOrder" value="Place Order" style="float:right;" />
             </div>
         </div>
-    </div>
+    </div><!-- /.container-fluid -->
    
     <div class="container-fluid container-970">
         <div class="row ">
