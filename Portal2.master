@@ -69,18 +69,18 @@
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">RfR Tools<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">Articles/Company</a></li>
+                                <li><a href="#" style="display:none">Articles/Company</a></li>
                                 <li><a href="MemberSearch.aspx">Search/Maintain Customer</a></li>
                                 <li><a href="FileImportStatus.aspx">View File Import Status</a></li>
-                                <li><a href="Marketing.aspx" target="_blank">Marketing mailer Page</a></li>
+                                <li><a href="Marketing.aspx" style="display:none">Marketing mailer Page</a></li>
                                 <li><a href="PendingManualEdits.aspx">Pending Manual Edits</a></li>
-                                <li><a href="MemberReActivate.aspx">Re-Activate Member</a></li>
-                                <li><a href="MemberResend.aspx">Re-Send Users</a></li>
-                                <li><a href="#FindTransaction.aspx">Search Transactions</a></li>
-                                <li><a href="#">Search Certificates</a></li>
-                                <li><a href="#">Combine Companies</a></li>
-                                <li><a href="#">Member Article/Company Update</a></li>
-                                <li><a href="#">View/Maintain Reservations</a></li> 
+                                <li><a href="MemberReActivate.aspx" style="display:none">Re-Activate Member</a></li>
+                                <li><a href="MemberResend.aspx" style="display:none">Re-Send Users</a></li>
+                                <li><a href="#FindTransaction.aspx" style="display:none">Search Transactions</a></li>
+                                <li><a href="#" style="display:none">Search Certificates</a></li>
+                                <li><a href="#" style="display:none">Combine Companies</a></li>
+                                <li><a href="#" style="display:none">Member Article/Company Update</a></li>
+                                <li><a href="#" style="display:none">View/Maintain Reservations</a></li> 
                                 <li><a href="ReservationList.aspx">List Reservations For Today</a></li>   
                             </ul>
                         </li>
@@ -91,12 +91,12 @@
                                 <li><a href="Cities.aspx">Cities</a></li>
                                 <li><a href="Airports.aspx">Airports</a></li>
                                 <li><a href="LocationFeatures.aspx">Location Features</a></li>
-                                <li><a href="#">Reservations Maintenance</a></li> 
-                                <li><a href="#">Blog Entries</a></li>
-                                <li><a href="#">News</a></li>
-                                <li><a href="CompanyCheck.aspx">Articles</a></li>
-                                <li><a href="MemberResend.aspx">Re-Send User</a></li> 
-                                <li><a href="#">Reciews</a></li>
+                                <li><a href="#" style="display:none">Reservations Maintenance</a></li> 
+                                <li><a href="#" style="display:none">Blog Entries</a></li>
+                                <li><a href="#" style="display:none">News</a></li>
+                                <li><a href="CompanyCheck.aspx" style="display:none">Articles</a></li>
+                                <li><a href="MemberResend.aspx" style="display:none">Re-Send User</a></li> 
+                                <li><a href="#" style="display:none">Reviews</a></li>
                             </ul>
                         </li> 
                         <li>
@@ -113,11 +113,13 @@
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Legal<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">Coupon Tracking</a></li>
-                                <li><a href="#">Coupon Zip Tracking</a></li>
-                                <li><a href="#">Coupon Tracking Cashier Form</a></li> 
-                                <li><a href="#">Contract Administration</a></li>
-                                <li><a href="#">Coupon Administration</a></li> 
+                                <li><a href="http://192.168.0.185/portal/Restricted/LegalSearch.aspx">Legal</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Insurance<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="http://192.168.0.185/portal/Restricted/ClaimsEntry.aspx">Insurance</a></li>
                             </ul>
                         </li>
                         <li class="dropdown">

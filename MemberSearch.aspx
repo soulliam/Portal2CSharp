@@ -952,6 +952,7 @@
             loadReceiptLocationCombo();
             loadmanualEditTypesCombo();
             loadCompaniesCombo();
+            loadRate();
 
             // setup reservation popup these are in Member/Scripts/MemberReservation.js
             loadReservationLocationCombo();
@@ -1692,7 +1693,7 @@
         //#region LoadComboBoxes
 
         function loadCompaniesCombo() {
-            //set manualedit type combobox
+            //set companies combobox
             var companySource =
             {
                 datatype: "json",
@@ -1714,6 +1715,34 @@
                 selectedIndex: 0,
                 displayMember: "name",
                 valueMember: "id"
+            });
+        }
+
+        function loadRate() {
+            //set rate combobox
+            var rateSource =
+            {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'LocationId' },
+                    { name: 'NameOfLocation' }
+                ],
+                url: $("#localApiDomain").val() + "Locations/Locations/",
+
+            };
+            var rateDataAdapter = new $.jqx.dataAdapter(rateSource);
+            $('#rateCombo').jqxComboBox({
+                selectedIndex: 0, source: rateDataAdapter, displayMember: "NameOfLocation", valueMember: "LocationId", height: 24, width: '100%',
+                renderer: function (index, label, value) {
+                    var table = '<table style="min-width: 150px;"><tr><td style="width: 55px;" rowspan="2">' + label + '</td><td><a style="margin-left:10px">Mike</a></td></tr></table>';
+                    return table;
+                },
+                renderSelectedItem: function (index, item) {
+                    var table = item.label + ' Mike';
+                    return table;
+                }
             });
         }
 
@@ -2008,6 +2037,30 @@
             $("#txtNote").val('');
             $("#popupNote").jqxWindow('hide');
             
+        }
+
+        function getRate() {
+
+
+            $.ajax({
+                type: "POST",
+                url: $("#localApiDomain").val() + "Rates/GetRateByLocationAndCompanyId/",
+                //url: "http://localhost:52839/api/MemberNotes/AddNote/",
+
+                data: { "CompanyId": 12902, "LocationId": 10 },
+                dataType: "json",
+                success: function () {
+                    alert("Saved!");
+                    loadNotes($("#MemberId").val());
+                },
+                error: function (request, status, error) {
+                    alert(error);
+                }
+            });
+
+            $("#txtNote").val('');
+            $("#popupNote").jqxWindow('hide');
+
         }
 
         //#endregion
@@ -2556,13 +2609,13 @@
                                         <div class="form-group">
                                             <label for="Rate" class="col-sm-3 col-md-4 control-label">Rate:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="Rate" placeholder="">
+                                                <div id="rateCombo"></div>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="AlwaysPrice" class="col-sm-3 col-md-4 control-label">Always Price:</label>
+                                            <label for="AlwaysPrice" class="col-sm-3 col-md-4 control-label"></label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="AlwaysPrice" placeholder="">
+                                                
                                             </div>
                                         </div>
                                         <div class="form-group">
