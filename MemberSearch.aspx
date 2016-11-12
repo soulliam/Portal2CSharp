@@ -45,6 +45,8 @@
         var memberSet = false;
         var AccountId = 0;
         var group = '<%= Session["groupList"] %>';
+        var glbCompanyId = 0;
+        var glbHomeLocationId = 0;
 
         $(document).ready(function () {
             
@@ -349,7 +351,7 @@
                             thisMemberId = $("#MemberId").val();
                             $('#jqxReservationGrid').jqxGrid('clearselection');
                             $('#jqxReservationGrid').jqxGrid('clear');
-                            loadReservations(thisMemberId);
+                            (thisMemberId);
                         }
                     });
                 }
@@ -962,7 +964,7 @@
             //#endregion
 
             Security();
-            
+
         });
         
         //#region LoadGrids
@@ -1239,10 +1241,10 @@
             // create member Activity Grid
             $("#jqxMemberActivityGrid").jqxGrid(
             {
-                pageable: true,
-                pagermode: 'advanced',
-                pagesize: 50,
-                pagesizeoptions: ['10', '20', '50', '100'],
+                //pageable: true,
+                //pagermode: 'advanced',
+                //pagesize: 50,
+                //pagesizeoptions: ['10', '20', '50', '100'],
                 width: '100%',
                 height: 500,
                 source: source,
@@ -1582,6 +1584,12 @@
         }
 
         function loadRedemptions(PageMemberID) {
+
+            //$("#jqxRedemptionGrid").jqxComboBox('clear');
+            //var parent = $("#jqxRedemptionGrid").parent();
+            //$("#jqxRedemptionGrid").jqxComboBox('destroy');
+            //$("<div id='jqxRedemptionGrid'></div>").appendTo(parent);
+
             //Loads redemptions
             var url = $("#apiDomain").val() + "members/" + PageMemberID + "/redemptions";
 
@@ -1610,10 +1618,10 @@
             // create Redemption Grid
             $("#jqxRedemptionGrid").jqxGrid(
             {
-                pageable: true,
-                pagermode: 'advanced',
-                pagesize: 50,
-                pagesizeoptions: ['10', '20', '50', '100'],
+                //pageable: true,
+                //pagermode: 'advanced',
+                //pagesize: 50,
+                //pagesizeoptions: ['10', '20', '50', '100'],
                 width: '100%',
                 height: 450,
                 source: source,
@@ -1634,6 +1642,11 @@
         }
 
         function loadReservations(PageMemberID) {
+
+            var parent = $("#jqxReservationGrid").parent();
+            $("#jqxReservationGrid").jqxComboBox('destroy');
+            $("<div id='jqxReservationGrid'></div>").appendTo(parent);
+
             // load reservations to list
             var url = $("#apiDomain").val() + "members/" + PageMemberID + "/reservations";
 
@@ -1664,10 +1677,10 @@
             // create Reservation Grid
             $("#jqxReservationGrid").jqxGrid(
             {
-                pageable: true,
-                pagermode: 'advanced',
-                pagesize: 50,
-                pagesizeoptions: ['10', '20', '50', '100'],
+                //pageable: true,
+                //pagermode: 'advanced',
+                //pagesize: 50,
+                //pagesizeoptions: ['10', '20', '50', '100'],
                 width: '100%',
                 height: 450,
                 source: source,
@@ -1719,9 +1732,16 @@
         }
 
         function loadRate() {
+            $("#rateCombo").jqxComboBox('clearSelection');
+            $("#rateCombo").jqxComboBox('clear');
+            var parent = $("#rateCombo").parent();
+            $("#rateCombo").jqxComboBox('destroy');
+            $("<div id='rateCombo'></div>").appendTo(parent);
+
             //set rate combobox
             var rateSource =
             {
+                async: false,
                 datatype: "json",
                 type: "Get",
                 root: "data",
@@ -1736,16 +1756,69 @@
             $('#rateCombo').jqxComboBox({
                 selectedIndex: 0, source: rateDataAdapter, displayMember: "NameOfLocation", valueMember: "LocationId", height: 24, width: '100%',
                 renderer: function (index, label, value) {
-                    var table = '<table style="min-width: 150px;"><tr><td style="width: 55px;" rowspan="2">' + label + '</td><td><a style="margin-left:10px">Mike</a></td></tr></table>';
+                    var rateObj = { rate: "0" };
+                    rateObj = { rateCode: "0" };
+                    rateObj = { locationList: "" };
+
+                    getRate(rateObj, value);
+
+                    var homeLocations = String(rateObj.locationList).split("_");
+                    
+                    if (homeLocations.indexOf(String(value)) > -1) {
+                        var table = '<div style="color:red">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + '</div>';
+                    } else {
+                        var table = '<div style="color:black">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + '</div>';
+                    }
+    
                     return table;
                 },
                 renderSelectedItem: function (index, item) {
-                    var table = item.label + ' Mike';
+                    var rateObj = { rate: "0" };
+                    rateObj = { rateCode: "0" };
+                    rateObj = { locationList: "" };
+
+                    getRate(rateObj, item.value);
+
+                    var homeLocations = String(rateObj.locationList).split("_");
+
+                    if (homeLocations.indexOf(String(item.value)) > -1) {
+                        var table = '<div style="color:red">' + item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + '</div>';
+                    } else {
+                        var table = '<div style="color:black">' + item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + '</div>';
+                    }
+
                     return table;
                 }
             });
+
+            $("#rateCombo").jqxComboBox('selectItem', glbHomeLocationId);
+
         }
 
+        function getRate(obj, thisLocationId) {
+            //var thisCompanyId = $("#MailerCompanyCombo").jqxComboBox('getSelectedItem').value;
+            var thisCompanyId = glbCompanyId;
+
+            $.ajax({
+                async: false,
+                type: "POST",
+                url: $("#localApiDomain").val() + "Rates/GetRateByLocationAndCompanyId/",
+                //url: "http://localhost:52839/api/Rates/GetRateByLocationAndCompanyId/",
+
+                data: { "CompanyId": thisCompanyId, "LocationId": thisLocationId },
+                dataType: "json",
+                success: function (thisData) {
+                    var results = String(thisData).split(",")
+                    obj.rate = results[0];
+                    obj.rateCode = results[1];
+                    obj.locationList = results[2];
+                },
+                error: function (request, status, error) {
+                    alert("Error getting rates for display - " + error);
+                }
+            });
+
+        }
 
         function loadmanualEditTypesCombo() {
             //set manualedit type combobox
@@ -2039,29 +2112,7 @@
             
         }
 
-        function getRate() {
 
-
-            $.ajax({
-                type: "POST",
-                url: $("#localApiDomain").val() + "Rates/GetRateByLocationAndCompanyId/",
-                //url: "http://localhost:52839/api/MemberNotes/AddNote/",
-
-                data: { "CompanyId": 12902, "LocationId": 10 },
-                dataType: "json",
-                success: function () {
-                    alert("Saved!");
-                    loadNotes($("#MemberId").val());
-                },
-                error: function (request, status, error) {
-                    alert(error);
-                }
-            });
-
-            $("#txtNote").val('');
-            $("#popupNote").jqxWindow('hide');
-
-        }
 
         //#endregion
 
@@ -2306,9 +2357,11 @@
                     $("#Zip").val(thisData.result.data.Zip);
                     $("#Company").val(thisData.result.data.Company);
                     $("#homeLocationCombo").jqxComboBox('selectItem', thisData.result.data.LocationId);
+                    glbHomeLocationId = thisData.result.data.LocationId;
                     $("#MarketingCode").val(thisData.result.data.MarketingCode);
                     $("#MarketingMailerCode").val(thisData.result.data.MarketingMailerCode);
                     $("#MailerCompanyCombo").jqxComboBox('selectItem', thisData.result.data.CompanyId);
+                    glbCompanyId = thisData.result.data.CompanyId;
                     $("#GetEmail").prop("checked", thisData.result.data.GetEmail);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -2316,13 +2369,16 @@
                 },
                 complete: function () {
 
-                    loadCards(PageMemberID);
-                    loadNotes(PageMemberID);
                     loadRedemptions(PageMemberID);
                     loadReservations(PageMemberID);
+                    loadCards(PageMemberID);
+                    loadNotes(PageMemberID);
+
                     loadMemberActivity(PageMemberID);
                     loadAccountActivity();
                     $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
+                    loadRate();
+                    
                 }
             });
         }

@@ -389,6 +389,10 @@
                 }
             });
 
+            $("#saveCharge").on("click", function (event) {
+                SaveCharges();
+            });
+
             $("#Cancel").click(function () {
                 //clears all of the inputs in the location edit window\
                 $("div#popupLocation input:text").val("");
@@ -401,15 +405,16 @@
             $("#addFeature").click(function () {
                 //gets the data from the feature form to save as new feature for site
                 var newFeatureId = $("#featureCombo").jqxComboBox('getSelectedItem').value;
-                var newFeatureAvailableDatetime = $("#FeatureAvailableDatetime").val();
-                var newMaxAvailable = $("#MaxAvailable").val();
-                var newIsDisplayed = $("#IsDisplayed").is(':checked');
-                var newSortOrder = $("#FeatureSortOrder").val();
-                var newChargeAmount = $("#FeatureChargeAmount").val();
-                var newChargeNote = $("#FeatureChargeNote").val();
-                var newFeatureEffectiveDatetime = $("#FeatureEffectiveDatetime").val();
-                var newOptionalExtrasName = $("#FeatureOptionalExtrasName").val();
-                var newOptionalExtrasDescription = $("#FeatureOptionalExtrasDescription").val();
+                var newFeatureAvailableDatetime = $("#addFeatureAvailableDatetime").val();
+                var newMaxAvailable = $("#addFeatureMaxAvailable").val();
+                var newIsDisplayed = $("#addFeatureIsDisplayed").is(':checked');
+                var newSortOrder = $("#addFeatureSortOrder").val();
+                var newChargeAmount = $("#addFeatureChargeAmount").val();
+                var newChargeNote = $("#addFeatureChargeNote").val();
+                var newOptionalExtrasName = $("#addFeatureOptionalExtrasName").val();
+                var newOptionalExtrasDescription = $("#addFeatureOptionalExtrasDescription").val();
+                var newIsDisplayedOptionalExtra = $("#addFeatureIsDisplayedOptionalExtra").is(':checked');
+                var newDisplayIcon = $("#addFeatureDisplayIcon").is(':checked');
 
                 var featurePostUrl = $("#apiDomain").val() + "locations/" + selectedLocationId + "/features"
 
@@ -427,12 +432,13 @@
                         "FeatureAvailableDatetime": newFeatureAvailableDatetime,
                         "MaxAvailable": newMaxAvailable,
                         "IsDisplayed": newIsDisplayed,
+                        "DisplayIcon": newDisplayIcon,
                         "SortOrder": newSortOrder,
                         "ChargeAmount": Number(newChargeAmount),
                         "ChargeNote": newChargeNote,
-                        "EffectiveDatetime": newFeatureEffectiveDatetime,
                         "OptionalExtrasName": newOptionalExtrasName,
-                        "OptionalExtrasDescription": newOptionalExtrasDescription
+                        "OptionalExtrasDescription": newOptionalExtrasDescription,
+                        "IsDisplayedOptionalExtra": true
                     }),
                     dataType: "json",
                     success: function (response) {
@@ -485,13 +491,12 @@
                     }),
                     dataType: "json",
                     success: function (response) {
-                        UpdateCharges();
+                       alert("Saved!")
                     },
                     error: function (request, status, error) {
                         alert(request.responseText);
                     },
                     complete: function(data) {
-                        alert("Saved!");
                         clearFeatureForm();
                         //refreshes feature grid after succesful save
                         loadFeatureGrid(selectedLocationId);
@@ -942,6 +947,10 @@
         //loads feature grid, requires locationID
         function loadFeatureGrid(thisLocationId) {
 
+            var parent = $("#jqxFeatureGrid").parent();
+            $("#jqxFeatureGrid").jqxGrid('destroy');
+            $("<div id='jqxFeatureGrid'></div>").appendTo(parent);
+
             var url = $("#apiDomain").val() + "locations/" + thisLocationId + "/features";
 
             var featureSource =
@@ -1117,7 +1126,7 @@
 
         //#region Functions
 
-        function UpdateCharges () {
+        function SaveCharges () {
             //gets the data from the feature form to save as new feature for site
 
             var newChargeAmount = $("#FeatureChargeAmount").val();
@@ -1147,7 +1156,7 @@
                 }),
                 dataType: "json",
                 success: function (response) {
-
+                    alert("Saved!")
                 },
                 error: function (request, status, error) {
                     alert(request.responseText);
@@ -1569,10 +1578,55 @@
                                             <input type="text" id="LocationHasFeatureId" style="display:none;" />
                                         </div>
                                     </div>
+                                    
                                     <div class="form-group">
+                                        <label for="FeatureOptionalExtrasName" class="col-sm-3 col-md-4 control-label"> Optional Extras Name:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="FeatureOptionalExtrasName" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="FeatureOptionalExtrasDescription" class="col-sm-3 col-md-4 control-label">Optional Extras Description:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <input type="text" class="form-control" id="FeatureOptionalExtrasDescription" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="MaxAvailable" class="col-sm-3 col-md-4 control-label">Max Available:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <input type="text" class="form-control" id="MaxAvailable" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="FeatureAvailableDatetime" class="col-sm-3 col-md-4 control-label">Date Available:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <input type="text" class="form-control" id="FeatureAvailableDatetime" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="IsDisplayed" class="col-sm-3 col-md-4 control-label">Display:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" class="form-control" id="IsDisplayed" />
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-horizontal">
+                                     <div class="form-group">
                                         <label for="FeatureChargeAmount" class="col-sm-3 col-md-4 control-label">Charge Amount:</label>
                                         <div class="col-sm-9 col-md-8">
                                             <input type="text" class="form-control" id="FeatureChargeAmount" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="FeatureOptionalExtrasDescription" class="col-sm-3 col-md-4 control-label">Charge Note:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="FeatureChargeNote" />
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -1582,43 +1636,11 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="FeatureOptionalExtrasName" class="col-sm-3 col-md-4 control-label"> Optional Extras Name:</label>
                                         <div class="col-sm-9 col-md-8">
-                                            <input type="text" class="form-control" id="FeatureOptionalExtrasName" />
+                                            <input type="Button" class="form-control" id="saveCharge" value="Save Charge Info" />
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-horizontal">
-                                    <div class="form-group">
-                                        <label for="FeatureOptionalExtrasDescription" class="col-sm-3 col-md-4 control-label">Optional Extras Description:</label>
-                                        <div class="col-sm-9 col-md-8">
-                                            <input type="text" class="form-control" id="FeatureOptionalExtrasDescription" />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="MaxAvailable" class="col-sm-3 col-md-4 control-label">Max Available:</label>
-                                        <div class="col-sm-9 col-md-8">
-                                            <input type="text" class="form-control" id="MaxAvailable" />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="FeatureAvailableDatetime" class="col-sm-3 col-md-4 control-label">Date Available:</label>
-                                        <div class="col-sm-9 col-md-8">
-                                            <input type="text" class="form-control" id="FeatureAvailableDatetime" />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="IsDisplayed" class="col-sm-3 col-md-4 control-label">Display:</label>
-                                        <div class="col-sm-9 col-md-8">
-                                            <div class="checkbox">
-                                                <label>
-                                                    <input type="checkbox" class="form-control" id="IsDisplayed" />
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -1655,22 +1677,7 @@
                                             <input type="text" class="form-control" id="addFeatureSortOrder" />
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="addFeatureChargeAmount" class="col-sm-3 col-md-4 control-label">Charge Amount:</label>
-                                        <div class="col-sm-9 col-md-8">
-                                            <input type="text" class="form-control" id="addFeatureChargeAmount" />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="addFeatureEffectiveDatetime" class="col-sm-3 col-md-4 control-label">Effective Date:</label>
-                                        <div class="col-sm-9 col-md-8">
-                                            <input type="text" class="form-control" id="addFeatureEffectiveDatetime" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-horizontal">
+                                    
                                     <div class="form-group">
                                         <label for="addFeatureOptionalExtrasName" class="col-sm-3 col-md-4 control-label">Extras Name:</label>
                                         <div class="col-sm-9 col-md-8">
@@ -1684,9 +1691,35 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="addMaxAvailable" class="col-sm-3 col-md-4 control-label">Max Available:</label>
+                                        <label for="addFeatureDisplayIcon" class="col-sm-3 col-md-4 control-label">Display Icon:</label>
                                         <div class="col-sm-9 col-md-8">
-                                            <input type="text" class="form-control" id="addMaxAvailable" />
+                                            <input type="checkbox" class="form-control" id="addFeatureDisplayIcon" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addFeatureIsDisplayed" class="col-sm-3 col-md-4 control-label">Display:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" class="form-control" id="addFeatureIsDisplayed" />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="addFeatureIsDisplayedOptionalExtra" class="col-sm-3 col-md-4 control-label">Dispaly Optional Extra:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="checkbox" class="form-control" id="addFeatureIsDisplayedOptionalExtra" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addFeatureMaxAvailable" class="col-sm-3 col-md-4 control-label">Max Available:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="addFeatureMaxAvailable" />
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -1696,13 +1729,15 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="addIsDisplayed" class="col-sm-3 col-md-4 control-label">Display:</label>
+                                        <label for="addFeatureChargeAmount" class="col-sm-3 col-md-4 control-label">Charge Amount:</label>
                                         <div class="col-sm-9 col-md-8">
-                                            <div class="checkbox">
-                                                <label>
-                                                    <input type="checkbox" class="form-control" id="addIsDisplayed" />
-                                                </label>
-                                            </div>
+                                            <input type="text" class="form-control" id="addFeatureChargeAmount" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addFeatureChargeNote" class="col-sm-3 col-md-4 control-label">Charge Note:</label>
+                                        <div class="col-sm-9 col-md-8">
+                                            <input type="text" class="form-control" id="addFeatureChargeNote" />
                                         </div>
                                     </div>
                                 </div>
@@ -1753,7 +1788,8 @@
         <div>Location Image</div>
         <div>
             <div class="modal-body">
-                <iframe id="showImage" style="width:640px;height:250px;border:none;text-align:center;"></iframe>
+                <!--<iframe id="showImage" style="width:640px;height:250px;border:none;text-align:center;"></iframe>-->
+                <img id="showImage" src="#" />
             </div>
         </div>
     </div>
