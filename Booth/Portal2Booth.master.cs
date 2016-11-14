@@ -94,26 +94,29 @@ public partial class Portal2Booth : System.Web.UI.MasterPage
     private void getUserLocation(string groupList)
     {
         var first = true;
-        var thisLocation = "";
+        var locationList = "";
+        string[] thisLocation;
         var thisGroups = groupList.Split(',');
         foreach (string locGroup in thisGroups)
         {
-            if (locGroup.IndexOf("\\loc") > -1)
+            if (locGroup.IndexOf("\\Loc_") > -1)
             {
                 Console.WriteLine(locGroup);
                 if (first == true)
                 {
-                    thisLocation = locGroup.Substring(locGroup.Length - 1, 1);
+                    thisLocation = locGroup.Split('_');
+                    locationList = thisLocation[2];
                     first = false;
                 }
                 else
                 {
-                    thisLocation = thisLocation + "," + locGroup.Substring(locGroup.Length - 1, 1);
+                    thisLocation = locGroup.Split('_');
+                    locationList = locationList + "," + thisLocation[2];
                 }
 
             }
         }
-        userLocation.Text = thisLocation;
+        userLocation.Text = locationList;
     }
 
 }

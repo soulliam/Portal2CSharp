@@ -45,6 +45,19 @@
                 if (getselectedrowindexes.length > 0) {
                     for (var index = 0; index < getselectedrowindexes.length; index++) {
                         var selectedRowData = $('#jqxOrders').jqxGrid('getrowdata', getselectedrowindexes[index]);
+                        if (selectedRowData.CardDistributionActivityDescription == "Order Receive") {
+                            alert("This is an 'Order Received' row!");
+                            return;
+                        } else {
+                            var rows = $('#jqxOrders').jqxGrid('getrows');
+                            for (var i = 0; i < rows.length; i++) {
+                                var data = rows[i];
+                                if (data.CardDistributionActivityDescription == "Order Receive" && data.StartingNumber == selectedRowData.StartingNumber && data.EndingNumber == selectedRowData.EndingNumber) {
+                                    alert("This Order has been received.");
+                                    return;
+                                }
+                            }
+                        }
                         ReceiveOrder(selectedRowData.StartingNumber, selectedRowData.EndingNumber);
                     }
                     loadGrid();
@@ -54,12 +67,33 @@
                 }
             });
 
+            $('#jqxOrders').on('checkChange', function (event) {
+                var args = event.args;
+                if (args) {
+                    // index represents the item's index.                          
+                    var index = args.index;
+                    if (args.checked) {
+                        
+                        var value = item.value;
+                        for (var i = 0; i < source.length; i++) {
+                            if (source[i] != label) {
+                                $('#jqxListBox').jqxListBox('uncheckIndex', i);
+                            }
+                        }
+                    }
+                }
+            });
+
         });
 
         // ============= Initialize Page ================== End
 
         function loadGrid()
         {
+            var parent = $("#jqxOrders").parent();
+            $("#jqxOrders").jqxGrid('destroy');
+            $("<div id='jqxOrders'></div>").appendTo(parent);
+
             // loading order histor
             var url = $("#localApiDomain").val() + "CardDistHistorys/Get/-1";
 
@@ -84,15 +118,14 @@
             // creage jqxgrid
             $("#jqxOrders").jqxGrid(
             {
-                editable: true,
-                pageable: true,
-                pagermode: 'simple',
+                //pageable: true,
+                //pagermode: 'simple',
                 //pagermode: 'advanced',
-                pagesize: 12,
+                //pagesize: 12,
                 width: '100%',
                 height: 500,
                 source: source,
-                selectionmode: 'checkbox',
+                selectionmode: 'singlerow',
                 rowsheight: 35,
                 sortable: true,
                 altrows: true,
@@ -130,6 +163,8 @@
         }
 
         function ReceiveOrder(StartingNumber, EndingNumber) {
+
+
             Date.prototype.toMMDDYYYYString = function () { return isNaN(this) ? 'NaN' : [this.getMonth() > 8 ? this.getMonth() + 1 : '0' + (this.getMonth() + 1), this.getDate() > 9 ? this.getDate() : '0' + this.getDate(), this.getFullYear()].join('/') }
 
             //alert(new Date().toMMDDYYYYString());

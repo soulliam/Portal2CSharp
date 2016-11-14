@@ -40,11 +40,24 @@
             //#endregion
 
             $("#btnReceive").on("click", function (event) {
-                var getselectedrowindexes = $('#jqxOrders').jqxGrid('getselectedrowindexes');
+                var getselectedrowindexes = $('#jqxShipments').jqxGrid('getselectedrowindexes');
                 if (getselectedrowindexes.length > 0) {
                     for (var index = 0; index < getselectedrowindexes.length; index++) {
-                        var selectedRowData = $('#jqxOrders').jqxGrid('getrowdata', getselectedrowindexes[index]);
-                        ReceiveOrder(selectedRowData.StartingNumber, selectedRowData.EndingNumber);
+                        var selectedRowData = $('#jqxShipments').jqxGrid('getrowdata', getselectedrowindexes[index]);
+                        if (selectedRowData.CardDistributionActivityDescription == "Ship Receive") {
+                            alert("This is an 'Shipment Received' row!");
+                            return;
+                        } else {
+                            var rows = $('#jqxShipments').jqxGrid('getrows');
+                            for (var i = 0; i < rows.length; i++) {
+                                var data = rows[i];
+                                if (data.CardDistributionActivityDescription == "Ship Receive" && data.StartingNumber == selectedRowData.StartingNumber && data.EndingNumber == selectedRowData.EndingNumber) {
+                                    alert("This Order has been received.");
+                                    return;
+                                }
+                            }
+                        }
+                        ReceiveShip(selectedRowData.StartingNumber, selectedRowData.EndingNumber);
                     }
                     loadGrid();
                 } else {
@@ -59,6 +72,10 @@
 
         function loadGrid()
         {
+            var parent = $("#jqxShipments").parent();
+            $("#jqxShipments").jqxGrid('destroy');
+            $("<div id='jqxShipments'></div>").appendTo(parent);
+
             // loading order histor
             var url = $("#localApiDomain").val() + "CardDistHistorys/Get/-1";
 
@@ -82,7 +99,7 @@
             };
 
             // creage jqxgrid
-            $("#jqxOrders").jqxGrid(
+            $("#jqxShipments").jqxGrid(
             {
                 editable: true,
                 pageable: true,
@@ -113,8 +130,8 @@
                     // add the filters to the filter group.
                     ActivityFilterGroup.addfilter(filter_or_operator, ActivityFilter1);
                     ActivityFilterGroup.addfilter(filter_or_operator, ActivityFilter2);
-                    $("#jqxOrders").jqxGrid('addfilter', 'ActivityId', ActivityFilterGroup);
-                    $("#jqxOrders").jqxGrid('applyfilters');
+                    $("#jqxShipments").jqxGrid('addfilter', 'ActivityId', ActivityFilterGroup);
+                    $("#jqxShipments").jqxGrid('applyfilters');
                 },
                 columns: [
                        { text: 'CardHistoryId', datafield: 'CardHistoryId', hidden: true },
@@ -130,7 +147,7 @@
             });
         }
 
-        function ReceiveOrder(StartingNumber, EndingNumber) {
+        function ReceiveShip(StartingNumber, EndingNumber) {
             Date.prototype.toMMDDYYYYString = function () { return isNaN(this) ? 'NaN' : [this.getMonth() > 8 ? this.getMonth() + 1 : '0' + (this.getMonth() + 1), this.getDate() > 9 ? this.getDate() : '0' + this.getDate(), this.getFullYear()].join('/') }
 
             //alert(new Date().toMMDDYYYYString());
@@ -184,7 +201,7 @@
     <div class="container-fluid container-970">
         <div class="row ">
             <div class="col-sm-12">
-                <div id="jqxOrders"></div>
+                <div id="jqxShipments"></div>
             </div>
         </div>
     </div><!-- /.container-fluid -->

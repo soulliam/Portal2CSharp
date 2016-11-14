@@ -64,8 +64,13 @@
 
         function loadGrid()
         {
+            var parent = $("#jqxOrders").parent();
+            $("#jqxOrders").jqxGrid('destroy');
+            $("<div id='jqxOrders'></div>").appendTo(parent);
+
             // loading order histor
             var url = $("#localApiDomain").val() + "CardDistHistorys/Get/-1";
+            //var url = "http://localhost:52839/api/CardDistHistorys/Get/-1";
 
             var source =
             {
@@ -88,10 +93,10 @@
             // creage jqxgrid
             $("#jqxOrders").jqxGrid(
             {
-                pageable: true,
-                pagermode: 'simple',
+                //pageable: true,
+                //pagermode: 'simple',
                 //pagermode: 'advanced',
-                pagesize: 12,
+                //pagesize: 12,
                 width: '100%',
                 height: 500,
                 source: source,
@@ -131,7 +136,7 @@
 
             $.ajax({
                 type: 'GET',
-                url: '$("#localApiDomain").val() + "CardDistInventorys/GetLastCardOrdered/',
+                url: $("#localApiDomain").val() + 'CardDistInventorys/GetLastCardOrdered/',
                 success: function (data) {
                     $("#lastOrdered").val(data[0].orderedMax);
                    
