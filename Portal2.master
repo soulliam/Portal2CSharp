@@ -23,7 +23,7 @@
         <form runat="server">
             <div class="hidden">
                 <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
-                <asp:TextBox runat="server" ID="userGuid" style="visibility:hidden">73FAB147749A425893AD8CFDA2002A21</asp:TextBox>
+                <asp:TextBox runat="server" ID="userGuid" style="visibility:hidden">991D9AACB55F4BE18B83340807917269</asp:TextBox>
                 <asp:TextBox runat="server" ID="AK" style="visibility:hidden">3E36B6D0-A79D-4A7D-B5F3-6C016DBF5580</asp:TextBox>
                 <asp:TextBox runat="server" ID="apiDomain" style="visibility:hidden">http://54.197.116.15/api/v1/</asp:TextBox>
                 <asp:TextBox runat="server" ID="localApiDomain" style="visibility:hidden">http://maxdev:8181/api/</asp:TextBox>
@@ -111,12 +111,6 @@
                             </ul>
                         </li> 
                         <li class="dropdown">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Legal<span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="http://192.168.0.185/portal/Restricted/LegalSearch.aspx">Legal</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Insurance<span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="http://192.168.0.185/portal/Restricted/ClaimsEntry.aspx">Insurance</a></li>
@@ -133,6 +127,9 @@
                                 <li><a href="CardInventoryHistory.aspx">Card History</a></li>
                                 <li><a href="BoothCardCount.aspx">Booth Distribution</a></li>
                             </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="Booth/BoothSearch.aspx">Booth</a>
                         </li>
                         <li>
                             <a href="#"><asp:Label runat="server" ID="loginLabel" Text="test"></asp:Label></a>

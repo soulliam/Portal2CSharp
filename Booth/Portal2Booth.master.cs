@@ -17,7 +17,7 @@ public partial class Portal2Booth : System.Web.UI.MasterPage
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if ((string)(Session["IMINBOOTH"]) != "true")
+        if ((string)(Session["IMINBOOTH"]) != "true"  || (string)(Session["IMIN"]) != "true")
         {
             Response.Redirect("http://www.thefastpark.com");
         }

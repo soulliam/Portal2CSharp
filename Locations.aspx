@@ -103,6 +103,7 @@
             $("#deleteFeature").jqxButton();
             $("#updateFeature").jqxButton();
             $("#updateLocationImages").jqxButton();
+            $("#addLocationImages").jqxButton();
             $("#btnNew").jqxLinkButton({ width: '100%', height: '26' });
             //#endregion
 
@@ -401,6 +402,29 @@
                 $("#brandCombo").jqxComboBox('selectItem', 0);
                 $("#popupLocation").jqxWindow('hide');
             });
+
+            $("#addLocationImages").on("click", function (event) {
+                $("#popupLocationImage").css('display', 'block');
+                $("#popupLocationImage").css('visibility', 'hidden');
+                var offset = $("#jqxgrid").offset();
+                $("#popupLocationImage").jqxWindow({ position: { x: '25%', y: '30%' } });
+                $('#popupLocationImage').jqxWindow({ resizable: false });
+                $('#popupLocationImage').jqxWindow({ draggable: true });
+                $('#popupLocationImage').jqxWindow({ isModal: true });
+                $("#popupLocationImage").css("visibility", "visible");
+                $('#popupLocationImage').jqxWindow({ height: '250px', width: '50%' });
+                $('#popupLocationImage').jqxWindow({ minHeight: '250px', minWidth: '50%' });
+                $('#popupLocationImage').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+                $('#popupLocationImage').jqxWindow({ showCloseButton: true });
+                $('#popupLocationImage').jqxWindow({ animationType: 'combined' });
+                $('#popupLocationImage').jqxWindow({ showAnimationDuration: 300 });
+                $('#popupLocationImage').jqxWindow({ closeAnimationDuration: 500 });
+                $("#popupLocationImage").jqxWindow('open');
+            });
+
+            $("#addImageSubmit").on("click", function (event) {
+                addLocationImage();
+            })
 
             $("#addFeature").click(function () {
                 //gets the data from the feature form to save as new feature for site
@@ -1165,6 +1189,45 @@
 
         }
 
+
+        function addLocationImage() {
+            //gets the data from the feature form to save as new feature for site
+            var newLocationId = selectedLocationId
+            var newImageUrl = $("#addImageUrl").val();
+            var newCaption = $("#addCaption").val();
+            var newSortOrder = $("#addSortOrder").val();
+
+
+            var featurePostUrl = $("#apiDomain").val() + "images";
+
+            $.ajax({
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "AccessToken": $("#userGuid").val(),
+                    "ApplicationKey": $("#AK").val()
+                },
+                type: "POST",
+                url: featurePostUrl,
+                data: JSON.stringify({
+                    "LocationId": newLocationId,
+                    "ImageUrl": newImageUrl,
+                    "Caption": newCaption,
+                    "SortOrder": newSortOrder
+                }),
+                dataType: "json",
+                success: function (response) {
+                    alert("Saved!");
+                    $("#popupLocationImage").jqxWindow('hide');
+                    loadLocationImagesGrid(newLocationId);
+                },
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            })
+
+        }
+
         //opens the location Pop out form empty for new location
         function newLocation() {
             var offset = $("#jqxgrid").offset();
@@ -1767,11 +1830,13 @@
                             <div class="col-sm-12">
                                 <div class="top-divider">
                                     <div class="col-sm-4 col-md-4">
-                                    </div>
-                                    <div class="col-sm-4 col-md-4">
                                         <input id="updateLocationImages" type="button" value="Update" />
                                     </div>
                                     <div class="col-sm-4 col-md-4">
+                                        
+                                    </div>
+                                    <div class="col-sm-4 col-md-4">
+                                        <input id="addLocationImages" type="button" value="Add" />
                                     </div>
                                 </div>
                             </div>
@@ -1790,6 +1855,52 @@
             <div class="modal-body">
                 <!--<iframe id="showImage" style="width:640px;height:250px;border:none;text-align:center;"></iframe>-->
                 <img id="showImage" src="#" />
+            </div>
+        </div>
+    </div>
+
+     <%-- html for popup Add Location Image --%>
+    <div id="popupLocationImage" style="display:none">
+        <div>Add Location Image</div>
+        <div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label for="addImageUrl" class="col-sm-3 col-md-4 control-label">Image URL:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="addImageUrl" placeholder="Image URL" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="addCaption" class="col-sm-3 col-md-4 control-label">Caption:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="addCaption" placeholder="Caption" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="addSortOrder" class="col-sm-3 col-md-4 control-label">Is Active:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="addSortOrder" placeholder="Sort Order" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="top-divider">
+                            <div class="col-sm-3 col-md-4">
+                            </div>
+                            <div class="col-sm-6 col-md-4">
+                                <input type="button" class="form-control" id="addImageSubmit" value="Add" />
+                            </div>
+                            <div class="col-sm-3 col-md-4">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

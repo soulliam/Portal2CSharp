@@ -33,7 +33,7 @@ public partial class _Default : System.Web.UI.Page
 
         }
 
-        if (groupList.IndexOf("BoothOnly") > -1)
+        if (groupList.IndexOf("\\BoothOnly,") > -1)
         {
             Session["IMINBOOTH"] = "true";
             class_Logging.clsLogging newLogin = new class_Logging.clsLogging();
@@ -42,6 +42,10 @@ public partial class _Default : System.Web.UI.Page
         }
         else
         {
+            if (groupList.IndexOf("\\booth,") > -1)
+            {
+                Session["IMINBOOTH"] = "true";
+            }
             Session["IMIN"] = "true";
             class_Logging.clsLogging newLogin = new class_Logging.clsLogging();
             newLogin.logChange(user, "", "", "", "", "New Login", newLogin.getBatch());

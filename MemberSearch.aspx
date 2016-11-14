@@ -1765,7 +1765,7 @@
                     var homeLocations = String(rateObj.locationList).split("_");
                     
                     if (homeLocations.indexOf(String(value)) > -1) {
-                        var table = '<div style="color:red">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + '</div>';
+                        var table = '<div style="color:black">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + ' **</div>';
                     } else {
                         var table = '<div style="color:black">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + '</div>';
                     }
@@ -1782,9 +1782,9 @@
                     var homeLocations = String(rateObj.locationList).split("_");
 
                     if (homeLocations.indexOf(String(item.value)) > -1) {
-                        var table = '<div style="color:red">' + item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + '</div>';
+                        var table =  item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + ' **';
                     } else {
-                        var table = '<div style="color:black">' + item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + '</div>';
+                        var table = item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate
                     }
 
                     return table;
