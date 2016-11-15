@@ -6,6 +6,11 @@
             font-size:20px;
             font-weight: bold;
         }
+        
+        #popupRedemptionList *{
+            font-size:20px;
+            font-weight: bold;
+        }
 
         #redemptionContainer *{
             font-size:20px;
@@ -92,10 +97,42 @@
 
             $("#newEmailCancel").jqxButton({ width: 100, height: 60 });
             $("#newEmailSubmit").jqxButton({ width: 100, height: 60 });
+            $("#showRedemptionList").jqxButton({ width: 175, height: 60 });
+            $("#closeRedemptionList").jqxButton({ width: 100, height: 60 });
 
             //#endregion
 
             //#region Button Clicks
+
+            //Show redemptoion LIst
+            $("#showRedemptionList").on("click", function (event) {
+
+                $("#popupRedemptionList").css('display', 'block');
+                $("#popupRedemptionList").css('visibility', 'hidden');
+
+                var offset = $("#jqxSearchGrid").offset();
+                var width = $('#jqxSearchGrid').width();
+
+                $('#popupRedemptionList').jqxWindow({ maxHeight: 450, maxWidth: width });
+                $("#popupRedemptionList").jqxWindow({ position: { x: parseInt(offset.left) - 10, y: parseInt(offset.top) + 0 } });
+                $('#popupRedemptionList').jqxWindow({ height: 450, width: width });
+                $('#popupRedemptionList').jqxWindow({ showCloseButton: true });
+                $('#popupRedemptionList').jqxWindow({ resizable: false });
+                $("#popupRedemptionList").css("visibility", "visible");
+                $("#popupRedemptionList").jqxWindow({ title: 'Existing Redemptions' });
+                $("#popupRedemptionList").jqxWindow('open');
+                $("#popupMember").jqxWindow('hide');
+                
+                loadRedemptionList();
+            });
+
+
+
+            $('#closeRedemptionList').on('click', function (event) {
+                $("#popupRedemptionList").jqxWindow('hide');
+            });
+
+
 
             //save receipt request
             $("#receiptSave").on("click", function (event) {
@@ -111,6 +148,7 @@
                 $("#popupReceipt").jqxWindow('hide');
             });
 
+
             //close receipt popup
             $("#receiptCancel").on("click", function (event) {
                 $("#popupReceipt").jqxWindow('hide');
@@ -118,6 +156,9 @@
 
             //open receipt entry
             $("#btnReceipt").on("click", function (event) {
+                $("#popupReceipt").css('display', 'block');
+                $("#popupReceipt").css('visibility', 'hidden');
+
                 var offset = $("#jqxSearchGrid").offset();
                 $("#popupReceipt").jqxWindow({ position: { x: parseInt(offset.left) + 200, y: parseInt(offset.top) - 80 } });
                 $('#popupReceipt').jqxWindow({ width: "500px", height: "550px" });
@@ -166,6 +207,9 @@
 
             //show email request pop up email chang
             $("#changeEmail").on("click", function (evnet) {
+                $("#popupNewEmail").css('display', 'block');
+                $("#popupNewEmail").css('visibility', 'hidden');
+
                 var offset = $("#jqxSearchGrid").offset();
                 $("#popupNewEmail").jqxWindow({ position: { x: parseInt(offset.left) + 500, y: parseInt(offset.top) - 40 } });
                 $('#popupNewEmail').jqxWindow({ width: "350px", height: "300px" });
@@ -193,48 +237,8 @@
             });
 
             $("#btnSearch").on("click", function (event) {
-                var thisReturn = "";
-
-                thisReturn = "LocationId=" + $("#boothLocation").val();
-
-                if ($("#btnSearchName").css('backgroundColor') == "rgb(169, 169, 169)") {
-                    
-                    if ($("#txtSearchLastName").val() == "") {
-                        alert("You must have a last name to search by name.")
-                        return "";
-                    }
-
-                    thisReturn = thisReturn + "&LastName=" + $("#txtSearchLastName").val();
-
-                    if ($("#txtSearchEmailFNameFPNumber").val() != "") {
-                        thisReturn = thisReturn + "&FirstName='" + $("#txtSearchEmailFNameFPNumber").val();
-                    }
-
-                }
-
-                if ($("#btnSearchFPNumber").css('backgroundColor') == "rgb(169, 169, 169)") {
-                    if ($("#txtSearchEmailFNameFPNumber").val() != ""){
-                    thisReturn = "&FPNumber=" + $("#txtSearchEmailFNameFPNumber").val();
-                    }
-                    else
-                    {
-                        alert("You must enter a value to search for an FPNumber!")
-                        return null;
-                    }
-                }
-
-                if ($("#btnSearchEmail").css('backgroundColor') == "rgb(169, 169, 169)") {
-                    if ($("#txtSearchEmailFNameFPNumber").val() != "") {
-                        thisReturn = "&EmailAddress=" + $("#txtSearchEmailFNameFPNumber").val();
-                    }
-                    else
-                    {
-                        alert("You must enter a value to search for an email!")
-                        return null;
-                    }
-                }
-
-                loadSearchResults(thisReturn);
+               
+                getParametersAndSearch();
 
             });
 
@@ -272,6 +276,15 @@
             $("#btnSearchClear").on("click", function (event) {
                 clearSearch();
             });
+
+
+            $("#searchContainer").keypress(function (e) {
+
+                if (e.keyCode == 13) {
+                    getParametersAndSearch();
+                }
+            });
+
             //#endregion
 
             //#region PageSetup
@@ -343,6 +356,9 @@
                     
                 }
                 LoadLocationPopup(thisLocationString);
+                $("#popupLocation").css('display', 'block');
+                $("#popupLocation").css('visibility', 'hidden');
+
                 var offset = $("#jqxSearchGrid").offset();
                 $("#popupLocation").jqxWindow({ position: { x: parseInt(offset.left) + 500, y: parseInt(offset.top) - 40 } });
                 $('#popupLocation').jqxWindow({ width: "325px", height: "300px" });
@@ -371,6 +387,55 @@
 
         //#region Functions
 
+        function getParametersAndSearch() {
+            var thisReturn = "";
+
+
+            $("#popupMember").jqxWindow('hide');
+            $("#popupNewEmail").jqxWindow('hide');
+            $("#popupReceipt").jqxWindow('hide');
+            $("#popupRedemptionList").jqxWindow('hide');
+
+
+            thisReturn = "LocationId=" + $("#boothLocation").val();
+
+            if ($("#btnSearchName").css('backgroundColor') == "rgb(169, 169, 169)") {
+
+                if ($("#txtSearchLastName").val() == "") {
+                    alert("You must have a last name to search by name.")
+                    return "";
+                }
+
+                thisReturn = thisReturn + "&LastName=" + $("#txtSearchLastName").val();
+
+                if ($("#txtSearchEmailFNameFPNumber").val() != "") {
+                    thisReturn = thisReturn + "&FirstName='" + $("#txtSearchEmailFNameFPNumber").val();
+                }
+
+            }
+
+            if ($("#btnSearchFPNumber").css('backgroundColor') == "rgb(169, 169, 169)") {
+                if ($("#txtSearchEmailFNameFPNumber").val() != "") {
+                    thisReturn = "&FPNumber=" + $("#txtSearchEmailFNameFPNumber").val();
+                }
+                else {
+                    alert("You must enter a value to search for an FPNumber!")
+                    return null;
+                }
+            }
+
+            if ($("#btnSearchEmail").css('backgroundColor') == "rgb(169, 169, 169)") {
+                if ($("#txtSearchEmailFNameFPNumber").val() != "") {
+                    thisReturn = "&EmailAddress=" + $("#txtSearchEmailFNameFPNumber").val();
+                }
+                else {
+                    alert("You must enter a value to search for an email!")
+                    return null;
+                }
+            }
+
+            loadSearchResults(thisReturn);
+        }
 
         // send error if logging login fails
         function BoothLogin(ResultString) {
@@ -415,6 +480,9 @@
                     var thisQrCodeString = thisData.result.data[0].QrCodeString;
                     document.getElementById('renderRedemption').src = './QRCode.aspx?codeNumber=' + thisQrCodeString;
 
+                    $("#popupRedemption").css('display', 'block');
+                    $("#popupRedemption").css('visibility', 'hidden');
+
                     var offset = $("#jqxSearchGrid").offset();
                     $("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 300, y: parseInt(offset.top) - 20 } });
                     $('#popupRedemption').jqxWindow({ width: "320px", height: "425px" });
@@ -445,6 +513,11 @@
        
         //clear search boxes 
         function clearSearch() {
+            $("#popupMember").jqxWindow('hide');
+            $("#popupNewEmail").jqxWindow('hide');
+            $("#popupReceipt").jqxWindow('hide');
+            $("#popupRedemptionList").jqxWindow('hide');
+            $("#jqxSearchGrid").jqxGrid("clear");
             $("#txtSearchLastName").val("");
             $("#txtSearchEmailFNameFPNumber").val("");
         }
@@ -528,6 +601,10 @@
 
         function loadSearchResults(thisParameters) {
 
+            var parent = $("#jqxSearchGrid").parent();
+            $("#jqxSearchGrid").jqxGrid('destroy');
+            $("<div id='jqxSearchGrid'></div>").appendTo(parent);
+
             //Loads SearchList from parameters
 
             var url = $("#apiDomain").val() + "members/search?" + thisParameters;
@@ -576,6 +653,9 @@
                                 var offset = $("#jqxSearchGrid").offset();
                                 var width = $('#jqxSearchGrid').width();
 
+                                $("#popupMember").css('display', 'block');
+                                $("#popupMember").css('visibility', 'hidden');
+
                                 $('#popupMember').jqxWindow({ maxHeight: 450, maxWidth: width });
                                 $("#popupMember").jqxWindow({ position: { x: parseInt(offset.left) - 10, y: parseInt(offset.top) + 0 } });
                                 $('#popupMember').jqxWindow({ height: 450, width: width });
@@ -595,6 +675,118 @@
                         { text: 'Street Address', datafield: 'StreetAddress', width: '25%' },
                         { text: 'City', datafield: 'City', width: '12%' }
                 ]
+            });
+        }
+
+        function loadRedemptionList() {
+
+            var parent = $("#jqxRedemptionList").parent();
+            $("#jqxRedemptionList").jqxGrid('destroy');
+            $("<div id='jqxRedemptionList'></div>").appendTo(parent);
+
+            //Loads redemptions
+            var thisMemberId = $("#MemberId").html();
+
+            var url = $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions";
+
+            var source =
+            {
+                datafields: [
+                    { name: 'RedemptionId' },
+                    { name: 'CertificateID' },
+                    { name: 'RedemptionType', map: 'RedemptionType>RedemptionType' },
+                    { name: 'RedeemDate', type: 'date' },
+                    { name: 'IsReturned' },
+                    { name: 'DateUsed' }
+                ],
+
+                id: 'CertificateID',
+                type: 'Get',
+                datatype: "json",
+                url: url,
+                beforeSend: function (jqXHR, settings) {
+                    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
+                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+                },
+                root: "data"
+            };
+
+            // create Redemption Grid
+            $("#jqxRedemptionList").jqxGrid(
+            {
+                //pageable: true,
+                //pagermode: 'advanced',
+                //pagesize: 50,
+                //pagesizeoptions: ['10', '20', '50', '100'],
+                width: '100%',
+                height: 300,
+                source: source,
+                rowsheight: 60,
+                altrows: true,
+                columns: [
+                      {
+                          text: 'Select', pinned: true, datafield: 'Select', width: 50, columntype: 'button', cellsrenderer: function () {
+                              return "Select";
+                          }, buttonclick: function (row) {
+                              editrow = row;
+
+                              var dataRecord = $("#jqxRedemptionList").jqxGrid('getrowdata', editrow);
+
+                              showRedemption(dataRecord.RedemptionId);
+                          },
+                          width: '5%'
+                      },
+                      { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
+                      { text: 'CertificateID', datafield: 'CertificateID' },
+                      { text: 'Redemption Type', datafield: 'RedemptionType' },
+                      { text: 'Redeem Date', datafield: 'RedeemDate', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
+                      { text: 'Returned', datafield: 'IsReturned' },
+                      { text: 'DateUsed', datafield: 'DateUsed' }
+                ]
+            });
+        }
+
+        function showRedemption(thisRedemptionId) {
+
+            $("#popupExistingRedemption").css('display', 'block');
+            $("#popupExistingRedemption").css('visibility', 'hidden');
+
+            $("#popupExistingRedemption").jqxWindow({ position: { x: '25%', y: '20%' } });
+            $('#popupExistingRedemption').jqxWindow({ resizable: false });
+            $('#popupExistingRedemption').jqxWindow({ draggable: true });
+            $('#popupExistingRedemption').jqxWindow({ isModal: true });
+            $("#popupExistingRedemption").css("visibility", "visible");
+            $('#popupExistingRedemption').jqxWindow({ height: '290px', width: '290px' });
+            $('#popupExistingRedemption').jqxWindow({ showCloseButton: true });
+            $('#popupExistingRedemption').jqxWindow({ animationType: 'combined' });
+            $('#popupExistingRedemption').jqxWindow({ showAnimationDuration: 300 });
+            $('#popupExistingRedemption').jqxWindow({ closeAnimationDuration: 500 });
+            $("#popupExistingRedemption").jqxWindow('open');
+
+            var thisMemberId = $("#MemberId").html();
+
+            $.ajax({
+                type: 'GET',
+                url: $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions/" + thisRedemptionId,
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "AccessToken": $("#userGuid").val(),
+                    "ApplicationKey": $("#AK").val()
+                },
+                success: function (thisData) {
+                    var thisCertificateID = thisData.result.data.CertificateID;
+                    var thisRedemptionType = thisData.result.data.RedemptionType.RedemptionType;
+                    thisRedemptionType = thisRedemptionType.replace(" ", "%20");
+                    var thisMemberName = thisData.result.data.Member.FirstName + '%20' + thisData.result.data.Member.LastName;
+                    var thisFPNumber = thisData.result.data.Member.PrimaryFPNumber;
+                    var thisQRCode = thisData.result.data.QrCodeString;
+
+                    document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?thisCertificateID=' + thisCertificateID + '&thisRedemptionType=' + thisRedemptionType + '&thisMemberName=' + thisMemberName + '&thisFPNumber=' + thisFPNumber + '&thisQRCode=' + thisQRCode;
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("Error: " + errorThrown);
+                }
             });
         }
 
@@ -735,13 +927,13 @@
     </div>
 
 
-    <div id="popupLocation" style="visibility: hidden">
+    <div id="popupLocation" style="display:none">
         <div>
             <div id="LocationCombo" style="float:left;"></div>
         </div>
     </div>
 
-    <div id="popupMember" style="visibility: hidden">
+    <div id="popupMember" style="display:none">
         <div>
             <div id="MemberInfo" style="width: 50%;float:left">
                 <div><label id="MemberId" style="display:none"></label></div>
@@ -760,12 +952,13 @@
             </div>
             <div style="margin-top:300px;width = 100%;">
                 <div style="float:left;margin-left:50px"><input type="button" id="changeEmail" value="Update Email"  /></div>
+                <div><input type="button" id="showRedemptionList" value="Redemptions" style="position:absolute;margin-left:50px;"  /></div>
                 <div style="float:right;margin-right:50px"><input type="button" id="closeMemberInfo" value="Back" /></div>
             </div>
         </div>
     </div>
 
-    <div id="popupNewEmail" style="visibility: hidden">
+    <div id="popupNewEmail" style="display:none">
         <div>
             <div><input style="margin-top:20px" id="oldEmail" placeholder="Old Email Address" /></div>
             <div><input style="margin-top:20px" id="newEmail" placeholder="New Email Address" /></div>
@@ -776,7 +969,7 @@
         </div>
     </div>
 
-    <div id="popupRedemption" style="visibility:hidden">
+    <div id="popupRedemption" style="display:none">
         <div>
             <div><iframe id="renderRedemption"  style="border:none;width=255px;height:275px;margin-left:20px;" ></iframe></div>
             <div>Certificate ID: <label id="redemptionCertificateID"></label></div>
@@ -786,11 +979,29 @@
         </div>
     </div>
 
-    <div id="popupReceipt" style="visibility:hidden">
+    <div id="popupReceipt" style="display:none">
         <div>
             <div><div id="jqxReceiptCalendar" style="margin-left:40px;"></div></div>
             <div><input type="text" id="receiptNumber" placeholder="Receipt Number" style="margin-left:75px;margin-top:10px;" /></div>
             <div><input type="button" id="receiptSave" value="Save" style="float:left;margin-top:10px;" /><input type="button" id="receiptCancel" value="Cancel" style="float:right;margin-top:10px;" /></div>
+        </div>
+    </div>
+
+    <div id="popupRedemptionList" style="display:none">
+        <div>
+            <div id="redemptionListContainer">
+                <div id="jqxRedemptionList"></div>
+            </div>
+            <div style="float:right;margin-top:10px;">
+                <input type="button" id="closeRedemptionList" value="Back" />
+            </div>
+        </div>
+    </div>
+
+    <div id="popupExistingRedemption" style="display: none;">
+        <div>Redemption Code</div>
+        <div>
+            <iframe id="redemptionIframe" style="height:225px; width:250px; border:none;"  ></iframe>
         </div>
     </div>
 

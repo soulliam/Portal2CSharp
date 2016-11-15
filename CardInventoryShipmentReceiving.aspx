@@ -33,7 +33,41 @@
         // ============= Initialize Page ==================== Begin
 
         $(document).ready(function () {
-            loadGrid();
+
+            var locationString = $("#userLocation").val();
+            var locationResult = locationString.split(",");
+
+            if (locationResult.length > 1) {
+                var thisLocationString = "";
+                for (i = 0; i < locationResult.length; i++) {
+                    if (i == locationResult.length - 1) {
+                        thisLocationString += locationResult[i];
+                    }
+                    else {
+                        thisLocationString += locationResult[i] + ",";
+                    }
+
+                }
+                LoadLocationPopup(thisLocationString);
+                var offset = $("#jqxShipments").offset();
+                $("#popupLocation").jqxWindow({ position: { x: parseInt(offset.left) + 500, y: parseInt(offset.top) - 40 } });
+                $('#popupLocation').jqxWindow({ width: "325px", height: "300px" });
+                $('#popupLocation').jqxWindow({ isModal: true, modalOpacity: 0.7 });
+                $('#popupLocation').jqxWindow({ showCloseButton: false });
+                $("#popupLocation").css("visibility", "visible");
+                $("#popupLocation").jqxWindow({ title: 'Pick a Location' });
+                $("#popupLocation").jqxWindow('open');
+            }
+            else {
+                $("#shipReceiveLocation").val(locationResult[0]);
+            }
+
+            //insert place holder in location combo box
+            $("#LocationCombo").on('bindingComplete', function (event) {
+                $("#LocationCombo").jqxDropDownList('insertAt', 'Pick a Location', 0);
+            });
+
+            
 
             //#region SetupButtons
             $("#btnReceive").jqxButton({ width: '100%', height: 26 });
@@ -70,7 +104,46 @@
 
         // ============= Initialize Page ================== End
 
-        function loadGrid()
+        //Load locationPopup if multiple locations
+        function LoadLocationPopup(thisLocationString) {
+            //set up the location combobox
+            var locationSource =
+            {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'NameOfLocation' },
+                    { name: 'LocationId' }
+                ],
+                url: $("#localApiDomain").val() + "Locations/LocationByLocationIds/" + thisLocationString,
+
+            };
+            var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
+            $("#LocationCombo").jqxDropDownList(
+            {
+                width: 300,
+                height: 50,
+                itemHeight: 50,
+                source: locationDataAdapter,
+                selectedIndex: 0,
+                displayMember: "NameOfLocation",
+                valueMember: "LocationId"
+            });
+            $("#LocationCombo").on('select', function (event) {
+                if (event.args) {
+                    var item = event.args.item;
+                    if (item) {
+                        loadGrid(item.value)
+                        $("#shipReceiveLocation").val(item.value);
+                        $("#popupLocation").jqxWindow('hide');
+                    }
+
+                }
+            });
+        }
+
+        function loadGrid(thisLocationID)
         {
             var parent = $("#jqxShipments").parent();
             $("#jqxShipments").jqxGrid('destroy');
@@ -90,6 +163,7 @@
                     { name: 'CardDistributionActivityDescription' },
                     { name: 'RecordedBy' },
                     { name: 'ActivityId' },
+                    { name: 'LocationId' },
                     { name: 'NameOfLocation' }
                 ],
                 id: 'ManualEditId',
@@ -115,26 +189,35 @@
                 altrows: true,
                 filterable: true,
                 ready: function () {
-                    // create a filter group for the FirstName column.
+                    // create a filter group for the ActivityId column.
                     var ActivityFilterGroup = new $.jqx.filter();
                     // operator between the filters in the filter group. 1 is for OR. 0 is for AND.
                     var filter_or_operator = 1;
-                    // create a number filter with 'equal' condition.
-                    var filtervalue = 2;
                     var filtercondition = 'equal';
-                    var ActivityFilter1 = ActivityFilterGroup.createfilter('numericfilter', filtervalue, filtercondition);
-                    // create second number filter with 'equal' condition.
-                    filtervalue = 3;
-                    filtercondition = 'equal';
-                    var ActivityFilter2 = ActivityFilterGroup.createfilter('numericfilter', filtervalue, filtercondition);
+
+                    var ActivityType_1 = 2;
+                    var ActivityFilter = ActivityFilterGroup.createfilter('numericfilter', ActivityType_1, filtercondition);
+
+                    var ActivityType_2 = 3;
+                    var ActivityFilter1 = ActivityFilterGroup.createfilter('numericfilter', ActivityType_2, filtercondition);
+
+                    var ActivityFilterGroup1 = new $.jqx.filter();
+                    var filter_or_operator1 = 0;
+                    var filterLocationId = thisLocationID;
+                    var ActivityFilter2 = ActivityFilterGroup.createfilter('numericfilter', filterLocationId, filtercondition);
+
                     // add the filters to the filter group.
+                    ActivityFilterGroup.addfilter(filter_or_operator, ActivityFilter);
                     ActivityFilterGroup.addfilter(filter_or_operator, ActivityFilter1);
-                    ActivityFilterGroup.addfilter(filter_or_operator, ActivityFilter2);
+                    ActivityFilterGroup1.addfilter(filter_or_operator1, ActivityFilter2);
+                    
                     $("#jqxShipments").jqxGrid('addfilter', 'ActivityId', ActivityFilterGroup);
+                    $("#jqxShipments").jqxGrid('addfilter', 'LocationId', ActivityFilterGroup1);
                     $("#jqxShipments").jqxGrid('applyfilters');
                 },
                 columns: [
                        { text: 'CardHistoryId', datafield: 'CardHistoryId', hidden: true },
+                       { text: 'LocationId', datafield: 'LocationId' },
                        { text: 'ActivityDate', datafield: 'ActivityDate' },
                        { text: 'StartingNumber', datafield: 'StartingNumber' },
                        { text: 'EndingNumber', datafield: 'EndingNumber' },
@@ -175,7 +258,7 @@
         }
 
     </script>
-
+    <input type="text" id="shipReceiveLocation" style="display:none;" />
     <div id="CardInventoryShipmentReceiving" class="container-fluid container-970 wrap-search-options">
         <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
             <div class="row search-size FPR_SearchLeft">
@@ -205,6 +288,12 @@
             </div>
         </div>
     </div><!-- /.container-fluid -->
+
+    <div id="popupLocation" style="visibility: hidden">
+        <div>
+            <div id="LocationCombo" style="float:left;"></div>
+        </div>
+    </div>
 
 </asp:Content>
 

@@ -42,7 +42,7 @@ public partial class _Default : System.Web.UI.Page
         }
         else
         {
-            if (groupList.IndexOf("\\booth,") > -1)
+            if (groupList.IndexOf("\\Booth,") > -1)
             {
                 Session["IMINBOOTH"] = "true";
             }

@@ -32,6 +32,8 @@
         // ============= Initialize Page ==================== Begin
 
         $(document).ready(function () {
+            loadLocationCombo();
+
             loadGrid();
 
             //#region SetupButtons
@@ -57,12 +59,14 @@
                     var item = event.args.item;
                     if (item != null) {
                         if (item.label == "Bus") {
+                            loadBuses();
                             $("#jqxBus").toggle();
                             if ($("#jqxRep").is(":visible")) {
                                 $("#jqxRep").toggle();
                             }
                         }
                         if (item.label == "Rep") {
+                            loadReps();
                             $("#jqxRep").toggle();
                             if ($("#jqxBus").is(":visible")) {
                                 $("#jqxBus").toggle();
@@ -80,88 +84,19 @@
                 }
             });
 
-
-            //setup Rep Combo
-            var RepSource =
-            {
-                datatype: "json",
-                type: "Get",
-                root: "data",
-                datafields: [
-                    { name: 'RepName' },
-                    { name: 'RepID' }
-                ],
-                url: $("#localApiDomain").val() + "MarketingReps/Get"
-            };
-            var RepDataAdapter = new $.jqx.dataAdapter(RepSource);
-
-            $("#jqxRep").jqxComboBox(
-            {
-                width: '100%',
-                height: 24,
-                source: RepDataAdapter,
-                selectedIndex: 0,
-                displayMember: "RepName",
-                valueMember: "RepID"
-            });
-            $("#jqxRep").on('select', function (event) {
-                if (event.args) {
-                    var item = event.args.item;
-                    if (item) {
-
-                    }
-                }
-            });
-
             $("#jqxRep").on('bindingComplete', function (event) {
                 $("#jqxRep").jqxComboBox('insertAt', 'Pick Rep', 0);
-                $("#jqxRep").on('change', function (event) {
-                    //Do nothing for now
-                });
             });
 
-            //set up the location combobox
-            var locationSource =
-            {
-                datatype: "json",
-                type: "Get",
-                root: "data",
-                datafields: [
-                    { name: 'DisplayName' },
-                    { name: 'LocationId' }
-                ],
-                beforeSend: function (jqXHR, settings) {
-                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
-                },
-                url: $("#apiDomain").val() + "locations",
-
-            };
-            var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
-            $("#LocationCombo").jqxComboBox(
-            {
-                width: '100%',
-                height: 24,
-                source: locationDataAdapter,
-                selectedIndex: 0,
-                displayMember: "DisplayName",
-                valueMember: "LocationId"
-            });
-            $("#LocationCombo").on('select', function (event) {
-                if (event.args) {
-
-                    var item = event.args.item;
-                    if (item) {
-
-                    }
-                }
+            $("#jqxBus").on('bindingComplete', function (event) {
+                $("#jqxBus").jqxComboBox('insertAt', 'Pick a Bus', 0);
+                $("#jqxBus").jqxComboBox('selectIndex', 0);
             });
 
             $("#LocationCombo").on('bindingComplete', function (event) {
                 $("#LocationCombo").jqxComboBox('insertAt', 'Pick Location', 0);
-                $("#LocationCombo").on('change', function (event) {
-                    loadBuses();
-                });
             });
+
 
             $("#jqxBus").toggle();
             $("#jqxRep").toggle();
@@ -169,8 +104,64 @@
 
         // ============= Initialize Page ================== End
 
+        function loadLocationCombo() {
+            var parent = $("#LocationCombo").parent();
+            $("#LocationCombo").jqxGrid('destroy');
+            $("<div id='LocationCombo'></div>").appendTo(parent);
+
+            var locationString = $("#userLocation").val();
+            var locationResult = locationString.split(",");
+            var thisLocationString = "";
+
+            if (locationResult.length > 1) {
+
+                for (i = 0; i < locationResult.length; i++) {
+                    if (i == locationResult.length - 1) {
+                        thisLocationString += locationResult[i];
+                    }
+                    else {
+                        thisLocationString += locationResult[i] + ",";
+                    }
+
+                }
+            } else {
+                thisLocationString = locationString;
+            }
+
+            //set up the location combobox
+
+            var locationSource =
+            {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'NameOfLocation' },
+                    { name: 'LocationId' }
+                ],
+                url: $("#localApiDomain").val() + "Locations/LocationByLocationIds/" + thisLocationString,
+
+            };
+            var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
+            $("#LocationCombo").jqxComboBox(
+            {
+                width: 150,
+                height: 25,
+                itemHeight: 50,
+                source: locationDataAdapter,
+                selectedIndex: 0,
+                displayMember: "NameOfLocation",
+                valueMember: "LocationId"
+            });
+
+        }
+
         function loadGrid()
         {
+            var parent = $("#jqxDistribution").parent();
+            $("#jqxDistribution").jqxGrid('destroy');
+            $("<div id='jqxDistribution'></div>").appendTo(parent);
+
             // loading order histor
             var url = $("#localApiDomain").val() + "CardDistHistorys/Get/-1";
 
@@ -197,14 +188,13 @@
             // creage jqxgrid
             $("#jqxDistribution").jqxGrid(
             {
-                pageable: true,
-                pagermode: 'simple',
+                //pageable: true,
+                //pagermode: 'simple',
                 //pagermode: 'advanced',
-                pagesize: 12,
+                //pagesize: 12,
                 width: '100%',
                 height: 500,
                 source: source,
-                selectionmode: 'checkbox',
                 rowsheight: 35,
                 sortable: true,
                 altrows: true,
@@ -275,21 +265,26 @@
         function DistributCards() {
             var StartingNumber = $("#firstCard").val();
             var EndingNumber = $("#lastCard").val();
-            var Bus = "";
-            var Rep = "";
-            var Booth = "";
-            var RepBus = "";
-
-            Bus = $("#jqxBus").jqxComboBox('getSelectedItem').label;
-            Rep = $("#jqxRep").jqxComboBox('getSelectedItem').label;
+            if ($("#jqxBus").val() != "") {
+                var Bus = $("#jqxBus").jqxComboBox('getSelectedItem').label;
+            }
+            if ($("#jqxRep").val() != "") {
+                var Rep = $("#jqxRep").jqxComboBox('getSelectedItem').label;
+            }
+            var thisLocationId = $("#LocationCombo").jqxComboBox('getSelectedItem').value;
+            var DistPoint = "";
+            
+            
 
             if (Bus == "Pick a Bus" && Rep == "Pick a Rep") {
-                Booth = "Booth";
+                DistPoint = "Booth";
             } else {
-                if (Bus != "Pick a Bus") {
+                if (Bus != "Pick a Bus" && Bus != "") {
                     RepBus = Bus;
+                    DistPoint = "Bus";
                 } else {
                     RepBus = Rep;
+                    DistPoint = "Rep";
                 }
             }
 
@@ -301,29 +296,37 @@
             var Quantity = parseInt(EndingNumber) - parseInt(StartingNumber);
             
             $.post($("#localApiDomain").val() + "CardDistHistorys/Post",
-                { 'ActivityDate': new Date().toMMDDYYYYString(), 'ActivityId': 4, 'StartingNumber': StartingNumber, 'EndingNumber': EndingNumber, 'NumberOfCards': Quantity, 'OrderConfirmationDate': '1/1/1900', 'DistributionPoint': Booth, 'BusOrRepID': RepBus, 'Shift': null, 'RecordDate': new Date().toMMDDYYYYString(), 'RecordedBy': $("#txtLoggedinUsername").val() },
+                { 'ActivityDate': new Date().toMMDDYYYYString(), 'ActivityId': 4, 'StartingNumber': StartingNumber, 'EndingNumber': EndingNumber, 'NumberOfCards': Quantity, 'OrderConfirmationDate': '1/1/1900', 'DistributionPoint': DistPoint, 'BusOrRepID': RepBus, 'Shift': null, 'RecordDate': new Date().toMMDDYYYYString(), 'RecordedBy': $("#txtLoggedinUsername").val(), 'LocationId': thisLocationId },
                 function (data, status) {
                     switch (status) {
                         case 'success':
                             $("#statusMessage").attr("class", "status");
                             $("#statusMessage").html('Cards were created received');
+                            alert('Cards were distributed.');
                             break;
                         default:
                             $("#statusMessage").attr("class", "warning");
                             $("#statusMessage").html('An Error occurred: ' + status + "\n Data:" + data);
+                            alert('An Error occurred: ' + status + "\n Data:" + data);
                             break;
                     }
                 }
             );
             $("#jqxBus").jqxComboBox('selectIndex', 0);
             $("#jqxRep").jqxComboBox('selectIndex', 0);
+            loadGrid();
 
         }
 
         function loadBuses() {
+
+            var parent = $("#jqxBus").parent();
+            $("#jqxBus").jqxGrid('destroy');
+            $("<div id='jqxBus'></div>").appendTo(parent);
+
             //setup bus Combo
             
-            var busLocID = $("#LocationCombo").jqxComboBox('getSelectedItem').value;
+            var busLocID = $("#LocationCombo").val();
 
             var busSource =
             {
@@ -347,20 +350,39 @@
                 displayMember: "VehicleNumber",
                 valueMember: "VehicleId"
             });
-            $("#jqxBus").on('select', function (event) {
-                if (event.args) {
-                    var item = event.args.item;
-                    if (item) {
 
-                    }
-                }
-            });
 
-            $("#jqxBus").on('bindingComplete', function (event) {
-                $("#jqxBus").jqxComboBox('insertAt', 'Pick a Bus', 0);
-                $("#jqxBus").on('change', function (event) {
-                    //Do nothing for now
-                });
+
+        }
+
+        function loadReps() {
+
+            var parent = $("#jqxRep").parent();
+            $("#jqxRep").jqxGrid('destroy');
+            $("<div id='jqxRep'></div>").appendTo(parent);
+
+            //setup Rep Combo
+            var RepSource =
+            {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'RepName' },
+                    { name: 'RepID' }
+                ],
+                url: $("#localApiDomain").val() + "MarketingReps/Get"
+            };
+            var RepDataAdapter = new $.jqx.dataAdapter(RepSource);
+
+            $("#jqxRep").jqxComboBox(
+            {
+                width: '100%',
+                height: 24,
+                source: RepDataAdapter,
+                selectedIndex: 0,
+                displayMember: "RepName",
+                valueMember: "RepID"
             });
         }
 
