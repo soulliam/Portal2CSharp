@@ -660,6 +660,7 @@
                 var isReceipt = dataRecord.ParkingTransactionNumber;
                 var isRedemption = dataRecord.RedemptionId;
                 var offset = $("#jqxMemberInfoTabs").offset();
+                var toAddress = $("#EmailAddress").val();
 
                 var thisMemberId = $("#MemberId").val();
 
@@ -667,7 +668,7 @@
                     //This will show the Receipt
                     var row = event.args.rowindex;
                     var dataRecord = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
-                    var thisItem = dataRecord.ParkingTransactionNumber;
+                    var thisLocationId = dataRecord.LocationId;
 
                     $("#popupReceipt").css('display', 'block');
                     $("#popupReceipt").css('visibility', 'hidden');
@@ -675,11 +676,11 @@
                     var offset = $("#jqxMemberInfoTabs").offset();
 
                     $("#popupReceipt").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
-                    $('#popupReceipt').jqxWindow({ maxHeight: 550, maxWidth: 350 });
+                    $('#popupReceipt').jqxWindow({ maxHeight: 525, maxWidth: 250 });
                     $('#popupReceipt').jqxWindow({ width: "950px", height: "600px" });
                     $("#popupReceipt").css("visibility", "visible");
                     $("#popupReceipt").jqxWindow('open');
-                    document.getElementById('receiptIframe').src = './ReceiptDisplay.aspx?codeNumber=' + thisItem;
+                    document.getElementById('receiptIframe').src = './ReceiptDisplay.aspx?MemberId=' + thisMemberId + '&ParkingTransactionNumber=' + isReceipt + '&LocationId=' + thisLocationId + '&EmailAddress=' + toAddress;
                     return null;
                 }
                 //This will show the Redemption
@@ -689,14 +690,14 @@
                     $("#popupRedemption").css('display', 'block');
                     $("#popupRedemption").css('visibility', 'hidden');
 
-                    $("#popupRedemption").jqxWindow({ position: { x: '25%', y: '30%' } });
+                    $("#popupRedemption").jqxWindow({ position: { x: '25%', y: '7%' } });
                     $('#popupRedemption').jqxWindow({ resizable: false });
                     $('#popupRedemption').jqxWindow({ draggable: true });
                     $('#popupRedemption').jqxWindow({ isModal: true });
                     $("#popupRedemption").css("visibility", "visible");
-                    $('#popupRedemption').jqxWindow({ height: '270px', width: '50%' });
-                    $('#popupRedemption').jqxWindow({ minHeight: '270px', minWidth: '50%' });
-                    $('#popupRedemption').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+                    $('#popupRedemption').jqxWindow({ height: '675px', width: '35%' });
+                    $('#popupRedemption').jqxWindow({ minHeight: '270px', minWidth: '10%' });
+                    $('#popupRedemption').jqxWindow({ maxHeight: '700px', maxWidth: '50%' });
                     $('#popupRedemption').jqxWindow({ showCloseButton: true });
                     $('#popupRedemption').jqxWindow({ animationType: 'combined' });
                     $('#popupRedemption').jqxWindow({ showAnimationDuration: 300 });
@@ -722,8 +723,9 @@
                             var thisMemberName = thisData.result.data.Member.FirstName + '%20' + thisData.result.data.Member.LastName;
                             var thisFPNumber = thisData.result.data.Member.PrimaryFPNumber;
                             var thisQRCode = thisData.result.data.QrCodeString;
+                            var toAddress = $("#EmailAddress").val();
 
-                            document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?thisCertificateID=' + thisCertificateID + '&thisRedemptionType=' + thisRedemptionType + '&thisMemberName=' + thisMemberName + '&thisFPNumber=' + thisFPNumber + '&thisQRCode=' + thisQRCode;
+                            document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?thisCertificateID=' + thisCertificateID + '&thisRedemptionType=' + thisRedemptionType + '&thisMemberName=' + thisMemberName + '&thisFPNumber=' + thisFPNumber + '&thisQRCode=' + thisQRCode + '&EmailAddress=' + toAddress;
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
                             alert("Error: " + errorThrown);
@@ -3250,17 +3252,17 @@
         </ul>
     </div>
 
-    <div id="popupReceipt" style="display: none">
+    <div id="popupReceipt" style="display:none;overflow:hidden;">
         <div>Reciept Details</div>
-        <div>
-            <iframe id="receiptIframe" style="border:none;width:255px;height:475px;" ></iframe>
+        <div style="margin-left:30px;margin-top:20px;overflow:hidden;">
+            <iframe id="receiptIframe" style="border:none;width:240px;height:465px;" ></iframe>
         </div>
     </div>
 
     <div id="popupRedemption" style="display: none;">
         <div>Redemption Details</div>
-        <div>
-            <iframe id="redemptionIframe" style="border:none;width:420px;height:570px;" ></iframe>
+        <div style="margin-left:20px;margin-top:10px;overflow:hidden;">
+            <iframe id="redemptionIframe" style="border:none;width:450px;height:700px;" ></iframe>
         </div>
     </div>
 

@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
+using System.Net.Mime;
 using System.Web;
 
 /// <summary>
@@ -19,7 +20,7 @@ public class clsCommon
         //
     }
 
-    public void SendEmail(string ToAddress, string From, string Subject, string Body, bool IsHtml)
+    public void SendEmail(string ToAddress, string From, string Subject, string Body, bool IsHtml, string file = "")
     {
         //(1) Create the MailMessage instance
         MailMessage Message = new MailMessage(From, ToAddress);
@@ -28,6 +29,13 @@ public class clsCommon
         Message.Subject = Subject;
         Message.Body = Body;
         Message.IsBodyHtml = IsHtml;
+
+        if (file != "")
+        {
+            Attachment data = new Attachment(file, MediaTypeNames.Application.Octet);
+            Message.Attachments.Add(data);
+        }
+
 
         //(3) Create the SmtpClient object
         SmtpClient smtp = new SmtpClient();
