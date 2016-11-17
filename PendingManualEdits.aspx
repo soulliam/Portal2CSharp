@@ -36,13 +36,16 @@
         var loading = true;
 
         $(document).ready(function () {
+
             loadLocationCombo();
+
             $("#LocationCombo").on('bindingComplete', function (event) {
                 $("#LocationCombo").jqxComboBox('insertAt', 'Pick a Location', 0);
                 $("#LocationCombo").on('change', function (event) {
                     loadGrid();
                 });
             });
+
             $("#jqxgrid").bind('cellendedit', function (event) {
                 if (event.args.value) {
                     $("#jqxgrid").jqxGrid('selectrow', event.args.rowindex);
@@ -51,7 +54,6 @@
                     $("#jqxgrid").jqxGrid('unselectrow', event.args.rowindex);
                 }
             });
-            loading = false;
 
             
             $("#btnSubmit").on('click', function () {
@@ -74,8 +76,8 @@
                     var jsonText = JSON.stringify(processingList);
 
                     $.ajax({
-                        //url: $("#localApiDomain").val() + "ProcessPendingManualEditsController/SubmitManualEdits",
-                        url: "http://localhost:52839/api/ProcessPendingManualEditsController/SubmitManualEdits",
+                        url: $("#localApiDomain").val() + "ProcessPendingManualEditsController/SubmitManualEdits",
+                        //url: "http://localhost:52839/api/ProcessPendingManualEditsController/SubmitManualEdits",
                         type: 'POST',
                         data: processingList,
                         success: function (response) {
@@ -128,7 +130,14 @@
             });
 
             //Place holder grid
-            var source = {};
+            var data = new Array();
+
+            var source =
+            {
+                localdata: data,
+                datatype: "array"
+            };
+
             $("#jqxgrid").jqxGrid(
                 {
                     width: '100%',
@@ -156,53 +165,54 @@
 
         //loads main airport grid
         function loadGrid() {
-            if (loading == false) {
-                var thisLocationID = $('#LocationCombo').jqxComboBox('getSelectedItem').value;
 
-                var url = $("#localApiDomain").val() + "PendingManualEdits/PendingManualEditsByLocation/" + thisLocationID;
+            var parent = $("#jqxgrid").parent();
+            $("#jqxgrid").jqxGrid('destroy');
+            $("<div id='jqxgrid'></div>").appendTo(parent);
 
-                var source =
-                {
-                    datafields: [
-                        { name: 'ManualEditID' },
-                        { name: 'FPNumber' },
-                        { name: 'FullName' },
-                        { name: 'Points' },
-                        { name: 'DateOfRequest' },
-                        { name: 'CertificateNumber' },
-                        { name: 'Explanation' }
-                    ],
+            var thisLocationID = $('#LocationCombo').jqxComboBox('getSelectedItem').value;
 
-                    id: 'ManualEditId',
-                    type: 'Get',
-                    datatype: "json",
-                    url: url,
-                };
+            var url = $("#localApiDomain").val() + "PendingManualEdits/PendingManualEditsByLocation/" + thisLocationID;
+            //var url = "http://localhost:52839/api/PendingManualEdits/PendingManualEditsByLocation/" + thisLocationID;
 
-                // creage jqxgrid
-                $("#jqxgrid").jqxGrid(
-                {
-                    width: '100%',
-                    height: 500,
-                    source: source,
-                    selectionmode: 'checkbox',
-                    rowsheight: 35,
-                    sortable: true,
-                    altrows: true,
-                    filterable: true,
-                    columns: [
-                          { text: 'ManualEditId', datafield: 'ManualEditId', hidden: true },
-                          { text: 'FPNumber', datafield: 'FPNumber' },
-                          { text: 'Full Name', datafield: 'FullName' },
-                          { text: 'Points', datafield: 'Points' },
-                          { text: 'DateOfRequest', datafield: 'DateOfRequest' },
-                          { text: 'Certificate #', datafield: 'CertificateNumber' },
-                          { text: 'Explanation', datafield: 'Explanation' }
-                    ]
-                });
-            }
+            var source =
+            {
+                datafields: [
+                    { name: 'ManualEditID' },
+                    { name: 'FullName' },
+                    { name: 'Points' },
+                    { name: 'DateOfRequest' },
+                    { name: 'CertificateNumber' },
+                    { name: 'Explanation' }
+                ],
+
+                id: 'ManualEditId',
+                type: 'Get',
+                datatype: "json",
+                url: url,
+            };
+
+            // creage jqxgrid
+            $("#jqxgrid").jqxGrid(
+            {
+                width: '100%',
+                height: 500,
+                source: source,
+                selectionmode: 'checkbox',
+                rowsheight: 35,
+                sortable: true,
+                altrows: true,
+                filterable: true,
+                columns: [
+                        { text: 'ManualEditId', datafield: 'ManualEditId', hidden: true },
+                        { text: 'Full Name', datafield: 'FullName' },
+                        { text: 'Points', datafield: 'Points' },
+                        { text: 'DateOfRequest', datafield: 'DateOfRequest' },
+                        { text: 'Certificate #', datafield: 'CertificateNumber' },
+                        { text: 'Explanation', datafield: 'Explanation' }
+                ]
+            });
         }
-
 
         function loadLocationCombo() {
             //set up the location combobox
@@ -233,25 +243,42 @@
 
     </script>
     
-    <style>
-
-    </style>
-
-    <div id="PendingManualEdits">      
-        <div class="FPR_SearchBox" style="display:block;">
-            <div class="FPR_SearchLeft" style="margin-left:10px;">
-                <div id="LocationCombo"></div>
-            </div>
-            <div class="FPR_SearchRight">
-                     
+    <div id="Locations" class="container-fluid container-970 wrap-search-options">
+        <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
+            <div class="row search-size FPR_SearchLeft">
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
+                    <div class="row search-size">
+                        <div class="col-sm-3 col-sm-offset-9">
+                            <div class="row search-size">
+                                <div class="col-sm-8 col-sm-offset-4">
+                                    <div class="row search-size">
+                                        <div class="col-sm-12">
+                                            <div id="LocationCombo" style="width:250px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        
-    </div> 
-   
+    </div><!-- /.container-fluid -->
     
-    <div id="jqxgrid"></div>
+    <div style="display:none;">
+        <input id="LocationId" type="text" value="0"  />
+    </div>
+
+    <div class="container-fluid container-970">
+        <div class="row ">
+            <div class="col-sm-12">
+                <div id="jqxgrid"></div>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+
     <div id="actionButtons"><input id="btnSubmit" value="Submit" type="button" style="margin-top:15px;" /><input id="btnDelete" value="Delete" type="button" style="margin-left:75px; margin-top:15px;" /></div>
+
     
 
 </asp:Content>

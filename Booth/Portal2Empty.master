@@ -20,8 +20,8 @@
             <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
             <asp:TextBox runat="server" ID="userGuid" style="display:none">55BE1C451C534097976C8DAAFC73A005</asp:TextBox>
             <asp:TextBox runat="server" ID="AK" style="display:none">3E36B6D0-A79D-4A7D-B5F3-6C016DBF5580</asp:TextBox>
-            <asp:TextBox runat="server" ID="apiDomain" style="display:none">http://54.197.116.15/api/v1/</asp:TextBox>
-            <asp:TextBox runat="server" ID="localApiDomain" style="display:none">http://maxdev:8181/api/</asp:TextBox>
+            <asp:TextBox runat="server" ID="apiDomain" style="display:none">http://api.stage.thefastpark.com:80/api/v1/</asp:TextBox>
+            <asp:TextBox runat="server" ID="localApiDomain" style="display:none">http://pca-portal:8181/api/</asp:TextBox>
             <asp:TextBox runat="server" ID="userLocation" style="display:none">14</asp:TextBox>
         </div>
         <div>

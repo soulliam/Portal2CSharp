@@ -17,9 +17,9 @@ namespace class_Logging
         {
             string strSQL = null;
 
-            strSQL = "Insert into changeLog " + "(changeUser, changeDate, changeID, changeValOld, changeValNew, changeTable, changeNote, changeBatch) " +
+            strSQL = "Insert into changeLog " + "(changeUser, changeDate, changeID, changeValOld, changeValNew, changeTable, changeNote, changeBatch, CreateUserId) " +
                      "Values ('" + changeUser + "', '" + DateTime.Now + "', '" + changeID + "', '" + changeValOld + "', '" + changeValNew + "', '" +
-                              changeTable + "', '" + changeNote + "', " + intBatch + ")";
+                              changeTable + "', '" + changeNote + "', " + intBatch + ", -1)";
 
             clsADO writeLog = new clsADO();
             writeLog.updateOrInsert(strSQL, false);

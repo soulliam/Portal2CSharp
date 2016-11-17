@@ -512,8 +512,8 @@
                 
                 $.ajax({
                     type: "POST",
-                    //url: "http://localhost:52839/api/ManualEdits/AddManualEdit/",
-                    url: $("#localApiDomain").val() + "ManualEdits/AddManualEdit/",
+                    url: "http://localhost:52839/api/ManualEdits/AddManualEdit/",
+                    //url: $("#localApiDomain").val() + "ManualEdits/AddManualEdit/",
                     
                     data: { "ManualEditId": 0,
                         "MemberId": PageMemberID,
@@ -2537,7 +2537,7 @@
                                 <div class="col-sm-8 col-sm-offset-4">
                                     <div class="row search-size">
                                         <div class="col-sm-12">
-                                            <input type="button" id="btnMarketing" value="Marketing" />
+                                            <input type="button" id="btnMarketing" value="Marketing" onclick="window.open('http://enrollnow.thefastpark.com/linklogin/BA1B0B96-30D3-45AB-815D-3527F72B6442');" />
                                         </div>
                                     </div>
                                     <div class="row search-size">
