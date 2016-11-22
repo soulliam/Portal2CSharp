@@ -38,21 +38,38 @@
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
 
-            $("#masterBody").on('contextmenu', function () {
-                return false;
+            $('#jqxLocationImagesGrid').on('rowclick', function (event) {
+
+                var rightclick = args.rightclick;
+
+                if (rightclick == true) {
+
+                    var row = event.args.rowindex;
+                    var datarow = $("#jqxLocationImagesGrid").jqxGrid('getrowdata', row);
+                    var source = datarow.ImageUrl;
+                    var offset = $("#jqxLocationTabs").offset();
+
+                    $("#popupImage").jqxWindow({ position: { x: '19%', y: '20%' } });
+                    $('#popupImage').jqxWindow({ resizable: false });
+                    $('#popupImage').jqxWindow({ draggable: true });
+                    $('#popupImage').jqxWindow({ isModal: true });
+                    $("#popupImage").css("visibility", "visible");
+                    $('#popupImage').jqxWindow({ height: '320px', width: '50%' });
+                    $('#popupImage').jqxWindow({ minHeight: '320px', minWidth: '50%' });
+                    $('#popupImage').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+                    $('#popupImage').jqxWindow({ showCloseButton: true });
+                    $('#popupImage').jqxWindow({ animationType: 'combined' });
+                    $('#popupImage').jqxWindow({ showAnimationDuration: 300 });
+                    $('#popupImage').jqxWindow({ closeAnimationDuration: 500 });
+                    $("#popupImage").jqxWindow('open');
+                    document.getElementById('showImage').src = "https://stage.thefastpark.com" + source;
+
+
+                    
+                }
+
             });
 
-            $(".imageLink").on('contextmenu', function () {
-                return false;
-            });
-
-            $("#jqxLocationImagesGrid").on('contextmenu', function () {
-                return false;
-            });
-
-            $("#locationImagesTab").on('contextmenu', function () {
-                return false;
-            });
 
             //set up the tabs
             $('#jqxTabs').jqxTabs({ width: '100%', position: 'top' });
@@ -93,6 +110,25 @@
                 }
             });
 
+            //set up the Reservation tabs
+            $('#jqxReservationTabs').jqxTabs({ width: '100%', position: 'top' });
+            $('#jqxReservationTabs').css('margin-bottom', '10px');
+            $('#settings div').css('margin-top', '10px');
+            $('#animation').on('change', function (event) {
+                var checked = event.args.checked;
+                $('#jqxReservationTabs').jqxTabs({ selectionTracker: checked });
+            });
+
+            $('#contentAnimation').on('change', function (event) {
+                var checked = event.args.checked;
+                if (checked) {
+                    $('#jqxReservationTabs').jqxTabs({ animationType: 'fade' });
+                }
+                else {
+                    $('#jqxReservationTabs').jqxTabs({ animationType: 'none' });
+                }
+            });
+
             //Loads main location grid
             loadLocationGrid();
 
@@ -104,6 +140,7 @@
             $("#updateFeature").jqxButton();
             $("#updateLocationImages").jqxButton();
             $("#addLocationImages").jqxButton();
+            $("#addReservationFee").jqxButton({ width: '200', height: '26' });
             $("#btnNew").jqxLinkButton({ width: '100%', height: '26' });
             //#endregion
 
@@ -741,6 +778,7 @@
 
 
         });
+   
         // ============= Initialize Page ================== End
 
         //#region LoadGridFunctions
@@ -909,9 +947,19 @@
 
                               //sets the current selected location
                               selectedLocationId = dataRecord.LocationId;
+
+                              $('#jqxReservationTabs').jqxTabs('select', 0);
+                              $('#jqxTabs').jqxTabs('select', 0);
+                              $('#jqxLocationTabs').jqxTabs('select', 0);
+
+
                               loadFeatureGrid(selectedLocationId);
 
                               loadLocationImagesGrid(selectedLocationId);
+
+                              loadRestrictionGrid(selectedLocationId);
+
+                              loadReservationFeesGrid(selectedLocationId);
 
                               // show the popup window.
                               $("#popupLocation").jqxWindow('open');
@@ -1099,50 +1147,155 @@
                 source: locationImagesSource,
                 altrows: true,
                 editable: true,
-                ready: function(){
+                ready: function () {
                     $("#jqxLocationImagesGrid").jqxGrid('sortby', 'SortOrder', 'asc');
                 },
                 columns: [
                             //  uncomment below to show the what you want
                             { text: 'ImageId', datafield: 'ImageId', editable: false, width: '7%' },
                             { text: 'LocationId', datafield: 'LocationId', editable: false, width: '7%' },
-                            { text: 'ImageUrl', datafield: 'ImageUrl', cellsrenderer: function(row, column, value, defaultSettings, columnSettings, rowdata )
                             {
-                                return "<a class='imageLink'><div>" + value + "</div></a>";
-                            }, width: '49%'},
+                                text: 'ImageUrl', datafield: 'ImageUrl', cellsrenderer: function (row, column, value, defaultSettings, columnSettings, rowdata) {
+                                    return "<a class='imageLink'><div oncontextmenu='return false;'>" + value + "</div></a>";
+                                }, width: '49%'
+                            },
                             { text: 'Caption', datafield: 'Caption', width: '30%' },
                             { text: 'SortOrder', datafield: 'SortOrder', width: '7%' }
 
                 ]
             });
+        }
 
-            $('#jqxLocationImagesGrid').on('rowclick', function (event) {
+        function loadRestrictionGrid(thisLocationId) {
 
-                var rightclick = args.rightclick;
+            //destroying restriction grid and recreate
+            var parent = $("#jqxRestrictionGrid").parent();
+            $("#jqxRestrictionGrid").jqxGrid('destroy');
+            $("<div id='jqxRestrictionGrid'></div>").appendTo(parent);
 
-                if (rightclick == true) {
-                    var row = event.args.rowindex;
-                    var datarow = $("#jqxLocationImagesGrid").jqxGrid('getrowdata', row);
-                    var source = datarow.ImageUrl;
-                    var offset = $("#jqxLocationTabs").offset();
 
-                    $("#popupImage").jqxWindow({ position: { x: '25%', y: '30%' } });
-                    $('#popupImage').jqxWindow({ resizable: false });
-                    $('#popupImage').jqxWindow({ draggable: true });
-                    $('#popupImage').jqxWindow({ isModal: true });
-                    $("#popupImage").css("visibility", "visible");
-                    $('#popupImage').jqxWindow({ height: '320px', width: '50%' });
-                    $('#popupImage').jqxWindow({ minHeight: '320px', minWidth: '50%' });
-                    $('#popupImage').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
-                    $('#popupImage').jqxWindow({ showCloseButton: true });
-                    $('#popupImage').jqxWindow({ animationType: 'combined' });
-                    $('#popupImage').jqxWindow({ showAnimationDuration: 300 });
-                    $('#popupImage').jqxWindow({ closeAnimationDuration: 500 });
-                    $("#popupImage").jqxWindow('open');
-                    document.getElementById('showImage').src = "https://stage.thefastpark.com" + source;
-                }
+            var url = $("#apiDomain").val() + "restriction";
 
+            var RestrictionSource =
+            {
+                datafields: [
+                    { name: 'RestrictionId' },
+                    { name: 'MaximumPreferredStatusRank' },
+                    { name: 'LocationId' },
+                    { name: 'IsClosed' },
+                    { name: 'LocationDetail' }
+                ],
+
+                id: 'ImageId',
+                type: 'Get',
+                datatype: "json",
+                url: url,
+                beforeSend: function (jqXHR, settings) {
+                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+                },
+                root: "data"
+            };
+
+            // make filter for location CoS API sends back everything
+            var addDefaultfilter = function () {
+                var filtergroup = new $.jqx.filter();
+                var filtervalue = thisLocationId;
+                var filtercondition = 'EQUAL';
+                var filter1 = filtergroup.createfilter('numericfilter', filtervalue, filtercondition);
+                var operator = 0;
+
+                filtergroup.addfilter(operator, filter1);
+
+                //$("#jqxProgress").jqxGrid('addfilter', 'Status', statusfiltergroup);
+                $("#jqxRestrictionGrid").jqxGrid('addfilter', 'LocationId', filtergroup);
+                $("#jqxRestrictionGrid").jqxGrid('applyfilters');
+            }
+
+            // creage Restriction grid
+            $("#jqxRestrictionGrid").jqxGrid(
+            {
+                width: '80%',
+                height: 300,
+                source: RestrictionSource,
+                altrows: true,
+                editable: true,
+                ready: function () {
+                    addDefaultfilter();
+                },
+                columns: [
+                            //  uncomment below to show the what you want
+                            { text: 'RestrictionId', datafield: 'RestrictionId', editable: false, width: '25%' },
+                            { text: 'MaximumPreferredStatusRank', datafield: 'MaximumPreferredStatusRank', editable: false, width: '25%' },
+                            { text: 'LocationId', datafield: 'LocationId', hidden: true },
+                            { text: 'IsClosed', datafield: 'IsClosed', width: '25%' },
+                            { text: 'LocationDetail', datafield: 'LocationDetail', width: '25%' }
+
+                ]
             });
+
+
+        }
+
+        function loadReservationFeesGrid(thisLocationId) {
+
+            //destroying reservation fees grid and create it again
+            var parent = $("#jqxReservationFeesGrid").parent();
+            $("#jqxReservationFeesGrid").jqxGrid('destroy');
+            $("<div id='jqxReservationFeesGrid'></div>").appendTo(parent);
+
+
+            var url = $("#apiDomain").val() + "reservation-fees?locationId=" + thisLocationId + "&startDatetime=1/1/1900";
+
+            var ReservationSource =
+            {
+                datafields: [
+                    { name: 'ReservationFeeId' },
+                    { name: 'LocationId' },
+                    { name: 'EffectiveDatetime' },
+                    { name: 'ExpiresDatetime' },
+                    { name: 'IsDefault' },
+                    { name: 'FeeDollars' },
+                    { name: 'FeePoints' },
+                    { name: 'CancellationGracePeriodHours' },
+                    { name: 'CancellationFeeDollars' },
+                    { name: 'NoShowFeeDollars' },
+                    { name: 'MaxReservationCount' }
+                ],
+
+                id: 'ImageId',
+                type: 'Get',
+                datatype: "json",
+                url: url,
+                beforeSend: function (jqXHR, settings) {
+                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+                },
+                root: "data"
+            };
+
+            // creage ReservationFee Grid
+            $("#jqxReservationFeesGrid").jqxGrid(
+            {
+                width: '100%',
+                height: 300,
+                source: ReservationSource,
+                altrows: true,
+                editable: true,
+                columns: [
+                            { text: 'ReservationFeeId', datafield: 'ReservationFeeId' },
+                            { text: 'LocationId', datafield: 'LocationId' },
+                            { text: 'EffectiveDatetime', datafield: 'EffectiveDatetime' },
+                            { text: 'ExpiresDatetime', datafield: 'ExpiresDatetime' },
+                            { text: 'IsDefault', datafield: 'IsDefault' },
+                            { text: 'FeeDollars', datafield: 'FeeDollars' },
+                            { text: 'FeePoints', datafield: 'FeePoints' },
+                            { text: 'CancellationGracePeriodHours', datafield: 'CancellationGracePeriodHours' },
+                            { text: 'CancellationFeeDollars', datafield: 'CancellationFeeDollars' },
+                            { text: 'NoShowFeeDollars', datafield: 'NoShowFeeDollars' },
+                            { text: 'MaxReservationCount', datafield: 'MaxReservationCount' }
+
+                ]
+            });
+
 
         }
 
@@ -1312,6 +1465,7 @@
                         <li>Edit Feature</li>
                         <li>Add Feature</li>
                         <li>Location Images</li>
+                        <li>Reservaton Maintenance</li>
                     </ul>
                     <div id="LocationTab" class="tab-body">
                         <div id="jqxLocationTabs" class="tab-system">
@@ -1823,7 +1977,7 @@
                     <div id="locationImagesTab" class="tab-body">
                         <div class="row">
                             <div class="col-sm-12">
-                                <div id="jqxLocationImagesGrid"></div>
+                                <div id="jqxLocationImagesGrid"  oncontextmenu='return false;'></div>
                             </div>
                         </div>
                         <div class="row">
@@ -1842,6 +1996,28 @@
                             </div>
                         </div>
                     </div>
+                    <div id="reservationMaintenance" class="tab-body">
+                        <div id="jqxReservationTabs" class="tab-system">
+                            <ul>
+                                <li>Reservation Fees</li>
+                                <li>Reservation Restriction</li>
+                            </ul>
+                            <div id="ReservationFees" class="tab-body">
+                                <div class="row">
+                                    <div class="col-sm-9 col-md-10">
+                                        <div id="jqxReservationFeesGrid"></div>
+                                    </div>
+                                    <div class="col-sm-3 col-md-2">
+                                        <div><input class="form-control" type="button" id="addReservationFee" value="Add Reservation Fee" style="float:right" /></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="ReservationRestriction" class="tab-body">
+                                <div id="jqxRestrictionGrid"></div>
+                                <div></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1849,12 +2025,12 @@
 
 
     <%-- html for popup edit box --%>
-    <div id="popupImage" style="display:none;">
+    <div id="popupImage" style="display:none;" oncontextmenu='return false;'>
         <div>Location Image</div>
         <div>
             <div class="modal-body">
                 <!--<iframe id="showImage" style="width:640px;height:250px;border:none;text-align:center;"></iframe>-->
-                <img id="showImage" src="#" />
+                <img id="showImage" src="#" oncontextmenu='return false;' />
             </div>
         </div>
     </div>

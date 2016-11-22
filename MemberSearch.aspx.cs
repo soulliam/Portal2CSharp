@@ -40,95 +40,108 @@ public partial class MemberSearch : System.Web.UI.Page
     [System.Web.Services.WebMethod]
     public static string SubmitReceipt1(DateTime entryDate, string Receipt, string Column, string SubmittedBy, Int64 LocationId, Int64 MemberId)
     {
-
-
-        class_ADO.clsADO thisADO = new class_ADO.clsADO();
-
-        SqlConnection cn = new SqlConnection(thisADO.getMaxConnectionString());
-
-        cn.Open();
-        SqlCommand cmd = new SqlCommand("dbo.GetManagerCreditForReceipt");
-        cmd.CommandType = CommandType.StoredProcedure;
-        cmd.Connection = cn;
-
-        SqlParameter thisEntryDate = cmd.Parameters.Add(new SqlParameter("@iEntryDate", SqlDbType.Date));
-        SqlParameter thisReceiptNumber = cmd.Parameters.Add(new SqlParameter("@iReceiptNumber", SqlDbType.NVarChar, 20));
-        SqlParameter thisColumnNumber = cmd.Parameters.Add(new SqlParameter("@iColumnNumber", SqlDbType.NVarChar, 20));
-        SqlParameter thisShortTermNumber = cmd.Parameters.Add(new SqlParameter("@iShortTermNumber", SqlDbType.NVarChar, 20));
-        SqlParameter thisUserId = cmd.Parameters.Add(new SqlParameter("@iUserId", SqlDbType.UniqueIdentifier));
-        SqlParameter thisLocationId = cmd.Parameters.Add(new SqlParameter("@iLocationId", SqlDbType.Int));
-        SqlParameter thisMemberId = cmd.Parameters.Add(new SqlParameter("@iMemberId", SqlDbType.BigInt));
-
-        if (Column == "")
+        try
         {
-            Column = null;
-        }
-        else
-        {
-            Receipt = null;
-        }
+            class_ADO.clsADO thisADO = new class_ADO.clsADO();
 
-        thisEntryDate.Value = entryDate;
-        thisReceiptNumber.Value = Receipt;
-        thisColumnNumber.Value = Column;
-        thisShortTermNumber.Value = null;
-        thisUserId.Value = Guid.Parse("BA1B0B96-30D3-45AB-815D-3527F72B6442");
-        thisLocationId.Value = LocationId;
-        thisMemberId.Value = MemberId;
+            SqlConnection cn = new SqlConnection(thisADO.getMaxConnectionString());
 
-        using (SqlDataReader sdr = cmd.ExecuteReader())
-        {
-            while (sdr.Read())
+            cn.Open();
+            SqlCommand cmd = new SqlCommand("dbo.GetManagerCreditForReceipt");
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Connection = cn;
+
+            SqlParameter thisEntryDate = cmd.Parameters.Add(new SqlParameter("@iEntryDate", SqlDbType.Date));
+            SqlParameter thisReceiptNumber = cmd.Parameters.Add(new SqlParameter("@iReceiptNumber", SqlDbType.NVarChar, 20));
+            SqlParameter thisColumnNumber = cmd.Parameters.Add(new SqlParameter("@iColumnNumber", SqlDbType.NVarChar, 20));
+            SqlParameter thisShortTermNumber = cmd.Parameters.Add(new SqlParameter("@iShortTermNumber", SqlDbType.NVarChar, 20));
+            SqlParameter thisUserId = cmd.Parameters.Add(new SqlParameter("@iUserId", SqlDbType.UniqueIdentifier));
+            SqlParameter thisLocationId = cmd.Parameters.Add(new SqlParameter("@iLocationId", SqlDbType.Int));
+            SqlParameter thisMemberId = cmd.Parameters.Add(new SqlParameter("@iMemberId", SqlDbType.BigInt));
+
+            if (Column == "")
             {
-                Console.WriteLine(sdr["ErrorMessage"]);
-                return Convert.ToString(sdr["ErrorMessage"]);
+                Column = null;
             }
+            else
+            {
+                Receipt = null;
+            }
+
+            thisEntryDate.Value = entryDate;
+            thisReceiptNumber.Value = Receipt;
+            thisColumnNumber.Value = Column;
+            thisShortTermNumber.Value = null;
+            thisUserId.Value = Guid.Parse("BA1B0B96-30D3-45AB-815D-3527F72B6442");
+            thisLocationId.Value = LocationId;
+            thisMemberId.Value = MemberId;
+
+            using (SqlDataReader sdr = cmd.ExecuteReader())
+            {
+                while (sdr.Read())
+                {
+                    Console.WriteLine(sdr["ErrorMessage"]);
+                    return Convert.ToString(sdr["ErrorMessage"]);
+                }
+            }
+            cn.Close();
+
+            return "Error";
         }
-
-        cn.Close();
-
-        return "Error";
+        catch (Exception ex)
+        {
+            return ex.ToString();
+        }
 
     }
 
     [System.Web.Services.WebMethod]
     public static string SubmitReceipt2(Int64 MemberId, DateTime entryDate, DateTime exitDate, string AmountPaid, Int64 LocationId, string SubmittedBy)
     {
-        class_ADO.clsADO thisADO = new class_ADO.clsADO();
-
-        SqlConnection cn = new SqlConnection(thisADO.getMaxConnectionString());
-
-        cn.Open();
-        SqlCommand cmd = new SqlCommand("dbo.GetReceiptCredit");
-        cmd.CommandType = CommandType.StoredProcedure;
-        cmd.Connection = cn;
-
-        SqlParameter thisMemberId = cmd.Parameters.Add(new SqlParameter("@iMemberId", SqlDbType.BigInt));
-        SqlParameter thisEntryDate = cmd.Parameters.Add(new SqlParameter("@iEntryDate", SqlDbType.DateTime));
-        SqlParameter thisExitDate = cmd.Parameters.Add(new SqlParameter("@iExitDate", SqlDbType.DateTime));
-        SqlParameter thisAmountPaid = cmd.Parameters.Add(new SqlParameter("@iAmountPaid", SqlDbType.Float));
-        SqlParameter thisLocationId = cmd.Parameters.Add(new SqlParameter("@iLocationId", SqlDbType.Int));
-        SqlParameter thisUserId = cmd.Parameters.Add(new SqlParameter("@iUserId", SqlDbType.UniqueIdentifier));
-
-        thisMemberId.Value = MemberId;
-        thisEntryDate.Value = entryDate;
-        thisExitDate.Value = exitDate;
-        thisAmountPaid.Value = AmountPaid;
-        thisLocationId.Value = LocationId;
-        thisUserId.Value = Guid.Parse("BA1B0B96-30D3-45AB-815D-3527F72B6442");
-
-        using (SqlDataReader sdr = cmd.ExecuteReader())
+        try
         {
-            while (sdr.Read())
+
+            class_ADO.clsADO thisADO = new class_ADO.clsADO();
+
+            SqlConnection cn = new SqlConnection(thisADO.getMaxConnectionString());
+
+            cn.Open();
+            SqlCommand cmd = new SqlCommand("dbo.GetReceiptCredit");
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Connection = cn;
+
+            SqlParameter thisMemberId = cmd.Parameters.Add(new SqlParameter("@iMemberId", SqlDbType.BigInt));
+            SqlParameter thisEntryDate = cmd.Parameters.Add(new SqlParameter("@iEntryDate", SqlDbType.DateTime));
+            SqlParameter thisExitDate = cmd.Parameters.Add(new SqlParameter("@iExitDate", SqlDbType.DateTime));
+            SqlParameter thisAmountPaid = cmd.Parameters.Add(new SqlParameter("@iAmountPaid", SqlDbType.Float));
+            SqlParameter thisLocationId = cmd.Parameters.Add(new SqlParameter("@iLocationId", SqlDbType.Int));
+            SqlParameter thisUserId = cmd.Parameters.Add(new SqlParameter("@iUserId", SqlDbType.UniqueIdentifier));
+
+            thisMemberId.Value = MemberId;
+            thisEntryDate.Value = entryDate;
+            thisExitDate.Value = exitDate;
+            thisAmountPaid.Value = AmountPaid;
+            thisLocationId.Value = LocationId;
+            thisUserId.Value = Guid.Parse("BA1B0B96-30D3-45AB-815D-3527F72B6442");
+
+            using (SqlDataReader sdr = cmd.ExecuteReader())
             {
-                Console.WriteLine(sdr["ErrorMessage"]);
-                return Convert.ToString(sdr["ErrorMessage"]);
+                while (sdr.Read())
+                {
+                    Console.WriteLine(sdr["ErrorMessage"]);
+                    return Convert.ToString(sdr["ErrorMessage"]);
+                }
             }
+
+            cn.Close();
+
+            return "Error";
+        }
+        catch (Exception ex)
+        {
+            return ex.ToString();
         }
 
-        cn.Close();
-
-        return "Error"; ;
 
     }
 

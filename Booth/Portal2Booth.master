@@ -55,7 +55,7 @@
     <div class="wrapper">
         <form runat="server">
             <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
-            <asp:TextBox runat="server" ID="userGuid" style="visibility:hidden">55BE1C451C534097976C8DAAFC73A005</asp:TextBox>
+            <asp:TextBox runat="server" ID="userGuid" style="visibility:hidden">64FD6C2F33EE4F24A71CF83A5542AD33</asp:TextBox>
             <asp:TextBox runat="server" ID="AK" style="visibility:hidden">3E36B6D0-A79D-4A7D-B5F3-6C016DBF5580</asp:TextBox>
             <asp:TextBox runat="server" ID="apiDomain" style="visibility:hidden">http://api.stage.thefastpark.com:80/api/v1/</asp:TextBox>
             <asp:TextBox runat="server" ID="localApiDomain" style="visibility:hidden">http://pca-portal:8181/api/</asp:TextBox>

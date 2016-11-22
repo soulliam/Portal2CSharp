@@ -232,6 +232,33 @@
 
             //#region ButtonClicks
 
+            //Marketing site
+            $("#btnMarketing").on("click", function (event) {
+                var oldPortalGuid = "";
+                var userName = $("#loginLabel").html();
+
+                userName = userName.replace("PCA\\", "");
+
+                var url = $("#localApiDomain").val() + "OldPortalGuids/getUserId/" + userName;
+
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "json",
+                    success: function (data) {
+                        oldPortalGuid = data[0].UserId
+                        var marketingURL = 'http://enrollnow.thefastpark.com/linklogin/BA1B0B96-' + oldPortalGuid;
+
+                        window.open(marketingURL);
+                    },
+                    error: function (request, status, error) {
+                        alert("Error getting user information for marketing - " + error);
+                    }
+                });
+
+                
+            });
+
             //Add Reservation
             $("#addReservation").on("click", function (event) {
 
@@ -351,16 +378,15 @@
                             thisMemberId = $("#MemberId").val();
                             $('#jqxReservationGrid').jqxGrid('clearselection');
                             $('#jqxReservationGrid').jqxGrid('clear');
-                            (thisMemberId);
+                            loadReservations(thisMemberId);
                         }
                     });
                 }
                 
             });
 
-
-            $("#addReservation").on("click", function (event) {
-
+            $("#addPhone").on("click", function (event) {
+                var value = $('#phoneGrid').jqxGrid('addrow', null, {});
             });
 
             //Save Member Info
@@ -512,8 +538,8 @@
                 
                 $.ajax({
                     type: "POST",
-                    url: "http://localhost:52839/api/ManualEdits/AddManualEdit/",
-                    //url: $("#localApiDomain").val() + "ManualEdits/AddManualEdit/",
+                    //url: "http://localhost:52839/api/ManualEdits/AddManualEdit/",
+                    url: $("#localApiDomain").val() + "ManualEdits/AddManualEdit/",
                     
                     data: { "ManualEditId": 0,
                         "MemberId": PageMemberID,
@@ -633,6 +659,7 @@
             //Send new Password
             $("#SendNewPassword").on("click", function (event) {
                 var thisMemberEmail = $("#EmailAddress").val();
+                alert($("#apiDomain").val() + "members/forgot-password?Email=" + thisMemberEmail);
 
                 $.ajax({
                     headers: {
@@ -642,7 +669,7 @@
                         "ApplicationKey": $("#AK").val()
                     },
                     type: "GET",
-                    url: $("#apiDomain").val() + "members/forgot-password?" + thisMemberEmail,
+                    url: $("#apiDomain").val() + "members/forgot-password?Email=" + thisMemberEmail,
                     dataType: "json",
                     success: function () {
                         alert("Forgot Password Instructions Sent!");
@@ -809,6 +836,7 @@
             $("#btnClear").on("click", function (event) {
                 $("div.FPR_SearchLeft input:text").val("");
                 $("#SearchFPNumber").jqxMaskedInput('clear');
+                $("#jqxSearchGrid").jqxGrid('clear');
             });
 
             $("#saveNote").on("click", function (event) {
@@ -2235,15 +2263,13 @@
                         return 'Fax';
                         break;
                     default:
-                        return 'Error';
+                        return 'Pick';
                 }
             }
             $("#phoneGrid").jqxGrid(
                 {
                     width: '100%',
                     height: 168,
-                    showeverpresentrow: true,
-                    everpresentrowposition: "bottom",
                     source: MemberDataAdapter,
                     rowsheight: 20,
                     selectionmode: 'singlerow',
@@ -2537,7 +2563,7 @@
                                 <div class="col-sm-8 col-sm-offset-4">
                                     <div class="row search-size">
                                         <div class="col-sm-12">
-                                            <input type="button" id="btnMarketing" value="Marketing" onclick="window.open('http://enrollnow.thefastpark.com/linklogin/BA1B0B96-30D3-45AB-815D-3527F72B6442');" />
+                                            <input type="button" id="btnMarketing" value="Marketing"  />
                                         </div>
                                     </div>
                                     <div class="row search-size">
@@ -2696,7 +2722,9 @@
                                             <label for="phoneGrid" class="col-sm-3 col-md-4 control-label">Phones:</label>
                                             <div class="col-sm-9 col-md-8">
                                                 <div id="phoneGrid"></div>
+                                                <div><input type="button" id="addPhone" value="Add Phone" /></div>
                                             </div>
+                                            
                                         </div>
                                         <div class="form-group">
                                             <label for="RepCode" class="col-sm-3 col-md-4 control-label">Rep Code:</label>
