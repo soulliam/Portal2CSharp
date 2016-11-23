@@ -1,5 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Portal2.master" AutoEventWireup="true" CodeFile="MemberSearch.aspx.cs" Inherits="MemberSearch" %>
 
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit"  %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
    
      
@@ -2437,7 +2439,8 @@
                     thisReturn = thisReturn + "&FPNumber=" + thisFPNumber;
                 }
             }
-            if ($("#SearchPhoneNumber").val() != "") {
+            if (typeof $("#MainContent_SearchPhone").val() !== "undefined" && $("#MainContent_SearchPhone").val() != "___-___-____") {
+            //if ($("#SearchPhoneNumber").val() != "") {
                 if (thisReturn == "") {
                     thisReturn = thisReturn + "PhoneNumber=" + $("#SearchPhoneNumber").val();
                 } else {
@@ -2527,7 +2530,8 @@
                             </div>
                             <div class="row search-size">
                                 <div class="col-sm-15">
-                                    <input type="text" id="SearchPhoneNumber" placeholder="Phone" />
+                                    <asp:TextBox ID="SearchPhone" runat="server" ></asp:TextBox>
+                                    <ajaxToolkit:MaskedEditExtender ID="MaskedEditExtender1" runat="server" ClearMaskOnLostFocus="False" Mask="999-999-9999" MaskType="Number" TargetControlID="SearchPhone" />
                                 </div>
                                 <div class="col-sm-15">
                                     <input type="text" id="SearchCompany" placeholder="Company" />

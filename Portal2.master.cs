@@ -42,7 +42,9 @@ public partial class Portal2 : System.Web.UI.MasterPage
             {
                 Guid objectGuid = new Guid(userDe.NativeGuid);
 
-                //userGuid.Text = Convert.ToString(objectGuid);
+                userGuid.Text = Convert.ToString(objectGuid);
+
+                Session["GUID"] = userGuid.Text;
             }
         }
 
