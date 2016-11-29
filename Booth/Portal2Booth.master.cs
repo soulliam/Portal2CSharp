@@ -44,11 +44,19 @@ public partial class Portal2Booth : System.Web.UI.MasterPage
         {
             SecurityIdentifier sid = windowsId.User;
 
+
             using (DirectoryEntry userDe = new DirectoryEntry("LDAP://<SID=" + sid.Value + ">"))
             {
-                Guid objectGuid = new Guid(userDe.NativeGuid);
+                //Guid objectGuid = new Guid(userDe.NativeGuid);
+
+                string myGuid = Convert.ToString(userDe.Guid);
+                myGuid = myGuid.Replace("{", "");
+                myGuid = myGuid.Replace("}", "");
 
                 //userGuid.Text = Convert.ToString(objectGuid);
+                userGuid.Text = myGuid;
+
+                Session["GUID"] = userGuid.Text;
             }
         }
 

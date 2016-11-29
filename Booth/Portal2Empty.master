@@ -18,9 +18,9 @@
     <form id="form1" runat="server">
         <div class="hidden">
             <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
-            <asp:TextBox runat="server" ID="userGuid" style="display:none">64FD6C2F33EE4F24A71CF83A5542AD33</asp:TextBox>
-            <asp:TextBox runat="server" ID="AK" style="display:none">3E36B6D0-A79D-4A7D-B5F3-6C016DBF5580</asp:TextBox>
-            <asp:TextBox runat="server" ID="apiDomain" style="display:none">http://api.stage.thefastpark.com:80/api/v1/</asp:TextBox>
+            <asp:TextBox runat="server" ID="userGuid" style="display:none">E39B9C5F76114D47AE8748D0EA134AA6</asp:TextBox>
+            <asp:TextBox runat="server" ID="AK" style="display:none">955A770C-EC8E-42DC-A1DD-63E6B764CF8D</asp:TextBox>
+            <asp:TextBox runat="server" ID="apiDomain" style="display:none">https://apistage.thefastpark.com/api/v1/</asp:TextBox>
             <asp:TextBox runat="server" ID="localApiDomain" style="display:none">http://pca-portal:8181/api/</asp:TextBox>
             <asp:TextBox runat="server" ID="userLocation" style="display:none">14</asp:TextBox>
         </div>

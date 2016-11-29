@@ -249,7 +249,7 @@
                     dataType: "json",
                     success: function (data) {
                         oldPortalGuid = data[0].UserId
-                        var marketingURL = 'http://enrollnow.thefastpark.com/linklogin/BA1B0B96-' + oldPortalGuid;
+                        var marketingURL = 'http://enrollnow.thefastpark.com/linklogin/' + oldPortalGuid;
 
                         window.open(marketingURL);
                     },
@@ -854,7 +854,7 @@
             });
 
             $("#editMember").on("click", function (event) {
-                if ($("#editMember").val() == "Disable Edit") {
+                if ($("#editMember").val() == "Cancel Edit") {
                     jQuery("#tabMemberInfo").find("input[type=text]").attr("disabled", true);
                     $("#stateCombo").jqxComboBox({ disabled: true });
                     $("#homeLocationCombo").jqxComboBox({ disabled: true });
@@ -865,7 +865,7 @@
                     jQuery("#tabMemberInfo").find("input[type=text]").attr("disabled", false);
                     $("#stateCombo").jqxComboBox({ disabled: false });
                     $("#homeLocationCombo").jqxComboBox({ disabled: false });
-                    $("#editMember").val("Disable Edit");
+                    $("#editMember").val("Cancel Edit");
                     $("#updateMemberInfo").css("visibility", "visible");;
                 }
             });
@@ -992,6 +992,7 @@
             loadReservationLocationCombo();
             loadReservationCalendars();
             loadReservationPaymentMethodId();
+            loadStatus();
 
             //#endregion
 
@@ -1737,6 +1738,35 @@
 
         //#region LoadComboBoxes
 
+        function loadStatus() {
+            //set companies combobox
+            var statusSource =
+            {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'PreferredStatusId' },
+                    { name: 'PreferredStatusName' }
+                ],
+                beforeSend: function (jqXHR, settings) {
+                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+                },
+                url: $("#apiDomain").val() + "status-levels",
+
+            };
+            var statusDataAdapter = new $.jqx.dataAdapter(statusSource);
+            $("#statusCombo").jqxComboBox(
+            {
+                width: 100,
+                height: 24,
+                source: statusDataAdapter,
+                selectedIndex: 0,
+                displayMember: "PreferredStatusName",
+                valueMember: "PreferredStatusId"
+            });
+        }
+
         function loadCompaniesCombo() {
             //set companies combobox
             var companySource =
@@ -2364,8 +2394,8 @@
                 },
                 success: function (thisData) {
                     //Fill out member detail tab info
-                    
-                    $("#topMemberSince").html(thisData.result.data.MemberSince);
+
+                    $("#topMemberSince").html(DateFormat(thisData.result.data.MemberSince));
                     if (thisData.result.data.Title != null) {
                         $("#Title").val(thisData.result.data.Title.TitleName);
                         $("#topName").html(thisData.result.data.Title.TitleName + " " + thisData.result.data.FirstName + " " + thisData.result.data.LastName)
@@ -2393,6 +2423,7 @@
                     $("#MailerCompanyCombo").jqxComboBox('selectItem', thisData.result.data.CompanyId);
                     glbCompanyId = thisData.result.data.CompanyId;
                     $("#GetEmail").prop("checked", thisData.result.data.GetEmail);
+                    $("#statusCombo").jqxComboBox('selectItem', thisData.result.data.PreferredStatusName);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     alert("Error: " + errorThrown);
@@ -2439,8 +2470,7 @@
                     thisReturn = thisReturn + "&FPNumber=" + thisFPNumber;
                 }
             }
-            if (typeof $("#MainContent_SearchPhone").val() !== "undefined" && $("#MainContent_SearchPhone").val() != "___-___-____") {
-            //if ($("#SearchPhoneNumber").val() != "") {
+            if ($("#SearchPhoneNumber").val() != "") {
                 if (thisReturn == "") {
                     thisReturn = thisReturn + "PhoneNumber=" + $("#SearchPhoneNumber").val();
                 } else {
@@ -2525,13 +2555,12 @@
                                     <input type="text" id="SearchEmail" placeholder="Email" />
                                 </div>
                                 <div class="col-sm-15">
-                                    <input type="text" id="SearchSteetAddress" placeholder="Street Address" />
+                                    <input type="text" id="SearchSteetAddress" placeholder="Street Address" style="visibility:hidden" />
                                 </div>
                             </div>
                             <div class="row search-size">
                                 <div class="col-sm-15">
-                                    <asp:TextBox ID="SearchPhone" runat="server" ></asp:TextBox>
-                                    <ajaxToolkit:MaskedEditExtender ID="MaskedEditExtender1" runat="server" ClearMaskOnLostFocus="False" Mask="999-999-9999" MaskType="Number" TargetControlID="SearchPhone" />
+                                    <input type="text" id="SearchPhoneNumber" placeholder="Phone XXX-XXX-XXXX"  />
                                 </div>
                                 <div class="col-sm-15">
                                     <input type="text" id="SearchCompany" placeholder="Company" />
@@ -2644,6 +2673,7 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="bottom-divider">
+                                        <div style="float:left;">
                                         <Label id="topName" class="strong right-buffer-15"></Label>
                                         <label id="pointsLabel" class="strong">Points Balance:</label>
                                         <label id="topPointsBalance" class="strong font-red right-buffer-15"></label>
@@ -2651,6 +2681,8 @@
                                         <label id="topLastLogin" class="font-normal right-buffer-15"></label>
                                         <label id="memberSinceLabel" class="strong">Member Since:</label>
                                         <label id="topMemberSince" class="font-normal"></label>
+                                        </div>
+                                        <div id="statusCombo" style="margin-left:650px;"></div>
                                     </div>
                                 </div>
                             </div>
