@@ -26,7 +26,7 @@
                 html2canvas($("#receipt"), {
                     onrendered: function (canvas) {
                         theCanvas = canvas;
-                        document.body.appendChild(canvas);
+                        //document.body.appendChild(canvas);
 
                         var image = canvas.toDataURL("image/png");
 

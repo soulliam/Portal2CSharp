@@ -140,27 +140,27 @@
 							        </tr>
 							        <tr>
 								        <td colspan='2'>
-									        <div id="receiptDateInfo" style="text-align:center;font-weight:bold;">09/17/2015 11:51 PM</div>
+									        <div id="receiptDateInfo" style="text-align:center;font-weight:bold;">--/--/---- --:-- PM</div>
 								        </td>
 							        </tr>
 							        <tr>
 								        <td colspan='2'>
-									        <div id="locationInfo"style="text-align:center;font-weight:bold;">Austin FastPark</div>
+									        <div id="locationInfo"style="text-align:center;font-weight:bold;">------ FastPark</div>
 								        </td>
 							        </tr>
 							        <tr>
 								        <td colspan='2'>
-									        <br/><div id="addressInfo"style="text-align:center;font-weight:bold;">2300 Spirit of Texas Drive</div>
+									        <br/><div id="addressInfo"style="text-align:center;font-weight:bold;">---- ----- -- ----- -----</div>
 								        </td>
 							        </tr>
 							        <tr>
 								        <td colspan='2'>
-									        <div id="cityZipInfo"style="text-align:center;font-weight:bold;">Austin, TX</div>
+									        <div id="cityZipInfo"style="text-align:center;font-weight:bold;">-----, --</div>
 								        </td>
 							        </tr>
 							        <tr>
 								        <td colspan='2'>
-									        <div id="telephoneInfo"style="text-align:center;font-weight:bold;">512-385-8877</div>
+									        <div id="telephoneInfo"style="text-align:center;font-weight:bold;">xxx-xxx-xxxx</div>
 								        </td>
 							        </tr>
 							        <tr>
@@ -175,12 +175,12 @@
 							        </tr>
 							        <tr>
 								        <td colspan='2'>
-									        <div id="entryDateInfo">09/16/2015 09:03 AM</div>
+									        <div id="entryDateInfo">--/--/---- --:-- --</div>
 								        </td>
 							        </tr>
 							        <tr>
 								        <td colspan='2'>
-									        <div id="exitDateInfo">09/17/2015 11:51 PM</div>
+									        <div id="exitDateInfo">--/--/---- --:-- --</div>
 								        </td>
 							        </tr>
 							        <tr>
@@ -188,7 +188,7 @@
 									        Period:
 								        </td>
 								        <td>
-									        <br/><div id="periodInfo">1d 14' 48"</div>
+									        <br/><div id="periodInfo">-- --' --"</div>
 								        </td>
 							        </tr>
 							        <tr>
@@ -201,7 +201,7 @@
 									        Amount Due:
 								        </td>
 								        <td>
-									        <div id="amountDueInfo">$21.00</div>
+									        <div id="amountDueInfo">$00.00</div>
 								        </td>
 							        </tr>
 							        <tr>
@@ -217,7 +217,7 @@
 									        <br/>Net Due:
 								        </td>
 								        <td>
-									        <br/><div id="netInfo">$21.00</div>
+									        <br/><div id="netInfo">$00.00</div>
 								        </td>
 							        </tr>		   
 							        <tr>
@@ -230,12 +230,12 @@
 									        <div id="paymentInfo">VISA payment</div>
 								        </td>
 								        <td>
-									        <div id="paymentInfoAmtInfo">$21.00</div>
+									        <div id="paymentInfoAmtInfo">$00.00</div>
 								        </td>
 							        </tr>
 							        <tr>
 								        <td colspan='2'>
-									        <div id="receiptDateInfo2">09/17/2015 11:51 PM</div>
+									        <div id="receiptDateInfo2">--/--/---- --:-- --</div>
 								        </td>
 							        </tr>
 						        </table>

@@ -37,6 +37,9 @@
 
         $(document).ready(function () {
 
+            $("#btnSubmit").jqxButton();
+            $("#btnDelete").jqxButton();
+
             loadLocationCombo();
 
             $("#LocationCombo").on('bindingComplete', function (event) {

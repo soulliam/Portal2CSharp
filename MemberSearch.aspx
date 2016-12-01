@@ -178,6 +178,11 @@
                 $("#saveReservation").jqxButton();
                 $("#cancelReservationForm").jqxButton();
 
+                $("#markUsedRedemption").jqxButton();
+                $("#1DayRedemption").jqxButton();
+                $("#3DayRedemption").jqxButton();
+                $("#1WeekRedemption").jqxButton();
+
 
             //#endregion
 
@@ -243,6 +248,32 @@
 
             //#region ButtonClicks
 
+            //Create Redemptions
+            $("#1DayRedemption").on("click", function (event) {
+                var result = confirm("Do you want to create a redemption!");
+                if (result != true) {
+                    return null;
+                }
+                CreateRedemption(1, 3, 1)
+            });
+
+            $("#3DayRedemption").on("click", function (event) {
+                var result = confirm("Do you want to create a redemption!");
+                if (result != true) {
+                    return null;
+                }
+                CreateRedemption(2, 3, 1)
+            });
+
+            $("#1WeekRedemption").on("click", function (event) {
+                var result = confirm("Do you want to create a redemption!");
+                if (result != true) {
+                    return null;
+                }
+                CreateRedemption(3, 3, 1)
+            });
+
+
             //Marketing site
             $("#btnMarketing").on("click", function (event) {
                 var oldPortalGuid = "";
@@ -298,7 +329,7 @@
                 if (result != true) {
                     return null;
                 }
-
+                $('#jqxLoader').jqxLoader('open');
                 //Get the selected rows RedemptionID
                 var thisMemberId = $("#MemberId").val();
                 var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
@@ -331,6 +362,9 @@
                     },
                     error: function (request, status, error) {
                         alert(request.responseText);
+                    },
+                    complete: function () {
+                        $('#jqxLoader').jqxLoader('close');
                     }
                 })
             });
@@ -781,6 +815,18 @@
                 }
                 
 
+            });
+
+            // defines redemption grid double click
+            $("#jqxRedemptionGrid").bind('rowdoubleclick', function (event) {
+                var row = event.args.rowindex;
+                var dataRecord = $("#jqxRedemptionGrid").jqxGrid('getrowdata', row);
+                var thisRedemptionId = dataRecord.RedemptionId;
+                var offset = $("#jqxMemberInfoTabs").offset();
+                var toAddress = $("#EmailAddress").val();
+                var thisMemberId = $("#MemberId").val();
+
+                showRedemption(thisRedemptionId, toAddress, thisMemberId);
             });
 
             //defines search grid double click to load member info
@@ -1644,10 +1690,10 @@
 
         function loadRedemptions(PageMemberID) {
 
-            //$("#jqxRedemptionGrid").jqxComboBox('clear');
-            //var parent = $("#jqxRedemptionGrid").parent();
-            //$("#jqxRedemptionGrid").jqxComboBox('destroy');
-            //$("<div id='jqxRedemptionGrid'></div>").appendTo(parent);
+            $("#jqxRedemptionGrid").jqxComboBox('clear');
+            var parent = $("#jqxRedemptionGrid").parent();
+            $("#jqxRedemptionGrid").jqxComboBox('destroy');
+            $("<div id='jqxRedemptionGrid'></div>").appendTo(parent);
 
             //Loads redemptions
             var url = $("#apiDomain").val() + "members/" + PageMemberID + "/redemptions";
@@ -1659,8 +1705,7 @@
                     { name: 'CertificateID' },
                     { name: 'RedemptionType', map: 'RedemptionType>RedemptionType' },
                     { name: 'RedeemDate', type: 'date' },
-                    { name: 'IsReturned' },
-                    { name: 'DateUsed' }
+                    { name: 'IsReturned' }
                 ],
 
                 id: 'CertificateID',
@@ -1694,8 +1739,7 @@
                       { text: 'CertificateID', datafield: 'CertificateID' },
                       { text: 'Redemption Type', datafield: 'RedemptionType' },
                       { text: 'Redeem Date', datafield: 'RedeemDate', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
-                      { text: 'Returned', datafield: 'IsReturned' },
-                      { text: 'DateUsed', datafield: 'DateUsed' }
+                      { text: 'Returned', datafield: 'IsReturned' }
                 ]
             });
         }
@@ -2230,6 +2274,99 @@
 
         //#region Functions
         
+        //Create New Redemption
+        function CreateRedemption(thisRedemptionTypeId, thisRedemptionSourceId, NumberToRedeem) {
+
+            var thisMemberId = $("#MemberId").val();
+            var thisQrCodeString = "";
+            var thisRedemptionId = "";
+            var toAddress = $("#EmailAddress").val();
+
+            $('#jqxLoader').jqxLoader('open');
+
+            $.ajax({
+                type: 'POST',
+                url: $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions",
+                dataType: "json",
+                data: JSON.stringify([{
+                    "RedemptionTypeId": thisRedemptionTypeId,
+                    "RedemptionSourceId": thisRedemptionSourceId,
+                    "NumberToRedeem": NumberToRedeem
+                }]),
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "AccessToken": $("#userGuid").val(),
+                    "ApplicationKey": $("#AK").val()
+                },
+                success: function (thisData) {
+                    thisRedemptionId = thisData.result.data[0].RedemptionId;
+                    var toAddress = $("#EmailAddress").val();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("Error: " + errorThrown);
+                },
+                complete: function () {
+                    $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
+                    loadRedemptions(thisMemberId);
+                    $('#jqxLoader').jqxLoader('close');
+                    if (thisRedemptionId != "") {
+                        var result = confirm("A redemption has been sent to the member.  Do you want to view it?");
+                        if (result == true) {
+                            showRedemption(thisRedemptionId, toAddress, thisMemberId);
+                        }
+                    }
+                }
+            });
+        }
+
+        function showRedemption(thisRedemptionId, toAddress, thisMemberId) {
+
+            $("#popupRedemption").css('display', 'block');
+            $("#popupRedemption").css('visibility', 'hidden');
+
+            $("#popupRedemption").jqxWindow({ position: { x: '25%', y: '7%' } });
+            $('#popupRedemption').jqxWindow({ resizable: false });
+            $('#popupRedemption').jqxWindow({ draggable: true });
+            $('#popupRedemption').jqxWindow({ isModal: true });
+            $("#popupRedemption").css("visibility", "visible");
+            $('#popupRedemption').jqxWindow({ height: '675px', width: '35%' });
+            $('#popupRedemption').jqxWindow({ minHeight: '270px', minWidth: '10%' });
+            $('#popupRedemption').jqxWindow({ maxHeight: '700px', maxWidth: '50%' });
+            $('#popupRedemption').jqxWindow({ showCloseButton: true });
+            $('#popupRedemption').jqxWindow({ animationType: 'combined' });
+            $('#popupRedemption').jqxWindow({ showAnimationDuration: 300 });
+            $('#popupRedemption').jqxWindow({ closeAnimationDuration: 500 });
+            $("#popupRedemption").jqxWindow('open');
+
+            var url = $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions/" + thisRedemptionId
+
+            $.ajax({
+                type: 'GET',
+                url: url,
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "AccessToken": $("#userGuid").val(),
+                    "ApplicationKey": $("#AK").val()
+                },
+                success: function (thisData) {
+                    var thisCertificateID = thisData.result.data.CertificateID;
+                    var thisRedemptionType = thisData.result.data.RedemptionType.RedemptionType;
+                    thisRedemptionType = thisRedemptionType.replace(" ", "%20");
+                    var thisMemberName = thisData.result.data.Member.FirstName + '%20' + thisData.result.data.Member.LastName;
+                    var thisFPNumber = thisData.result.data.Member.PrimaryFPNumber;
+                    var thisQRCode = thisData.result.data.QrCodeString;
+                    var toAddress = $("#EmailAddress").val();
+
+                    document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?thisCertificateID=' + thisCertificateID + '&thisRedemptionType=' + thisRedemptionType + '&thisMemberName=' + thisMemberName + '&thisFPNumber=' + thisFPNumber + '&thisQRCode=' + thisQRCode + '&EmailAddress=' + toAddress;
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("Error: " + errorThrown);
+                }
+            });
+        }
+
         //Security Setup
         function Security() {
             if (group.indexOf("booth") <= -1) {
@@ -2639,7 +2776,7 @@
                                     </div>
                                     <div class="row search-size">
                                         <div class="col-sm-12">
-                                            <input type="button" id="btnFindTransaction" value="Find Transaction" />
+                                            <input type="button" id="btnFindTransaction" value="Find Transaction" style="display:none;" />
                                         </div>
                                     </div>
                                 </div>
@@ -3059,7 +3196,11 @@
                                     <div id="jqxRedemptionGrid"></div>
                                 </div>
                                 <div class="col-sm-3 col-md-2">
-                                <input type="button" id="returnRedemption" value="Return Redemption" class="editor" />
+                                    <input type="button" id="returnRedemption" value="Return Redemption" class="editor" />
+                                    <input type="button" id="markUsedRedemption" value="Mark Used" class="editor" />
+                                    <input type="button" id="1DayRedemption" value="1 Day" class="editor" />
+                                    <input type="button" id="3DayRedemption" value="3 Day" class="editor" />
+                                    <input type="button" id="1WeekRedemption" value="1 Week" class="editor" />
                                 </div>
                             </div>
                         </div>
@@ -3069,8 +3210,8 @@
                                     <div id="jqxReservationGrid"></div>
                                 </div>
                                 <div class="col-sm-3 col-md-2">
-                                    <input type="button" id="addReservation" value="Add" class="editor" />
-                                    <input type="button" id="cancelReservation" value="Cancel" class="editor" />
+                                    <input type="button" id="addReservation" value="Add Reservation" class="editor" style="display:none;" />
+                                    <input type="button" id="cancelReservation" value="Cancel Reservation" class="editor" />
                                 </div>
                             </div>
                         </div>
@@ -3081,7 +3222,7 @@
                                     <div id="jqxCardGrid"></div>
                                 </div>
                                 <div class="col-sm-3 col-md-2">
-                                <input type="button" id="transferCard" value="Transfer" class="editor" />
+                                <input type="button" id="transferCard" value="Transfer" class="editor" style="display:none;" />
                                 <input type="button" id="deleteCard" value="Delete" class="editor" />
                                 <input type="button" id="addCard" value="Add" class="editor" />
                                 </div>

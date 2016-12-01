@@ -74,8 +74,6 @@
                     $('#popupImage').jqxWindow({ closeAnimationDuration: 500 });
                     $("#popupImage").jqxWindow('open');
                     document.getElementById('showImage').src = "https://stage.thefastpark.com" + source;
-
-
                     
                 }
 
