@@ -52,6 +52,15 @@
 
         $(document).ready(function () {
             
+            var groups = '<%= Session["groupList"] %>';
+
+            //if (groups.indexOf("Fred") < 0 && groups.indexOf("tet") < 0) {
+            //    var elements = document.getElementsByClassName('editor')
+
+            //    for (var i = 0; i < elements.length; i++) {
+            //        elements[i].style.display = "none";
+            //    }
+            //}
 
             //#region TabSetup            
 
@@ -393,6 +402,7 @@
 
             //Save Member Info
             $("#updateMemberInfo").on("click", function (event) {
+                $('#jqxLoader').jqxLoader('open');
                 var thisUserName = $("#UserName").val();
                 var thisFirstName = $("#FirstName").val();
                 var thisLastName = $("#LastName").val();
@@ -411,7 +421,7 @@
                 var thisZip = $("#Zip").val();
                 var thisCompany = $("#Company").val();
                 var thisTitleId = 1;
-                var thisMarketingCode = $("#MailerCode").val();
+                var thisMarketingCode = $("#MarketingMailerCode").val();
                 var thisMemberId = $("#MemberId").val(); homeLocationCombo
 
                 if ($("#homeLocationCombo").jqxComboBox('getSelectedIndex') == -1) {
@@ -447,6 +457,7 @@
 
                 saveUpdateMemberInfo(phoneType, phoneNumber, thisMemberId, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2,
                                      thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail);
+
 
                 
             });
@@ -558,6 +569,13 @@
                         "Notes": thisNotes,
                         "PerformedByUserId": thisPerformedByUserId,
                         "SubmittedByUserId": thisSubmittedByUserId,
+                        "CreateDatetime": null,
+                        "CreateUserId": null,
+                        "UpdateDatetime": null,
+                        "UpdateUserId": null,
+                        "IsDeleted": null,
+                        "CreateExternalUserData": null,
+                        "UpdateExternalUserData": null,
                     },
                     dataType: "json",
                     success: function (Response) {
@@ -767,6 +785,7 @@
 
             //defines search grid double click to load member info
             $("#jqxSearchGrid").bind('rowdoubleclick', function (event) {
+                $('#jqxLoader').jqxLoader('open');
                 var row = event.args.rowindex;
                 var dataRecord = $("#jqxSearchGrid").jqxGrid('getrowdata', row);
                 findMember(dataRecord.MemberId);
@@ -818,6 +837,8 @@
 
                 $('#jqxMemberInfoTabs').jqxTabs('select', 0);
 
+                clearMemberInfo();
+
                 var thisParameters = GetSearchParameters();
 
                 if ($("#jqxSearchGrid").is(":visible")) {
@@ -839,6 +860,12 @@
                 $("div.FPR_SearchLeft input:text").val("");
                 $("#SearchFPNumber").jqxMaskedInput('clear');
                 $("#jqxSearchGrid").jqxGrid('clear');
+                
+                if ($("#jqxSearchGrid").is(":hidden")) {
+                    $("#MemberDetails").toggle();
+                    $("#jqxSearchGrid").toggle();
+                    clearMemberInfo();
+                }
             });
 
             $("#saveNote").on("click", function (event) {
@@ -986,7 +1013,7 @@
             loadReceiptLocationCombo();
             loadmanualEditTypesCombo();
             loadCompaniesCombo();
-            loadRate();
+
 
             // setup reservation popup these are in Member/Scripts/MemberReservation.js
             loadReservationLocationCombo();
@@ -1004,7 +1031,7 @@
 
       
         function loadMemberList(acctNum, compareMemberId) {
-            $('#jqxLoader').jqxLoader('open');
+            
             $.ajax({
                 type: 'GET',
                 url: $("#apiDomain").val() + "accounts/" + acctNum + "/members",
@@ -1056,7 +1083,7 @@
                     $('#jqxMemberTabs').jqxTabs('select', memberPicked);
                     loadMember($("#" + memberPicked).val());
 
-                    $('#jqxLoader').jqxLoader('close');
+                  
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     alert("Error: " + errorThrown);
@@ -1509,7 +1536,6 @@
                     { name: 'Company' },
                     { name: 'EmailAddress' }
                 ],
-                loadComplete: function () { $('#jqxLoader').jqxLoader('close'); },
                 id: 'MemberId',
                 type: 'Get',
                 datatype: "json",
@@ -1524,10 +1550,10 @@
             // create Searchlist Grid
             $("#jqxSearchGrid").jqxGrid(
             {
-                pageable: true,
-                pagermode: 'advanced',
-                pagesize: 50,
-                pagesizeoptions: ['10', '20', '50', '100'],
+                //pageable: true,
+                //pagermode: 'advanced',
+                //pagesize: 50,
+                //pagesizeoptions: ['10', '20', '50', '100'],
                 width: '100%',
                 height: 500,
                 source: source,
@@ -1553,7 +1579,7 @@
                           text: 'Select', pinned: true, datafield: 'Select', width: 50, columntype: 'button', cellsrenderer: function () {
                               return "Select";
                           }, buttonclick: function (row) {
-
+                              $('#jqxLoader').jqxLoader('open');
                               editrow = row;
 
                               var dataRecord = $("#jqxSearchGrid").jqxGrid('getrowdata', editrow);
@@ -1854,7 +1880,7 @@
             });
 
             $("#rateCombo").jqxComboBox('selectItem', glbHomeLocationId);
-
+            $('#jqxLoader').jqxLoader('close');
         }
 
         function getRate(obj, thisLocationId) {
@@ -2153,12 +2179,13 @@
             var note = $("#txtNote").val();
             var submittedBy = $("#txtLoggedinUsername").val();
 
+            var testURL = $("#localApiDomain").val() + "MemberNotes/AddNote/";
+
             $.ajax({
                 type: "POST",
                 url: $("#localApiDomain").val() + "MemberNotes/AddNote/",
                 //url: "http://localhost:52839/api/MemberNotes/AddNote/",
-
-                data: { "MemberId": memberId, "Note": note, "Date": thisDate, "SubmittedBy": submittedBy },
+                data: { "MemberId": memberId, "Note": note, "Date": thisDate, "SubmittedBy": submittedBy, "CreateDatetime": thisDate, "CreateUserId": -1, "UpdateDatetime": null, "UpdateUserId": null, "IsDeleted": 0, "CreateExternalUserData": null, "UpdateExternalUserData": null },
                 dataType: "json",
                 success: function () {
                     alert("Saved!");
@@ -2217,7 +2244,12 @@
             $("#topMemberSince").html("");
             $("#topLastLogin").html
             $("#topName").html("");
-            
+            $("#phoneGrid").jqxGrid('clear');
+            $("#jqxAccountActivityGrid").jqxGrid('clear');
+            $("#jqxMemberActivityGrid").jqxGrid('clear'); 
+            $("#jqxRedemptionGrid").jqxGrid('clear');
+            $("#jqxReservationGrid").jqxGrid('clear');
+            $("#jqxCardGrid").jqxGrid('clear');
         }
 
         function findMember(PageMemberID) {
@@ -2261,6 +2293,7 @@
         }
 
         function loadMember(PageMemberID) {
+            
             clearMemberInfo();
             
 
@@ -2758,7 +2791,7 @@
                                             <label for="phoneGrid" class="col-sm-3 col-md-4 control-label">Phones:</label>
                                             <div class="col-sm-9 col-md-8">
                                                 <div id="phoneGrid"></div>
-                                                <div><input type="button" id="addPhone" value="Add Phone" /></div>
+                                                <div><input type="button" id="addPhone" value="Add Phone" class="editor" /></div>
                                             </div>
                                             
                                         </div>
@@ -2837,7 +2870,7 @@
                                 <div class="col-sm-8">
                                     <div class="section-content-header-controls">
                                         <label class="control-label">Notes:</label>
-                                        <input id="addNote" value="Add Note" type="button" style="float:right" />
+                                        <input id="addNote" value="Add Note" type="button" style="float:right" class="editor" />
                                         <div id="jqxNotesGrid"></div>
                                     </div>
                                 </div>
@@ -2853,7 +2886,7 @@
                                             <input type="button" id="DisplayQA" value="Display Q &amp; A" />
                                         </div>
                                         <div class="col-sm-6">
-                                            <input type="button" id="editMember" value="Edit" />
+                                            <input type="button" id="editMember" value="Edit" class="editor" />
                                         </div>
                                         <div class="col-sm-12">
                                             <input type="button" id="updateMemberInfo" value="Save Member Info" />
@@ -2875,7 +2908,6 @@
                             <div id="jqxManualEditTabs">
                                 <ul>
                                     <li>Receipt Entry</li>
-                                    <li>Redemption</li>
                                     <li>Points</li>
                                     <li>Coupons</li>
                                 </ul>
@@ -2915,7 +2947,7 @@
                                                 <div class="form-group">
                                                     <label class="col-sm-3 col-md-4 control-label"></label>
                                                     <div class="col-sm-9 col-md-8">
-                                                        <input type ="button" value="Submit Receipt" id="submitReceipt1" />
+                                                        <input type ="button" value="Submit Receipt" id="submitReceipt1" class="editor" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -2963,7 +2995,7 @@
                                                 <div class="form-group">
                                                     <label class="col-sm-3 col-md-4 control-label"></label>
                                                     <div class="col-sm-9 col-md-8">
-                                                        <input type ="button" value="Submit Receipt" id="submitReceipt2" />
+                                                        <input type ="button" value="Submit Receipt" id="submitReceipt2" class="editor" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -2972,10 +3004,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div id="tabAddRedemption" class="tab-body">
-                                </div>
-
-
                                 <div id="tabPoints" class="tab-body">
                                     <div class="row">
                                         <div class="col-sm-6 col-md-5">
@@ -2995,7 +3023,7 @@
                                                 <div class="form-group">
                                                     <label class="col-sm-3 col-md-4 control-label"></label>
                                                     <div class="col-sm-9 col-md-8">
-                                                        <input type="button" value="Submit Manual Edit" id="manualEditSubmit" />
+                                                        <input type="button" value="Submit Manual Edit" id="manualEditSubmit" class="editor" />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -3031,7 +3059,7 @@
                                     <div id="jqxRedemptionGrid"></div>
                                 </div>
                                 <div class="col-sm-3 col-md-2">
-                                <input type="button" id="returnRedemption" value="Return Redemption" />
+                                <input type="button" id="returnRedemption" value="Return Redemption" class="editor" />
                                 </div>
                             </div>
                         </div>
@@ -3041,8 +3069,8 @@
                                     <div id="jqxReservationGrid"></div>
                                 </div>
                                 <div class="col-sm-3 col-md-2">
-                                    <input type="button" id="addReservation" value="Add" />
-                                    <input type="button" id="cancelReservation" value="Cancel" />
+                                    <input type="button" id="addReservation" value="Add" class="editor" />
+                                    <input type="button" id="cancelReservation" value="Cancel" class="editor" />
                                 </div>
                             </div>
                         </div>
@@ -3053,9 +3081,9 @@
                                     <div id="jqxCardGrid"></div>
                                 </div>
                                 <div class="col-sm-3 col-md-2">
-                                <input type="button" id="transferCard" value="Transfer" />
-                                <input type="button" id="deleteCard" value="Delete" />
-                                <input type="button" id="addCard" value="Add" />
+                                <input type="button" id="transferCard" value="Transfer" class="editor" />
+                                <input type="button" id="deleteCard" value="Delete" class="editor" />
+                                <input type="button" id="addCard" value="Add" class="editor" />
                                 </div>
                             </div>
                         </div>

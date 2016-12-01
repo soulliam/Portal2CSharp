@@ -47,7 +47,7 @@ public partial class Portal2 : System.Web.UI.MasterPage
                 myGuid = myGuid.Replace("}", "");
 
                 //userGuid.Text = Convert.ToString(objectGuid);
-                userGuid.Text = myGuid;
+                //userGuid.Text = myGuid;
 
                 Session["GUID"] = userGuid.Text;
             }

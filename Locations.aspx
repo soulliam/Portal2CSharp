@@ -32,11 +32,22 @@
 
         var selectedLocationId = 0; //is set to the ID of the location that is selected from the main grid
         var thisNewLocation = false; //determines whether a new Location is being made so the feature grid doesn't get set 
-
+        var DisableEdit = false;
         
 
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
+
+            var groups = '<%= Session["groupList"] %>';
+
+            //if (groups.indexOf("Fred") < 0 && groups.indexOf("TEst") < 0) {
+            //    DisableEdit = true;
+            //    var elements = document.getElementsByClassName('editor')
+
+            //    for (var i = 0; i < elements.length; i++) {
+            //        elements[i].style.display = "none";
+            //    }
+            //}
 
             $('#jqxLocationImagesGrid').on('rowclick', function (event) {
 
@@ -133,6 +144,7 @@
             loadLocationGrid();
 
             //#region SetupButtons
+            $("#btnNew").jqxButton();
             $("#Save").jqxButton();
             $("#Cancel").jqxButton();
             $("#addFeature").jqxButton();
@@ -201,6 +213,8 @@
 
                     loadLocationImagesGrid(selectedLocationId);
                 }
+
+
             });
 
             //Save main location
@@ -773,9 +787,10 @@
                     }
                 }
             });
-            
-           //#endregion
 
+
+           //#endregion
+       
 
         });
    
@@ -875,95 +890,102 @@
                 columns: [
                       {
                           //creates the edit button
-                          text: '', pinned: true, datafield: 'Edit', width: 50, columntype: 'button', cellsrenderer: function () {
+                          text: '',
+                          pinned: true,
+                          datafield: 'Edit',
+                          width: 50,
+                          columntype: 'button',
+                          cellclassname: "editor",
+                          cellsrenderer: function () {
                               return "Edit";
                           }, buttonclick: function (row) {
                               // open the popup window when the user clicks a button.
+                              if (DisableEdit == false) {
+                                  $("#popupLocation").css('display', 'block');
+                                  $("#popupLocation").css('visibility', 'hidden');
 
-                              $("#popupLocation").css('display', 'block');
-                              $("#popupLocation").css('visibility', 'hidden');
+                                  editrow = row;
+                                  var offset = $("#jqxgrid").offset();
+                                  $("#popupLocation").jqxWindow({ position: { x: '5%', y: '7.5%' } });
+                                  $('#popupLocation').jqxWindow({ resizable: false });
+                                  $('#popupLocation').jqxWindow({ draggable: true });
+                                  $('#popupLocation').jqxWindow({ isModal: true });
+                                  $("#popupLocation").css("visibility", "visible");
+                                  $('#popupLocation').jqxWindow({ height: '85%', width: '90%' });
+                                  $('#popupLocation').jqxWindow({ minHeight: '85%', minWidth: '90%' });
+                                  $('#popupLocation').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
+                                  $('#popupLocation').jqxWindow({ showCloseButton: true });
+                                  $('#popupLocation').jqxWindow({ animationType: 'combined' });
+                                  $('#popupLocation').jqxWindow({ showAnimationDuration: 300 });
+                                  $('#popupLocation').jqxWindow({ closeAnimationDuration: 500 });
 
-                              editrow = row;
-                              var offset = $("#jqxgrid").offset();
-                              $("#popupLocation").jqxWindow({ position: { x: '5%', y: '7.5%' } });
-                              $('#popupLocation').jqxWindow({ resizable: false });
-                              $('#popupLocation').jqxWindow({ draggable: true });
-                              $('#popupLocation').jqxWindow({ isModal: true });
-                              $("#popupLocation").css("visibility", "visible");
-                              $('#popupLocation').jqxWindow({ height: '85%', width: '90%' });
-                              $('#popupLocation').jqxWindow({ minHeight: '85%', minWidth: '90%' });
-                              $('#popupLocation').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
-                              $('#popupLocation').jqxWindow({ showCloseButton: true });
-                              $('#popupLocation').jqxWindow({ animationType: 'combined' });
-                              $('#popupLocation').jqxWindow({ showAnimationDuration: 300 });
-                              $('#popupLocation').jqxWindow({ closeAnimationDuration: 500 });
-
-                              // get the clicked row's data and initialize the input fields.
-                              var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
-
-
-
-                              $("#thisLocationId").val(dataRecord.LocationId);
-                              $("#NameOfLocation").val(dataRecord.NameOfLocation);
-                              $("#DisplayName").val(dataRecord.DisplayName);
-                              $("#ShortLocationName").val(dataRecord.ShortLocationName);
-                              $("#FacilityNumber").val(dataRecord.FacilityNumber);
-                              $("#SkiDataVersion").val(dataRecord.SkiDataVersion);
-                              $("#SkiDataLocation").val(dataRecord.SkiDataLocation);
-                              $("#LocationAddress").val(dataRecord.LocationAddress);
-                              $("#LocationCity").val(dataRecord.LocationCity);
-                              $("#LocationZipCode").val(dataRecord.LocationZipCode);
-                              $("#LocationPhoneNumber").val(dataRecord.LocationPhoneNumber);
-                              $("#LocationFaxNumber").val(dataRecord.LocationFaxNumber);
-                              $("#Capacity").val(dataRecord.Capacity);
-                              $("#Description").val(dataRecord.Description);
-                              $("#Alert").val(dataRecord.Alert);
-                              $("#Slug").val(dataRecord.Slug);
-                              $("#siteManager").val(dataRecord.Manager);
-                              $("#ManagerEmail").val(dataRecord.ManagerEmail);
-                              $("#DailyRate").val(dataRecord.DailyRate);
-                              $("#HourlyRate").val(dataRecord.DailyRate);
-                              $("#RateQualifications").val(dataRecord.RateQualifications);
-                              $("#RateText").val(dataRecord.RateText);
-                              $("#MemberRateText").val(dataRecord.MemberRateText);
-                              $("#Latitude").val(dataRecord.Latitude);
-                              $("#Longitude").val(dataRecord.Longitude);
-                              $("#GoogleLink").val(dataRecord.GoogleLink);
-                              $("#IsActive").val(dataRecord.IsActive);
-                              $("#SpecialFlagsText").val(dataRecord.SpecialFlagsText);
-                              $("#SpecialFlagsInformation").val(dataRecord.SpecialFlagsInformation);
-                              $("#ManagerImageUrl").val(dataRecord.ManagerImageUrl);
-                              $("#ImageUrl").val(dataRecord.ImageUrl);
-                              $("#EstimatedCharges").val(dataRecord.EstimatedCharges);
-                              $("#EstimatedSavings").val(dataRecord.EstimatedSavings);
-                              $("#BrandId").val(dataRecord.BrandId);
-                              $("#stateCombo").jqxComboBox('selectItem', dataRecord.StateId);
-                              $("#brandCombo").jqxComboBox('selectItem', dataRecord.BrandId);
-                              $("#airportCombo").jqxComboBox('selectItem', dataRecord.AirportId);
-                              $("#LocationContactEmail").val(dataRecord.LocationContactEmail);
-                              $("#SkiDataIMP").val(dataRecord.IMP);
-                              $("#SiteURL").val(dataRecord.SiteURL);
-                              $("#cityCombo").jqxComboBox('selectItem', dataRecord.CityId);
-
-                              //sets the current selected location
-                              selectedLocationId = dataRecord.LocationId;
-
-                              $('#jqxReservationTabs').jqxTabs('select', 0);
-                              $('#jqxTabs').jqxTabs('select', 0);
-                              $('#jqxLocationTabs').jqxTabs('select', 0);
+                                  // get the clicked row's data and initialize the input fields.
+                                  var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
 
 
-                              loadFeatureGrid(selectedLocationId);
 
-                              loadLocationImagesGrid(selectedLocationId);
+                                  $("#thisLocationId").val(dataRecord.LocationId);
+                                  $("#NameOfLocation").val(dataRecord.NameOfLocation);
+                                  $("#DisplayName").val(dataRecord.DisplayName);
+                                  $("#ShortLocationName").val(dataRecord.ShortLocationName);
+                                  $("#FacilityNumber").val(dataRecord.FacilityNumber);
+                                  $("#SkiDataVersion").val(dataRecord.SkiDataVersion);
+                                  $("#SkiDataLocation").val(dataRecord.SkiDataLocation);
+                                  $("#LocationAddress").val(dataRecord.LocationAddress);
+                                  $("#LocationCity").val(dataRecord.LocationCity);
+                                  $("#LocationZipCode").val(dataRecord.LocationZipCode);
+                                  $("#LocationPhoneNumber").val(dataRecord.LocationPhoneNumber);
+                                  $("#LocationFaxNumber").val(dataRecord.LocationFaxNumber);
+                                  $("#Capacity").val(dataRecord.Capacity);
+                                  $("#Description").val(dataRecord.Description);
+                                  $("#Alert").val(dataRecord.Alert);
+                                  $("#Slug").val(dataRecord.Slug);
+                                  $("#siteManager").val(dataRecord.Manager);
+                                  $("#ManagerEmail").val(dataRecord.ManagerEmail);
+                                  $("#DailyRate").val(dataRecord.DailyRate);
+                                  $("#HourlyRate").val(dataRecord.DailyRate);
+                                  $("#RateQualifications").val(dataRecord.RateQualifications);
+                                  $("#RateText").val(dataRecord.RateText);
+                                  $("#MemberRateText").val(dataRecord.MemberRateText);
+                                  $("#Latitude").val(dataRecord.Latitude);
+                                  $("#Longitude").val(dataRecord.Longitude);
+                                  $("#GoogleLink").val(dataRecord.GoogleLink);
+                                  $("#IsActive").val(dataRecord.IsActive);
+                                  $("#SpecialFlagsText").val(dataRecord.SpecialFlagsText);
+                                  $("#SpecialFlagsInformation").val(dataRecord.SpecialFlagsInformation);
+                                  $("#ManagerImageUrl").val(dataRecord.ManagerImageUrl);
+                                  $("#ImageUrl").val(dataRecord.ImageUrl);
+                                  $("#EstimatedCharges").val(dataRecord.EstimatedCharges);
+                                  $("#EstimatedSavings").val(dataRecord.EstimatedSavings);
+                                  $("#BrandId").val(dataRecord.BrandId);
+                                  $("#stateCombo").jqxComboBox('selectItem', dataRecord.StateId);
+                                  $("#brandCombo").jqxComboBox('selectItem', dataRecord.BrandId);
+                                  $("#airportCombo").jqxComboBox('selectItem', dataRecord.AirportId);
+                                  $("#LocationContactEmail").val(dataRecord.LocationContactEmail);
+                                  $("#SkiDataIMP").val(dataRecord.IMP);
+                                  $("#SiteURL").val(dataRecord.SiteURL);
+                                  $("#cityCombo").jqxComboBox('selectItem', dataRecord.CityId);
 
-                              loadRestrictionGrid(selectedLocationId);
+                                  //sets the current selected location
+                                  selectedLocationId = dataRecord.LocationId;
 
-                              loadReservationFeesGrid(selectedLocationId);
+                                  $('#jqxReservationTabs').jqxTabs('select', 0);
+                                  $('#jqxTabs').jqxTabs('select', 0);
+                                  $('#jqxLocationTabs').jqxTabs('select', 0);
 
-                              // show the popup window.
-                              $("#popupLocation").jqxWindow('open');
-                          }, width: '5%'
+
+                                  loadFeatureGrid(selectedLocationId);
+
+                                  loadLocationImagesGrid(selectedLocationId);
+
+                                  loadRestrictionGrid(selectedLocationId);
+
+                                  loadReservationFeesGrid(selectedLocationId);
+
+                                  // show the popup window.
+                                  $("#popupLocation").jqxWindow('open');
+                              }
+                          }
                       },
                       // loads the rest of the columns for the location grid
                       { text: 'LocationId', datafield: 'LocationId', hidden: true },
@@ -1383,22 +1405,24 @@
 
         //opens the location Pop out form empty for new location
         function newLocation() {
-            var offset = $("#jqxgrid").offset();
-            //sets the varialbe to true so form doesn't try to load feature grid
-            thisNewLocation = true;
-            $("#popupLocation").jqxWindow({ position: { x: '5%', y: '7.5%' } });
-            $('#popupLocation').jqxWindow({ resizable: false });
-            $('#popupLocation').jqxWindow({ draggable: true });
-            $('#popupLocation').jqxWindow({ isModal: true });
-            $("#popupLocation").css("visibility", "visible");
-            $('#popupLocation').jqxWindow({ height: '85%', width: '90%' });
-            $('#popupLocation').jqxWindow({ minHeight: '85%', minWidth: '90%' });
-            $('#popupLocation').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
-            $('#popupLocation').jqxWindow({ showCloseButton: true });
-            $('#popupLocation').jqxWindow({ animationType: 'combined' });
-            $('#popupLocation').jqxWindow({ showAnimationDuration: 300 });
-            $('#popupLocation').jqxWindow({ closeAnimationDuration: 500 });
-            $("#popupLocation").jqxWindow('open');
+
+                var offset = $("#jqxgrid").offset();
+                //sets the varialbe to true so form doesn't try to load feature grid
+                thisNewLocation = true;
+                $("#popupLocation").jqxWindow({ position: { x: '5%', y: '7.5%' } });
+                $('#popupLocation').jqxWindow({ resizable: false });
+                $('#popupLocation').jqxWindow({ draggable: true });
+                $('#popupLocation').jqxWindow({ isModal: true });
+                $("#popupLocation").css("visibility", "visible");
+                $('#popupLocation').jqxWindow({ height: '85%', width: '90%' });
+                $('#popupLocation').jqxWindow({ minHeight: '85%', minWidth: '90%' });
+                $('#popupLocation').jqxWindow({ maxHeight: '90%', maxWidth: '90%' });
+                $('#popupLocation').jqxWindow({ showCloseButton: true });
+                $('#popupLocation').jqxWindow({ animationType: 'combined' });
+                $('#popupLocation').jqxWindow({ showAnimationDuration: 300 });
+                $('#popupLocation').jqxWindow({ closeAnimationDuration: 500 });
+                $("#popupLocation").jqxWindow('open');
+
         }
 
         //clears feature form so when it is open by new Location button there is now content there
@@ -1429,7 +1453,7 @@
                                 <div class="col-sm-8 col-sm-offset-4">
                                     <div class="row search-size">
                                         <div class="col-sm-12">
-                                            <a href="javascript:newLocation();" id="btnNew">New Location</a>
+                                            <a href="javascript:newLocation();" id="btnNew" class="editor">New City</a>
                                         </div>
                                     </div>
                                 </div>
@@ -2080,10 +2104,6 @@
             </div>
         </div>
     </div>
-
-
-
-
 
 </asp:Content>
 

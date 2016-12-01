@@ -246,20 +246,14 @@
     <div id="Locations" class="container-fluid container-970 wrap-search-options">
         <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
             <div class="row search-size FPR_SearchLeft">
-                <div class="col-sm-12 col-md-10 col-md-offset-1">
-                    <div class="row search-size">
-                        <div class="col-sm-3 col-sm-offset-9">
-                            <div class="row search-size">
-                                <div class="col-sm-8 col-sm-offset-4">
-                                    <div class="row search-size">
-                                        <div class="col-sm-12">
-                                            <div id="LocationCombo" style="width:250px;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-sm-2">
+                    <div id="LocationCombo" style="width:250px;"></div>
+                </div>
+                <div class="col-sm-2">
+                </div>
+                <div class="col-sm-2">
+                </div>
+                <div class="col-sm-2">
                 </div>
             </div>
         </div>
@@ -277,7 +271,10 @@
         </div>
     </div><!-- /.container-fluid -->
 
-    <div id="actionButtons"><input id="btnSubmit" value="Submit" type="button" style="margin-top:15px;" /><input id="btnDelete" value="Delete" type="button" style="margin-left:75px; margin-top:15px;" /></div>
+    <div id="actionButtons">
+        <input id="btnSubmit" value="Submit" type="button" style="margin-left:50px;margin-top:15px;width:200px;" class="editor" />
+        <input id="btnDelete" value="Delete" type="button" style="margin-right:50px; margin-top:15px;width:200px;float:right;" class="editor" />
+    </div>
 
     
 

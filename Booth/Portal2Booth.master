@@ -55,9 +55,9 @@
     <div class="wrapper">
         <form runat="server">
             <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
-            <asp:TextBox runat="server" ID="userGuid" style="visibility:hidden">E39B9C5F76114D47AE8748D0EA134AA6</asp:TextBox>
-            <asp:TextBox runat="server" ID="AK" style="visibility:hidden">955A770C-EC8E-42DC-A1DD-63E6B764CF8D</asp:TextBox>
-            <asp:TextBox runat="server" ID="apiDomain" style="visibility:hidden">https://apistage.thefastpark.com/api/v1/</asp:TextBox>
+            <asp:TextBox runat="server" ID="userGuid" style="visibility:hidden">05FB299269E94CE5980A55E4733102C5</asp:TextBox>
+            <asp:TextBox runat="server" ID="AK" style="visibility:hidden">3E36B6D0-A79D-4A7D-B5F3-6C016DBF5580</asp:TextBox>
+            <asp:TextBox runat="server" ID="apiDomain" style="visibility:hidden">http://api.stage.thefastpark.com:80/api/v1/</asp:TextBox>
             <asp:TextBox runat="server" ID="localApiDomain" style="visibility:hidden">http://pca-portal:8181/api/</asp:TextBox>
             <asp:TextBox runat="server" ID="userLocation" style="visibility:hidden">3,4</asp:TextBox>
             <table class="table1" style="margin-bottom:0px;padding:0px;width:100%;">

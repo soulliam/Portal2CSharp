@@ -30,14 +30,21 @@
                     "LocationId": thisLocationId,
                     "PhoneList": [],
                     "GetEmail": thisGetEmail,
-                    "EmailReceiptsFlag": true
+                    "EmailReceiptsFlag": true,
+                    "CompanyId": thisCompanyId
                 }),
                 dataType: "json",
                 success: function () {
+                    $('#jqxLoader').jqxLoader('close');
                     alert("Saved!");
+                    
                 },
                 error: function (request, status, error) {
+                    $('#jqxLoader').jqxLoader('close');
                     alert(status);
+                },
+                complete: function () {
+                    $('#jqxLoader').jqxLoader('close');
                 }
             });
             break;
@@ -75,14 +82,20 @@
                     }
                     ],
                     "GetEmail": thisGetEmail,
-                    "EmailReceiptsFlag": true
+                    "EmailReceiptsFlag": true,
+                    "CompanyId": thisCompanyId
                 }),
                 dataType: "json",
                 success: function () {
+                    $('#jqxLoader').jqxLoader('close');
                     alert("Saved!");
                 },
                 error: function (request, status, error) {
-                    alert(status);
+                    $('#jqxLoader').jqxLoader('close');
+                    alert(error);
+                },
+                complete: function () {
+                    $('#jqxLoader').jqxLoader('close');
                 }
             });
             break;
@@ -124,14 +137,20 @@
                     }
                     ],
                     "GetEmail": true,
-                    "EmailReceiptsFlag": true
+                    "EmailReceiptsFlag": true,
+                    "CompanyId": thisCompanyId
                 }),
                 dataType: "json",
                 success: function () {
+                    $('#jqxLoader').jqxLoader('close');
                     alert("Saved!");
                 },
                 error: function (request, status, error) {
-                    alert(status);
+                    $('#jqxLoader').jqxLoader('close');
+                    alert(error);
+                },
+                complete: function () {
+                    $('#jqxLoader').jqxLoader('close');
                 }
             });
             break;
@@ -177,14 +196,20 @@
                     }
                     ],
                     "GetEmail": true,
-                    "EmailReceiptsFlag": true
+                    "EmailReceiptsFlag": true,
+                    "CompanyId": thisCompanyId
                 }),
                 dataType: "json",
                 success: function () {
+                    $('#jqxLoader').jqxLoader('close');
                     alert("Saved!");
                 },
                 error: function (request, status, error) {
-                    alert(status);
+                    $('#jqxLoader').jqxLoader('close');
+                    alert(error);
+                },
+                complete: function () {
+                    $('#jqxLoader').jqxLoader('close');
                 }
             });
             break;
@@ -234,14 +259,20 @@
                     }
                     ],
                     "GetEmail": true,
-                    "EmailReceiptsFlag": true
+                    "EmailReceiptsFlag": true,
+                    "CompanyId": thisCompanyId
                 }),
                 dataType: "json",
                 success: function () {
+                    $('#jqxLoader').jqxLoader('close');
                     alert("Saved!");
                 },
                 error: function (request, status, error) {
-                    alert(status);
+                    $('#jqxLoader').jqxLoader('close');
+                    alert(error);
+                },
+                complete: function () {
+                    $('#jqxLoader').jqxLoader('close');
                 }
             });
             break;
