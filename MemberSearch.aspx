@@ -248,6 +248,47 @@
 
             //#region ButtonClicks
 
+            // mark redemption used button click
+            $("#markUsedRedemption").on("click", function (event) {
+                var success = false;
+                var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
+
+                if (getselectedrowindexes.length > 0) {
+                    // returns the selected row's data.
+                    var selectedRowData = $('#jqxRedemptionGrid').jqxGrid('getrowdata', getselectedrowindexes[0]);
+                    var thisRedemptionId = selectedRowData.RedemptionId;
+                    var thisUser = $("#txtLoggedinUsername").val();
+                    var thisMemberId = $("#MemberId").val();
+                } else {
+                    alert("You must select a redemption to mark used.");
+                    return null;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    //url: "http://localhost:52839/api/Redemptions/SetBeenUsed/",
+                    url: $("#localApiDomain").val() + "Redemptions/SetBeenUsed/",
+
+                    data: {
+                        "RedemptionId": thisRedemptionId,
+                        "UpdateExternalUserData": thisUser,
+                    },
+                    dataType: "json",
+                    success: function (Response) {
+                        alert("Saved!  Marked as used.");
+                        success = true;
+                    },
+                    error: function (request, status, error) {
+                        alert(error);
+                    },
+                    complete: function () {
+                        if (success == true) {
+                            loadRedemptions(thisMemberId);
+                            loadMemberActivity(thisMemberId);
+                        }
+                    }
+                });
+            });
             //Create Redemptions
             $("#1DayRedemption").on("click", function (event) {
                 var result = confirm("Do you want to create a redemption!");
@@ -273,6 +314,10 @@
                 CreateRedemption(3, 3, 1)
             });
 
+            // open import status page in new page or tab
+            $("#btnImportStatus").on("click", function (event) {
+                window.open("./FileImportStatus.aspx");
+            });
 
             //Marketing site
             $("#btnMarketing").on("click", function (event) {
@@ -325,6 +370,12 @@
 
             //return redemption
             $("#returnRedemption").on("click", function (event) {
+                var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
+                if (getselectedrowindexes.length <= 0) {
+                    alert("You have not selected a redemption.")
+                    return null;
+                }
+
                 var result = confirm("Do you want to return this redemption!");
                 if (result != true) {
                     return null;
@@ -968,6 +1019,22 @@
 
             //#region pageSetup
 
+            // make the redemption grid single select
+            $('#jqxRedemptionGrid').on('rowselect', function (event) {
+                // event arguments.
+                var args = event.args;
+                var index = args.rowindex;
+                var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
+
+                if (getselectedrowindexes.length > 0) {
+                    if (getselectedrowindexes != index) {
+                        $("#jqxRedemptionGrid").jqxGrid('clearselection');
+                        $("#jqxRedemptionGrid").jqxGrid('selectrow', index);
+                    }
+                }
+
+            });
+
             // set key press in search bar to initiate search
             $("div.FPR_SearchLeft input:text").keypress(function (e) {
 
@@ -1144,6 +1211,7 @@
             $("#jqxCardGrid").jqxGrid('destroy');
             $("<div id='jqxCardGrid'></div>").appendTo(parent);
 
+
             //Loads card list
             var url = $("#apiDomain").val() + "Members/" + PageMemberID + "/Cards";
 
@@ -1212,6 +1280,12 @@
         }
 
         function loadDisplayQA() {
+
+
+            var parent = $("#jqxDisplayQAGrid").parent();
+            $("#jqxDisplayQAGrid").jqxGrid('destroy');
+            $("<div id='jqxDisplayQAGrid'></div>").appendTo(parent);
+
             //Loads card list
             var PageMemberID = $("#MemberId").val();
 
@@ -1259,6 +1333,11 @@
         }
 
         function loadMemberActivity(PageMemberID) {
+
+            var parent = $("#jqxMemberActivityGrid").parent();
+            $("#jqxMemberActivityGrid").jqxGrid('destroy');
+            $("<div id='jqxMemberActivityGrid'></div>").appendTo(parent);
+
             //Loads card list
             var url = $("#apiDomain").val() + "accounts/" + AccountId + "/activity?StartDate=1/1/1900&EndDate=1/1/9999&Limit=";
 
@@ -1418,6 +1497,11 @@
         }
 
         function loadAccountActivity() {
+
+            var parent = $("#jqxAccountActivityGrid").parent();
+            $("#jqxAccountActivityGrid").jqxGrid('destroy');
+            $("<div id='jqxAccountActivityGrid'></div>").appendTo(parent);
+
             //Loads card list
             var url = $("#apiDomain").val() + "accounts/" + AccountId + "/activity?StartDate=1/1/1900&EndDate=1/1/9999&Limit=";
 
@@ -1566,6 +1650,10 @@
         }
 
         function loadSearchResults(thisParameters) {
+
+            var parent = $("#jqxSearchGrid").parent();
+            $("#jqxSearchGrid").jqxGrid('destroy');
+            $("<div id='jqxSearchGrid'></div>").appendTo(parent);
 
             //Loads SearchList from parameters
 
@@ -2579,7 +2667,7 @@
                     $("#LastName").val(thisData.result.data.LastName);
                     $("#EmailAddress").val(thisData.result.data.EmailAddress);
                     $("#UserName").val(thisData.result.data.UserName);
-                    $("#IsActive").val(thisData.result.data.IsActive);
+                    $("#IsActive").prop( "checked", thisData.result.data.IsActive);
                     $("#StreetAddress").val(thisData.result.data.StreetAddress);
                     $("#StreetAddress2").val(thisData.result.data.StreetAddress2);
                     $("#stateCombo").jqxComboBox('selectItem', thisData.result.data.StateId);
@@ -2730,7 +2818,7 @@
                             </div>
                             <div class="row search-size">
                                 <div class="col-sm-15">
-                                    <input type="text" id="SearchPhoneNumber" placeholder="Phone XXX-XXX-XXXX"  />
+                                    <input type="text" id="SearchPhoneNumber" placeholder="Phone xxx-xxx-xxxx"  />
                                 </div>
                                 <div class="col-sm-15">
                                     <input type="text" id="SearchCompany" placeholder="Company" />
@@ -2911,7 +2999,11 @@
                                         <div class="form-group">
                                             <label for="IsActive" class="col-sm-3 col-md-4 control-label">Active:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="IsActive" placeholder:"">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" class="form-control" id="IsActive" >
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

@@ -1932,7 +1932,11 @@
                                     <div class="form-group">
                                         <label for="addFeatureDisplayIcon" class="col-sm-3 col-md-4 control-label">Display Icon:</label>
                                         <div class="col-sm-9 col-md-8">
-                                            <input type="checkbox" class="form-control" id="addFeatureDisplayIcon" />
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" class="form-control" id="addFeatureDisplayIcon" />
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -1952,7 +1956,11 @@
                                     <div class="form-group">
                                         <label for="addFeatureIsDisplayedOptionalExtra" class="col-sm-3 col-md-4 control-label">Dispaly Optional Extra:</label>
                                         <div class="col-sm-9 col-md-8">
-                                            <input type="checkbox" class="form-control" id="addFeatureIsDisplayedOptionalExtra" />
+                                            <div class="checkbox">
+                                                <label>
+                                                     <input type="checkbox" class="form-control" id="addFeatureIsDisplayedOptionalExtra" />
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
