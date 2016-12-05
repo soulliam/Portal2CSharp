@@ -1,4 +1,43 @@
-﻿//Pad number
+﻿//Security Setup
+function Security() {
+    if (group.indexOf("Booth") <= -1) {
+        $("#BoothLink").remove();
+    }
+
+    if (group.indexOf("Portal_Auditadmin") <= -1) {
+        $("#ReservationMaintenanceLink").remove();
+    }
+
+    //if (group.indexOf("Portal_Admin") <= -1 && group.indexOf("Portal_Auditadmin") <= -1 && group.indexOf("Portal_Manager") <= -1 && group.indexOf("Portal_RFR") <= -1 && group.indexOf("Portal_Superadmin") <= -1) {
+    if (group.indexOf("Portal_Edit") <= -1) {
+        var elements = document.getElementsByClassName('editor')
+
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].style.display = "none";
+        }
+    }
+}
+
+//render dates for grid
+var DateRender = function (row, columnfield, value, defaulthtml, columnproperties) {
+    // format date as string due to inconsistant date coversions
+    var thisDateTime = value;
+
+    if (thisDateTime != "") {
+        thisDateTime = thisDateTime.split("T");
+
+        var thisDate = thisDateTime[0].split("-");
+
+        var newDate = thisDate[1] + "/" + thisDate[2] + "/" + thisDate[0];
+
+        return newDate;
+    } else {
+        return "";
+    }
+
+};
+
+//Pad number
 function padNumber(i, l, s) {
     //leave s blank to return zeros
     var o = i.toString();
@@ -65,7 +104,10 @@ function JsonDateTimeFormat(dateObject) {
 
 //Display PageMethod Results
 function DisplayPageMethodResults(ResultString) {
-    alert(ResultString);
+    if (ResultString != "") {
+        alert(ResultString);
+    }
+    
 }
 
 
@@ -91,4 +133,67 @@ function loadPoints(thisAccountId, textInput) {
 
         }
     });
+}
+
+
+// Use this to render location names if they only sent the ID
+var locatioinCellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+    switch (value) {
+        case 1:
+            return '<div style="margin-top: 10px;margin-left: 5px">Albuquerque</div>';
+            break;
+        case 2:
+            return '<div style="margin-top: 10px;margin-left: 5px">Austin</div>';
+            break;
+        case 3:
+            return '<div style="margin-top: 10px;margin-left: 5px">Baltimore Elkridge Landing</div>';
+            break;
+        case 4:
+            return '<div style="margin-top: 10px;margin-left: 5px">Baltimore W. Nursery Road</div>';
+            break;
+        case 5:
+            return '<div style="margin-top: 10px;margin-left: 5px">Cincinnati</div>';
+            break;
+        case 6:
+            return '<div style="margin-top: 10px;margin-left: 5px">Cleveland</div>';
+            break;
+        case 7:
+            return '<div style="margin-top: 10px;margin-left: 5px">Cleveland PP</div>';
+            break;
+        case 9:
+            return '<div style="margin-top: 10px;margin-left: 5px">Cincinnati</div>';
+            break;
+        case 10:
+            return '<div style="margin-top: 10px;margin-left: 5px">Raleigh</div>';
+            break;
+        case 11:
+            return '<div style="margin-top: 10px;margin-left: 5px">Tucson</div>';
+            break;
+        case 12:
+            return '<div style="margin-top: 10px;margin-left: 5px">Orlando</div>';
+            break;
+        case 13:
+            return '<div style="margin-top: 10px;margin-left: 5px">Milwaukee</div>';
+            break;
+        case 14:
+            return '<div style="margin-top: 10px;margin-left: 5px">Miami</div>';
+            break;
+        case 15:
+            return '<div style="margin-top: 10px;margin-left: 5px">Memphis</div>';
+            break;
+        case 16:
+            return '<div style="margin-top: 10px;margin-left: 5px">Houston</div>';
+            break;
+        case 17:
+            return '<div style="margin-top: 10px;margin-left: 5px">Indianapolis</div>';
+            break;
+        case 18:
+            return '<div style="margin-top: 10px;margin-left: 5px">Atlanta</div>';
+            break;
+        case 20:
+            return '<div style="margin-top: 10px;margin-left: 5px">Houston Hobby</div>';
+            break;
+        default:
+            return 'Error';
+    }
 }

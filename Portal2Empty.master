@@ -20,10 +20,10 @@
     <form id="form1" runat="server">
     <div class="hidden">
         <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
-        <asp:TextBox runat="server" ID="userGuid" style="visibility:hidden">05FB299269E94CE5980A55E4733102C5</asp:TextBox>
+        <asp:TextBox runat="server" ID="userGuid" style="visibility:hidden">E3470A645144461293833FBCE3EE7305</asp:TextBox>
         <asp:TextBox runat="server" ID="AK" style="visibility:hidden">3E36B6D0-A79D-4A7D-B5F3-6C016DBF5580</asp:TextBox>
-        <asp:TextBox runat="server" ID="apiDomain" style="visibility:hidden">http://api.stage.thefastpark.com:80/api/v1/</asp:TextBox>
-        <asp:TextBox runat="server" ID="localApiDomain" style="visibility:hidden">http://pca-portal:8181/api/</asp:TextBox>
+        <asp:TextBox runat="server" ID="apiDomain" style="visibility:hidden">https://apistage.thefastpark.com/api/v1/</asp:TextBox>
+        <asp:TextBox runat="server" ID="localApiDomain" style="visibility:hidden">http://portal.thefastpark.com:8181/api/</asp:TextBox>
         <asp:TextBox runat="server" ID="userLocation" style="visibility:hidden">14</asp:TextBox>
     </div>
     <div>

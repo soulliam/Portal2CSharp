@@ -11,7 +11,15 @@ public partial class Booth_BoothSearch : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        
+        object value = Session["IMINBOOTH"];
+        if (string.IsNullOrEmpty(Convert.ToString(value)))
+        {
+            Response.Redirect("http://www.thefastpark.com");
+        }
+        if (value.ToString() != "true")
+        {
+            Response.Redirect("http://www.thefastpark.com");
+        } 
     }
 
     [System.Web.Services.WebMethod]
@@ -23,6 +31,23 @@ public partial class Booth_BoothSearch : System.Web.UI.Page
 
             logEmailRequest.logChange(thisUserName, thisMemberId, thisOld, thisNew, "MemberInformation", "Cashier Booth Email Change", logEmailRequest.getBatch());
             return "Request Made";
+        }
+        catch (Exception ex)
+        {
+            return Convert.ToString(ex);
+        }
+    }
+
+    [System.Web.Services.WebMethod]
+    public static string logSearch(string thisUserName, string thisMemberId, string thisOld, string thisNew)
+    {
+        try
+        {
+            clsLogging logSearch = new clsLogging();
+
+            logSearch.logChange(thisUserName, thisMemberId, thisOld, thisNew, "", "Booth Search", logSearch.getBatch());
+
+            return "";
         }
         catch (Exception ex)
         {

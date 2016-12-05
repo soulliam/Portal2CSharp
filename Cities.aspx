@@ -88,7 +88,7 @@
             
             // saving new or changed city
             $("#Save").click(function () {
-                // If Airport is nothing then we are adding a new Airport and we need a post
+                // If city is nothing then we are adding a new Airport and we need a post
                 if ($("#CityId").val() == "") {
                     var newCityName = $("#CityName").val();
                     var newStateID = $("#stateCombo").jqxComboBox('getSelectedItem').value;

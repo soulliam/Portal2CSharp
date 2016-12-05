@@ -12,10 +12,11 @@ public partial class Portal2 : System.Web.UI.MasterPage
     {
         //uncomment for production or security testing
 
-        //if ((string)(Session["IMIN"]) != "true")
-        //{
-        //    Response.Redirect("http://www.thefastpark.com");
-        //} 
+        if ((string)(Session["IMIN"]) != "true")
+        {
+            Response.Write("<script>alert('Hello');</script>");
+            Response.Redirect("http://www.thefastpark.com");
+        }
 
         loginLabel.Text = Page.User.Identity.Name;
         txtLoggedinUsername.Value = Page.User.Identity.Name;

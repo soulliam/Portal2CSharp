@@ -14,7 +14,7 @@
             [
                 { name: 'available', type: 'bool' },
                 { name: 'date', type: 'date' },
-                { name: 'range', map: 'date', type: 'date' },
+                { name: 'range', map: 'date' },
 
             ],
             datatype: "array"

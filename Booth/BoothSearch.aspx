@@ -156,17 +156,17 @@
 
             //open receipt entry
             $("#btnReceipt").on("click", function (event) {
-                $("#popupReceipt").css('display', 'block');
-                $("#popupReceipt").css('visibility', 'hidden');
+                //$("#popupReceipt").css('display', 'block');
+                //$("#popupReceipt").css('visibility', 'hidden');
 
-                var offset = $("#jqxSearchGrid").offset();
-                $("#popupReceipt").jqxWindow({ position: { x: parseInt(offset.left) + 200, y: parseInt(offset.top) - 80 } });
-                $('#popupReceipt').jqxWindow({ width: "500px", height: "550px" });
-                $('#popupReceipt').jqxWindow({ isModal: true, modalOpacity: 0.7 });
-                $('#popupReceipt').jqxWindow({ showCloseButton: false });
-                $("#popupReceipt").css("visibility", "visible");
-                $("#popupReceipt").jqxWindow({ title: 'Enter Receipt' });
-                $("#popupReceipt").jqxWindow('open');
+                //var offset = $("#jqxSearchGrid").offset();
+                //$("#popupReceipt").jqxWindow({ position: { x: parseInt(offset.left) + 200, y: parseInt(offset.top) - 80 } });
+                //$('#popupReceipt').jqxWindow({ width: "500px", height: "550px" });
+                //$('#popupReceipt').jqxWindow({ isModal: true, modalOpacity: 0.7 });
+                //$('#popupReceipt').jqxWindow({ showCloseButton: false });
+                //$("#popupReceipt").css("visibility", "visible");
+                //$("#popupReceipt").jqxWindow({ title: 'Enter Receipt' });
+                //$("#popupReceipt").jqxWindow('open');
             });
 
             //redeem 1 day
@@ -209,6 +209,8 @@
             $("#changeEmail").on("click", function (evnet) {
                 $("#popupNewEmail").css('display', 'block');
                 $("#popupNewEmail").css('visibility', 'hidden');
+
+                $("#oldEmail").val($("#memberEmail").html());
 
                 var offset = $("#jqxSearchGrid").offset();
                 $("#popupNewEmail").jqxWindow({ position: { x: parseInt(offset.left) + 500, y: parseInt(offset.top) - 40 } });
@@ -409,7 +411,7 @@
                 thisReturn = thisReturn + "&LastName=" + $("#txtSearchLastName").val();
 
                 if ($("#txtSearchEmailFNameFPNumber").val() != "") {
-                    thisReturn = thisReturn + "&FirstName='" + $("#txtSearchEmailFNameFPNumber").val();
+                    thisReturn = thisReturn + "&FirstName=" + $("#txtSearchEmailFNameFPNumber").val();
                 }
 
             }
@@ -433,6 +435,11 @@
                     return null;
                 }
             }
+
+            var thisMemberId = $("#MemberId").html();
+            var thisUser = $("#loginLabel").html();
+
+            PageMethods.logSearch(thisUser, thisMemberId, $("#txtSearchEmailFNameFPNumber").val(), $("#txtSearchLastName").val(), DisplayPageMethodResults);
 
             loadSearchResults(thisReturn);
         }
@@ -695,7 +702,7 @@
                     { name: 'RedemptionId' },
                     { name: 'CertificateID' },
                     { name: 'RedemptionType', map: 'RedemptionType>RedemptionType' },
-                    { name: 'RedeemDate', type: 'date' },
+                    { name: 'RedeemDate' },
                     { name: 'IsReturned' },
                     { name: 'DateUsed' }
                 ],
@@ -739,7 +746,7 @@
                       { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
                       { text: 'CertificateID', datafield: 'CertificateID' },
                       { text: 'Redemption Type', datafield: 'RedemptionType' },
-                      { text: 'Redeem Date', datafield: 'RedeemDate', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
+                      { text: 'Redeem Date', datafield: 'RedeemDate', cellsrenderer: DateRender },
                       { text: 'Returned', datafield: 'IsReturned' },
                       { text: 'DateUsed', datafield: 'DateUsed' }
                 ]
@@ -909,19 +916,19 @@
                 <input type="button" id="btn1Day" value="1 Day" style="margin-right:10px;margin-top:7px;" />
             </div>
             <div class="col-sm-2" >
-                <input type="button" id="btn2Day" value="2 Day" style="margin-right:10px;margin-top:7px;" />
+                <input type="button" id="btn2Day" value="2 Day" style="margin-right:10px;margin-top:7px;display:none;" />
             </div>
             <div class="col-sm-2" >
                 <input type="button" id="btn3Day" value="3 Day" style="margin-right:10px;margin-top:7px;" />
             </div>
             <div class="col-sm-2" >
-                <input type="button" id="btn4Day" value="4 Day" style="margin-right:10px;margin-top:7px;" />
+                <input type="button" id="btn4Day" value="4 Day" style="margin-right:10px;margin-top:7px;display:none;" />
             </div>
             <div class="col-sm-2" >
                 <input type="button" id="btnWeek" value="Week" style="margin-right:10px;margin-top:7px;" />
             </div>
             <div class="col-sm-2" >
-                <input type="button" id="btnReceipt" value="Receipt" style="margin-right:10px;margin-top:7px;" />
+                <input type="button" id="btnReceipt" value="Receipt" style="margin-right:10px;margin-top:7px;display:none;" />
             </div>
         </div>
     </div>

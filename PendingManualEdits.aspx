@@ -87,8 +87,8 @@
                             alert("Saved!");
                             loadGrid();
                         },
-                        error: function (jqXHR, textStatus, errorThrown, data) {
-                            alert(textStatus); alert(errorThrown);
+                        error: function (request, status, error) {
+                            alert(error + " - " + request.responseJSON.message);
                         }
                     });
                 }
@@ -125,8 +125,8 @@
                             alert("Deleted!");
                             loadGrid();
                         },
-                        error: function (jqXHR, textStatus, errorThrown, data) {
-                            alert(textStatus); alert(errorThrown);
+                        error: function (request, status, error) {
+                            alert(error + " - " + request.responseJSON.message);
                         }
                     });
                 }

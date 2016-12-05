@@ -32,7 +32,8 @@
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
             // load main city grid
-            loadGrid();
+            
+            LoadLocationPopup();
 
             //#region SetupButtons
             $("#newCount").jqxButton({ width: '100%', height: 26 });
@@ -61,21 +62,28 @@
             $("#Save").click(function () {
                 Date.prototype.toMMDDYYYYString = function () { return isNaN(this) ? 'NaN' : [this.getMonth() > 8 ? this.getMonth() + 1 : '0' + (this.getMonth() + 1), this.getDate() > 9 ? this.getDate() : '0' + this.getDate(), this.getFullYear()].join('/') }
 
-                $.post($("#localApiDomain").val() + "BoothCardCounts/Post",
-                    { 'Shift1': $("#Shift1").val(), 'Shift2': $("#Shift2").val(), 'Shift3': $("#Shift3").val(), 'Total': $("#Total").val(), 'BoothCardCountDate': new Date().toMMDDYYYYString(), 'LocationId': $("#userLocation").val() },
-                    function (data, status) {
-                        switch (status) {
-                            case 'success':
-                                alert('Counts were created successfully');
-                                break;
-                            default:
-                                alert('An Error occurred: ' + status + "\n Data:" + data);
-                                break;
-                        }
-                    }
-                );
+                var data = { 'Shift1': $("#Shift1").val(), 'Shift2': $("#Shift2").val(), 'Shift3': $("#Shift3").val(), 'Total': $("#Total").val(), 'BoothCardCountDate': new Date().toMMDDYYYYString(), 'LocationId': $("#boothLocation").val() };
 
-                loadGrid();
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:52839/api/BoothCardCounts/Post",
+                    //url: $("#localApiDomain").val() + "BoothCardCounts/Post/",
+
+                    data: data,
+                    dataType: "json",
+                    success: function (Response) {
+                        alert("Saved!");
+                        success = true;
+                    },
+                    error: function (request, status, error) {
+                        alert(error + " - " + request.responseText);
+                    },
+                    complete: function () {
+                        loadGrid($("#boothLocation").val());
+                    }
+                });
+
+                
                 $("#popupWindow").jqxWindow('hide');
                 $(".countPost").val('');
                 $("#Total").val('');
@@ -100,13 +108,60 @@
                 $(".countPost").val('');
                 
             });
+
+
+            var locationString = $("#userLocation").val();
+            var locationResult = locationString.split(",");
+
+            if (locationResult.length > 1) {
+                var thisLocationString = "";
+                for (i = 0; i < locationResult.length; i++) {
+                    if (i == locationResult.length - 1) {
+                        thisLocationString += locationResult[i];
+                    }
+                    else {
+                        thisLocationString += locationResult[i] + ",";
+                    }
+
+                }
+                LoadLocationPopup(thisLocationString);
+                $("#popupLocation").css('display', 'block');
+                $("#popupLocation").css('visibility', 'hidden');
+
+                var offset = $("#jqxgrid").offset();
+                $("#popupLocation").jqxWindow({ position: { x: parseInt(offset.left) + 500, y: parseInt(offset.top) - 40 } });
+                $('#popupLocation').jqxWindow({ width: "325px", height: "300px" });
+                $('#popupLocation').jqxWindow({ isModal: true, modalOpacity: 0.7 });
+                $('#popupLocation').jqxWindow({ showCloseButton: false });
+                $("#popupLocation").css("visibility", "visible");
+                $("#popupLocation").jqxWindow({ title: 'Pick a Location' });
+                $("#popupLocation").jqxWindow('open');
+            }
+            else {
+                $("#boothLocation").val(locationResult[0]);
+            }
+
+            $("#LocationCombo").on('select', function (event) {
+                if (event.args) {
+                    var item = event.args.item;
+                    if (item) {
+                        $("#boothLocation").val(item.value);
+                        $("#popupLocation").jqxWindow('hide');
+                        loadGrid(item.value);
+                    }
+
+                }
+            });
+
         });
         // ============= Initialize Page ================== End
 
         //Loads count grid
-        function loadGrid() {
+        function loadGrid(thisLocationId) {
 
-            var url = $("#localApiDomain").val() + "BoothCardCounts/GetBoothCardCount";
+            //var url = $("#localApiDomain").val() + "BoothCardCounts/GetBoothCardCount";
+            var url = "http://localhost:52839/api/BoothCardCounts/GetBoothCardCount/" + thisLocationId;
+
 
             var source =
             {
@@ -173,11 +228,36 @@
             $("#popupWindow").jqxWindow('open');
         }
 
+        function LoadLocationPopup(thisLocationString) {
+            //set up the location combobox
+            var locationSource =
+            {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'NameOfLocation' },
+                    { name: 'LocationId' }
+                ],
+                url: $("#localApiDomain").val() + "Locations/LocationByLocationIds/" + thisLocationString,
+
+            };
+            var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
+            $("#LocationCombo").jqxDropDownList(
+            {
+                width: 300,
+                height: 50,
+                itemHeight: 50,
+                source: locationDataAdapter,
+                selectedIndex: 0,
+                displayMember: "NameOfLocation",
+                valueMember: "LocationId"
+            });
+           
+        }
+
     </script>
-        <style>
-
-    </style>
-
+    <input type="text" id="boothLocation" style="display:none;" />
     <div id="BoothCardCount" class="container-fluid container-970 wrap-search-options">
         <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
             <div class="row search-size FPR_SearchLeft">
@@ -268,5 +348,11 @@
     </div>
     <%-- html for popup edit box END --%>
 
+
+    <div id="popupLocation" style="display:none">
+        <div>
+            <div id="LocationCombo" style="float:left;"></div>
+        </div>
+    </div>
 </asp:Content>
 

@@ -21,7 +21,7 @@ public partial class FileStatus : System.Web.UI.Page
 
         DataSet ds = new DataSet();
 
-        SqlConnection connection = new SqlConnection(thisADO.getMaxConnectionString());
+        SqlConnection connection = new SqlConnection(thisADO.getLocalConnectionString());
         SqlDataAdapter adapter = new SqlDataAdapter(strSQL, connection);
 
         adapter.Fill(ds);

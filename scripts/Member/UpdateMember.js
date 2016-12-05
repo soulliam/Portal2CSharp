@@ -41,7 +41,7 @@
                 },
                 error: function (request, status, error) {
                     $('#jqxLoader').jqxLoader('close');
-                    alert(status);
+                    alert(error + " - " + request.responseJSON.message);
                 },
                 complete: function () {
                     $('#jqxLoader').jqxLoader('close');
@@ -92,7 +92,7 @@
                 },
                 error: function (request, status, error) {
                     $('#jqxLoader').jqxLoader('close');
-                    alert(error);
+                    alert(error + " - " + request.responseJSON.message);
                 },
                 complete: function () {
                     $('#jqxLoader').jqxLoader('close');
@@ -147,7 +147,7 @@
                 },
                 error: function (request, status, error) {
                     $('#jqxLoader').jqxLoader('close');
-                    alert(error);
+                    alert(error + " - " + request.responseJSON.message);
                 },
                 complete: function () {
                     $('#jqxLoader').jqxLoader('close');
@@ -206,7 +206,7 @@
                 },
                 error: function (request, status, error) {
                     $('#jqxLoader').jqxLoader('close');
-                    alert(error);
+                    alert(error + " - " + request.responseJSON.message);
                 },
                 complete: function () {
                     $('#jqxLoader').jqxLoader('close');
@@ -269,7 +269,7 @@
                 },
                 error: function (request, status, error) {
                     $('#jqxLoader').jqxLoader('close');
-                    alert(error);
+                    alert(error + " - " + request.responseJSON.message);
                 },
                 complete: function () {
                     $('#jqxLoader').jqxLoader('close');

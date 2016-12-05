@@ -90,7 +90,7 @@
                             loadGrid();
                         },
                         error: function (request, status, error) {
-                            alert(request.responseText);
+                            alert(error + " - " + request.responseJSON.message);
                         }
                     })
 
@@ -136,7 +136,7 @@
                                 loadGrid();
                             },
                             error: function (request, status, error) {
-                                alert(request.responseText);
+                                alert(error + " - " + request.responseJSON.message);
                             }
                         })
 

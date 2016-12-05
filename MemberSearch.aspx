@@ -27,7 +27,7 @@
     <script type="text/javascript" src="jqwidgets/jqxgrid.filter.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxgrid.grouping.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxgrid.pager.js"></script>
-    <script type="text/javascript" src="jqwidgets/jqxgrid.selection.js"></script> 
+    <script type="text/javascript" src="jqwidgets/jqxgrid.selection.js"></script> c
     <script type="text/javascript" src="jqwidgets/jqxgrid.sort.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxlistbox.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxmaskedinput.js"></script>
@@ -51,16 +51,7 @@
         var glbHomeLocationId = 0;
 
         $(document).ready(function () {
-            
-            var groups = '<%= Session["groupList"] %>';
 
-            //if (groups.indexOf("Fred") < 0 && groups.indexOf("tet") < 0) {
-            //    var elements = document.getElementsByClassName('editor')
-
-            //    for (var i = 0; i < elements.length; i++) {
-            //        elements[i].style.display = "none";
-            //    }
-            //}
 
             //#region TabSetup            
 
@@ -248,6 +239,8 @@
 
             //#region ButtonClicks
 
+
+
             // mark redemption used button click
             $("#markUsedRedemption").on("click", function (event) {
                 var success = false;
@@ -279,7 +272,7 @@
                         success = true;
                     },
                     error: function (request, status, error) {
-                        alert(error);
+                        alert(error + " - " + request.responseJSON.message);
                     },
                     complete: function () {
                         if (success == true) {
@@ -339,7 +332,7 @@
                         window.open(marketingURL);
                     },
                     error: function (request, status, error) {
-                        alert("Error getting user information for marketing - " + error);
+                        alert(error + " - " + request.responseJSON.message);
                     }
                 });
 
@@ -412,7 +405,7 @@
                         loadMemberActivity(thisMemberId);
                     },
                     error: function (request, status, error) {
-                        alert(request.responseText);
+                        alert(error + " - " + request.responseJSON.message);
                     },
                     complete: function () {
                         $('#jqxLoader').jqxLoader('close');
@@ -468,7 +461,7 @@
                             alert("Canceled!");
                         },
                         error: function (request, status, error) {
-                            alert(error);
+                            alert(error + " - " + request.responseJSON.message);
                         },
                         complete: function () {
                             thisMemberId = $("#MemberId").val();
@@ -507,7 +500,7 @@
                 var thisCompany = $("#Company").val();
                 var thisTitleId = 1;
                 var thisMarketingCode = $("#MarketingMailerCode").val();
-                var thisMemberId = $("#MemberId").val(); homeLocationCombo
+                var thisMemberId = $("#MemberId").val(); 
 
                 if ($("#homeLocationCombo").jqxComboBox('getSelectedIndex') == -1) {
                     var thisLocationId = 0;
@@ -606,7 +599,7 @@
                                 loadCards(thisMemberId);
                             },
                             error: function (request, status, error) {
-                                alert(error);
+                                alert(error + " - " + request.responseJSON.message);
                             }
                         });
                     }
@@ -668,7 +661,7 @@
                         $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
                     },
                     error: function (request, status, error) {
-                        alert(error);
+                        alert(error + " - " + request.responseJSON.message);
                     }
                 });
             });
@@ -780,7 +773,7 @@
                         alert("Forgot Password Instructions Sent!");
                     },
                     error: function (request, status, error) {
-                        alert(error);
+                        alert(error + " - " + request.responseJSON.message);
                     }
                 });
             });
@@ -859,8 +852,8 @@
 
                             document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?thisCertificateID=' + thisCertificateID + '&thisRedemptionType=' + thisRedemptionType + '&thisMemberName=' + thisMemberName + '&thisFPNumber=' + thisFPNumber + '&thisQRCode=' + thisQRCode + '&EmailAddress=' + toAddress;
                         },
-                        error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            alert("Error: " + errorThrown);
+                        error: function (request, status, error) {
+                            alert(error + " - " + request.responseJSON.message);
                         }
                     });
                 }
@@ -1018,6 +1011,8 @@
             //#endregion
 
             //#region pageSetup
+
+
 
             // make the redemption grid single select
             $('#jqxRedemptionGrid').on('rowselect', function (event) {
@@ -1198,8 +1193,8 @@
 
                   
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert("Error: " + errorThrown);
+                error: function (request, status, error) {
+                    alert(error + " - " + request.responseJSON.message);
                 }
 
             });
@@ -1351,7 +1346,7 @@
                     { name: 'PointsChanged' },
                     { name: 'Description' },
                     { name: 'LocationId' },
-                    { name: 'Date', type: 'date' }
+                    { name: 'Date' }
                 ],
 
                 type: 'Get',
@@ -1363,66 +1358,7 @@
                 },
                 root: 'result>data>ActivityHistory'
             };
-            var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
-                switch (value) {
-                    case 1:
-                        return 'Albuquerque';
-                        break;
-                    case 2:
-                        return 'Austin';
-                        break;
-                    case 3:
-                        return 'Baltimore Elkridge Landing';
-                        break;
-                    case 4:
-                        return 'Baltimore W. Nursery Road';
-                        break;
-                    case 5:
-                        return 'Cincinnati';
-                        break;
-                    case 6:
-                        return 'Cleveland';
-                        break;
-                    case 7:
-                        return 'Cleveland PP';
-                        break;
-                    case 9:
-                        return 'Cincinnati';
-                        break;
-                    case 10:
-                        return 'Raleigh';
-                        break;
-                    case 11:
-                        return 'Tucson';
-                        break;
-                    case 12:
-                        return 'Orlando';
-                        break;
-                    case 13:
-                        return 'Milwaukee';
-                        break;
-                    case 14:
-                        return 'Miami';
-                        break;
-                    case 15:
-                        return 'Memphis';
-                        break;
-                    case 16:
-                        return 'Houston';
-                        break;
-                    case 17:
-                        return 'Indianapolis';
-                        break;
-                    case 18:
-                        return 'Atlanta';
-                        break;
-                    case 20:
-                        return 'Houston';
-                        break;
-                    default:
-                        return 'Error';
-                }
-            }
+            
             // create member Activity Grid
             $("#jqxMemberActivityGrid").jqxGrid(
             {
@@ -1458,40 +1394,8 @@
                       { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
                       { text: 'Points Changed', datafield: 'PointsChanged', width: '10%' },
                       { text: 'Description', datafield: 'Description', width: '50%' },
-                      { text: 'Location', datafield: 'LocationId', width: '20%', columntype: 'combobox',
-                          createeditor: function (row, column, editor) {
-                              // assign a new data source to the combobox.
-                              var activityLocationSource =
-                                {
-                                    datatype: "json",
-                                    type: "Get",
-                                    root: "data",
-                                    datafields: [
-                                        { name: 'LocationId' },
-                                        { name: 'NameOfLocation' }
-                                    ],
-                                    url: $("#localApiDomain").val() + "Locations/Locations/",
-                                };
-                              var activityLocationAdapter = new $.jqx.dataAdapter(activityLocationSource);
-                              editor.jqxComboBox({
-                                  autoDropDownHeight: true,
-                                  source: activityLocationAdapter,
-                                  promptText: "Please Choose:",
-                                  displayMember: "NameOfLocation",
-                                  valueMember: "LocationId"
-                              });
-                          },
-                          initeditor: function (row, cellvalue, editor, celltext, cellwidth, cellheight) {
-                              editor.jqxComboBox('selectItem', cellvalue);
-                          },
-                          // update the editor's value before saving it.
-                          cellvaluechanging: function (row, column, columntype, oldvalue, newvalue) {
-                              // return the old value, if the new value is empty.
-                              if (newvalue == "") return oldvalue;
-                          },
-                          cellsrenderer: cellsrenderer
-                      },
-                  { text: 'Date', datafield: 'Date', width: '15%', cellsformat: 'MM/dd/yyyy HH:mm:ss' }
+                      { text: 'Location', datafield: 'LocationId', width: '10%', cellsrenderer: locatioinCellsrenderer },
+                      { text: 'Date', datafield: 'Date', width: '10%', cellsrenderer: DateRender }
                 ]
             });
         }
@@ -1516,7 +1420,7 @@
                     { name: 'PointsChanged' },
                     { name: 'Description' },
                     { name: 'LocationId' },
-                    { name: 'Date', type: 'date' }
+                    { name: 'Date' }
                 ],
 
                 type: 'Get',
@@ -1528,66 +1432,7 @@
                 },
                 root: 'result>data>ActivityHistory'
             };
-            var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
-                switch (value) {
-                    case 1:
-                        return 'Albuquerque';
-                        break;
-                    case 2:
-                        return 'Austin';
-                        break;
-                    case 3:
-                        return 'Baltimore Elkridge Landing';
-                        break;
-                    case 4:
-                        return 'Baltimore W. Nursery Road';
-                        break;
-                    case 5:
-                        return 'Cincinnati';
-                        break;
-                    case 6:
-                        return 'Cleveland';
-                        break;
-                    case 7:
-                        return 'Cleveland PP';
-                        break;
-                    case 9:
-                        return 'Cincinnati';
-                        break;
-                    case 10:
-                        return 'Raleigh';
-                        break;
-                    case 11:
-                        return 'Tucson';
-                        break;
-                    case 12:
-                        return 'Orlando';
-                        break;
-                    case 13:
-                        return 'Milwaukee';
-                        break;
-                    case 14:
-                        return 'Miami';
-                        break;
-                    case 15:
-                        return 'Memphis';
-                        break;
-                    case 16:
-                        return 'Houston';
-                        break;
-                    case 17:
-                        return 'Indianapolis';
-                        break;
-                    case 18:
-                        return 'Atlanta';
-                        break;
-                    case 20:
-                        return 'Houston';
-                        break;
-                    default:
-                        return 'Error';
-                }
-            }
+
             // create Account Activity Grid
             $("#jqxAccountActivityGrid").jqxGrid(
             {
@@ -1610,41 +1455,8 @@
                       { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
                       { text: 'Points Changed', datafield: 'PointsChanged', width: '10%' },
                       { text: 'Description', datafield: 'Description', width: '50%' },
-                      {
-                          text: 'Location', datafield: 'LocationId', width: '20%', columntype: 'combobox',
-                          createeditor: function (row, column, editor) {
-                              // assign a new data source to the combobox.
-                              var activityLocationSource =
-                                {
-                                    datatype: "json",
-                                    type: "Get",
-                                    root: "data",
-                                    datafields: [
-                                        { name: 'LocationId' },
-                                        { name: 'NameOfLocation' }
-                                    ],
-                                    url: $("#localApiDomain").val() + "Locations/Locations/",
-                                };
-                              var activityLocationAdapter = new $.jqx.dataAdapter(activityLocationSource);
-                              editor.jqxComboBox({
-                                  autoDropDownHeight: true,
-                                  source: activityLocationAdapter,
-                                  promptText: "Please Choose:",
-                                  displayMember: "NameOfLocation",
-                                  valueMember: "LocationId"
-                              });
-                          },
-                          initeditor: function (row, cellvalue, editor, celltext, cellwidth, cellheight) {
-                              editor.jqxComboBox('selectItem', cellvalue);
-                          },
-                          // update the editor's value before saving it.
-                          cellvaluechanging: function (row, column, columntype, oldvalue, newvalue) {
-                              // return the old value, if the new value is empty.
-                              if (newvalue == "") return oldvalue;
-                          },
-                          cellsrenderer: cellsrenderer
-                      },
-                  { text: 'Date', datafield: 'Date', width: '15%', cellsformat: 'MM/dd/yyyy HH:mm:ss' }
+                      { text: 'Location', datafield: 'LocationId', width: '10%', cellsrenderer: locatioinCellsrenderer },
+                      { text: 'Date', datafield: 'Date', width: '10%', cellsrenderer: DateRender }
                 ]
             });
         }
@@ -1657,8 +1469,27 @@
 
             //Loads SearchList from parameters
 
-            var url = $("#apiDomain").val() + "members/search?" + thisParameters;
+            //var url = $("#apiDomain").val() + "members/search?" + thisParameters;
+            var url = $("#localApiDomain").val() + "members/search";
+            //var url = "http://localhost:52839/api/members/search";
 
+            if ($("#SearchFPNumber").jqxMaskedInput('value') != null && $("#SearchFPNumber").jqxMaskedInput('value') != "___-_____") {
+                var thisFPNumber = $("#SearchFPNumber").jqxMaskedInput('value');
+
+                thisFPNumber = thisFPNumber.replace("-", "");
+
+                thisFPNumber = thisFPNumber.replace(/^(0+)/g, '');
+
+                thisFPNumber = padNumber(thisFPNumber, 8, "0");
+            } else {
+                thisFPNumber = "";
+            }
+
+            if ($("#SearchFirstName").val() == "") {
+               
+            }
+
+            var data = { "FPNumber": thisFPNumber, "FirstName": $("#SearchFirstName").val(), "LastName": $("#SearchLastName").val(), "EmailAddress": $("#SearchEmail").val(), "HomePhone": $("#SearchPhoneNumber").val(), "Company": $("#SearchCompany").val(), "MailerCompany": $("#SearchMailerCompany").val(), "MarketingCode": $("#SearchMailerCode").val(), "UserName": $("#SearchUserName").val() };
 
             var source =
             {
@@ -1671,14 +1502,10 @@
                     { name: 'EmailAddress' }
                 ],
                 id: 'MemberId',
-                type: 'Get',
+                type: 'POST',
                 datatype: "json",
-                url: url,
-                beforeSend: function (jqXHR, settings) {
-                    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
-                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
-                },
-                root: "data"
+                data: data,
+                url: url
             };
 
             // create Searchlist Grid
@@ -1746,7 +1573,7 @@
             var source =
             {
                 datafields: [
-                    { name: 'Date', type: 'date' },
+                    { name: 'Date' },
                     { name: 'Note' },
                     { name: 'SubmittedBy' }
                 ],
@@ -1769,7 +1596,7 @@
                 altrows: true,
                 filterable: true,
                 columns: [
-                      { text: 'Date', datafield: 'Date', width: '20%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
+                      { text: 'Date', datafield: 'Date', width: '20%', cellsrenderer: DateRender },
                       { text: 'Note', datafield: 'Note', width: '60%' },
                       { text: 'SubmittedBy', datafield: 'SubmittedBy', width: '20%' }
                 ]
@@ -1792,7 +1619,7 @@
                     { name: 'RedemptionId' },
                     { name: 'CertificateID' },
                     { name: 'RedemptionType', map: 'RedemptionType>RedemptionType' },
-                    { name: 'RedeemDate', type: 'date' },
+                    { name: 'RedeemDate' },
                     { name: 'IsReturned' }
                 ],
 
@@ -1826,7 +1653,7 @@
                       { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
                       { text: 'CertificateID', datafield: 'CertificateID' },
                       { text: 'Redemption Type', datafield: 'RedemptionType' },
-                      { text: 'Redeem Date', datafield: 'RedeemDate', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
+                      { text: 'Redeem Date', datafield: 'RedeemDate', cellsrenderer: DateRender },
                       { text: 'Returned', datafield: 'IsReturned' }
                 ]
             });
@@ -1847,9 +1674,9 @@
                     { name: 'ReservationId' },
                     { name: 'ReservationNumber' },
                     { name: 'NameOfLocation', map: 'LocationInformation>NameOfLocation' },
-                    { name: 'CreateDatetime', type: 'date' },
-                    { name: 'StartDatetime', type: 'date' },
-                    { name: 'EndDatetime', type: 'date' },
+                    { name: 'CreateDatetime' },
+                    { name: 'StartDatetime' },
+                    { name: 'EndDatetime' },
                     { name: 'ReservationStatusName', map: 'ReservationStatus>ReservationStatusName' },
                     { name: 'MemberNote' }
                 ],
@@ -1884,9 +1711,9 @@
                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
                       { text: 'Reservation Number', datafield: 'ReservationNumber', width: '10%' },
                       { text: 'Location', datafield: 'NameOfLocation', width: '10%' },
-                      { text: 'Create Date', datafield: 'CreateDatetime', width: '13%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
-                      { text: 'Start Date', datafield: 'StartDatetime', width: '13%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
-                      { text: 'End Date', datafield: 'EndDatetime', width: '13%', cellsformat: 'MM/dd/yyyy HH:mm:ss' },
+                      { text: 'Create Date', datafield: 'CreateDatetime', width: '13%', cellsrenderer: DateRender },
+                      { text: 'Start Date', datafield: 'StartDatetime', width: '13%', cellsrenderer: DateRender },
+                      { text: 'End Date', datafield: 'EndDatetime', width: '13%', cellsrenderer: DateRender },
                       { text: 'Status', datafield: 'ReservationStatusName', width: '15%' },
                       { text: 'Note', datafield: 'MemberNote', width: '26%' }
                 ]
@@ -1948,6 +1775,9 @@
                 selectedIndex: 0,
                 displayMember: "name",
                 valueMember: "id"
+            });
+            $('#MailerCompanyCombo input').on('focus', function () {
+                $("#MailerCompanyCombo").jqxComboBox('open');
             });
         }
 
@@ -2034,7 +1864,7 @@
                     obj.locationList = results[2];
                 },
                 error: function (request, status, error) {
-                    alert("Error getting rates for display - " + error);
+                    alert(error + " - " + request.responseJSON.message);
                 }
             });
 
@@ -2291,7 +2121,7 @@
                     alert("Saved!");
                 },
                 error: function (request, status, error) {
-                    alert(error);
+                    alert(error + " - " + request.responseJSON.message);
                 },
                 complete: function () {
                     thisMemberId = $("#MemberId").val();
@@ -2324,7 +2154,7 @@
                     loadNotes($("#MemberId").val());
                 },
                 error: function (request, status, error) {
-                    alert(error);
+                    alert(error + " - " + request.responseJSON.message);
                 }
             });
 
@@ -2391,8 +2221,8 @@
                     thisRedemptionId = thisData.result.data[0].RedemptionId;
                     var toAddress = $("#EmailAddress").val();
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert("Error: " + errorThrown);
+                error: function (request, status, error) {
+                    alert(error + " - " + request.responseJSON.message);
                 },
                 complete: function () {
                     $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
@@ -2449,18 +2279,13 @@
 
                     document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?thisCertificateID=' + thisCertificateID + '&thisRedemptionType=' + thisRedemptionType + '&thisMemberName=' + thisMemberName + '&thisFPNumber=' + thisFPNumber + '&thisQRCode=' + thisQRCode + '&EmailAddress=' + toAddress;
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert("Error: " + errorThrown);
+                error: function (request, status, error) {
+                    alert(error + " - " + request.responseJSON.message);
                 }
             });
         }
 
-        //Security Setup
-        function Security() {
-            if (group.indexOf("booth") <= -1) {
-                $("#BoothLink").remove();
-            }
-        }
+
 
         //clear memberinfo
         function clearMemberInfo() {
@@ -2511,8 +2336,8 @@
                         }
                     }
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert("Error: " + errorThrown);
+                error: function (request, status, error) {
+                    alert(error + " - " + request.responseJSON.message);
                 }
             });
         }
@@ -2683,8 +2508,8 @@
                     $("#GetEmail").prop("checked", thisData.result.data.GetEmail);
                     $("#statusCombo").jqxComboBox('selectItem', thisData.result.data.PreferredStatusName);
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert("Error: " + errorThrown);
+                error: function (request, status, error) {
+                    alert(error + " - " + request.responseJSON.message);
                 },
                 complete: function () {
 
@@ -2931,16 +2756,20 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="bottom-divider">
-                                        <div style="float:left;">
-                                        <Label id="topName" class="strong right-buffer-15"></Label>
-                                        <label id="pointsLabel" class="strong">Points Balance:</label>
-                                        <label id="topPointsBalance" class="strong font-red right-buffer-15"></label>
-                                        <label id="lastLoginLabel" class="strong">Last Login:</label>
-                                        <label id="topLastLogin" class="font-normal right-buffer-15"></label>
-                                        <label id="memberSinceLabel" class="strong">Member Since:</label>
-                                        <label id="topMemberSince" class="font-normal"></label>
+                                        <div>
+                                            <Label id="topName" class="strong right-buffer-15"></Label>
+                                            <label id="pointsLabel" class="strong">Points Balance:</label>
+                                            <label id="topPointsBalance" class="strong font-red right-buffer-15"></label>
+                                            <label id="lastLoginLabel" class="strong">Last Login:</label>
+                                            <label id="topLastLogin" class="font-normal right-buffer-15"></label>
+                                            <label id="memberSinceLabel" class="strong">Member Since:</label>
+                                            <label id="topMemberSince" class="font-normal"></label>
+                                            <div style="margin-left:50px;float:right;">
+                                                <label id="statusLabel" class="strong" style="float:left">Member Status:</label>
+                                                <div id="statusCombo" style="position:relative;margin-left:120px;"></div>
+                                            </div>
                                         </div>
-                                        <div id="statusCombo" style="margin-left:650px;"></div>
+                                    
                                     </div>
                                 </div>
                             </div>

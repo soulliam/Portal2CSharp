@@ -33,21 +33,11 @@
         var selectedLocationId = 0; //is set to the ID of the location that is selected from the main grid
         var thisNewLocation = false; //determines whether a new Location is being made so the feature grid doesn't get set 
         var DisableEdit = false;
-        
+        var group = '<%= Session["groupList"] %>';
 
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
 
-            var groups = '<%= Session["groupList"] %>';
-
-            //if (groups.indexOf("Fred") < 0 && groups.indexOf("TEst") < 0) {
-            //    DisableEdit = true;
-            //    var elements = document.getElementsByClassName('editor')
-
-            //    for (var i = 0; i < elements.length; i++) {
-            //        elements[i].style.display = "none";
-            //    }
-            //}
 
             $('#jqxLocationImagesGrid').on('rowclick', function (event) {
 
@@ -119,24 +109,6 @@
                 }
             });
 
-            //set up the Reservation tabs
-            $('#jqxReservationTabs').jqxTabs({ width: '100%', position: 'top' });
-            $('#jqxReservationTabs').css('margin-bottom', '10px');
-            $('#settings div').css('margin-top', '10px');
-            $('#animation').on('change', function (event) {
-                var checked = event.args.checked;
-                $('#jqxReservationTabs').jqxTabs({ selectionTracker: checked });
-            });
-
-            $('#contentAnimation').on('change', function (event) {
-                var checked = event.args.checked;
-                if (checked) {
-                    $('#jqxReservationTabs').jqxTabs({ animationType: 'fade' });
-                }
-                else {
-                    $('#jqxReservationTabs').jqxTabs({ animationType: 'none' });
-                }
-            });
 
             //Loads main location grid
             loadLocationGrid();
@@ -150,7 +122,6 @@
             $("#updateFeature").jqxButton();
             $("#updateLocationImages").jqxButton();
             $("#addLocationImages").jqxButton();
-            $("#addReservationFee").jqxButton({ width: '200', height: '26' });
             $("#btnNew").jqxLinkButton({ width: '100%', height: '26' });
             //#endregion
 
@@ -201,8 +172,8 @@
                             
                         },
                         error: function (request, status, error) {
+                            alert(error + " - " + request.responseJSON.message);
                             thisError = true;
-                            alert(error);
                         }
                     })
                 }
@@ -317,8 +288,8 @@
                             //refresh the main grid
                             loadLocationGrid();
                         },
-                        error: function (jqXHR, textStatus, errorThrown, data) {
-                            alert(textStatus); alert(errorThrown);
+                        error: function (request, status, error) {
+                            alert(error + " - " + request.responseJSON.message);
                         }
                     });
                     
@@ -429,8 +400,8 @@
                                 //refresh the main grid
                                 loadLocationGrid();
                             },
-                            error: function (jqXHR, textStatus, errorThrown, data) {
-                                alert(textStatus); alert(errorThrown);
+                            error: function (request, status, error) {
+                                alert(error + " - " + request.responseJSON.message);
                             }
                         });
 
@@ -521,7 +492,7 @@
                         loadFeatureGrid(selectedLocationId);
                     },
                     error: function (request, status, error) {
-                        alert(request.responseText);
+                        alert(error + " - " + request.responseJSON.message);
                     }
                 })
 
@@ -567,7 +538,7 @@
                        alert("Saved!")
                     },
                     error: function (request, status, error) {
-                        alert(request.responseText);
+                        alert(error + " - " + request.responseJSON.message);
                     },
                     complete: function(data) {
                         clearFeatureForm();
@@ -601,7 +572,7 @@
                         loadFeatureGrid(selectedLocationId);
                     },
                     error: function (request, status, error) {
-                        alert(request.responseText);
+                        alert(error + " - " + request.responseJSON.message);
                     }
                 })
 
@@ -786,6 +757,7 @@
                 }
             });
 
+            Security();
 
            //#endregion
        
@@ -967,7 +939,6 @@
                                   //sets the current selected location
                                   selectedLocationId = dataRecord.LocationId;
 
-                                  $('#jqxReservationTabs').jqxTabs('select', 0);
                                   $('#jqxTabs').jqxTabs('select', 0);
                                   $('#jqxLocationTabs').jqxTabs('select', 0);
 
@@ -975,10 +946,6 @@
                                   loadFeatureGrid(selectedLocationId);
 
                                   loadLocationImagesGrid(selectedLocationId);
-
-                                  loadRestrictionGrid(selectedLocationId);
-
-                                  loadReservationFeesGrid(selectedLocationId);
 
                                   // show the popup window.
                                   $("#popupLocation").jqxWindow('open');
@@ -1186,139 +1153,6 @@
             });
         }
 
-        function loadRestrictionGrid(thisLocationId) {
-
-            //destroying restriction grid and recreate
-            var parent = $("#jqxRestrictionGrid").parent();
-            $("#jqxRestrictionGrid").jqxGrid('destroy');
-            $("<div id='jqxRestrictionGrid'></div>").appendTo(parent);
-
-
-            var url = $("#apiDomain").val() + "restriction";
-
-            var RestrictionSource =
-            {
-                datafields: [
-                    { name: 'RestrictionId' },
-                    { name: 'MaximumPreferredStatusRank' },
-                    { name: 'LocationId' },
-                    { name: 'IsClosed' },
-                    { name: 'LocationDetail' }
-                ],
-
-                id: 'ImageId',
-                type: 'Get',
-                datatype: "json",
-                url: url,
-                beforeSend: function (jqXHR, settings) {
-                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
-                },
-                root: "data"
-            };
-
-            // make filter for location CoS API sends back everything
-            var addDefaultfilter = function () {
-                var filtergroup = new $.jqx.filter();
-                var filtervalue = thisLocationId;
-                var filtercondition = 'EQUAL';
-                var filter1 = filtergroup.createfilter('numericfilter', filtervalue, filtercondition);
-                var operator = 0;
-
-                filtergroup.addfilter(operator, filter1);
-
-                //$("#jqxProgress").jqxGrid('addfilter', 'Status', statusfiltergroup);
-                $("#jqxRestrictionGrid").jqxGrid('addfilter', 'LocationId', filtergroup);
-                $("#jqxRestrictionGrid").jqxGrid('applyfilters');
-            }
-
-            // creage Restriction grid
-            $("#jqxRestrictionGrid").jqxGrid(
-            {
-                width: '80%',
-                height: 300,
-                source: RestrictionSource,
-                altrows: true,
-                editable: true,
-                ready: function () {
-                    addDefaultfilter();
-                },
-                columns: [
-                            //  uncomment below to show the what you want
-                            { text: 'RestrictionId', datafield: 'RestrictionId', editable: false, width: '25%' },
-                            { text: 'MaximumPreferredStatusRank', datafield: 'MaximumPreferredStatusRank', editable: false, width: '25%' },
-                            { text: 'LocationId', datafield: 'LocationId', hidden: true },
-                            { text: 'IsClosed', datafield: 'IsClosed', width: '25%' },
-                            { text: 'LocationDetail', datafield: 'LocationDetail', width: '25%' }
-
-                ]
-            });
-
-
-        }
-
-        function loadReservationFeesGrid(thisLocationId) {
-
-            //destroying reservation fees grid and create it again
-            var parent = $("#jqxReservationFeesGrid").parent();
-            $("#jqxReservationFeesGrid").jqxGrid('destroy');
-            $("<div id='jqxReservationFeesGrid'></div>").appendTo(parent);
-
-
-            var url = $("#apiDomain").val() + "reservation-fees?locationId=" + thisLocationId + "&startDatetime=1/1/1900";
-
-            var ReservationSource =
-            {
-                datafields: [
-                    { name: 'ReservationFeeId' },
-                    { name: 'LocationId' },
-                    { name: 'EffectiveDatetime' },
-                    { name: 'ExpiresDatetime' },
-                    { name: 'IsDefault' },
-                    { name: 'FeeDollars' },
-                    { name: 'FeePoints' },
-                    { name: 'CancellationGracePeriodHours' },
-                    { name: 'CancellationFeeDollars' },
-                    { name: 'NoShowFeeDollars' },
-                    { name: 'MaxReservationCount' }
-                ],
-
-                id: 'ImageId',
-                type: 'Get',
-                datatype: "json",
-                url: url,
-                beforeSend: function (jqXHR, settings) {
-                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
-                },
-                root: "data"
-            };
-
-            // creage ReservationFee Grid
-            $("#jqxReservationFeesGrid").jqxGrid(
-            {
-                width: '100%',
-                height: 300,
-                source: ReservationSource,
-                altrows: true,
-                editable: true,
-                columns: [
-                            { text: 'ReservationFeeId', datafield: 'ReservationFeeId' },
-                            { text: 'LocationId', datafield: 'LocationId' },
-                            { text: 'EffectiveDatetime', datafield: 'EffectiveDatetime' },
-                            { text: 'ExpiresDatetime', datafield: 'ExpiresDatetime' },
-                            { text: 'IsDefault', datafield: 'IsDefault' },
-                            { text: 'FeeDollars', datafield: 'FeeDollars' },
-                            { text: 'FeePoints', datafield: 'FeePoints' },
-                            { text: 'CancellationGracePeriodHours', datafield: 'CancellationGracePeriodHours' },
-                            { text: 'CancellationFeeDollars', datafield: 'CancellationFeeDollars' },
-                            { text: 'NoShowFeeDollars', datafield: 'NoShowFeeDollars' },
-                            { text: 'MaxReservationCount', datafield: 'MaxReservationCount' }
-
-                ]
-            });
-
-
-        }
-
         //#endregion
 
         //#region Functions
@@ -1356,7 +1190,7 @@
                     alert("Saved!")
                 },
                 error: function (request, status, error) {
-                    alert(request.responseText);
+                    alert(error + " - " + request.responseJSON.message);
                 }
             })
 
@@ -1395,7 +1229,7 @@
                     loadLocationImagesGrid(newLocationId);
                 },
                 error: function (request, status, error) {
-                    alert(request.responseText);
+                    alert(error + " - " + request.responseJSON.message);
                 }
             })
 
@@ -1487,7 +1321,6 @@
                         <li>Edit Feature</li>
                         <li>Add Feature</li>
                         <li>Location Images</li>
-                        <li>Reservaton Maintenance</li>
                     </ul>
                     <div id="LocationTab" class="tab-body">
                         <div id="jqxLocationTabs" class="tab-system">
@@ -1790,7 +1623,7 @@
                                     <div class="col-sm-2 col-md-3">
                                     </div>
                                     <div class="col-sm-4 col-md-3">
-                                        <input type="button" id="Save" value="Save" />
+                                        <input type="button" id="Save" value="Save"  class="editor" />
                                     </div>
                                     <div class="col-sm-4 col-md-3">
                                         <input type="button" id="Cancel" value="Cancel" />
@@ -1876,7 +1709,7 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="col-sm-9 col-md-8">
-                                            <input type="Button" class="form-control" id="saveCharge" value="Save Charge Info" />
+                                            <input type="Button" class="form-control editor" id="saveCharge" value="Save Charge Info" />
                                         </div>
                                     </div>
                                     
@@ -1889,7 +1722,7 @@
                                     <div class="col-sm-2 col-md-3">
                                     </div>
                                     <div class="col-sm-4 col-md-3">
-                                        <input type="button" class="form-control" id="updateFeature" value="Update" />
+                                        <input type="button" class="form-control editor" id="updateFeature" value="Update" />
                                     </div>
                                     <div class="col-sm-4 col-md-3">
                                         <input type="button" class="form-control" id="deleteFeature" value="Delete" />
@@ -1996,7 +1829,7 @@
                                     <div class="col-sm-4 col-md-4">
                                     </div>
                                     <div class="col-sm-4 col-md-4">
-                                        <input type="button" class="form-control" id="addFeature" value="Add" />
+                                        <input type="button" class="form-control editor" id="addFeature" value="Add" />
                                     </div>
                                     <div class="col-sm-4 col-md-4">
                                     </div>
@@ -2014,37 +1847,15 @@
                             <div class="col-sm-12">
                                 <div class="top-divider">
                                     <div class="col-sm-4 col-md-4">
-                                        <input id="updateLocationImages" type="button" value="Update" />
+                                        <input id="updateLocationImages" type="button" value="Update" class="editor" />
                                     </div>
                                     <div class="col-sm-4 col-md-4">
                                         
                                     </div>
                                     <div class="col-sm-4 col-md-4">
-                                        <input id="addLocationImages" type="button" value="Add" />
+                                        <input id="addLocationImages" type="button" value="Add" class="editor" />
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="reservationMaintenance" class="tab-body">
-                        <div id="jqxReservationTabs" class="tab-system">
-                            <ul>
-                                <li>Reservation Fees</li>
-                                <li>Reservation Restriction</li>
-                            </ul>
-                            <div id="ReservationFees" class="tab-body">
-                                <div class="row">
-                                    <div class="col-sm-9 col-md-10">
-                                        <div id="jqxReservationFeesGrid"></div>
-                                    </div>
-                                    <div class="col-sm-3 col-md-2">
-                                        <div><input class="form-control" type="button" id="addReservationFee" value="Add Reservation Fee" style="float:right" /></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="ReservationRestriction" class="tab-body">
-                                <div id="jqxRestrictionGrid"></div>
-                                <div></div>
                             </div>
                         </div>
                     </div>

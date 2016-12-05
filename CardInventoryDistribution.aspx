@@ -237,9 +237,8 @@
                 success: function (data) {
                     $("#lastShipped").val(data[0].maxShipped);
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert("Error: " + errorThrown);
-                }
+                error: function (request, status, error) {
+                    alert(error + " - " + request.responseJSON.message);
             });
 
             //return $("#LastCardAPIResult").val();
@@ -254,8 +253,8 @@
                 success: function (response) {
                    
                 },
-                error: function (jqXHR, textStatus, errorThrown, data) {
-                    alert(textStatus); alert(errorThrown);
+                error: function (request, status, error) {
+                    alert(error + " - " + request.responseJSON.message);
                 }
             });
 
