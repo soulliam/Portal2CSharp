@@ -33,6 +33,8 @@ public partial class _Default : System.Web.UI.Page
 
         }
 
+        Session["groupList"] = groupList;
+
         if (groupList.IndexOf("\\BoothOnly,") > -1)
         {
             Session["IMINBOOTH"] = "true";

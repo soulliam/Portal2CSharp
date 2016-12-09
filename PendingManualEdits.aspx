@@ -32,6 +32,8 @@
     <script type="text/javascript" src="jqwidgets/jqxcheckbox.js"></script>
 
     <script type="text/javascript">
+        var group = '<%= Session["groupList"] %>';
+
         // ============= Initialize Page ==================== Begin
         var loading = true;
 
@@ -162,6 +164,7 @@
                     ]
                 });
 
+            Security();
 
         });
         // ============= Initialize Page ================== End

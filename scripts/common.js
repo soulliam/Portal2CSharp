@@ -10,7 +10,17 @@ function Security() {
 
     //if (group.indexOf("Portal_Admin") <= -1 && group.indexOf("Portal_Auditadmin") <= -1 && group.indexOf("Portal_Manager") <= -1 && group.indexOf("Portal_RFR") <= -1 && group.indexOf("Portal_Superadmin") <= -1) {
     if (group.indexOf("Portal_Edit") <= -1) {
+    //if (group.indexOf("frie") <= -1) {
         var elements = document.getElementsByClassName('editor')
+
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].style.display = "none";
+        }
+    }
+
+    if (group.indexOf("Portal_RFR") <= -1) {
+        //if (group.indexOf("frie") <= -1) {
+        var elements = document.getElementsByClassName('RFR')
 
         for (var i = 0; i < elements.length; i++) {
             elements[i].style.display = "none";

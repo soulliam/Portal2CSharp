@@ -32,9 +32,26 @@
         // ============= Initialize Page ==================== Begin
 
         $(document).ready(function () {
-            loadLocationCombo();
 
-            loadGrid();
+            var locationString = $("#userLocation").val();
+            var locationResult = locationString.split(",");
+
+            if (locationResult.length > 1) {
+                var thisLocationString = "";
+                for (i = 0; i < locationResult.length; i++) {
+                    if (i == locationResult.length - 1) {
+                        thisLocationString += locationResult[i];
+                    }
+                    else {
+                        thisLocationString += locationResult[i] + ",";
+                    }
+
+                }
+            }
+
+            LoadLocationPopup(thisLocationString);
+
+            
 
             //#region SetupButtons
             $("#btnSaveDistribution").jqxButton({ width: '100%', height: 26 });
@@ -93,77 +110,35 @@
                 $("#jqxBus").jqxComboBox('selectIndex', 0);
             });
 
-            $("#LocationCombo").on('bindingComplete', function (event) {
-                $("#LocationCombo").jqxComboBox('insertAt', 'Pick Location', 0);
-            });
-
 
             $("#jqxBus").toggle();
             $("#jqxRep").toggle();
+
+            $("#LocationCombo").on('select', function (event) {
+                if (event.args) {
+                    var item = event.args.item;
+                    if (item) {
+                        loadGrid($("#LocationCombo").jqxComboBox('getSelectedItem').value);
+                    }
+                }
+            });
         });
+
+       
 
         // ============= Initialize Page ================== End
 
-        function loadLocationCombo() {
-            var parent = $("#LocationCombo").parent();
-            $("#LocationCombo").jqxGrid('destroy');
-            $("<div id='LocationCombo'></div>").appendTo(parent);
+    
 
-            var locationString = $("#userLocation").val();
-            var locationResult = locationString.split(",");
-            var thisLocationString = "";
-
-            if (locationResult.length > 1) {
-
-                for (i = 0; i < locationResult.length; i++) {
-                    if (i == locationResult.length - 1) {
-                        thisLocationString += locationResult[i];
-                    }
-                    else {
-                        thisLocationString += locationResult[i] + ",";
-                    }
-
-                }
-            } else {
-                thisLocationString = locationString;
-            }
-
-            //set up the location combobox
-
-            var locationSource =
-            {
-                datatype: "json",
-                type: "Get",
-                root: "data",
-                datafields: [
-                    { name: 'NameOfLocation' },
-                    { name: 'LocationId' }
-                ],
-                url: $("#localApiDomain").val() + "Locations/LocationByLocationIds/" + thisLocationString,
-
-            };
-            var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
-            $("#LocationCombo").jqxComboBox(
-            {
-                width: 150,
-                height: 25,
-                itemHeight: 50,
-                source: locationDataAdapter,
-                selectedIndex: 0,
-                displayMember: "NameOfLocation",
-                valueMember: "LocationId"
-            });
-
-        }
-
-        function loadGrid()
+        function loadGrid(thisLocationId)
         {
             var parent = $("#jqxDistribution").parent();
             $("#jqxDistribution").jqxGrid('destroy');
             $("<div id='jqxDistribution'></div>").appendTo(parent);
 
             // loading order histor
-            var url = $("#localApiDomain").val() + "CardDistHistorys/Get/-1";
+            var url = $("#localApiDomain").val() + "CardDistHistorys/Get/" + thisLocationId;
+            //var url = "http://localhost:52839/api/CardDistHistorys/Get/" + thisLocationId;
 
             var source =
             {
@@ -215,7 +190,7 @@
                 },
                 columns: [
                        { text: 'CardHistoryId', datafield: 'CardHistoryId', hidden: true },
-                       { text: 'ActivityDate', datafield: 'ActivityDate' },
+                       { text: 'ActivityDate', datafield: 'ActivityDate', cellsrenderer: DateRender },
                        { text: 'StartingNumber', datafield: 'StartingNumber' },
                        { text: 'EndingNumber', datafield: 'EndingNumber' },
                        { text: 'NumberOfCards', datafield: 'NumberOfCards' },
@@ -239,7 +214,8 @@
                 },
                 error: function (request, status, error) {
                     alert(error + " - " + request.responseJSON.message);
-            });
+                }
+            })
 
             //return $("#LastCardAPIResult").val();
             return cardNumber;
@@ -275,10 +251,10 @@
             
             
 
-            if (Bus == "Pick a Bus" && Rep == "Pick a Rep") {
+            if (typeof Bus == "undefined" && typeof Rep == "undefined") {
                 DistPoint = "Booth";
             } else {
-                if (Bus != "Pick a Bus" && Bus != "") {
+                if (typeof Bus != "undefined") {
                     RepBus = Bus;
                     DistPoint = "Bus";
                 } else {
@@ -294,26 +270,49 @@
 
             var Quantity = parseInt(EndingNumber) - parseInt(StartingNumber);
             
-            $.post($("#localApiDomain").val() + "CardDistHistorys/Post",
-                { 'ActivityDate': new Date().toMMDDYYYYString(), 'ActivityId': 4, 'StartingNumber': StartingNumber, 'EndingNumber': EndingNumber, 'NumberOfCards': Quantity, 'OrderConfirmationDate': '1/1/1900', 'DistributionPoint': DistPoint, 'BusOrRepID': RepBus, 'Shift': null, 'RecordDate': new Date().toMMDDYYYYString(), 'RecordedBy': $("#txtLoggedinUsername").val(), 'LocationId': thisLocationId },
-                function (data, status) {
-                    switch (status) {
-                        case 'success':
-                            $("#statusMessage").attr("class", "status");
-                            $("#statusMessage").html('Cards were created received');
-                            alert('Cards were distributed.');
-                            break;
-                        default:
-                            $("#statusMessage").attr("class", "warning");
-                            $("#statusMessage").html('An Error occurred: ' + status + "\n Data:" + data);
-                            alert('An Error occurred: ' + status + "\n Data:" + data);
-                            break;
-                    }
+            var data = { 'ActivityDate': new Date().toMMDDYYYYString(), 'ActivityId': 4, 'StartingNumber': StartingNumber, 'EndingNumber': EndingNumber, 'NumberOfCards': Quantity, 'OrderConfirmationDate': '1/1/1900', 'DistributionPoint': DistPoint, 'BusOrRepID': RepBus, 'Shift': null, 'RecordDate': new Date().toMMDDYYYYString(), 'RecordedBy': $("#txtLoggedinUsername").val(), 'LocationId': thisLocationId };
+
+            $.ajax({
+                async: false,
+                type: "POST",
+                url: $("#localApiDomain").val() + "CardDistHistorys/Post",
+                //url: "http://localhost:52839/api/CardDistHistorys/Post",
+
+                data: data,
+                dataType: "json",
+                success: function (thisData) {
+                    alert('Cards were distributed.');
+                },
+                error: function (request, status, error) {
+                    alert(error);
+                },
+                complete: function () {
+                    loadGrid($("#LocationCombo").jqxComboBox('getSelectedItem').value);
                 }
-            );
+
+            });
+
+            //$.post($("#localApiDomain").val() + "CardDistHistorys/Post",
+            //    { 'ActivityDate': new Date().toMMDDYYYYString(), 'ActivityId': 4, 'StartingNumber': StartingNumber, 'EndingNumber': EndingNumber, 'NumberOfCards': Quantity, 'OrderConfirmationDate': '1/1/1900', 'DistributionPoint': DistPoint, 'BusOrRepID': RepBus, 'Shift': null, 'RecordDate': new Date().toMMDDYYYYString(), 'RecordedBy': $("#txtLoggedinUsername").val(), 'LocationId': thisLocationId },
+            //    function (data, status) {
+            //        switch (status) {
+            //            case 'success':
+            //                $("#statusMessage").attr("class", "status");
+            //                $("#statusMessage").html('Cards were created received');
+            //                alert('Cards were distributed.');
+            //                break;
+            //            default:
+            //                $("#statusMessage").attr("class", "warning");
+            //                $("#statusMessage").html('An Error occurred: ' + status + "\n Data:" + data);
+            //                alert('An Error occurred: ' + status + "\n Data:" + data);
+            //                break;
+            //        }
+            //    }
+            //);
+
             $("#jqxBus").jqxComboBox('selectIndex', 0);
             $("#jqxRep").jqxComboBox('selectIndex', 0);
-            loadGrid();
+            
 
         }
 
@@ -385,8 +384,37 @@
             });
         }
 
-    </script>
+        function LoadLocationPopup(thisLocationString) {
+            //set up the location combobox
+            var locationSource =
+            {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'NameOfLocation' },
+                    { name: 'LocationId' }
+                ],
+                url: $("#localApiDomain").val() + "Locations/LocationByLocationIds/" + thisLocationString,
 
+            };
+            var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
+            $("#LocationCombo").jqxComboBox(
+            {
+                width: '100%',
+                height: 25,
+                itemHeight: 50,
+                source: locationDataAdapter,
+                selectedIndex: 0,
+                displayMember: "NameOfLocation",
+                valueMember: "LocationId"
+            });
+
+        }
+
+
+    </script>
+    <input type="text" id="boothLocation" style="display:none;" />
     <div id="CardInventoryShipping" class="container-fluid container-970 wrap-search-options">
         <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
             <div class="row search-size FPR_SearchLeft">
@@ -394,19 +422,19 @@
                     <div class="row search-size">
                         <div class="col-sm-9">
                             <div class="row search-size">
-                                <div class="col-sm-15">
+                                <div class="col-sm-4">
                                     <div id="LocationCombo"></div>
                                 </div>
-                                <div class="col-sm-15">
+                                <div class="col-sm-2">
                                     <input type="text" id="firstCard" placeholder="First Card" />
                                 </div>
-                                <div class="col-sm-15">
+                                <div class="col-sm-2">
                                     <input type="text" id="lastCard" placeholder="Last Card"  />
                                 </div>
-                                <div class="col-sm-15">
+                                <div class="col-sm-2">
                                     <div id="jqxDistPoint"></div>
                                 </div>
-                                <div class="col-sm-15">
+                                <div class="col-sm-2">
                                     <div id="jqxBus"></div>
                                     <div id="jqxRep"></div>
                                 </div>

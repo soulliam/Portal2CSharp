@@ -38,7 +38,7 @@ public partial class MemberSearch : System.Web.UI.Page
     }
 
     [System.Web.Services.WebMethod]
-    public static string SubmitReceipt1(DateTime entryDate, string Receipt, string Column, string SubmittedBy, Int64 LocationId, Int64 MemberId)
+    public static string SubmitReceipt1(DateTime entryDate, string Receipt, string Column, string SubmittedBy, Int64 LocationId, Int64 MemberId, string thisGuid)
     {
         try
         {
@@ -72,7 +72,7 @@ public partial class MemberSearch : System.Web.UI.Page
             thisReceiptNumber.Value = Receipt;
             thisColumnNumber.Value = Column;
             thisShortTermNumber.Value = null;
-            thisUserId.Value = Guid.Parse("BA1B0B96-30D3-45AB-815D-3527F72B6442");
+            thisUserId.Value = Guid.Parse(thisGuid);
             thisLocationId.Value = LocationId;
             thisMemberId.Value = MemberId;
 
@@ -96,7 +96,7 @@ public partial class MemberSearch : System.Web.UI.Page
     }
 
     [System.Web.Services.WebMethod]
-    public static string SubmitReceipt2(Int64 MemberId, DateTime entryDate, DateTime exitDate, string AmountPaid, Int64 LocationId, string SubmittedBy)
+    public static string SubmitReceipt2(Int64 MemberId, DateTime entryDate, DateTime exitDate, string AmountPaid, Int64 LocationId, string SubmittedBy, string thisGuid)
     {
         try
         {
@@ -122,7 +122,7 @@ public partial class MemberSearch : System.Web.UI.Page
             thisExitDate.Value = exitDate;
             thisAmountPaid.Value = AmountPaid;
             thisLocationId.Value = LocationId;
-            thisUserId.Value = Guid.Parse("BA1B0B96-30D3-45AB-815D-3527F72B6442");
+            thisUserId.Value = Guid.Parse(thisGuid);
 
             using (SqlDataReader sdr = cmd.ExecuteReader())
             {

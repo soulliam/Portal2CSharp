@@ -4,17 +4,17 @@ using System.Web.UI;
 using System.Security.Principal;
 using System.DirectoryServices;
 using System.Collections;
-using System.DirectoryServices.AccountManagement;
+
 
 public partial class Portal2 : System.Web.UI.MasterPage
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+
         //uncomment for production or security testing
 
         if ((string)(Session["IMIN"]) != "true")
         {
-            Response.Write("<script>alert('Hello');</script>");
             Response.Redirect("http://www.thefastpark.com");
         }
 
@@ -49,6 +49,7 @@ public partial class Portal2 : System.Web.UI.MasterPage
 
                 //userGuid.Text = Convert.ToString(objectGuid);
                 //userGuid.Text = myGuid;
+                tempUserGuid.Text = myGuid;
 
                 Session["GUID"] = userGuid.Text;
             }
@@ -127,5 +128,29 @@ public partial class Portal2 : System.Web.UI.MasterPage
             }
         }
         userLocation.Text = locationList;
+    }
+
+    public string GetUserGuid
+
+    {
+
+        get
+
+        {
+
+            return userGuid.Text;
+
+        }
+
+        set
+
+        {
+
+            userGuid.Text = value;
+
+        }
+
+
+
     }
 }

@@ -32,6 +32,8 @@
     <script type="text/javascript" src="jqwidgets/jqxwindow.js"></script>
 
     <script type="text/javascript">
+        var group = '<%= Session["groupList"] %>';
+
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
 
@@ -150,6 +152,7 @@
                 $("#SortOrder").val("");
             }
 
+            Security();
 
         });
         // ============= Initialize Page ================== End
@@ -277,7 +280,7 @@
                                 <div class="col-sm-8 col-sm-offset-4">
                                     <div class="row search-size">
                                         <div class="col-sm-12">
-                                            <a href="javascript:newFeature();" id="btnNew">New Feature</a>
+                                            <a href="javascript:newFeature();" id="btnNew" class="editor">New Feature</a>
                                         </div>
                                     </div>
                                 </div>
@@ -374,7 +377,7 @@
                             <div class="col-sm-2 col-md-3">
                             </div>
                             <div class="col-sm-4 col-md-3">
-                                <input type="button" id="Save" value="Save" />
+                                <input type="button" id="Save" value="Save" class="editor" />
                             </div>
                             <div class="col-sm-4 col-md-3">
                                 <input type="button" id="Cancel" value="Cancel" />

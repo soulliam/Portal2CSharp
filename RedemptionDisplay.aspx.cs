@@ -69,8 +69,8 @@ public partial class RedemptionDisplay : System.Web.UI.Page
 
                     clsCommon thisEmail = new clsCommon();
 
-                    thisEmail.SendEmail("mgoode@thefastpark.com", "RFRTeam@thefastpark.com", "FastPark Redemption", "Attached is your FastPark redemption!", true, path);
-                    //thisEmail.SendEmail(ToAddress, "RFRTeam@thefastpark.com", "FastPark Receipt", "Attached is your FastPark receipt", true, path);
+                    //thisEmail.SendEmail("mgoode@thefastpark.com", "RFRTeam@thefastpark.com", "FastPark Redemption", "Attached is your FastPark redemption!", true, path);
+                    thisEmail.SendEmail(ToAddress, "RFRTeam@thefastpark.com", "FastPark Receipt", "Attached is your FastPark receipt", true, path);
                 }
             }
 

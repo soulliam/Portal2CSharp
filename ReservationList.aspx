@@ -27,11 +27,27 @@
     <script type="text/javascript" src="jqwidgets/jqxmenu.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxscrollbar.js"></script>    
     <script type="text/javascript" src="jqwidgets/jqxwindow.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxdata.export.js"></script> 
+    <script type="text/javascript" src="jqwidgets/jqxgrid.export.js"></script> 
+    <script type="text/javascript" src="jqwidgets/jqxcheckbox.js"></script>
 
     <script type="text/javascript">
+        var group = '<%= Session["groupList"] %>';
+
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
             
+            $("#pdfExportIn").jqxButton();
+            $("#pdfExportIn").click(function () {
+                $("#jqxgrid").jqxGrid('exportdata', 'pdf', 'jqxGrid');
+            });
+
+            $("#pdfExportOut").jqxButton();
+            $("#pdfExportOut").click(function () {
+                $("#jqxgridOUT").jqxGrid('exportdata', 'pdf', 'jqxGrid');
+            });
+
+
             $("#calendar").jqxDateTimeInput({ formatString: 'MM-dd-yyyy', width: '100%', height: '24px' });
 
             //Place holder grid
@@ -99,13 +115,45 @@
                 });
             });
 
-            
+            $('#calendar').on('change', function (event) {
+                var parent = $("#jqxgrid").parent();
+                $("#jqxgrid").jqxGrid('destroy');
+                $("<div id='jqxgrid'></div>").appendTo(parent);
 
+                var parent = $("#jqxgridOUT").parent();
+                $("#jqxgridOUT").jqxGrid('destroy');
+                $("<div id='jqxgridOUT'></div>").appendTo(parent);
+
+                loadGridOut($("#locationCombo").jqxComboBox('getSelectedItem').value);
+                loadGrid($("#locationCombo").jqxComboBox('getSelectedItem').value);
+            });
+
+            
+            
+            Security();
 
         });
         // ============= Initialize Page ================== End
 
-        //Loads city grid
+        var DateRenderWithTime = function (row, columnfield, value, defaulthtml, columnproperties) {
+            // format date as string due to inconsistant date coversions
+            var thisDateTime = value;
+
+            if (thisDateTime != "") {
+                thisDateTime = thisDateTime.split("T");
+
+                var thisDate = thisDateTime[0].split("-");
+                var thisTime = thisDateTime[1].split(":");
+
+                var newDate = thisDate[1] + "/" + thisDate[2] + "/" + thisDate[0] + ' ' + thisTime[0] + ':' + thisTime[1];
+
+                return newDate;
+            } else {
+                return "";
+            }
+
+        };
+
         function loadGrid(thisLocationId) {
             if (thisLocationId == 0) {
                 return null;
@@ -116,11 +164,13 @@
             var source =
             {
                 datafields: [
-                    { name: 'ReservationId' },
+                    { name: 'ReservationId',  type: 'string' },
                     { name: 'ReservationNumber' },
-                    { name: 'StartDatetime', type: 'date' },
-                    { name: 'EndDatetime', type: 'date' },
-                    { name: 'LastName', map: 'MemberInformation>LastName' }
+                    { name: 'StartDatetime' },
+                    { name: 'EndDatetime' },
+                    { name: 'FirstName', map: 'MemberInformation>FirstName' },
+                    { name: 'LastName', map: 'MemberInformation>LastName' },
+                    { name: 'IsGuest', map: 'MemberInformation>IsGuest', type: 'boolean' }
                 ],
                 beforeSend: function (jqXHR, settings) {
                     jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
@@ -137,17 +187,22 @@
             var addDefaultfilter = function () {
                 var datefiltergroup = new $.jqx.filter();
                 var operator = 0;
-                var today = new Date();
+                var strToday = "";
+                var strNextDay = "";
+                var today = new Date($("#calendar").val());
+                var NextDay = new Date($("#calendar").val());
 
-                var weekago = new Date();
+                NextDay = DateFormat(NextDay)
+                strNextDay = NextDay.toString() + ' 23:59:59'
 
-                weekago.setDate((today.getDate() - 7));
+                today = DateFormat(today);
+                strToday = today.toString() + ' 00:00:00'
 
-                var filtervalue = weekago;
+                var filtervalue = strToday;
                 var filtercondition = 'GREATER_THAN_OR_EQUAL';
                 var filter1 = datefiltergroup.createfilter('datefilter', filtervalue, filtercondition);
 
-                filtervalue = today;
+                filtervalue = strNextDay;
                 filtercondition = 'LESS_THAN_OR_EQUAL';
                 var filter2 = datefiltergroup.createfilter('datefilter', filtervalue, filtercondition);
 
@@ -175,11 +230,13 @@
                     addDefaultfilter();
                 },
                 columns: [
-                      { text: 'ReservationId', datafield: 'ReservationId' },
+                      { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
                       { text: 'ReservationNumber', datafield: 'ReservationNumber' },
-                      { text: 'StartDatetime', datafield: 'StartDatetime', cellsformat: 'MM/dd/yyyy HH:mm', filtertype: 'range' },
-                      { text: 'EndDatetime', datafield: 'EndDatetime', cellsformat: 'MM/dd/yyyy HH:mm' },
-                      { text: 'LastName', datafield: 'LastName' }
+                      { text: 'StartDatetime', datafield: 'StartDatetime', filtertype: 'range', cellsrenderer: DateRenderWithTime },
+                      { text: 'EndDatetime', datafield: 'EndDatetime', cellsrenderer: DateRenderWithTime },
+                      { text: 'First Name', datafield: 'FirstName' },
+                      { text: 'LastName', datafield: 'LastName' },
+                      { text: 'IsGuest', datafield: 'IsGuest', columntype: 'checkbox' }
                 ]
             });
 
@@ -197,9 +254,11 @@
                 datafields: [
                     { name: 'ReservationId' },
                     { name: 'ReservationNumber' },
-                    { name: 'StartDatetime', type: 'date' },
-                    { name: 'EndDatetime', type: 'date' },
-                    { name: 'LastName', map: 'MemberInformation>LastName' }
+                    { name: 'StartDatetime' },
+                    { name: 'EndDatetime' },
+                    { name: 'FirstName', map: 'MemberInformation>FirstName' },
+                    { name: 'LastName', map: 'MemberInformation>LastName' },
+                    { name: 'IsGuest', map: 'MemberInformation>IsGuest', type: 'boolean' }
                 ],
                 beforeSend: function (jqXHR, settings) {
                     jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
@@ -216,17 +275,22 @@
             var addDefaultfilter = function () {
                 var datefiltergroup = new $.jqx.filter();
                 var operator = 0;
-                var today = new Date();
+                var strToday = "";
+                var strNextDay = "";
+                var today = new Date($("#calendar").val());
+                var NextDay = new Date($("#calendar").val());
 
-                var weekago = new Date();
+                NextDay = DateFormat(NextDay)
+                strNextDay = NextDay.toString() + ' 23:59:59'
 
-                weekago.setDate((today.getDate() - 7));
+                today = DateFormat(today);
+                strToday = today.toString() + ' 00:00:00'
 
-                var filtervalue = weekago;
+                var filtervalue = strToday;
                 var filtercondition = 'GREATER_THAN_OR_EQUAL';
                 var filter1 = datefiltergroup.createfilter('datefilter', filtervalue, filtercondition);
 
-                filtervalue = today;
+                filtervalue = strNextDay;
                 filtercondition = 'LESS_THAN_OR_EQUAL';
                 var filter2 = datefiltergroup.createfilter('datefilter', filtervalue, filtercondition);
 
@@ -254,11 +318,13 @@
                     addDefaultfilter();
                 },
                 columns: [
-                      { text: 'ReservationId', datafield: 'ReservationId' },
+                      { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
                       { text: 'ReservationNumber', datafield: 'ReservationNumber' },
-                      { text: 'StartDatetime', datafield: 'StartDatetime', cellsformat: 'MM/dd/yyyy HH:mm', filtertype: 'range' },
-                      { text: 'EndDatetime', datafield: 'EndDatetime', cellsformat: 'MM/dd/yyyy HH:mm' },
-                      { text: 'LastName', datafield: 'LastName' }
+                      { text: 'StartDatetime', datafield: 'StartDatetime', filtertype: 'range', cellsrenderer: DateRenderWithTime },
+                      { text: 'EndDatetime', datafield: 'EndDatetime', cellsrenderer: DateRenderWithTime },
+                      { text: 'First Name', datafield: 'FirstName' },
+                      { text: 'LastName', datafield: 'LastName' },
+                      { text: 'IsGuest', datafield: 'IsGuest', columntype: 'checkbox' }
                 ]
             });
 
@@ -272,30 +338,27 @@
 
     </style>
 
-    <div id="Cities">      
-        <div class="FPR_SearchBox" style="display:block;">
-            <div class="FPR_SearchLeft">
-            
-
+    <div id="ReservationList">      
+        <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
+            <div class="row search-size FPR_SearchLeft">
+                <div class="col-sm-2">
+                    <div id="locationCombo"></div>
+                </div>
+                <div class="col-sm-2">
+                    <div id="calendar"></div>
+                </div>
+                <div class="col-sm-4">
+                </div>
+                <div class="col-sm-2">
+                    <input type="button" value="Export Entrances" id='pdfExportIn' />
+                </div>
+                <div class="col-sm-2">
+                    <input type="button" value="Export Exits" id='pdfExportOut' />
+                </div>
             </div>
-            <div class="FPR_SearchRight">
-                <a href="javascript:" onclick="newCity();" id="btnNew">New City</a>     
-            </div>
-        </div>
-        <div style="visibility:hidden">
-            <input id="LocationId" type="text" value="0"  />
         </div>
     </div>  
-    <div class="container-fluid container-970">
-        <div class="row ">
-            <div class="col-sm-2">
-                <div id="locationCombo"></div>
-            </div>
-            <div class="col-sm-2">
-                <div id="calendar"></div>
-            </div>
-        </div>
-    </div>
+    
     <div id="holdIn">
         <div id="jqxgrid"></div>
     </div>

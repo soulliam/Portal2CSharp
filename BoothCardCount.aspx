@@ -31,9 +31,25 @@
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
-            // load main city grid
             
-            LoadLocationPopup();
+            
+            var locationString = $("#userLocation").val();
+            var locationResult = locationString.split(",");
+
+            if (locationResult.length > 1) {
+                var thisLocationString = "";
+                for (i = 0; i < locationResult.length; i++) {
+                    if (i == locationResult.length - 1) {
+                        thisLocationString += locationResult[i];
+                    }
+                    else {
+                        thisLocationString += locationResult[i] + ",";
+                    }
+
+                }
+            }
+
+            LoadLocationPopup(thisLocationString);
 
             //#region SetupButtons
             $("#newCount").jqxButton({ width: '100%', height: 26 });
@@ -66,8 +82,8 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "http://localhost:52839/api/BoothCardCounts/Post",
-                    //url: $("#localApiDomain").val() + "BoothCardCounts/Post/",
+                    //url: "http://localhost:52839/api/BoothCardCounts/Post",
+                    url: $("#localApiDomain").val() + "BoothCardCounts/Post/",
 
                     data: data,
                     dataType: "json",
@@ -159,8 +175,8 @@
         //Loads count grid
         function loadGrid(thisLocationId) {
 
-            //var url = $("#localApiDomain").val() + "BoothCardCounts/GetBoothCardCount";
-            var url = "http://localhost:52839/api/BoothCardCounts/GetBoothCardCount/" + thisLocationId;
+            var url = $("#localApiDomain").val() + "BoothCardCounts/GetBoothCardCount/" + thisLocationId;;
+            //var url = "http://localhost:52839/api/BoothCardCounts/GetBoothCardCount/" + thisLocationId;
 
 
             var source =
@@ -198,12 +214,12 @@
                 columns: [
                       
                       //loads rest of columns for city
-                      { text: 'BoothCardCountId', datafield: 'BoothCardCountId' },
+                      { text: 'BoothCardCountId', datafield: 'BoothCardCountId', hidden: true },
                       { text: 'Shift1', datafield: 'Shift1' },
                       { text: 'Shift2', datafield: 'Shift2' },
                       { text: 'Shift3', datafield: 'Shift3' },
                       { text: 'Total', datafield: 'Total' },
-                      { text: 'BoothCardCountDate', datafield: 'BoothCardCountDate' },
+                      { text: 'BoothCardCountDate', datafield: 'BoothCardCountDate', cellsrenderer: DateRender },
                       { text: 'NameOfLocation', datafield: 'NameOfLocation' }
                 ]
             });

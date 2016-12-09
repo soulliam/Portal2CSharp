@@ -1,5 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Portal2.master" AutoEventWireup="true" CodeFile="MemberSearch.aspx.cs" Inherits="MemberSearch" %>
 
+
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit"  %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
@@ -272,7 +273,7 @@
                         success = true;
                     },
                     error: function (request, status, error) {
-                        alert(error + " - " + request.responseJSON.message);
+                        alert(error);
                     },
                     complete: function () {
                         if (success == true) {
@@ -282,6 +283,7 @@
                     }
                 });
             });
+
             //Create Redemptions
             $("#1DayRedemption").on("click", function (event) {
                 var result = confirm("Do you want to create a redemption!");
@@ -332,7 +334,7 @@
                         window.open(marketingURL);
                     },
                     error: function (request, status, error) {
-                        alert(error + " - " + request.responseJSON.message);
+                        alert(error);
                     }
                 });
 
@@ -419,6 +421,9 @@
                 if (result != true) {
                     return null;
                 }
+
+
+                alert("HLEP");
 
                 var ProcessList = "";
                 var first = true;
@@ -661,7 +666,7 @@
                         $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
                     },
                     error: function (request, status, error) {
-                        alert(error + " - " + request.responseJSON.message);
+                        alert(error);
                     }
                 });
             });
@@ -674,10 +679,11 @@
                 var submittedBy = $("#loginLabel").val();
                 var thisLocationId = $("#receiptLocationCombo").jqxComboBox('getSelectedItem').value;
                 var checked = $('#jqxRadioTypeReceipt').jqxRadioButton('checked');
+                var thisGuid = $('#tempUserGuid').val()
 
                 if (checked == true) {
                     
-                    PageMethods.SubmitReceipt1(newEntryDate, newReceiptNumber, "", submittedBy, thisLocationId, PageMemberID, DisplayPageMethodResults);
+                    PageMethods.SubmitReceipt1(newEntryDate, newReceiptNumber, "", submittedBy, thisLocationId, PageMemberID, thisGuid, DisplayPageMethodResults);
                     function onSucess(result) {
                         alert(result);
                     }
@@ -687,7 +693,7 @@
                 }
                 else
                 {
-                    PageMethods.SubmitReceipt1(newEntryDate, "", newReceiptNumber, submittedBy, thisLocationId, PageMemberID, DisplayPageMethodResults);
+                    PageMethods.SubmitReceipt1(newEntryDate, "", newReceiptNumber, submittedBy, thisLocationId, PageMemberID, thisGuid, DisplayPageMethodResults);
                     function onSucess(result) {
                         alert(result);
                     }
@@ -706,9 +712,9 @@
                 var submittedBy = $("#txtLoggedinUsername").val();
                 var thisLocationId = $("#receiptLocationCombo2").jqxComboBox('getSelectedItem').value;
                 var checked = $('#jqxRadioTypeReceipt').jqxRadioButton('checked');
+                var thisGuid = $('#tempUserGuid').val()
 
-
-                PageMethods.SubmitReceipt2(PageMemberID, newEntryDate, newExitDate, newAmountPaid, thisLocationId, submittedBy, DisplayPageMethodResults);
+                PageMethods.SubmitReceipt2(PageMemberID, newEntryDate, newExitDate, newAmountPaid, thisLocationId, submittedBy, thisGuid, DisplayPageMethodResults);
                 function onSucess(result) {
                     alert(result);
                 }
@@ -1497,9 +1503,10 @@
                     { name: 'MemberId' },
                     { name: 'FirstName' },
                     { name: 'LastName' },
-                    { name: 'StreetAddress' },
+                    { name: 'FPNumber' },
                     { name: 'Company' },
-                    { name: 'EmailAddress' }
+                    { name: 'EmailAddress' },
+                    { name: 'Home' }
                 ],
                 id: 'MemberId',
                 type: 'POST',
@@ -1552,11 +1559,12 @@
                           }
                       },
                       { text: 'MemberId', datafield: 'MemberId', hidden: true },
-                      { text: 'First Name', datafield: 'FirstName' },
-                      { text: 'Last Name', datafield: 'LastName' },
-                      { text: 'Address', datafield: 'StreetAddress' },
-                      { text: 'Company', datafield: 'Company' },
-                      { text: 'Email', datafield: 'EmailAddress' }
+                      { text: 'First Name', datafield: 'FirstName', width: '15%' },
+                      { text: 'Last Name', datafield: 'LastName', width: '20%' },
+                      { text: 'Primary Card', datafield: 'FPNumber', width: '10%' },
+                      { text: 'Company', datafield: 'Company', width: '20%' },
+                      { text: 'Email', datafield: 'EmailAddress', width: '20%' },
+                      { text: 'Home', datafield: 'Home', width: '15%' }
                 ]
             });
 
@@ -1788,6 +1796,7 @@
             $("#rateCombo").jqxComboBox('destroy');
             $("<div id='rateCombo'></div>").appendTo(parent);
 
+            
             //set rate combobox
             var rateSource =
             {
@@ -1864,7 +1873,7 @@
                     obj.locationList = results[2];
                 },
                 error: function (request, status, error) {
-                    alert(error + " - " + request.responseJSON.message);
+                    alert(error);
                 }
             });
 
@@ -2154,7 +2163,7 @@
                     loadNotes($("#MemberId").val());
                 },
                 error: function (request, status, error) {
-                    alert(error + " - " + request.responseJSON.message);
+                    alert(error);
                 }
             });
 
@@ -2938,7 +2947,7 @@
                                             <input type="button" id="SendNewPassword" value="Send New Password" />
                                         </div>
                                         <div class="col-sm-12">
-                                            <input type="button" id="SendLoginInstructions" value="Send Login Instructions" />
+                                            <input type="button" id="SendLoginInstructions" value="Send Login Instructions" style="display:none;" />
                                         </div>
                                         <div class="col-sm-6">
                                             <input type="button" id="DisplayQA" value="Display Q &amp; A" />

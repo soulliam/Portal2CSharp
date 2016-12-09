@@ -32,13 +32,12 @@
 
     <script type="text/javascript">
 
-
         var thisNewCity = false; //determines whether a new City is being made so the feature grid doesn't get set 
         var group = '<%= Session["groupList"] %>';
 
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
-            Security();
+            
 
             $('#jqxTabs').jqxTabs({ width: '100%', height: 600, position: 'top' });
 
@@ -270,12 +269,6 @@
               
             });
 
-            function Security() {
-                if (group.indexOf("Portal_Superadmin") <= -1) {
-                    window.location.href = "http://www.thefastpark.com";
-                }
-            }
-
             //Delete restriction button click event
             $("#restrictionDelete").on("click", function (event) {
                 var delRescrtrictionId = $("#restrictionId").val();
@@ -310,6 +303,7 @@
                 $("#restrictionId").val("");
             });
 
+            Security();
 
         })//end document ready ***************************
 
@@ -722,7 +716,7 @@
                     <div class="col-sm-12">
                         <div class="top-divider">
                             <div class="col-sm-4 col-md-4">
-                                <input type="button" id="restrictionSave" value="Save" />
+                                <input type="button" id="restrictionSave" value="Save" class="editor" />
                             </div>
                             <div class="col-sm-4 col-md-4">
                                 
