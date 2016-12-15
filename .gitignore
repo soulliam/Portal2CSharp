@@ -127,6 +127,8 @@ DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
 
+web.config
+
 # Click-Once directory
 publish/
 
