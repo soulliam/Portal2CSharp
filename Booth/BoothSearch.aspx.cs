@@ -11,15 +11,7 @@ public partial class Booth_BoothSearch : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        object value = Session["IMINBOOTH"];
-        if (string.IsNullOrEmpty(Convert.ToString(value)))
-        {
-            Response.Redirect("http://www.thefastpark.com");
-        }
-        if (value.ToString() != "true")
-        {
-            Response.Redirect("http://www.thefastpark.com");
-        } 
+
     }
 
     [System.Web.Services.WebMethod]

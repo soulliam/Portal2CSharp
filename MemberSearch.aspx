@@ -175,6 +175,9 @@
                 $("#3DayRedemption").jqxButton();
                 $("#1WeekRedemption").jqxButton();
 
+                $("#deleteEmail").jqxButton();
+                $("#addPhone").jqxButton();
+
 
             //#endregion
 
@@ -240,7 +243,29 @@
 
             //#region ButtonClicks
 
+            //Delte email and set status
+            $("#deleteEmail").on("click", function (event) {
+                var result = confirm("Do you want to delete this member's email?");
+                if (result != true) {
+                    return null;
+                }
 
+                var thisMemberId = $("#MemberId").val();
+                var url = $("#localApiDomain").val() + "Members/DeleteEmail/" + thisMemberId;
+
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "json",
+                    success: function (data) {
+                        alert("Email Deleted!")
+                        $("#EmailAddress").val('');
+                    },
+                    error: function (request, status, error) {
+                        alert(error);
+                    }
+                });
+            });
 
             // mark redemption used button click
             $("#markUsedRedemption").on("click", function (event) {
@@ -784,100 +809,6 @@
                 });
             });
 
-            // defines activity grid double click
-            $("#jqxMemberActivityGrid").bind('rowdoubleclick', function (event) {
-                var row = event.args.rowindex;
-                var dataRecord = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
-                var isReceipt = dataRecord.ParkingTransactionNumber;
-                var isRedemption = dataRecord.RedemptionId;
-                var offset = $("#jqxMemberInfoTabs").offset();
-                var toAddress = $("#EmailAddress").val();
-
-                var thisMemberId = $("#MemberId").val();
-
-                if (isReceipt != null) {
-                    //This will show the Receipt
-                    var row = event.args.rowindex;
-                    var dataRecord = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
-                    var thisLocationId = dataRecord.LocationId;
-
-                    $("#popupReceipt").css('display', 'block');
-                    $("#popupReceipt").css('visibility', 'hidden');
-
-                    var offset = $("#jqxMemberInfoTabs").offset();
-
-                    $("#popupReceipt").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
-                    $('#popupReceipt').jqxWindow({ maxHeight: 525, maxWidth: 250 });
-                    $('#popupReceipt').jqxWindow({ width: "950px", height: "600px" });
-                    $("#popupReceipt").css("visibility", "visible");
-                    $("#popupReceipt").jqxWindow('open');
-                    document.getElementById('receiptIframe').src = './ReceiptDisplay.aspx?MemberId=' + thisMemberId + '&ParkingTransactionNumber=' + isReceipt + '&LocationId=' + thisLocationId + '&EmailAddress=' + toAddress;
-                    return null;
-                }
-                //This will show the Redemption
-               
-                if (isRedemption != null) {
-
-                    $("#popupRedemption").css('display', 'block');
-                    $("#popupRedemption").css('visibility', 'hidden');
-
-                    $("#popupRedemption").jqxWindow({ position: { x: '25%', y: '7%' } });
-                    $('#popupRedemption').jqxWindow({ resizable: false });
-                    $('#popupRedemption').jqxWindow({ draggable: true });
-                    $('#popupRedemption').jqxWindow({ isModal: true });
-                    $("#popupRedemption").css("visibility", "visible");
-                    $('#popupRedemption').jqxWindow({ height: '675px', width: '35%' });
-                    $('#popupRedemption').jqxWindow({ minHeight: '270px', minWidth: '10%' });
-                    $('#popupRedemption').jqxWindow({ maxHeight: '700px', maxWidth: '50%' });
-                    $('#popupRedemption').jqxWindow({ showCloseButton: true });
-                    $('#popupRedemption').jqxWindow({ animationType: 'combined' });
-                    $('#popupRedemption').jqxWindow({ showAnimationDuration: 300 });
-                    $('#popupRedemption').jqxWindow({ closeAnimationDuration: 500 });
-                    $("#popupRedemption").jqxWindow('open');
-
-                    //get redemption data and send to display
-                    var thisRedemptionId = dataRecord.RedemptionId
-
-                    $.ajax({
-                        type: 'GET',
-                        url: $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions/" + thisRedemptionId,
-                        headers: {
-                            "Accept": "application/json",
-                            "Content-Type": "application/json",
-                            "AccessToken": $("#userGuid").val(),
-                            "ApplicationKey": $("#AK").val()
-                        },
-                        success: function (thisData) {
-                            var thisCertificateID = thisData.result.data.CertificateID;
-                            var thisRedemptionType = thisData.result.data.RedemptionType.RedemptionType;
-                            thisRedemptionType = thisRedemptionType.replace(" ", "%20");
-                            var thisMemberName = thisData.result.data.Member.FirstName + '%20' + thisData.result.data.Member.LastName;
-                            var thisFPNumber = thisData.result.data.Member.PrimaryFPNumber;
-                            var thisQRCode = thisData.result.data.QrCodeString;
-                            var toAddress = $("#EmailAddress").val();
-
-                            document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?thisCertificateID=' + thisCertificateID + '&thisRedemptionType=' + thisRedemptionType + '&thisMemberName=' + thisMemberName + '&thisFPNumber=' + thisFPNumber + '&thisQRCode=' + thisQRCode + '&EmailAddress=' + toAddress;
-                        },
-                        error: function (request, status, error) {
-                            alert(error + " - " + request.responseJSON.message);
-                        }
-                    });
-                }
-                
-
-            });
-
-            // defines redemption grid double click
-            $("#jqxRedemptionGrid").bind('rowdoubleclick', function (event) {
-                var row = event.args.rowindex;
-                var dataRecord = $("#jqxRedemptionGrid").jqxGrid('getrowdata', row);
-                var thisRedemptionId = dataRecord.RedemptionId;
-                var offset = $("#jqxMemberInfoTabs").offset();
-                var toAddress = $("#EmailAddress").val();
-                var thisMemberId = $("#MemberId").val();
-
-                showRedemption(thisRedemptionId, toAddress, thisMemberId);
-            });
 
             //defines search grid double click to load member info
             $("#jqxSearchGrid").bind('rowdoubleclick', function (event) {
@@ -982,14 +913,22 @@
                     $("#stateCombo").jqxComboBox({ disabled: true });
                     $("#homeLocationCombo").jqxComboBox({ disabled: true });
                     $("#editMember").val("Edit");
-                    $("#updateMemberInfo").css("visibility", "hidden");;
+                    $("#updateMemberInfo").css("visibility", "hidden");
+                    $("#addPhone").jqxButton({ disabled: true });
+                    $("#deleteEmail").jqxButton({ disabled: true });
+                    $("#MailerCompanyCombo").jqxComboBox({ disabled: true });
+                    $('#phoneGrid').jqxGrid({ editable: false });
                 }
                 else {
                     jQuery("#tabMemberInfo").find("input[type=text]").attr("disabled", false);
                     $("#stateCombo").jqxComboBox({ disabled: false });
                     $("#homeLocationCombo").jqxComboBox({ disabled: false });
                     $("#editMember").val("Cancel Edit");
-                    $("#updateMemberInfo").css("visibility", "visible");;
+                    $("#MailerCompanyCombo").jqxComboBox({ disabled: false });
+                    $("#updateMemberInfo").css("visibility", "visible");
+                    $("#addPhone").jqxButton({ disabled: false });
+                    $("#deleteEmail").jqxButton({ disabled: false });
+                    $('#phoneGrid').jqxGrid({ editable: true });
                 }
             });
             //#endregion
@@ -1079,7 +1018,7 @@
                 }
             });
 
-            //load locations turn off for now*******************************************************
+
             loadLocationCombo();
            
             $("#AccountTabContent").toggle();
@@ -1103,6 +1042,10 @@
             jQuery("#tabMemberInfo").find("input[type=text]").attr("disabled", true);
             $("#stateCombo").jqxComboBox({ disabled: true });
             $("#homeLocationCombo").jqxComboBox({ disabled: true });
+            $("#addPhone").jqxButton({ disabled: true });
+            $("#deleteEmail").jqxButton({ disabled: true });
+            $("#MailerCompanyCombo").jqxComboBox({ disabled: true });
+            
 
             // Setup Radio Buttons for simple Receipt Entry form+++++++++++++++++++++++++++++++++++++++++++++
             $("#jqxRadioTypeReceipt").jqxRadioButton({ groupName: 'ReceiptEntry', width: 100, height: 24, checked: true });
@@ -1404,6 +1347,89 @@
                       { text: 'Date', datafield: 'Date', width: '10%', cellsrenderer: DateRender }
                 ]
             });
+
+            // defines activity grid double click
+            $("#jqxMemberActivityGrid").bind('rowdoubleclick', function (event) {
+                var row = event.args.rowindex;
+                var dataRecord = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
+                var isReceipt = dataRecord.ParkingTransactionNumber;
+                var isRedemption = dataRecord.RedemptionId;
+                var offset = $("#jqxMemberInfoTabs").offset();
+                var toAddress = $("#EmailAddress").val();
+
+                var thisMemberId = $("#MemberId").val();
+
+                if (isReceipt != null) {
+                    //This will show the Receipt
+                    var row = event.args.rowindex;
+                    var dataRecord = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
+                    var thisLocationId = dataRecord.LocationId;
+
+                    $("#popupReceipt").css('display', 'block');
+                    $("#popupReceipt").css('visibility', 'hidden');
+
+                    var offset = $("#jqxMemberInfoTabs").offset();
+
+                    $("#popupReceipt").jqxWindow({ position: { x: parseInt(offset.left) + 350, y: parseInt(offset.top) - 150 } });
+                    $('#popupReceipt').jqxWindow({ maxHeight: 525, maxWidth: 250 });
+                    $('#popupReceipt').jqxWindow({ width: "950px", height: "600px" });
+                    $("#popupReceipt").css("visibility", "visible");
+                    $("#popupReceipt").jqxWindow('open');
+                    document.getElementById('receiptIframe').src = './ReceiptDisplay.aspx?MemberId=' + thisMemberId + '&ParkingTransactionNumber=' + isReceipt + '&LocationId=' + thisLocationId + '&EmailAddress=' + toAddress;
+                    return null;
+                }
+                //This will show the Redemption
+
+                if (isRedemption != null) {
+
+                    $("#popupRedemption").css('display', 'block');
+                    $("#popupRedemption").css('visibility', 'hidden');
+
+                    $("#popupRedemption").jqxWindow({ position: { x: '25%', y: '7%' } });
+                    $('#popupRedemption').jqxWindow({ resizable: false });
+                    $('#popupRedemption').jqxWindow({ draggable: true });
+                    $('#popupRedemption').jqxWindow({ isModal: true });
+                    $("#popupRedemption").css("visibility", "visible");
+                    $('#popupRedemption').jqxWindow({ height: '675px', width: '35%' });
+                    $('#popupRedemption').jqxWindow({ minHeight: '270px', minWidth: '10%' });
+                    $('#popupRedemption').jqxWindow({ maxHeight: '700px', maxWidth: '50%' });
+                    $('#popupRedemption').jqxWindow({ showCloseButton: true });
+                    $('#popupRedemption').jqxWindow({ animationType: 'combined' });
+                    $('#popupRedemption').jqxWindow({ showAnimationDuration: 300 });
+                    $('#popupRedemption').jqxWindow({ closeAnimationDuration: 500 });
+                    $("#popupRedemption").jqxWindow('open');
+
+                    //get redemption data and send to display
+                    var thisRedemptionId = dataRecord.RedemptionId
+
+                    $.ajax({
+                        type: 'GET',
+                        url: $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions/" + thisRedemptionId,
+                        headers: {
+                            "Accept": "application/json",
+                            "Content-Type": "application/json",
+                            "AccessToken": $("#userGuid").val(),
+                            "ApplicationKey": $("#AK").val()
+                        },
+                        success: function (thisData) {
+                            var thisCertificateID = thisData.result.data.CertificateID;
+                            var thisRedemptionType = thisData.result.data.RedemptionType.RedemptionType;
+                            thisRedemptionType = thisRedemptionType.replace(" ", "%20");
+                            var thisMemberName = thisData.result.data.Member.FirstName + '%20' + thisData.result.data.Member.LastName;
+                            var thisFPNumber = thisData.result.data.Member.PrimaryFPNumber;
+                            var thisQRCode = thisData.result.data.QrCodeString;
+                            var toAddress = $("#EmailAddress").val();
+
+                            document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?thisCertificateID=' + thisCertificateID + '&thisRedemptionType=' + thisRedemptionType + '&thisMemberName=' + thisMemberName + '&thisFPNumber=' + thisFPNumber + '&thisQRCode=' + thisQRCode + '&EmailAddress=' + toAddress;
+                        },
+                        error: function (request, status, error) {
+                            alert(error + " - " + request.responseJSON.message);
+                        }
+                    });
+                }
+
+
+            });
         }
 
         function loadAccountActivity() {
@@ -1664,6 +1690,18 @@
                       { text: 'Redeem Date', datafield: 'RedeemDate', cellsrenderer: DateRender },
                       { text: 'Returned', datafield: 'IsReturned' }
                 ]
+            });
+
+            // defines redemption grid double click
+            $("#jqxRedemptionGrid").bind('rowdoubleclick', function (event) {
+                var row = event.args.rowindex;
+                var dataRecord = $("#jqxRedemptionGrid").jqxGrid('getrowdata', row);
+                var thisRedemptionId = dataRecord.RedemptionId;
+                var offset = $("#jqxMemberInfoTabs").offset();
+                var toAddress = $("#EmailAddress").val();
+                var thisMemberId = $("#MemberId").val();
+
+                showRedemption(thisRedemptionId, toAddress, thisMemberId);
             });
         }
 
@@ -2398,7 +2436,7 @@
                     rowsheight: 20,
                     selectionmode: 'singlerow',
                     editmode: 'selectedrow',
-                    editable: true,
+                    editable: false,
                     columns: [
                       {
                           text: 'Type', datafield: 'PhoneTypeId', width: 70, columntype: 'combobox',
@@ -2441,34 +2479,6 @@
                     ]
             });
             
-
-            // create context menu
-            var contextMenu = $("#phoneContextMenu").jqxMenu({ width: 200, height: 58, autoOpenPopup: false, mode: 'popup' });
-
-            $("#phoneGrid").on('contextmenu', function () {
-                return false;
-            });
-
-            // handle context menu clicks.
-            $("#phoneContextMenu").on('itemclick', function (event) {
-                var args = event.args;
-                var rowindex = $("#phoneGrid").jqxGrid('getselectedrowindex');
-                
-                var rowid = $("#phoneGrid").jqxGrid('getrowid', rowindex);
-                $("#phoneGrid").jqxGrid('deleterow', rowid);
-                
-            });
-
-            $("#phoneGrid").on('rowclick', function (event) {
-                if (event.args.rightclick) {
-                    $("#phoneGrid").jqxGrid('selectrow', event.args.rowindex);
-                    var scrollTop = $(window).scrollTop();
-                    var scrollLeft = $(window).scrollLeft();
-                    contextMenu.jqxMenu('open', parseInt(event.args.originalEvent.clientX) + 5 + scrollLeft, parseInt(event.args.originalEvent.clientY) + 5 + scrollTop);
-
-                    return false;
-                }
-            });
 
 
             var locationId = 0;
@@ -2808,6 +2818,7 @@
                                             <label for="EmailAddress" class="col-sm-3 col-md-4 control-label">Email:</label>
                                             <div class="col-sm-9 col-md-8">
                                                 <input type="text" class="form-control" id="EmailAddress" placeholder="">
+                                                <div><input type="button" id="deleteEmail" value="Delete Email" class="editor" /></div>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -2844,6 +2855,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
@@ -3014,7 +3026,7 @@
                                                 <div class="form-group">
                                                     <label class="col-sm-3 col-md-4 control-label"></label>
                                                     <div class="col-sm-9 col-md-8">
-                                                        <input type ="button" value="Submit Receipt" id="submitReceipt1" class="editor" />
+                                                        <input type ="button" value="Submit Receipt" id="submitReceipt1" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -3062,7 +3074,7 @@
                                                 <div class="form-group">
                                                     <label class="col-sm-3 col-md-4 control-label"></label>
                                                     <div class="col-sm-9 col-md-8">
-                                                        <input type ="button" value="Submit Receipt" id="submitReceipt2" class="editor" />
+                                                        <input type ="button" value="Submit Receipt" id="submitReceipt2" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -3090,7 +3102,7 @@
                                                 <div class="form-group">
                                                     <label class="col-sm-3 col-md-4 control-label"></label>
                                                     <div class="col-sm-9 col-md-8">
-                                                        <input type="button" value="Submit Manual Edit" id="manualEditSubmit" class="editor" />
+                                                        <input type="button" value="Submit Manual Edit" id="manualEditSubmit" />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -3127,7 +3139,7 @@
                                 </div>
                                 <div class="col-sm-3 col-md-2">
                                     <input type="button" id="returnRedemption" value="Return Redemption" class="editor" />
-                                    <input type="button" id="markUsedRedemption" value="Mark Used" class="editor" />
+                                    <input type="button" id="markUsedRedemption" value="Mark Used" />
                                     <input type="button" id="1DayRedemption" value="1 Day" class="editor" />
                                     <input type="button" id="3DayRedemption" value="3 Day" class="editor" />
                                     <input type="button" id="1WeekRedemption" value="1 Week" class="editor" />

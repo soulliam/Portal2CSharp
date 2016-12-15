@@ -17,10 +17,12 @@ public partial class Portal2Booth : System.Web.UI.MasterPage
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if ((string)(Session["IMINBOOTH"]) != "true"  || (string)(Session["IMIN"]) != "true")
-        {
-            Response.Redirect("http://www.thefastpark.com");
-        }
+
+        ////checks to see if you have booth rights
+        //if ((string)(Session["IMINBOOTH"]) != "true"  || (string)(Session["IMIN"]) != "true")
+        //{
+        //    Response.Redirect("http://www.thefastpark.com");
+        //}
 
         logOutLabel.Attributes.Add("onclick", "return logout();");
 
@@ -86,6 +88,11 @@ public partial class Portal2Booth : System.Web.UI.MasterPage
         Session["groupList"] = groupList;
 
         getUserLocation(groupList);
+
+        if (groupList.IndexOf("\\BoothOnly") <= -1 && groupList.IndexOf("\\Booth") <= -1)
+        {
+            Response.Redirect("http://www.thefastpark.com");
+        }
     }
 
     public ArrayList Groups()

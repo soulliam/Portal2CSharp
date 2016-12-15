@@ -35,7 +35,7 @@ public partial class _Default : System.Web.UI.Page
 
         Session["groupList"] = groupList;
 
-        if (groupList.IndexOf("\\BoothOnly,") > -1)
+        if (groupList.IndexOf("\\BoothOnly") > -1)
         {
             Session["IMINBOOTH"] = "true";
             class_Logging.clsLogging newLogin = new class_Logging.clsLogging();
@@ -44,7 +44,7 @@ public partial class _Default : System.Web.UI.Page
         }
         else
         {
-            if (groupList.IndexOf("\\Booth,") > -1)
+            if (groupList.IndexOf("\\Booth") > -1)
             {
                 Session["IMINBOOTH"] = "true";
             }

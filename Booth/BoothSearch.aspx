@@ -81,9 +81,9 @@
 
             $("#btnSearch").jqxButton({ width: 100, height: 60 });
             $("#btnSearchClear").jqxButton({ width: 100, height: 60 });
-            $("#btnSearchEmail").jqxButton({ width: 240, height: 80 });
-            $("#btnSearchFPNumber").jqxButton({ width: 240, height: 80 });
-            $("#btnSearchName").jqxButton({ width: 240, height: 80 });
+            $("#btnSearchEmail").jqxButton({ width: 240, height: 60 });
+            $("#btnSearchFPNumber").jqxButton({ width: 240, height: 60 });
+            $("#btnSearchName").jqxButton({ width: 240, height: 60 });
 
             $("#btn1Day").jqxButton({ width: 100, height: 60 });
             $("#btn2Day").jqxButton({ width: 100, height: 60 });
@@ -171,10 +171,6 @@
 
             //redeem 1 day
             $("#btn1Day").on("click", function (event) {
-                var result = confirm("Do you want to create a redemption!");
-                if (result != true) {
-                    return null;
-                } 
                CreateRedemption(1,3,1)
             });
 
@@ -453,6 +449,10 @@
 
         //Create New Redemption
         function CreateRedemption(thisRedemptionTypeId, thisRedemptionSourceId, NumberToRedeem) {
+            var result = confirm("Do you want to create a redemption!");
+            if (result != true) {
+                return null;
+            }
 
             var thisMemberId = $("#MemberId").html();
             var thisQrCodeString = "";
@@ -527,6 +527,7 @@
             $("#jqxSearchGrid").jqxGrid("clear");
             $("#txtSearchLastName").val("");
             $("#txtSearchEmailFNameFPNumber").val("");
+            $("#redemptionRow").css("visibility", "hidden");
         }
 
         function loadStateCombo() {
@@ -1008,7 +1009,7 @@
     <div id="popupExistingRedemption" style="display: none;">
         <div>Redemption Code</div>
         <div>
-            <iframe id="redemptionIframe" style="height:225px; width:250px; border:none;"  ></iframe>
+            <iframe id="redemptionIframe" style="height:325px; width:350px; border:none;"  ></iframe>
         </div>
     </div>
 

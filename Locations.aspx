@@ -39,37 +39,6 @@
         $(document).ready(function () {
 
 
-            $('#jqxLocationImagesGrid').on('rowclick', function (event) {
-
-                var rightclick = args.rightclick;
-
-                if (rightclick == true) {
-
-                    var row = event.args.rowindex;
-                    var datarow = $("#jqxLocationImagesGrid").jqxGrid('getrowdata', row);
-                    var source = datarow.ImageUrl;
-                    var offset = $("#jqxLocationTabs").offset();
-
-                    $("#popupImage").jqxWindow({ position: { x: '19%', y: '20%' } });
-                    $('#popupImage').jqxWindow({ resizable: false });
-                    $('#popupImage').jqxWindow({ draggable: true });
-                    $('#popupImage').jqxWindow({ isModal: true });
-                    $("#popupImage").css("visibility", "visible");
-                    $('#popupImage').jqxWindow({ height: '320px', width: '50%' });
-                    $('#popupImage').jqxWindow({ minHeight: '320px', minWidth: '50%' });
-                    $('#popupImage').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
-                    $('#popupImage').jqxWindow({ showCloseButton: true });
-                    $('#popupImage').jqxWindow({ animationType: 'combined' });
-                    $('#popupImage').jqxWindow({ showAnimationDuration: 300 });
-                    $('#popupImage').jqxWindow({ closeAnimationDuration: 500 });
-                    $("#popupImage").jqxWindow('open');
-                    document.getElementById('showImage').src = "https://stage.thefastpark.com" + source;
-                    
-                }
-
-            });
-
-
             //set up the tabs
             $('#jqxTabs').jqxTabs({ width: '100%', position: 'top' });
             $('#jqxTabs').css('margin-bottom', '10px');
@@ -1150,6 +1119,36 @@
                             { text: 'SortOrder', datafield: 'SortOrder', width: '7%' }
 
                 ]
+            });
+
+            $('#jqxLocationImagesGrid').on('rowclick', function (event) {
+
+                var rightclick = args.rightclick;
+
+                if (rightclick == true) {
+
+                    var row = event.args.rowindex;
+                    var datarow = $("#jqxLocationImagesGrid").jqxGrid('getrowdata', row);
+                    var source = datarow.ImageUrl;
+                    var offset = $("#jqxLocationTabs").offset();
+
+                    $("#popupImage").jqxWindow({ position: { x: '19%', y: '20%' } });
+                    $('#popupImage').jqxWindow({ resizable: false });
+                    $('#popupImage').jqxWindow({ draggable: true });
+                    $('#popupImage').jqxWindow({ isModal: true });
+                    $("#popupImage").css("visibility", "visible");
+                    $('#popupImage').jqxWindow({ height: '320px', width: '50%' });
+                    $('#popupImage').jqxWindow({ minHeight: '320px', minWidth: '50%' });
+                    $('#popupImage').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+                    $('#popupImage').jqxWindow({ showCloseButton: true });
+                    $('#popupImage').jqxWindow({ animationType: 'combined' });
+                    $('#popupImage').jqxWindow({ showAnimationDuration: 300 });
+                    $('#popupImage').jqxWindow({ closeAnimationDuration: 500 });
+                    $("#popupImage").jqxWindow('open');
+                    document.getElementById('showImage').src = "https://stage.thefastpark.com" + source;
+
+                }
+
             });
         }
 

@@ -62,7 +62,7 @@
 
             
             $("#btnSubmit").on('click', function () {
-                var ProcessList = "BA1B0B96-30D3-45AB-815D-3527F72B6442";
+                var ProcessList = $("#tempUserGuid").val();
                 var getselectedrowindexes = $('#jqxgrid').jqxGrid('getselectedrowindexes');
 
                 if (getselectedrowindexes.length > 0) {
@@ -278,8 +278,8 @@
     </div><!-- /.container-fluid -->
 
     <div id="actionButtons">
-        <input id="btnSubmit" value="Submit" type="button" style="margin-left:50px;margin-top:15px;width:200px;" class="editor" />
-        <input id="btnDelete" value="Delete" type="button" style="margin-right:50px; margin-top:15px;width:200px;float:right;" class="editor" />
+        <input id="btnSubmit" value="Submit" type="button" style="margin-left:50px;margin-top:15px;width:200px;" />
+        <input id="btnDelete" value="Delete" type="button" style="margin-right:50px; margin-top:15px;width:200px;float:right;" />
     </div>
 
     

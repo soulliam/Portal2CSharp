@@ -11,12 +11,12 @@ public partial class Portal2 : System.Web.UI.MasterPage
     protected void Page_Load(object sender, EventArgs e)
     {
 
-        //uncomment for production or security testing
+        ////uncomment for production or security testing
 
-        if ((string)(Session["IMIN"]) != "true")
-        {
-            Response.Redirect("http://www.thefastpark.com");
-        }
+        //if ((string)(Session["IMINBOOTH"]) == "true")
+        //{
+        //    Response.Redirect("./Booth/BoothSearch.aspx");
+        //}
 
         loginLabel.Text = Page.User.Identity.Name;
         txtLoggedinUsername.Value = Page.User.Identity.Name;
@@ -49,6 +49,8 @@ public partial class Portal2 : System.Web.UI.MasterPage
 
                 //userGuid.Text = Convert.ToString(objectGuid);
                 //userGuid.Text = myGuid;
+
+                //this one is hear so we can save the user guid but, for now, send a common token to CoS
                 tempUserGuid.Text = myGuid;
 
                 Session["GUID"] = userGuid.Text;
@@ -82,6 +84,18 @@ public partial class Portal2 : System.Web.UI.MasterPage
         Session["groupList"] = groupList;
 
         getUserLocation(groupList);
+
+
+        // if you are a booth person send you to booth, if you don't have groups then you should not be hear
+        if (groupList.IndexOf("\\BoothOnly") > -1)
+        {
+            Response.Redirect("./Booth/BoothSearch.aspx");
+        }
+
+        if (groupList == "")
+        {
+            Response.Redirect("http://www.thefastpark.com");
+        }
     }
 
     public ArrayList Groups()
@@ -130,27 +144,4 @@ public partial class Portal2 : System.Web.UI.MasterPage
         userLocation.Text = locationList;
     }
 
-    public string GetUserGuid
-
-    {
-
-        get
-
-        {
-
-            return userGuid.Text;
-
-        }
-
-        set
-
-        {
-
-            userGuid.Text = value;
-
-        }
-
-
-
-    }
 }
