@@ -59,7 +59,7 @@
             <asp:TextBox runat="server" ID="tempUserGuid" style="display:none"></asp:TextBox>
             <asp:TextBox runat="server" ID="AK" style="display:none">3E36B6D0-A79D-4A7D-B5F3-6C016DBF5580</asp:TextBox>
             <asp:TextBox runat="server" ID="apiDomain" style="display:none">https://api.thefastpark.com/api/v1/</asp:TextBox>
-            <asp:TextBox runat="server" ID="localApiDomain" style="display:none">http://portal.thefastpark.com:8181/api/</asp:TextBox>
+            <asp:TextBox runat="server" ID="localApiDomain" style="display:none">http://maxdev:8181/api/</asp:TextBox>
             <asp:TextBox runat="server" ID="userLocation" style="display:none">3,4</asp:TextBox>
             <table class="table1" style="margin-bottom:0px;padding:0px;width:100%;">
                 <tr>

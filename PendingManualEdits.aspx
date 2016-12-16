@@ -62,7 +62,8 @@
 
             
             $("#btnSubmit").on('click', function () {
-                var ProcessList = $("#tempUserGuid").val();
+                //var ProcessList = $("#tempUserGuid").val();
+                var ProcessList = $("#loginLabel").val();
                 var getselectedrowindexes = $('#jqxgrid').jqxGrid('getselectedrowindexes');
 
                 if (getselectedrowindexes.length > 0) {

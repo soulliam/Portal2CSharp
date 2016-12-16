@@ -171,14 +171,26 @@
 
             //redeem 1 day
             $("#btn1Day").on("click", function (event) {
+                if ($("#acctPoints").html() < 8) {
+                    alert("There are not enough points for this redemption!");
+                    return null;
+                }
                CreateRedemption(1,3,1)
             });
 
             $("#btn3Day").on("click", function (event) {
+                if ($("#acctPoints").html() < 20) {
+                    alert("There are not enough points for this redemption!");
+                    return null;
+                }
                 CreateRedemption(2, 3, 1)
             });
 
             $("#btnWeek").on("click", function (event) {
+                if ($("#acctPoints").html() < 40) {
+                    alert("There are not enough points for this redemption!");
+                    return null;
+                }
                 CreateRedemption(3, 3, 1)
             });
 
@@ -384,6 +396,100 @@
         });
 
         //#region Functions
+
+        function loadRate() {
+            $("#memberRate").jqxComboBox('clearSelection');
+            $("#memberRate").jqxComboBox('clear');
+            var parent = $("#memberRate").parent();
+            $("#memberRate").jqxComboBox('destroy');
+            $("<div id='memberRate'></div>").appendTo(parent);
+
+
+            //set rate combobox
+            var rateSource =
+            {
+                async: true,
+                width: '100%',
+                height: 35,
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'LocationId' },
+                    { name: 'NameOfLocation' }
+                ],
+                url: $("#localApiDomain").val() + "Locations/Locations/",
+
+            };
+            var rateDataAdapter = new $.jqx.dataAdapter(rateSource);
+            $('#memberRate').jqxComboBox({
+                selectedIndex: 0, source: rateDataAdapter, displayMember: "NameOfLocation", valueMember: "LocationId", height: 24, width: '100%',
+                renderer: function (index, label, value) {
+                    var rateObj = { rate: "0" };
+                    rateObj = { rateCode: "0" };
+                    rateObj = { locationList: "" };
+
+                    getRate(rateObj, value);
+
+                    var homeLocations = String(rateObj.locationList).split("_");
+
+                    if (homeLocations.indexOf(String(value)) > -1) {
+                        var table = '<div style="color:black">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + ' **</div>';
+                    } else {
+                        var table = '<div style="color:black">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + '</div>';
+                    }
+
+                    return table;
+                },
+                renderSelectedItem: function (index, item) {
+                    var rateObj = { rate: "0" };
+                    rateObj = { rateCode: "0" };
+                    rateObj = { locationList: "" };
+
+                    getRate(rateObj, item.value);
+
+                    var homeLocations = String(rateObj.locationList).split("_");
+
+                    if (homeLocations.indexOf(String(item.value)) > -1) {
+                        var table = item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + ' **';
+                    } else {
+                        var table = item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate
+                    }
+
+                    return table;
+                }
+            });
+
+            $("#memberRate").on('bindingComplete', function (event) {
+                $("#memberRate").jqxComboBox('selectItem', $("#boothLocation").val());
+            });
+            
+        }
+
+        function getRate(obj, thisLocationId) {
+            //var thisCompanyId = $("#MailerCompanyCombo").jqxComboBox('getSelectedItem').value;
+            var thisCompanyId = $("#CompanyId").html();
+
+            $.ajax({
+                async: false,
+                type: "POST",
+                url: $("#localApiDomain").val() + "Rates/GetRateByLocationAndCompanyId/",
+                //url: "http://localhost:52839/api/Rates/GetRateByLocationAndCompanyId/",
+
+                data: { "CompanyId": thisCompanyId, "LocationId": thisLocationId },
+                dataType: "json",
+                success: function (thisData) {
+                    var results = String(thisData).split(",")
+                    obj.rate = results[0];
+                    obj.rateCode = results[1];
+                    obj.locationList = results[2];
+                },
+                error: function (request, status, error) {
+                    alert(error);
+                }
+            });
+
+        }
 
         function getParametersAndSearch() {
             var thisReturn = "";
@@ -820,7 +926,8 @@
                     $("#memberStreetAddress").html(thisData.result.data.StreetAddress);
                     $("#stateCombo").jqxComboBox('selectItem', thisData.result.data.StateId);
                     $("#stateCombo").jqxComboBox({ disabled: true });
-
+                    $("#CompanyId").html(thisData.result.data.CompanyId);
+                    //loadRate();
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     alert("Error: " + errorThrown);
@@ -944,6 +1051,7 @@
     <div id="popupMember" style="display:none">
         <div>
             <div id="MemberInfo" style="width: 50%;float:left">
+                <div><label id="CompanyId" style="display:none"></label></div>
                 <div><label id="MemberId" style="display:none"></label></div>
                 <div><label id="memberAcctId"style="display:none"></label></div>
                 <div style="margin-top:10px">Name: <label id="memberName" style="float:right"></label></div>
@@ -951,7 +1059,14 @@
                 <div style="margin-top:10px">Card: <div id="cardCombo" style="float:right"></div></div>
                 <div style="margin-top:10px">Address: <label id="memberStreetAddress" style="float:right"></label></div>
                 <div style="margin-top:10px">State: <div id="stateCombo" style="float:right;" ></div></div>  
-                <div style="margin-top:10px">Rate: <div id="memberRate" style="float:right;" ></div></div>  
+                <div style="margin-top:10px">
+                    <table style="width:100%;" >
+                        <tr>
+                            <td style="width:30%">Rate:</td>
+                            <td style="width:70%"><div id="memberRate" style="float:right;" ></div></td>
+                        </tr>
+                    </table>
+                </div>  
                 <div style="margin-top:10px">Points: <label id="acctPoints" style="float:right;color:red;"></label></div>
             </div>
             <div id="MemberInfo2" style="float:right;width:35%;">
