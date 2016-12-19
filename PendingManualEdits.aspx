@@ -62,8 +62,8 @@
 
             
             $("#btnSubmit").on('click', function () {
-                //var ProcessList = $("#tempUserGuid").val();
-                var ProcessList = $("#loginLabel").val();
+                var ProcessList = $("#tempUserGuid").val();
+                //var ProcessList = $("#loginLabel").val();
                 var getselectedrowindexes = $('#jqxgrid').jqxGrid('getselectedrowindexes');
 
                 if (getselectedrowindexes.length > 0) {
@@ -91,7 +91,7 @@
                             loadGrid();
                         },
                         error: function (request, status, error) {
-                            alert(error + " - " + request.responseJSON.message);
+                            alert(error);
                         }
                     });
                 }
@@ -129,7 +129,7 @@
                             loadGrid();
                         },
                         error: function (request, status, error) {
-                            alert(error + " - " + request.responseJSON.message);
+                            alert(error);
                         }
                     });
                 }

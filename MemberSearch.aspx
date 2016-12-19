@@ -1720,6 +1720,7 @@
                     { name: 'ReservationId' },
                     { name: 'ReservationNumber' },
                     { name: 'NameOfLocation', map: 'LocationInformation>NameOfLocation' },
+                    { name: 'BrandName', map: 'LocationInformation>BrandInformation>BrandName' },
                     { name: 'CreateDatetime' },
                     { name: 'StartDatetime' },
                     { name: 'EndDatetime' },
@@ -1757,11 +1758,12 @@
                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
                       { text: 'Reservation Number', datafield: 'ReservationNumber', width: '10%' },
                       { text: 'Location', datafield: 'NameOfLocation', width: '10%' },
+                      { text: 'Brand', datafield: 'BrandName', width: '5%' },
                       { text: 'Create Date', datafield: 'CreateDatetime', width: '13%', cellsrenderer: DateRender },
                       { text: 'Start Date', datafield: 'StartDatetime', width: '13%', cellsrenderer: DateRender },
                       { text: 'End Date', datafield: 'EndDatetime', width: '13%', cellsrenderer: DateRender },
-                      { text: 'Status', datafield: 'ReservationStatusName', width: '15%' },
-                      { text: 'Note', datafield: 'MemberNote', width: '26%' }
+                      { text: 'Status', datafield: 'ReservationStatusName', width: '11%' },
+                      { text: 'Note', datafield: 'MemberNote', width: '25%' }
                 ]
             });
         }
@@ -1838,7 +1840,7 @@
             //set rate combobox
             var rateSource =
             {
-                async: false,
+                async: true,
                 datatype: "json",
                 type: "Get",
                 root: "data",
@@ -1888,7 +1890,11 @@
                 }
             });
 
-            $("#rateCombo").jqxComboBox('selectItem', glbHomeLocationId);
+            $("#rateCombo").on('bindingComplete', function (event) {
+                $("#rateCombo").jqxComboBox('selectItem', glbHomeLocationId);
+            });
+
+            
             $('#jqxLoader').jqxLoader('close');
         }
 

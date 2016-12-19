@@ -316,7 +316,7 @@
                     var item = event.args.item;
 
                     if (item) {
-                        var thisItem = item.label;
+                        var thisItem = "62711601" + item.label;
                         //Populate the Iframe with QR Code
                         document.getElementById('qrIframe').src = './QRCode.aspx?codeNumber=' + thisItem;
                         //This code is for jqeury version of QR generator
@@ -396,6 +396,9 @@
         });
 
         //#region Functions
+
+
+
 
         function loadRate() {
             $("#memberRate").jqxComboBox('clearSelection');
@@ -584,8 +587,9 @@
                 success: function (thisData) {
 
                     var thisDate = thisData.result.data[0].RedeemDate;
+                    var thisCertificateId = thisData.result.data[0].CertificateID;
 
-                    $("#redemptionCertificateID").html(thisData.result.data[0].CertificateID);
+                    $("#redemptionCertificateID").html(thisCertificateId);
                     $("#redemptionRedeemDate").html(DateFormat(thisDate));
                     $("#redemptionRedemptionType").html(thisData.result.data[0].RedemptionType.RedemptionType);
                     $("#redemptionPointValue").html(thisData.result.data[0].RedemptionType.PointValue);
@@ -613,6 +617,8 @@
                     var acctId = $("#memberAcctId").html();
                     loadPoints(acctId, $("#acctPoints"));
 
+                    MarkRedemptionAsUserd(thisCertificateId);
+
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     alert("Error: " + errorThrown);
@@ -622,6 +628,35 @@
                 }
             });
         }
+
+        function MarkRedemptionAsUserd(thisCertificateId) {
+            var thisUser = $("#txtLoggedinUsername").val();
+
+            $.ajax({
+                type: "POST",
+                //url: "http://localhost:52839/api/Redemptions/SetBeenUsed/",
+                url: $("#localApiDomain").val() + "Redemptions/SetBeenUsed/",
+
+                data: {
+                    "RedemptionId": thisCertificateId,
+                    "UpdateExternalUserData": thisUser,
+                },
+                dataType: "json",
+                success: function (Response) {
+                    alert("Saved!  Marked as used.");
+                    success = true;
+                },
+                error: function (request, status, error) {
+                    alert(error);
+                },
+                complete: function () {
+                    if (success == true) {
+
+                    }
+                }
+            });
+        }
+        
 
        
         //clear search boxes 

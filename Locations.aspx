@@ -141,7 +141,7 @@
                             
                         },
                         error: function (request, status, error) {
-                            alert(error + " - " + request.responseJSON.message);
+                            alert(error + " - " + request.html);
                             thisError = true;
                         }
                     })
@@ -258,7 +258,7 @@
                             loadLocationGrid();
                         },
                         error: function (request, status, error) {
-                            alert(error + " - " + request.responseJSON.message);
+                            alert(error + " - " + request);
                         }
                     });
                     
@@ -370,7 +370,7 @@
                                 loadLocationGrid();
                             },
                             error: function (request, status, error) {
-                                alert(error + " - " + request.responseJSON.message);
+                                alert(error + " - " + request.html);
                             }
                         });
 
@@ -461,7 +461,7 @@
                         loadFeatureGrid(selectedLocationId);
                     },
                     error: function (request, status, error) {
-                        alert(error + " - " + request.responseJSON.message);
+                        alert(error + " - " + request.html);
                     }
                 })
 
@@ -507,7 +507,7 @@
                        alert("Saved!")
                     },
                     error: function (request, status, error) {
-                        alert(error + " - " + request.responseJSON.message);
+                        alert(error + " - " + request.html);
                     },
                     complete: function(data) {
                         clearFeatureForm();
@@ -541,7 +541,7 @@
                         loadFeatureGrid(selectedLocationId);
                     },
                     error: function (request, status, error) {
-                        alert(error + " - " + request.responseJSON.message);
+                        alert(error + " - " + request.html);
                     }
                 })
 
@@ -904,6 +904,7 @@
                                   $("#SkiDataIMP").val(dataRecord.IMP);
                                   $("#SiteURL").val(dataRecord.SiteURL);
                                   $("#cityCombo").jqxComboBox('selectItem', dataRecord.CityId);
+                                  $("#DistanceFromAirport").val(dataRecord.DistanceFromAirport);
 
                                   //sets the current selected location
                                   selectedLocationId = dataRecord.LocationId;
@@ -1189,7 +1190,7 @@
                     alert("Saved!")
                 },
                 error: function (request, status, error) {
-                    alert(error + " - " + request.responseJSON.message);
+                    alert(error + " - " + request.html);
                 }
             })
 
@@ -1228,7 +1229,7 @@
                     loadLocationImagesGrid(newLocationId);
                 },
                 error: function (request, status, error) {
-                    alert(error + " - " + request.responseJSON.message);
+                    alert(error + " - " + request.html);
                 }
             })
 
