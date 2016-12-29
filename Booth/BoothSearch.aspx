@@ -129,6 +129,18 @@
 
 
             $('#closeRedemptionList').on('click', function (event) {
+                $("#memberAcctId").html("");
+                $("#MemberId").html("");
+                $("#memberName").html("");
+                $("#memberEmail").html("");
+                $("#memberFPNumber").html("");
+                $("#memberStreetAddress").html("");
+                $("#acctPoints").html("");
+                $("#stateCombo").jqxComboBox('selectItem', 0);
+                $("#cardCombo").jqxComboBox("clear");
+                document.getElementById('qrIframe').src = '';
+                $("#qrcode").html("");
+                $("#redemptionRow").css("visibility", "hidden");
                 $("#popupRedemptionList").jqxWindow('hide');
             });
 
@@ -156,17 +168,17 @@
 
             //open receipt entry
             $("#btnReceipt").on("click", function (event) {
-                //$("#popupReceipt").css('display', 'block');
-                //$("#popupReceipt").css('visibility', 'hidden');
+                $("#popupReceipt").css('display', 'block');
+                $("#popupReceipt").css('visibility', 'hidden');
 
-                //var offset = $("#jqxSearchGrid").offset();
-                //$("#popupReceipt").jqxWindow({ position: { x: parseInt(offset.left) + 200, y: parseInt(offset.top) - 80 } });
-                //$('#popupReceipt').jqxWindow({ width: "500px", height: "550px" });
-                //$('#popupReceipt').jqxWindow({ isModal: true, modalOpacity: 0.7 });
-                //$('#popupReceipt').jqxWindow({ showCloseButton: false });
-                //$("#popupReceipt").css("visibility", "visible");
-                //$("#popupReceipt").jqxWindow({ title: 'Enter Receipt' });
-                //$("#popupReceipt").jqxWindow('open');
+                var offset = $("#jqxSearchGrid").offset();
+                $("#popupReceipt").jqxWindow({ position: { x: parseInt(offset.left) + 200, y: parseInt(offset.top) - 80 } });
+                $('#popupReceipt').jqxWindow({ width: "500px", height: "550px" });
+                $('#popupReceipt').jqxWindow({ isModal: true, modalOpacity: 0.7 });
+                $('#popupReceipt').jqxWindow({ showCloseButton: false });
+                $("#popupReceipt").css("visibility", "visible");
+                $("#popupReceipt").jqxWindow({ title: 'Enter Receipt' });
+                $("#popupReceipt").jqxWindow('open');
             });
 
             //redeem 1 day
@@ -541,10 +553,9 @@
                 }
             }
 
-            var thisMemberId = $("#MemberId").html();
             var thisUser = $("#loginLabel").html();
 
-            PageMethods.logSearch(thisUser, thisMemberId, $("#txtSearchEmailFNameFPNumber").val(), $("#txtSearchLastName").val(), DisplayPageMethodResults);
+            PageMethods.logSearch(thisUser, 0, $("#txtSearchEmailFNameFPNumber").val(), $("#txtSearchLastName").val(), DisplayPageMethodResults);
 
             loadSearchResults(thisReturn);
         }
@@ -619,6 +630,10 @@
 
                     MarkRedemptionAsUserd(thisCertificateId);
 
+
+                    var thisUser = $("#loginLabel").html();
+
+                    PageMethods.logCertificate(thisUser, thisMemberId, $("#txtSearchEmailFNameFPNumber").val(), $("#txtSearchLastName").val(), DisplayPageMethodResults);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     alert("Error: " + errorThrown);
@@ -962,7 +977,7 @@
                     $("#stateCombo").jqxComboBox('selectItem', thisData.result.data.StateId);
                     $("#stateCombo").jqxComboBox({ disabled: true });
                     $("#CompanyId").html(thisData.result.data.CompanyId);
-                    //loadRate();
+                    loadRate();
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     alert("Error: " + errorThrown);
@@ -1071,7 +1086,7 @@
                 <input type="button" id="btnWeek" value="Week" style="margin-right:10px;margin-top:7px;" />
             </div>
             <div class="col-sm-2" >
-                <input type="button" id="btnReceipt" value="Receipt" style="margin-right:10px;margin-top:7px;display:none;" />
+                <input type="button" id="btnReceipt" value="Receipt" style="margin-right:10px;margin-top:7px;" />
             </div>
         </div>
     </div>

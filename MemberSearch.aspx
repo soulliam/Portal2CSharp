@@ -243,6 +243,11 @@
 
             //#region ButtonClicks
 
+            //Goto pending manualedits button
+            $("#manualEditPending").on("click", function (event) {
+                window.location = "./PendingManualEdits.aspx"
+            });
+
             //Delte email and set status
             $("#deleteEmail").on("click", function (event) {
                 var result = confirm("Do you want to delete this member's email?");
@@ -643,7 +648,7 @@
                 //var PageMemberID = Number($("#MemberId").val());
                 var PageMemberID = $("#MemberId").val();
                 var thisLocationId = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
-                var thisManualEditDate = new Date().toMMDDYYYYString();
+                var thisManualEditDate = DateTimeFormat(new Date());
                 var thisSubmittedDate = "1/1/1900";
                 var thisPerformedBy = $("#txtLoggedinUsername").val();
                 var thisSubmittedBy = null;
@@ -918,6 +923,8 @@
                     $("#deleteEmail").jqxButton({ disabled: true });
                     $("#MailerCompanyCombo").jqxComboBox({ disabled: true });
                     $('#phoneGrid').jqxGrid({ editable: false });
+
+
                 }
                 else {
                     jQuery("#tabMemberInfo").find("input[type=text]").attr("disabled", false);
@@ -929,6 +936,11 @@
                     $("#addPhone").jqxButton({ disabled: false });
                     $("#deleteEmail").jqxButton({ disabled: false });
                     $('#phoneGrid').jqxGrid({ editable: true });
+
+                    if (group.indexOf("Portal_Asstmanager") > -1) {
+                        $("#MailerCompanyCombo").jqxComboBox({ disabled: true });
+                    }
+                    Security();
                 }
             });
             //#endregion
@@ -1762,8 +1774,8 @@
                       { text: 'Create Date', datafield: 'CreateDatetime', width: '13%', cellsrenderer: DateRender },
                       { text: 'Start Date', datafield: 'StartDatetime', width: '13%', cellsrenderer: DateRender },
                       { text: 'End Date', datafield: 'EndDatetime', width: '13%', cellsrenderer: DateRender },
-                      { text: 'Status', datafield: 'ReservationStatusName', width: '11%' },
-                      { text: 'Note', datafield: 'MemberNote', width: '25%' }
+                      { text: 'Status', datafield: 'ReservationStatusName', width: '9%' },
+                      { text: 'Note', datafield: 'MemberNote', width: '24%' }
                 ]
             });
         }
@@ -2811,13 +2823,13 @@
                                         <div class="form-group">
                                             <label for="FirstName" class="col-sm-3 col-md-4 control-label">First Name:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="FirstName" placeholder="">
+                                                <input type="text" class="form-control NoAsstMgr" id="FirstName" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="LastName" class="col-sm-3 col-md-4 control-label">Last Name:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="LastName" placeholder="">
+                                                <input type="text" class="form-control NoAsstMgr" id="LastName" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -2883,13 +2895,13 @@
                                         <div class="form-group">
                                             <label for="RepCode" class="col-sm-3 col-md-4 control-label">Rep Code:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="MarketingCode" placeholder="">
+                                                <input type="text" class="form-control NoMgr NoAsstMgr" id="MarketingCode" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="MailerCo" class="col-sm-3 col-md-4 control-label">Mailer Company:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <div id="MailerCompanyCombo"></div>
+                                                <div id="MailerCompanyCombo" class="NoAsstMgr"></div>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -2935,7 +2947,7 @@
                                         <div class="form-group">
                                             <label for="Zip" class="col-sm-3 col-md-4 control-label">Zip:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="Zip" placeholder="Zip Code">
+                                                <input type="text" class="form-control FART" id="Zip" placeholder="Zip Code">
                                             </div>
                                         </div>
                                         <div class="form-group">

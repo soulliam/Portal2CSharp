@@ -26,6 +26,24 @@ function Security() {
             elements[i].style.display = "none";
         }
     }
+
+    if (group.indexOf("Portal_Asstmanager") > -1) {
+        var elements = document.getElementsByClassName('NoAsstMgr')
+
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].disabled = true;
+        }
+    }
+
+    if (group.indexOf("Portal_Manager") > -1) {
+        var elements = document.getElementsByClassName('NoMgr')
+
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].disabled = true;
+        }
+    }
+
+
 }
 
 //render dates for grid
@@ -39,6 +57,21 @@ var DateRender = function (row, columnfield, value, defaulthtml, columnpropertie
         var thisDate = thisDateTime[0].split("-");
 
         var newDate = thisDate[1] + "/" + thisDate[2] + "/" + thisDate[0];
+
+        return newDate;
+    } else {
+        return "";
+    }
+
+};
+
+var DateTimeRender = function (row, columnfield, value, defaulthtml, columnproperties) {
+    // format date as string due to inconsistant date coversions
+    var thisDateTime = value;
+
+    if (thisDateTime != "") {
+
+        var newDate = JsonDateTimeFormat(thisDateTime);
 
         return newDate;
     } else {

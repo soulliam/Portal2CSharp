@@ -62,8 +62,10 @@
 
             
             $("#btnSubmit").on('click', function () {
-                var ProcessList = $("#tempUserGuid").val();
-                //var ProcessList = $("#loginLabel").val();
+                //var ProcessList = $("#tempUserGuid").val();
+                
+                var ProcessList = $("#txtLoggedinUsername").val();
+
                 var getselectedrowindexes = $('#jqxgrid').jqxGrid('getselectedrowindexes');
 
                 if (getselectedrowindexes.length > 0) {
@@ -214,7 +216,7 @@
                         { text: 'ManualEditId', datafield: 'ManualEditId', hidden: true },
                         { text: 'Full Name', datafield: 'FullName' },
                         { text: 'Points', datafield: 'Points' },
-                        { text: 'DateOfRequest', datafield: 'DateOfRequest' },
+                        { text: 'DateOfRequest', datafield: 'DateOfRequest', cellsrenderer: DateTimeRender },
                         { text: 'Certificate #', datafield: 'CertificateNumber' },
                         { text: 'Explanation', datafield: 'Explanation' }
                 ]
