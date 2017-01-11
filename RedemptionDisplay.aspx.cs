@@ -19,6 +19,11 @@ public partial class RedemptionDisplay : System.Web.UI.Page
         string thisFPNumber = Request.QueryString["thisFPNumber"];
         string thisMemberName = Request.QueryString["thisMemberName"];
 
+        RedemptionType.InnerHtml = "";
+        CertificateID.InnerHtml = "";
+        FPNumber.InnerHtml = "";
+        MemberName.InnerHtml = "";
+
         RedemptionType.InnerHtml = thisRedemptionType;
         CertificateID.InnerHtml = thisCertificateID;
         FPNumber.InnerHtml = thisFPNumber;

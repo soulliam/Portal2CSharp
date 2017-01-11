@@ -10,7 +10,7 @@
                     "ApplicationKey": $("#AK").val()
                 },
                 type: "PUT",
-                url: $("#apiDomain").val() + "members/" + thisMemberId,
+                url: $("#apiDomain").val() + "members/" + thisMemberId + "?SendEmail=false",
                 data: JSON.stringify({
                     "UserName": thisUserName,
                     "FirstName": thisFirstName,
@@ -57,7 +57,7 @@
                     "ApplicationKey": $("#AK").val()
                 },
                 type: "PUT",
-                url: $("#apiDomain").val() + "members/" + thisMemberId,
+                url: $("#apiDomain").val() + "members/" + thisMemberId + "?SendEmail=false",
                 data: JSON.stringify({
                     "UserName": thisUserName,
                     "FirstName": thisFirstName,
@@ -108,7 +108,7 @@
                     "ApplicationKey": $("#AK").val()
                 },
                 type: "PUT",
-                url: $("#apiDomain").val() + "members/" + thisMemberId,
+                url: $("#apiDomain").val() + "members/" + thisMemberId + "?SendEmail=false",
                 data: JSON.stringify({
                     "UserName": thisUserName,
                     "FirstName": thisFirstName,
@@ -163,7 +163,7 @@
                     "ApplicationKey": $("#AK").val()
                 },
                 type: "PUT",
-                url: $("#apiDomain").val() + "members/" + thisMemberId,
+                url: $("#apiDomain").val() + "members/" + thisMemberId + "?SendEmail=false",
                 data: JSON.stringify({
                     "UserName": thisUserName,
                     "FirstName": thisFirstName,
@@ -222,7 +222,7 @@
                     "ApplicationKey": $("#AK").val()
                 },
                 type: "PUT",
-                url: $("#apiDomain").val() + "members/" + thisMemberId,
+                url: $("#apiDomain").val() + "members/" + thisMemberId + "?SendEmail=false",
                 data: JSON.stringify({
                     "UserName": thisUserName,
                     "FirstName": thisFirstName,

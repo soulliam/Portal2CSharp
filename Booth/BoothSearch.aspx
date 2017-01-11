@@ -173,11 +173,11 @@
 
                 var offset = $("#jqxSearchGrid").offset();
                 $("#popupReceipt").jqxWindow({ position: { x: parseInt(offset.left) + 200, y: parseInt(offset.top) - 80 } });
-                $('#popupReceipt').jqxWindow({ width: "500px", height: "550px" });
+                $('#popupReceipt').jqxWindow({ width: "500px", height: "575px" });
                 $('#popupReceipt').jqxWindow({ isModal: true, modalOpacity: 0.7 });
                 $('#popupReceipt').jqxWindow({ showCloseButton: false });
                 $("#popupReceipt").css("visibility", "visible");
-                $("#popupReceipt").jqxWindow({ title: 'Enter Receipt' });
+                $("#popupReceipt").jqxWindow({ title: 'Enter Customer Receipt' });
                 $("#popupReceipt").jqxWindow('open');
             });
 
@@ -269,6 +269,8 @@
                 if ($("#txtSearchLastName").is(":hidden")) {
                     $("#txtSearchLastName").toggle();
                 }
+                $("#txtSearchEmailFNameFPNumber").prop('type', 'text');
+                $("#txtSearchEmailFNameFPNumber").attr("placeholder", "First Name");
                 $("#btnSearchName").css("background", "darkgray");
                 $("#btnSearchFPNumber").css("background", "#EFEFEF");
                 $("#btnSearchEmail").css("background", "#EFEFEF");
@@ -279,6 +281,8 @@
                 if ($("#txtSearchLastName").is(":visible")) {
                     $("#txtSearchLastName").toggle();
                 }
+                $("#txtSearchEmailFNameFPNumber").prop('type', 'number');
+                $("#txtSearchEmailFNameFPNumber").attr("placeholder", "FPNumber");
                 $("#btnSearchFPNumber").css("background", "darkgray");
                 $("#btnSearchName").css("background", "#EFEFEF");
                 $("#btnSearchEmail").css("background", "#EFEFEF");
@@ -289,6 +293,8 @@
                 if ($("#txtSearchLastName").is(":visible")) {
                     $("#txtSearchLastName").toggle();
                 }
+                $("#txtSearchEmailFNameFPNumber").prop('type', 'email');
+                $("#txtSearchEmailFNameFPNumber").attr("placeholder", "Email Address");
                 $("#btnSearchEmail").css("background", "darkgray");
                 $("#btnSearchName").css("background", "#EFEFEF");
                 $("#btnSearchFPNumber").css("background", "#EFEFEF");
@@ -633,7 +639,7 @@
 
                     var thisUser = $("#loginLabel").html();
 
-                    PageMethods.logCertificate(thisUser, thisMemberId, $("#txtSearchEmailFNameFPNumber").val(), $("#txtSearchLastName").val(), DisplayPageMethodResults);
+                    PageMethods.logCertificate(thisUser, thisMemberId, NumberToRedeem, thisRedemptionTypeId, DisplayPageMethodResults);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     alert("Error: " + errorThrown);
@@ -1054,7 +1060,7 @@
                 <input type="button" id="btnSearchClear" value="Clear" />
             </div>
             <div class="col-sm-9">
-                <input type="text" id="txtSearchEmailFNameFPNumber" style="font-size:x-large;margin-top:10px;" placeholder="Email/First Name/FPNumber" />
+                <input type="Number" id="txtSearchEmailFNameFPNumber" style="font-size:x-large;margin-top:10px;" placeholder="FPNumber" />
             
                 <input type="text" id="txtSearchLastName" style="font-size:x-large;margin-top:10px;" placeholder="Last Name"  />
             </div>
@@ -1133,8 +1139,8 @@
 
     <div id="popupNewEmail" style="display:none">
         <div>
-            <div><input style="margin-top:20px" id="oldEmail" placeholder="Old Email Address" /></div>
-            <div><input style="margin-top:20px" id="newEmail" placeholder="New Email Address" /></div>
+            <div><input type="email" style="margin-top:20px" id="oldEmail" placeholder="Old Email Address" /></div>
+            <div><input type="email" style="margin-top:20px" id="newEmail" placeholder="New Email Address" /></div>
             <div>
                 <input type="button" style="float:left;margin-top:70px" id="newEmailCancel" value="Cancel" />
                 <input type="button" style="float:right;margin-top:70px" id="newEmailSubmit" value="Submit" />
@@ -1154,8 +1160,9 @@
 
     <div id="popupReceipt" style="display:none">
         <div>
+            <div style="width:100%;text-align:center">Entry Date</div>
             <div><div id="jqxReceiptCalendar" style="margin-left:40px;"></div></div>
-            <div><input type="text" id="receiptNumber" placeholder="Receipt Number" style="margin-left:75px;margin-top:10px;" /></div>
+            <div><input type="number" id="receiptNumber" placeholder="Receipt Number" style="margin-left:75px;margin-top:10px;" /></div>
             <div><input type="button" id="receiptSave" value="Save" style="float:left;margin-top:10px;" /><input type="button" id="receiptCancel" value="Cancel" style="float:right;margin-top:10px;" /></div>
         </div>
     </div>

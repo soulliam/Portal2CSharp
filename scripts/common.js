@@ -18,7 +18,7 @@ function Security() {
         }
     }
 
-    if (group.indexOf("Portal_RFR") <= -1) {
+    if (group.indexOf("Portal_RFR") <= -1 && group.indexOf("Portal_Superadmin") <= -1 && group.indexOf("Portal_Admin") <= -1) {
         //if (group.indexOf("frie") <= -1) {
         var elements = document.getElementsByClassName('RFR')
 

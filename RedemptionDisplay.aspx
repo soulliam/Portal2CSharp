@@ -9,7 +9,10 @@
     <script type="text/javascript" src="jqwidgets/jqxbuttons.js"></script>
 
     <script type="text/javascript">
+        
         $(document).ready(function () {
+            
+
             $("#email").jqxButton({ width: 415, height: 25 });
 
             $("#email").jqxButton({ width: 180, height: 25 });
@@ -33,7 +36,7 @@
                             alert(result);
                         }
                         function onError(result) {
-                            alert('Error Submitting Receipt: ' + result);
+                            alert('Error Emailing Redemption: ' + result);
                         }
                     }
                 });

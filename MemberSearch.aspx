@@ -452,9 +452,6 @@
                     return null;
                 }
 
-
-                alert("HLEP");
-
                 var ProcessList = "";
                 var first = true;
                 var getselectedrowindexes = $('#jqxReservationGrid').jqxGrid('getselectedrowindexes');
@@ -489,8 +486,8 @@
                             "AccessToken": $("#userGuid").val(),
                             "ApplicationKey": $("#AK").val()
                         },
-                        type: "DEL",
-                        url: $("#apiDomain").val() + "/reservations/" + thisReservationList[i],
+                        type: "DELETE",
+                        url: $("#apiDomain").val() + "reservations/" + thisReservationList[i],
                         dataType: "json",
                         success: function () {
                             alert("Canceled!");
@@ -1394,22 +1391,7 @@
 
                 if (isRedemption != null) {
 
-                    $("#popupRedemption").css('display', 'block');
-                    $("#popupRedemption").css('visibility', 'hidden');
 
-                    $("#popupRedemption").jqxWindow({ position: { x: '25%', y: '7%' } });
-                    $('#popupRedemption').jqxWindow({ resizable: false });
-                    $('#popupRedemption').jqxWindow({ draggable: true });
-                    $('#popupRedemption').jqxWindow({ isModal: true });
-                    $("#popupRedemption").css("visibility", "visible");
-                    $('#popupRedemption').jqxWindow({ height: '675px', width: '35%' });
-                    $('#popupRedemption').jqxWindow({ minHeight: '270px', minWidth: '10%' });
-                    $('#popupRedemption').jqxWindow({ maxHeight: '700px', maxWidth: '50%' });
-                    $('#popupRedemption').jqxWindow({ showCloseButton: true });
-                    $('#popupRedemption').jqxWindow({ animationType: 'combined' });
-                    $('#popupRedemption').jqxWindow({ showAnimationDuration: 300 });
-                    $('#popupRedemption').jqxWindow({ closeAnimationDuration: 500 });
-                    $("#popupRedemption").jqxWindow('open');
 
                     //get redemption data and send to display
                     var thisRedemptionId = dataRecord.RedemptionId
@@ -1424,6 +1406,24 @@
                             "ApplicationKey": $("#AK").val()
                         },
                         success: function (thisData) {
+
+                            $("#popupRedemption").css('display', 'block');
+                            $("#popupRedemption").css('visibility', 'hidden');
+
+                            $("#popupRedemption").jqxWindow({ position: { x: '25%', y: '7%' } });
+                            $('#popupRedemption').jqxWindow({ resizable: false });
+                            $('#popupRedemption').jqxWindow({ draggable: true });
+                            $('#popupRedemption').jqxWindow({ isModal: true });
+                            $("#popupRedemption").css("visibility", "visible");
+                            $('#popupRedemption').jqxWindow({ height: '675px', width: '35%' });
+                            $('#popupRedemption').jqxWindow({ minHeight: '270px', minWidth: '10%' });
+                            $('#popupRedemption').jqxWindow({ maxHeight: '700px', maxWidth: '50%' });
+                            $('#popupRedemption').jqxWindow({ showCloseButton: true });
+                            $('#popupRedemption').jqxWindow({ animationType: 'combined' });
+                            $('#popupRedemption').jqxWindow({ showAnimationDuration: 300 });
+                            $('#popupRedemption').jqxWindow({ closeAnimationDuration: 500 });
+                            $("#popupRedemption").jqxWindow('open');
+
                             var thisCertificateID = thisData.result.data.CertificateID;
                             var thisRedemptionType = thisData.result.data.RedemptionType.RedemptionType;
                             thisRedemptionType = thisRedemptionType.replace(" ", "%20");
@@ -2305,23 +2305,6 @@
 
         function showRedemption(thisRedemptionId, toAddress, thisMemberId) {
 
-            $("#popupRedemption").css('display', 'block');
-            $("#popupRedemption").css('visibility', 'hidden');
-
-            $("#popupRedemption").jqxWindow({ position: { x: '25%', y: '7%' } });
-            $('#popupRedemption').jqxWindow({ resizable: false });
-            $('#popupRedemption').jqxWindow({ draggable: true });
-            $('#popupRedemption').jqxWindow({ isModal: true });
-            $("#popupRedemption").css("visibility", "visible");
-            $('#popupRedemption').jqxWindow({ height: '675px', width: '35%' });
-            $('#popupRedemption').jqxWindow({ minHeight: '270px', minWidth: '10%' });
-            $('#popupRedemption').jqxWindow({ maxHeight: '700px', maxWidth: '50%' });
-            $('#popupRedemption').jqxWindow({ showCloseButton: true });
-            $('#popupRedemption').jqxWindow({ animationType: 'combined' });
-            $('#popupRedemption').jqxWindow({ showAnimationDuration: 300 });
-            $('#popupRedemption').jqxWindow({ closeAnimationDuration: 500 });
-            $("#popupRedemption").jqxWindow('open');
-
             var url = $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions/" + thisRedemptionId
 
             $.ajax({
@@ -2334,6 +2317,23 @@
                     "ApplicationKey": $("#AK").val()
                 },
                 success: function (thisData) {
+                    $("#popupRedemption").css('display', 'block');
+                    $("#popupRedemption").css('visibility', 'hidden');
+
+                    $("#popupRedemption").jqxWindow({ position: { x: '25%', y: '7%' } });
+                    $('#popupRedemption').jqxWindow({ resizable: false });
+                    $('#popupRedemption').jqxWindow({ draggable: true });
+                    $('#popupRedemption').jqxWindow({ isModal: true });
+                    $("#popupRedemption").css("visibility", "visible");
+                    $('#popupRedemption').jqxWindow({ height: '675px', width: '35%' });
+                    $('#popupRedemption').jqxWindow({ minHeight: '270px', minWidth: '10%' });
+                    $('#popupRedemption').jqxWindow({ maxHeight: '700px', maxWidth: '50%' });
+                    $('#popupRedemption').jqxWindow({ showCloseButton: true });
+                    $('#popupRedemption').jqxWindow({ animationType: 'combined' });
+                    $('#popupRedemption').jqxWindow({ showAnimationDuration: 300 });
+                    $('#popupRedemption').jqxWindow({ closeAnimationDuration: 500 });
+                    $("#popupRedemption").jqxWindow('open');
+
                     var thisCertificateID = thisData.result.data.CertificateID;
                     var thisRedemptionType = thisData.result.data.RedemptionType.RedemptionType;
                     thisRedemptionType = thisRedemptionType.replace(" ", "%20");
