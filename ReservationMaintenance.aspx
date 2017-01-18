@@ -280,7 +280,7 @@
                         "AccessToken": $("#userGuid").val(),
                         "ApplicationKey": $("#AK").val()
                     },
-                    type: "DEL",
+                    type: "delete",
                     url: $("#apiDomain").val() + "restriction/" + delRescrtrictionId,
                     dataType: "json",
                     success: function (response) {

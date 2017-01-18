@@ -11,6 +11,7 @@ public partial class Portal2 : System.Web.UI.MasterPage
     protected void Page_Load(object sender, EventArgs e)
     {
 
+
         ////uncomment for production or security testing
 
         //if ((string)(Session["IMINBOOTH"]) == "true")
@@ -84,6 +85,23 @@ public partial class Portal2 : System.Web.UI.MasterPage
         Session["groupList"] = groupList;
 
         getUserLocation(groupList);
+
+        Boolean beenToDefault = false;
+
+        if ((string)(Session["IMINBOOTH"]) == "true")
+        {
+            beenToDefault = true;
+        }
+
+        if ((string)(Session["IMIN"]) == "true")
+        {
+            beenToDefault = true;
+        }
+
+        if (beenToDefault == false)
+        {
+            Response.Redirect("./Default.aspx");
+        }
 
 
         // if you are a booth person send you to booth, if you don't have groups then you should not be hear

@@ -56,7 +56,7 @@ var DateRender = function (row, columnfield, value, defaulthtml, columnpropertie
 
         var thisDate = thisDateTime[0].split("-");
 
-        var newDate = thisDate[1] + "/" + thisDate[2] + "/" + thisDate[0];
+        var newDate = '<div style="margin-top: 10px;margin-left: 5px">' + thisDate[1] + "/" + thisDate[2] + "/" + thisDate[0] + '</div>';
 
         return newDate;
     } else {
@@ -73,7 +73,7 @@ var DateTimeRender = function (row, columnfield, value, defaulthtml, columnprope
 
         var newDate = JsonDateTimeFormat(thisDateTime);
 
-        return newDate;
+        return '<div style="margin-top: 10px;margin-left: 5px">' + newDate + '</div>';
     } else {
         return "";
     }

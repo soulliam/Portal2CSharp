@@ -664,7 +664,6 @@
                 },
                 dataType: "json",
                 success: function (Response) {
-                    alert("Saved!  Marked as used.");
                     success = true;
                 },
                 error: function (request, status, error) {

@@ -33,6 +33,7 @@ namespace class_ADO
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return null;
             }
 
@@ -60,11 +61,13 @@ namespace class_ADO
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine(ex.ToString());
                     return null;
                 }
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return null;
             }
 

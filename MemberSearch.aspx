@@ -163,7 +163,11 @@
 
                 $("#transferCard").jqxButton();
                 $("#addCard").jqxButton();
-                $("#deleteCard").jqxButton(); 
+                $("#deleteCard").jqxButton();
+                $("#setCardPrimary").jqxButton();
+                $("#combineMemberCards").jqxButton();
+                $("#saveCombineMember").jqxButton();
+                $("#cancelCombineMember").jqxButton();
 
                 $("#addCardSubmit").jqxButton(); 
 
@@ -565,8 +569,14 @@
                     phoneNumber[i] = rows[i].Number;
                 }
 
+                var isRFR = false;
+
+                if (group.indexOf("Portal_RFR") > 0) {
+                    isRFR = true;
+                }
+
                 saveUpdateMemberInfo(phoneType, phoneNumber, thisMemberId, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2,
-                                     thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail);
+                                     thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, isRFR);
 
 
                 
@@ -597,7 +607,7 @@
                 addCard();
             });
 
-            //Delte Card from Member
+            //Delete Card from Member
             $("#deleteCard").on("click", function (event) {
                 var result = confirm("Do you want to delete this card!");
                 if (result != true) {
@@ -619,7 +629,7 @@
                                 "AccessToken": $("#userGuid").val(),
                                 "ApplicationKey": $("#AK").val()
                             },
-                            type: "DEL",
+                            type: "Delete",
                             url: url,
 
                             dataType: "json",
@@ -631,11 +641,135 @@
                                 loadCards(thisMemberId);
                             },
                             error: function (request, status, error) {
-                                alert(error + " - " + request.responseJSON.message);
+                                alert(error);
                             }
                         });
                     }
                 }
+            });
+
+            //Set Card As Primary
+            $("#setCardPrimary").on("click", function (event) {
+                var result = confirm("Do you want to set this card as primary?");
+                if (result != true) {
+                    return null;
+                }
+
+                var getselectedrowindexes = $('#jqxCardGrid').jqxGrid('getselectedrowindexes');
+
+                //We can only do this to one card
+                if (getselectedrowindexes.length > 1) {
+                    alert("Please only select one card to set as primary!")
+                    return null;
+                }
+
+                if (getselectedrowindexes.length > 0) {
+                    for (var index = 0; index < getselectedrowindexes.length; index++) {
+                        var selectedRowData = $('#jqxCardGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
+
+                        var thisMemberId = $("#MemberId").val();
+
+                        var url = $("#apiDomain").val() + "members/" + thisMemberId + "/cards/" + selectedRowData.CardId + "/primary";
+
+                        $.ajax({
+                            headers: {
+                                "Accept": "application/json",
+                                "Content-Type": "application/json",
+                                "AccessToken": $("#userGuid").val(),
+                                "ApplicationKey": $("#AK").val()
+                            },
+                            type: "Put",
+                            url: url,
+
+                            dataType: "json",
+                            success: function () {
+                                alert("Success!");
+                                thisMemberId = $("#MemberId").val();
+                                $('#jqxCardGrid').jqxGrid('clearselection');
+                                $('#jqxCardGrid').jqxGrid('clear');
+                                loadCards(thisMemberId);
+                            },
+                            error: function (request, status, error) {
+                                alert(error);
+                            }
+                        });
+
+                    }
+                }
+            });
+
+            // close combine card popup
+            $("#cancelCombineMember").on("click", function (event) {
+                $("#popupCombineMembers").jqxWindow('hide');
+                $("#targetMember").val('');
+            });
+
+
+            //Open Combine card popup
+            $("#combineMemberCards").on("click", function (event) {
+
+                $("#popupCombineMembers").css('display', 'block');
+                $("#popupCombineMembers").css('visibility', 'hidden');
+
+                var offset = $("#jqxMemberInfoTabs").offset();
+                $("#popupCombineMembers").jqxWindow({ position: { x: '30%', y: '30%' } });
+                $('#popupCombineMembers').jqxWindow({ resizable: false });
+                $('#popupCombineMembers').jqxWindow({ draggable: true });
+                $('#popupCombineMembers').jqxWindow({ isModal: true });
+                $("#popupCombineMembers").css("visibility", "visible");
+                $('#popupCombineMembers').jqxWindow({ height: '15%', width: '30%' });
+                $('#popupCombineMembers').jqxWindow({ minHeight: '25%', minWidth: '30%' });
+                $('#popupCombineMembers').jqxWindow({ showCloseButton: true });
+                $('#popupCombineMembers').jqxWindow({ animationType: 'combined' });
+                $('#popupCombineMembers').jqxWindow({ showAnimationDuration: 300 });
+                $('#popupCombineMembers').jqxWindow({ closeAnimationDuration: 500 });
+                $("#popupCombineMembers").jqxWindow('open');
+
+                var thisMemberId = $("#MemberId").val();
+
+                $("#targetMember").val(thisMemberId);
+
+               
+            });
+
+            $("#saveCombineMember").on("click", function (event) {
+                var result = confirm("Do you want combine cards?");
+                if (result != true) {
+                    return null;
+                }
+
+                thisTargetMemberId = $("#targetMember").val();
+                thisOriginMemberId = $("#orginMember").val();
+                thisCombinedBy = $("#txtLoggedinUsername").val();
+
+                var url = $("#localApiDomain").val() + "CombineMemberCardsController/CombineMemberCards/";
+                //var url = "http://localhost:52839/api/CombineMemberCardsController/CombineMemberCards/";
+
+                $.ajax({
+                    type: "POST",
+                    
+                    url: url,
+                    
+                    data: {
+                        "TargetMemberId": thisTargetMemberId,
+                        "OriginMemberId": thisOriginMemberId,
+                        "CombinedBy": thisCombinedBy,
+                    },
+                    dataType: "json",
+                    success: function (Response) {
+                        alert("Success!");
+                        $("#popupCombineMembers").jqxWindow('hide');
+                        thisMemberId = $("#MemberId").val();
+                        $('#jqxCardGrid').jqxGrid('clearselection');
+                        $('#jqxCardGrid').jqxGrid('clear');
+                        $("#targetMember").val('');
+                        loadCards(thisMemberId);
+                    },
+                    error: function (request, status, error) {
+                        alert(error);
+                    }
+                });
+
             });
 
             //submit manual Edit manualEditSubmit
@@ -657,6 +791,8 @@
                 var thisNotes = $("#manualEditNote").val();
                 var thisPerformedByUserId = null;
                 var thisSubmittedByUserId = null;
+
+                thisNotes = thisNotes.replace("'", "''");
 
                 
                 $.ajax({
@@ -1352,7 +1488,7 @@
                       { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
                       { text: 'Points Changed', datafield: 'PointsChanged', width: '10%' },
                       { text: 'Description', datafield: 'Description', width: '50%' },
-                      { text: 'Location', datafield: 'LocationId', width: '10%', cellsrenderer: locatioinCellsrenderer },
+                      { text: 'Location', datafield: 'LocationId', width: '10%' },
                       { text: 'Date', datafield: 'Date', width: '10%', cellsrenderer: DateRender }
                 ]
             });
@@ -1538,13 +1674,13 @@
             var source =
             {
                 datafields: [
-                    { name: 'MemberId' },
                     { name: 'FirstName' },
                     { name: 'LastName' },
                     { name: 'FPNumber' },
                     { name: 'Company' },
                     { name: 'EmailAddress' },
-                    { name: 'Home' }
+                    { name: 'Home' },
+                    { name: 'MemberId' }
                 ],
                 id: 'MemberId',
                 type: 'POST',
@@ -1568,6 +1704,7 @@
                 altrows: true,
                 filterable: true,
                 columnsresize: true,
+                enablebrowserselection: true,
                 ready: function ()
                 {
                     //var datainformations = $("#jqxSearchGrid").jqxGrid("getdatainformation");
@@ -1596,13 +1733,13 @@
 
                           }
                       },
-                      { text: 'MemberId', datafield: 'MemberId', hidden: true },
                       { text: 'First Name', datafield: 'FirstName', width: '15%' },
-                      { text: 'Last Name', datafield: 'LastName', width: '20%' },
-                      { text: 'Primary Card', datafield: 'FPNumber', width: '10%' },
-                      { text: 'Company', datafield: 'Company', width: '20%' },
+                      { text: 'Last Name', datafield: 'LastName', width: '19%' },
+                      { text: 'Primary Card', datafield: 'FPNumber', width: '8%' },
+                      { text: 'Company', datafield: 'Company', width: '14%' },
                       { text: 'Email', datafield: 'EmailAddress', width: '20%' },
-                      { text: 'Home', datafield: 'Home', width: '15%' }
+                      { text: 'Home', datafield: 'Home', width: '12%' },
+                      { text: 'MemberId', datafield: 'MemberId', width: '8%'},
                 ]
             });
 
@@ -1695,6 +1832,7 @@
                 altrows: true,
                 filterable: true,
                 selectionmode: 'checkbox',
+                enablebrowserselection: true,
                 columns: [
                       { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
                       { text: 'CertificateID', datafield: 'CertificateID' },
@@ -1766,6 +1904,7 @@
                 sortable: true,
                 altrows: true,
                 filterable: true,
+                enablebrowserselection: true,
                 columns: [
                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
                       { text: 'Reservation Number', datafield: 'ReservationNumber', width: '10%' },
@@ -2206,6 +2345,8 @@
             var note = $("#txtNote").val();
             var submittedBy = $("#txtLoggedinUsername").val();
 
+            note = note.replace("'", "''");
+
             var testURL = $("#localApiDomain").val() + "MemberNotes/AddNote/";
 
             $.ajax({
@@ -2227,7 +2368,6 @@
             $("#popupNote").jqxWindow('hide');
             
         }
-
 
 
         //#endregion
@@ -2501,11 +2641,13 @@
 
             var locationId = 0;
 
-
+            //Get member detail information
+            var url = $("#apiDomain").val() + "members/" + PageMemberID;
+            //var url = "http://localhost:52839/api/members/" + PageMemberID;
 
             $.ajax({
                 type: 'GET',
-                url: $("#apiDomain").val() + "members/" + PageMemberID,
+                url: url,
                 headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
@@ -3185,6 +3327,8 @@
                                 <input type="button" id="transferCard" value="Transfer" class="editor" style="display:none;" />
                                 <input type="button" id="deleteCard" value="Delete" class="editor" />
                                 <input type="button" id="addCard" value="Add" class="editor" />
+                                <input type="button" id="setCardPrimary" value="Set as Primary" class="editor" />
+                                <input type="button" id="combineMemberCards" value="Combine Member Cards" class="editor" />
                                 </div>
                             </div>
                         </div>
@@ -3456,6 +3600,50 @@
         <div>Redemption Details</div>
         <div style="margin-left:20px;margin-top:10px;overflow:hidden;">
             <iframe id="redemptionIframe" style="border:none;width:450px;height:700px;" ></iframe>
+        </div>
+    </div>
+
+    <%-- html for combine cards --%>
+    <div id="popupCombineMembers" class="popupCombinMembers" style="display:none">
+        <div>Combine Members</div>
+        <div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label for="combineMemberTransferFrom" class="col-sm-3 col-md-4 control-label">Transfer from:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" id="orginMember"  />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="combineMemberTransferTo" class="col-sm-3 col-md-4 control-label">Transfer to:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" id="targetMember" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="top-divider">
+                            <div class="col-sm-2 col-md-3">
+                            </div>
+                            <div class="col-sm-4 col-md-3">
+                                <input type="button" id="saveCombineMember" value="Save" />
+                            </div>
+                            <div class="col-sm-4 col-md-3">
+                                <input type="button" id="cancelCombineMember" value="Cancel" />
+                            </div>
+                            <div class="col-sm-2 col-md-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

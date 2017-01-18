@@ -1,5 +1,12 @@
 ﻿function saveUpdateMemberInfo(phoneType, phoneNumber, thisMemberId, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2,
-                                     thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail) {
+                                     thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, RFR) {
+    if (RFR == true) {
+        url = $("#apiDomain").val() + "members/" + thisMemberId + "?SendEmail=false";
+    } else {
+        url = $("#apiDomain").val() + "members/" + thisMemberId;
+    }
+    
+
     switch (phoneType.length) {
         case 0:
             $.ajax({
@@ -10,7 +17,7 @@
                     "ApplicationKey": $("#AK").val()
                 },
                 type: "PUT",
-                url: $("#apiDomain").val() + "members/" + thisMemberId + "?SendEmail=false",
+                url: url,
                 data: JSON.stringify({
                     "UserName": thisUserName,
                     "FirstName": thisFirstName,
@@ -57,7 +64,7 @@
                     "ApplicationKey": $("#AK").val()
                 },
                 type: "PUT",
-                url: $("#apiDomain").val() + "members/" + thisMemberId + "?SendEmail=false",
+                url: url,
                 data: JSON.stringify({
                     "UserName": thisUserName,
                     "FirstName": thisFirstName,
@@ -108,7 +115,7 @@
                     "ApplicationKey": $("#AK").val()
                 },
                 type: "PUT",
-                url: $("#apiDomain").val() + "members/" + thisMemberId + "?SendEmail=false",
+                url: url,
                 data: JSON.stringify({
                     "UserName": thisUserName,
                     "FirstName": thisFirstName,
@@ -163,7 +170,7 @@
                     "ApplicationKey": $("#AK").val()
                 },
                 type: "PUT",
-                url: $("#apiDomain").val() + "members/" + thisMemberId + "?SendEmail=false",
+                url: url,
                 data: JSON.stringify({
                     "UserName": thisUserName,
                     "FirstName": thisFirstName,
@@ -222,7 +229,7 @@
                     "ApplicationKey": $("#AK").val()
                 },
                 type: "PUT",
-                url: $("#apiDomain").val() + "members/" + thisMemberId + "?SendEmail=false",
+                url: url,
                 data: JSON.stringify({
                     "UserName": thisUserName,
                     "FirstName": thisFirstName,

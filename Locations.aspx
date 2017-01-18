@@ -531,7 +531,7 @@
                         "AccessToken": $("#userGuid").val(),
                         "ApplicationKey": $("#AK").val()
                     },
-                    type: "DEL",
+                    type: "delete",
                     url: featurePostUrl,
                     dataType: "json",
                     success: function (response) {

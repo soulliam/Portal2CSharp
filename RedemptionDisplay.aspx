@@ -16,7 +16,7 @@
             $("#email").jqxButton({ width: 415, height: 25 });
 
             $("#email").jqxButton({ width: 180, height: 25 });
-
+            
             var thisCertificateID = getUrlParameter('thisCertificateID');
             var thisToAddress = getUrlParameter('EmailAddress');
 

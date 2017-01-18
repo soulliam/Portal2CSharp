@@ -85,6 +85,23 @@ public partial class Portal2Booth : System.Web.UI.MasterPage
 
         }
 
+        Boolean beenToDefault = false;
+
+        if ((string)(Session["IMINBOOTH"]) == "true")
+        {
+            beenToDefault = true;
+        }
+
+        if ((string)(Session["IMIN"]) == "true")
+        {
+            beenToDefault = true;
+        }
+
+        if (beenToDefault == false)
+        {
+            Response.Redirect("../Default.aspx");
+        }
+
         Session["groupList"] = groupList;
 
         getUserLocation(groupList);
