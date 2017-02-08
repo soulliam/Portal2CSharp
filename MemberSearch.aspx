@@ -182,6 +182,8 @@
                 $("#deleteEmail").jqxButton();
                 $("#addPhone").jqxButton();
 
+                $("#btnArchiveSearch").jqxButton();
+
 
             //#endregion
 
@@ -249,7 +251,13 @@
 
             //Goto pending manualedits button
             $("#manualEditPending").on("click", function (event) {
-                window.location = "./PendingManualEdits.aspx"
+                var homeLocation = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
+                window.location = "./PendingManualEdits.aspx?location=" + homeLocation;
+            });
+
+            //Button click archive Search
+            $("#btnArchiveSearch").on("click", function (event) {
+                LoadArchiveSearch();
             });
 
             //Delte email and set status
@@ -276,47 +284,6 @@
                 });
             });
 
-            // mark redemption used button click
-            $("#markUsedRedemption").on("click", function (event) {
-                var success = false;
-                var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
-
-                if (getselectedrowindexes.length > 0) {
-                    // returns the selected row's data.
-                    var selectedRowData = $('#jqxRedemptionGrid').jqxGrid('getrowdata', getselectedrowindexes[0]);
-                    var thisRedemptionId = selectedRowData.RedemptionId;
-                    var thisUser = $("#txtLoggedinUsername").val();
-                    var thisMemberId = $("#MemberId").val();
-                } else {
-                    alert("You must select a redemption to mark used.");
-                    return null;
-                }
-
-                $.ajax({
-                    type: "POST",
-                    //url: "http://localhost:52839/api/Redemptions/SetBeenUsed/",
-                    url: $("#localApiDomain").val() + "Redemptions/SetBeenUsed/",
-
-                    data: {
-                        "RedemptionId": thisRedemptionId,
-                        "UpdateExternalUserData": thisUser,
-                    },
-                    dataType: "json",
-                    success: function (Response) {
-                        alert("Saved!  Marked as used.");
-                        success = true;
-                    },
-                    error: function (request, status, error) {
-                        alert(error);
-                    },
-                    complete: function () {
-                        if (success == true) {
-                            loadRedemptions(thisMemberId);
-                            loadMemberActivity(thisMemberId);
-                        }
-                    }
-                });
-            });
 
             //Create Redemptions
             $("#1DayRedemption").on("click", function (event) {
@@ -397,6 +364,65 @@
                 $("#popupReservation").jqxWindow('open');
             });
 
+            // mark redemption used button click
+            $("#markUsedRedemption").on("click", function (event) {
+                //Get the selected rows RedemptionID
+                var thisMemberId = $("#MemberId").val();
+                var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
+                var thisUser = $("#txtLoggedinUsername").val();
+                var ProcessList = "";
+                var first = true;
+
+                if (getselectedrowindexes.length > 0) {
+
+                    for (var index = 0; index < getselectedrowindexes.length; index++) {
+                        var selectedRowData = $('#jqxRedemptionGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
+                        if (first == true) {
+                            ProcessList = ProcessList + selectedRowData.RedemptionId;
+                            first = false;
+                        }
+                        else {
+                            ProcessList = ProcessList + "," + selectedRowData.RedemptionId;
+                        }
+                    }
+
+                    var thisRedemptionList = ProcessList.split(",");
+
+                }
+                else {
+                    alert("You must select a redemption to mark used.");
+                    return null;
+                }
+
+                for (var i = 0, len = thisRedemptionList.length; i < len; i++) {
+
+                    $.ajax({
+                        type: "POST",
+                        //url: "http://localhost:52839/api/Redemptions/SetBeenUsed/",
+                        url: $("#localApiDomain").val() + "Redemptions/SetBeenUsed/",
+
+                        data: {
+                            "RedemptionId": thisRedemptionList[i],
+                            "UpdateExternalUserData": thisUser,
+                        },
+                        dataType: "json",
+                        success: function (Response) {
+                            success = true;
+                        },
+                        error: function (request, status, error) {
+                            alert(error);
+                        },
+                        complete: function () {
+                            if (success == true) {
+                                alert("Saved!  Marked as used.");
+                                loadRedemptions(thisMemberId);
+                                loadMemberActivity(thisMemberId);
+                            }
+                        }
+                    });
+                }
+            });
+
             //return redemption
             $("#returnRedemption").on("click", function (event) {
                 var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
@@ -413,40 +439,64 @@
                 //Get the selected rows RedemptionID
                 var thisMemberId = $("#MemberId").val();
                 var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
+                var ProcessList = "";
+                var first = true;
+
+
                 if (getselectedrowindexes.length > 0) {
-                    // returns the selected row's data.
-                    var selectedRowData = $('#jqxRedemptionGrid').jqxGrid('getrowdata', getselectedrowindexes[0]);
-                    var thisRedemptionId = selectedRowData.RedemptionId;
+
+                    for (var index = 0; index < getselectedrowindexes.length; index++) {
+                        var selectedRowData = $('#jqxRedemptionGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
+                        if (first == true) {
+                            ProcessList = ProcessList + selectedRowData.RedemptionId;
+                            first = false;
+                        }
+                        else {
+                            ProcessList = ProcessList + "," + selectedRowData.RedemptionId;
+                        }
+                    }
+
+                    var thisRedemptionList = ProcessList.split(",");
+
+                }
+                else {
+                    return null;
                 }
 
-                var putUrl = $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions/" + thisRedemptionId;
+                for (var i = 0, len = thisRedemptionList.length; i < len; i++) {
 
-                $.ajax({
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json",
-                        "AccessToken": $("#userGuid").val(),
-                        "ApplicationKey": $("#AK").val()
-                    },
-                    type: "PUT",
-                    url: putUrl,
-                    dataType: "json",
-                    success: function (response) {
-                        alert("Returned!  Check activity for returned points.");
-                        //Clear the redemption grid and reload
-                        $('#jqxRedemptionGrid').jqxGrid('clearselection');
-                        $('#jqxRedemptionGrid').jqxGrid('clear');
-                        $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
-                        loadRedemptions(thisMemberId);
-                        loadMemberActivity(thisMemberId);
-                    },
-                    error: function (request, status, error) {
-                        alert(error + " - " + request.responseJSON.message);
-                    },
-                    complete: function () {
-                        $('#jqxLoader').jqxLoader('close');
-                    }
-                })
+                    var putUrl = $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions/" + thisRedemptionList[i];
+
+                    $.ajax({
+                        headers: {
+                            "Accept": "application/json",
+                            "Content-Type": "application/json",
+                            "AccessToken": $("#userGuid").val(),
+                            "ApplicationKey": $("#AK").val()
+                        },
+                        type: "PUT",
+                        url: putUrl,
+                        dataType: "json",
+                        success: function (response) {
+                            //Clear the redemption grid and reload
+                            $('#jqxRedemptionGrid').jqxGrid('clearselection');
+                            $('#jqxRedemptionGrid').jqxGrid('clear');
+                            $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
+                            $("#topPointsBalanceAccountBar").html(loadPoints(AccountId, $("#topPointsBalanceAccountBar")));
+                            loadRedemptions(thisMemberId);
+                            loadMemberActivity(thisMemberId);
+                        },
+                        error: function (request, status, error) {
+                            alert(error + " - " + request.responseJSON.message);
+                        },
+                        complete: function () {
+                            if (success == true) {
+                                alert("Returned!  Check activity for returned points.");
+                            }
+                            $('#jqxLoader').jqxLoader('close');
+                        }
+                    })
+                }
             });
 
             // Cancel Reservation
@@ -494,12 +544,12 @@
                         url: $("#apiDomain").val() + "reservations/" + thisReservationList[i],
                         dataType: "json",
                         success: function () {
-                            alert("Canceled!");
                         },
                         error: function (request, status, error) {
                             alert(error + " - " + request.responseJSON.message);
                         },
                         complete: function () {
+                            alert("Canceled!");
                             thisMemberId = $("#MemberId").val();
                             $('#jqxReservationGrid').jqxGrid('clearselection');
                             $('#jqxReservationGrid').jqxGrid('clear');
@@ -526,7 +576,7 @@
                 var thisStreetAddress2 = $("#StreetAddress2").val();
                 var thisCityName = $("#CityName").val();
 
-                if ($("#stateCombo").jqxComboBox('getSelectedIndex') == -1) {
+                if ($("#stateCombo").jqxComboBox('getSelectedIndex') == 0) {
                     var thisStateId = 0;
                 } else {
                     var thisStateId = $("#stateCombo").jqxComboBox('getSelectedItem').value;
@@ -538,13 +588,13 @@
                 var thisMarketingCode = $("#MarketingMailerCode").val();
                 var thisMemberId = $("#MemberId").val(); 
 
-                if ($("#homeLocationCombo").jqxComboBox('getSelectedIndex') == -1) {
+                if ($("#homeLocationCombo").jqxComboBox('getSelectedIndex') == 0) {
                     var thisLocationId = 0;
                 } else {
                     var thisLocationId = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
                 }
 
-                if ($("#MailerCompanyCombo").jqxComboBox('getSelectedIndex') == -1) {
+                if ($("#MailerCompanyCombo").jqxComboBox('getSelectedIndex') == 0) {
                     var thisCompanyId = 0;
                 } else {
                     var thisCompanyId = $("#MailerCompanyCombo").jqxComboBox('getSelectedItem').value;
@@ -564,7 +614,6 @@
                 var phoneNumber = new Array();
 
                 for (var i = 0; i < rows.length; i++) {
-
                     phoneType[i] = rows[i].PhoneTypeId;
                     phoneNumber[i] = rows[i].Number;
                 }
@@ -578,7 +627,9 @@
                 saveUpdateMemberInfo(phoneType, phoneNumber, thisMemberId, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2,
                                      thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, isRFR);
 
+                SaveMarketingCode();
 
+                $("#editMember").trigger("click");
                 
             });
 
@@ -611,6 +662,13 @@
             $("#deleteCard").on("click", function (event) {
                 var result = confirm("Do you want to delete this card!");
                 if (result != true) {
+                    return null;
+                }
+
+                var rowCount = $('#jqxCardGrid').jqxGrid('getrows');
+
+                if (rowCount.length == 1) {
+                    alert("There is only one card assigned to this account!")
                     return null;
                 }
 
@@ -826,7 +884,8 @@
                     dataType: "json",
                     success: function (Response) {
                         alert("Saved!");
-                        $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
+                        $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance"))); 
+                        $("#topPointsBalanceAccountBar").html(loadPoints(AccountId, $("#topPointsBalanceAccountBar")));
                     },
                     error: function (request, status, error) {
                         alert(error);
@@ -839,14 +898,13 @@
                 var newEntryDate = $("#jqxReceiptEntryCalendar").val();
                 var newReceiptNumber = $("#receiptNumber").val();
                 var PageMemberID = $('#MemberId').val();
-                var submittedBy = $("#loginLabel").val();
+                var submittedBy = $("#txtLoggedinUsername").val();
                 var thisLocationId = $("#receiptLocationCombo").jqxComboBox('getSelectedItem').value;
                 var checked = $('#jqxRadioTypeReceipt').jqxRadioButton('checked');
                 var thisGuid = $('#tempUserGuid').val()
 
                 if (checked == true) {
                     
-                    PageMethods.SubmitReceipt1(newEntryDate, newReceiptNumber, "", submittedBy, thisLocationId, PageMemberID, thisGuid, DisplayPageMethodResults);
                     function onSucess(result) {
                         alert(result);
                     }
@@ -1039,6 +1097,8 @@
 
             $("#cancelNote").on("click", function (event) {
                 $("#popupNote").jqxWindow('close');
+                $("#txtNote").val('');
+                $("#saveNote").css("visibility", "visible");
             });
 
             $("#addNote").on("click", function (event) {
@@ -1070,8 +1130,8 @@
                     $("#deleteEmail").jqxButton({ disabled: false });
                     $('#phoneGrid').jqxGrid({ editable: true });
 
-                    if (group.indexOf("Portal_Asstmanager") > -1) {
-                        $("#MailerCompanyCombo").jqxComboBox({ disabled: true });
+                    if (group.indexOf("RFR") > -1 || group.indexOf("Portal_Superadmin") > -1) {
+                        $("#MailerCompanyCombo").jqxComboBox({ disabled: false });
                     }
                     Security();
                 }
@@ -1087,6 +1147,7 @@
                     //Do nothing for now
                 });
             });
+
 
             $("#LocationCombo").on('select', function (event) {
                 if (event.args) {
@@ -1111,12 +1172,13 @@
                 var index = args.rowindex;
                 var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
 
-                if (getselectedrowindexes.length > 0) {
-                    if (getselectedrowindexes != index) {
-                        $("#jqxRedemptionGrid").jqxGrid('clearselection');
-                        $("#jqxRedemptionGrid").jqxGrid('selectrow', index);
-                    }
-                }
+                ////Force Single select with checkbox
+                //if (getselectedrowindexes.length > 0) {
+                //    if (getselectedrowindexes != index) {
+                //        $("#jqxRedemptionGrid").jqxGrid('clearselection');
+                //        $("#jqxRedemptionGrid").jqxGrid('selectrow', index);
+                //    }
+                //}
 
             });
 
@@ -1231,7 +1293,63 @@
         
         //#region LoadGrids
 
-      
+        function LoadArchiveSearch() {
+            //Loads card list
+            var parent = $("#jqxArchiveGrid").parent();
+            $("#jqxArchiveGrid").jqxGrid('destroy');
+            $("<div id='jqxArchiveGrid'></div>").appendTo(parent);
+
+            var PageMemberID = $("#MemberId").val();
+
+            var url = $("#localApiDomain").val() + "ArchiveActivitysController/GetArchive/" + PageMemberID;
+            //var url = "http://localhost:52839/api/ArchiveActivitysController/GetArchive/" + PageMemberID;
+
+            var source =
+            {
+                datafields: [
+                    { name: 'TransactionNumber' },
+                    { name: 'ManualEditId' },
+                    { name: 'PointsChanged' },
+                    { name: 'SubmittedBy' },
+                    { name: 'DateOfActivity' },
+                    { name: 'ActivityType' }
+                ],
+
+                id: 'TransactionNumber',
+                type: 'Get',
+                datatype: "json",
+                url: url
+            };
+
+            // create jqxNotesGrid
+            $("#jqxArchiveGrid").jqxGrid(
+            {
+                theme: 'shinyblack',
+                width: '100%',
+                height: 450,
+                source: source,
+                rowsheight: 35,
+                sortable: true,
+                altrows: true,
+                filterable: true,
+                enabletooltips: true,
+                columns: [
+                      { text: 'TransactionNumber', datafield: 'TransactionNumber', width: '20%' },
+                      { text: 'ManualEditId', datafield: 'ManualEditId', width: '20%' },
+                      { text: 'PointsChanged', datafield: 'PointsChanged', width: '10%' },
+                      { text: 'SubmittedBy', datafield: 'SubmittedBy', width: '20%', cellsrenderer: DateRender },
+                      { text: 'DateOfActivity', datafield: 'DateOfActivity', width: '20%', cellsrenderer: DateRender },
+                      { text: 'ActivityType', datafield: 'ActivityType', width: '10%' }
+                ]
+            });
+
+            // defines redemption grid double click
+            $("#jqxArchiveGrid").bind('rowdoubleclick', function (event) {
+
+            });
+        }
+
+
         function loadMemberList(acctNum, compareMemberId) {
             
             $.ajax({
@@ -1438,6 +1556,7 @@
                     { name: 'ManualEditsId' },
                     { name: 'RedemptionId' },
                     { name: 'PointsChanged' },
+                    { name: 'Points'},
                     { name: 'Description' },
                     { name: 'LocationId' },
                     { name: 'Date' }
@@ -1452,6 +1571,8 @@
                 },
                 root: 'result>data>ActivityHistory'
             };
+
+            var dataAdapter = new $.jqx.dataAdapter(source);
             
             // create member Activity Grid
             $("#jqxMemberActivityGrid").jqxGrid(
@@ -1462,13 +1583,32 @@
                 //pagesizeoptions: ['10', '20', '50', '100'],
                 width: '100%',
                 height: 500,
-                source: source,
+                source: dataAdapter,
                 rowsheight: 35,
                 sortable: true,
                 altrows: true,
                 filterable: true,
                 columnsresize: true,
-                ready: function (){
+                ready: function (records) {
+                    var rows = $("#jqxMemberActivityGrid").jqxGrid('getrows');
+
+                    // get the total member points
+                    var thisTotal = parseInt($("#topPointsBalanceAccountBar").html());
+                    var thisPointsChanged = 0;
+                    var thisFirst = true;
+
+                    var length = rows.length;
+                    for (var i = 0; i < length ; i++) {
+                        var record = rows[i];
+                        //get pointschanged for this row
+                        thisPointsChanged = parseInt(record["PointsChanged"]);
+                        // put the current thistotal in the current row.  The first row will have the members actual total
+                        $("#jqxMemberActivityGrid").jqxGrid('setcellvalue', i, 'Points', thisTotal);
+
+                        //subtract this rows points changed from the total and it will go on the next line.
+                        thisTotal = thisTotal - thisPointsChanged;
+                    }
+
                     // create a filter group for the FirstName column.
                     var fnameFilterGroup = new $.jqx.filter();
                     // operator between the filters in the filter group. 1 is for OR. 0 is for AND.
@@ -1487,6 +1627,7 @@
                       { text: 'ManualEditsId', datafield: 'ManualEditsId', hidden: true },
                       { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
                       { text: 'Points Changed', datafield: 'PointsChanged', width: '10%' },
+                      { text: 'Points', datafield: 'Points', width: '10%' },
                       { text: 'Description', datafield: 'Description', width: '50%' },
                       { text: 'Location', datafield: 'LocationId', width: '10%' },
                       { text: 'Date', datafield: 'Date', width: '10%', cellsrenderer: DateRender }
@@ -1499,6 +1640,7 @@
                 var dataRecord = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
                 var isReceipt = dataRecord.ParkingTransactionNumber;
                 var isRedemption = dataRecord.RedemptionId;
+                var thisManualEditId = dataRecord.ManualEditsId;
                 var offset = $("#jqxMemberInfoTabs").offset();
                 var toAddress = $("#EmailAddress").val();
 
@@ -1526,9 +1668,6 @@
                 //This will show the Redemption
 
                 if (isRedemption != null) {
-
-
-
                     //get redemption data and send to display
                     var thisRedemptionId = dataRecord.RedemptionId
 
@@ -1574,9 +1713,46 @@
                             alert(error + " - " + request.responseJSON.message);
                         }
                     });
+                    return null;
                 }
 
+                if (thisManualEditId != null) {
+                    //get redemption data and send to display
+                    var thisManualEditId = dataRecord.ManualEditsId
 
+                    var url = $("#localApiDomain").val() + "ManualEdits/ManualEditById/" + thisManualEditId;
+
+                    $.ajax({
+                        type: 'GET',
+                        url: url,
+                        
+                        success: function (thisData) {
+
+                            $("#popupViewManualEdit").css('display', 'block');
+                            $("#popupViewManualEdit").css('visibility', 'hidden');
+
+                            $("#popupViewManualEdit").jqxWindow({ position: { x: '25%', y: '7%' } });
+                            $('#popupViewManualEdit').jqxWindow({ resizable: false });
+                            $('#popupViewManualEdit').jqxWindow({ draggable: true });
+                            $('#popupViewManualEdit').jqxWindow({ isModal: true });
+                            $("#popupViewManualEdit").css("visibility", "visible");
+                            $('#popupViewManualEdit').jqxWindow({ height: '675px', width: '35%' });
+                            $('#popupViewManualEdit').jqxWindow({ minHeight: '270px', minWidth: '10%' });
+                            $('#popupViewManualEdit').jqxWindow({ maxHeight: '700px', maxWidth: '50%' });
+                            $('#popupViewManualEdit').jqxWindow({ showCloseButton: true });
+                            $('#popupViewManualEdit').jqxWindow({ animationType: 'combined' });
+                            $('#popupViewManualEdit').jqxWindow({ showAnimationDuration: 300 });
+                            $('#popupViewManualEdit').jqxWindow({ closeAnimationDuration: 500 });
+                            $("#popupViewManualEdit").jqxWindow('open');
+
+                            //var thisCertificateID = thisData.result.data.CertificateID;
+                        },
+                        error: function (request, status, error) {
+                            alert(error + " - " + request.responseJSON.message);
+                        }
+                    });
+                    return null;
+                }
             });
         }
 
@@ -1753,6 +1929,8 @@
             $("<div id='jqxNotesGrid'></div>").appendTo(parent);
 
             var url = $("#localApiDomain").val() + "MemberNotes/NotesByMemberId/" + PageMemberID;
+            //var url = "http://localhost:52839/api/MemberNotes/NotesByMemberId/" + PageMemberID;
+
             var source =
             {
                 datafields: [
@@ -1778,11 +1956,39 @@
                 sortable: true,
                 altrows: true,
                 filterable: true,
+                enabletooltips: true,
                 columns: [
                       { text: 'Date', datafield: 'Date', width: '20%', cellsrenderer: DateRender },
                       { text: 'Note', datafield: 'Note', width: '60%' },
                       { text: 'SubmittedBy', datafield: 'SubmittedBy', width: '20%' }
                 ]
+            });
+
+            // defines redemption grid double click
+            $("#jqxNotesGrid").bind('rowdoubleclick', function (event) {
+                var row = event.args.rowindex;
+                var dataRecord = $("#jqxNotesGrid").jqxGrid('getrowdata', row);
+
+                $("#popupNote").css('display', 'block');
+                $("#popupNote").css('visibility', 'hidden');
+
+                var offset = $("#jqxMemberInfoTabs").offset();
+                $("#popupNote").jqxWindow({ position: { x: '25%', y: '30%' } });
+                $('#popupNote').jqxWindow({ resizable: false });
+                $('#popupNote').jqxWindow({ draggable: true });
+                $('#popupNote').jqxWindow({ isModal: true });
+                $("#popupNote").css("visibility", "visible");
+                $('#popupNote').jqxWindow({ height: '195px', width: '50%' });
+                $('#popupNote').jqxWindow({ minHeight: '195px', minWidth: '50%' });
+                $('#popupNote').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
+                $('#popupNote').jqxWindow({ showCloseButton: true });
+                $('#popupNote').jqxWindow({ animationType: 'combined' });
+                $('#popupNote').jqxWindow({ showAnimationDuration: 300 });
+                $('#popupNote').jqxWindow({ closeAnimationDuration: 500 });
+                $("#popupNote").jqxWindow('open');
+
+                $("#txtNote").val(dataRecord.Note);
+                $("#saveNote").css("visibility", "hidden");
             });
         }
 
@@ -1794,26 +2000,31 @@
             $("<div id='jqxRedemptionGrid'></div>").appendTo(parent);
 
             //Loads redemptions
-            var url = $("#apiDomain").val() + "members/" + PageMemberID + "/redemptions";
+            //var url = $("#apiDomain").val() + "members/" + PageMemberID + "/redemptions";
+            var url = $("#localApiDomain").val() + "Redemptions/GetMemberRedemption/" + PageMemberID;
+            //var url = "http://localhost:52839/api/Redemptions/GetMemberRedemption/" + PageMemberID;
 
             var source =
             {
                 datafields: [
                     { name: 'RedemptionId' },
-                    { name: 'CertificateID' },
-                    { name: 'RedemptionType', map: 'RedemptionType>RedemptionType' },
+                    { name: 'CertificateId' },
+                    //{ name: 'RedemptionType', map: 'RedemptionType>RedemptionType' },
+                    { name: 'RedemptionTypeName' },
                     { name: 'RedeemDate' },
-                    { name: 'IsReturned' }
+                    { name: 'IsReturned' },
+                    { name: 'BeenUsed' },
+                    { name: 'DateUsed' }
                 ],
 
-                id: 'CertificateID',
+                id: 'RedemptionId',
                 type: 'Get',
                 datatype: "json",
                 url: url,
-                beforeSend: function (jqXHR, settings) {
-                    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
-                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
-                },
+                //beforeSend: function (jqXHR, settings) {
+                //    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
+                //    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+                //},
                 root: "data"
             };
 
@@ -1827,18 +2038,20 @@
                 width: '100%',
                 height: 450,
                 source: source,
+                selectionmode: 'checkbox',
                 rowsheight: 35,
                 sortable: true,
                 altrows: true,
                 filterable: true,
-                selectionmode: 'checkbox',
                 enablebrowserselection: true,
                 columns: [
                       { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
-                      { text: 'CertificateID', datafield: 'CertificateID' },
-                      { text: 'Redemption Type', datafield: 'RedemptionType' },
+                      { text: 'CertificateId', datafield: 'CertificateId' },
+                      { text: 'Redemption Type', datafield: 'RedemptionTypeName' },
                       { text: 'Redeem Date', datafield: 'RedeemDate', cellsrenderer: DateRender },
-                      { text: 'Returned', datafield: 'IsReturned' }
+                      { text: 'Returned', datafield: 'IsReturned' },
+                      { text: 'BeenUsed', datafield: 'BeenUsed' },
+                      { text: 'DateUsed', datafield: 'DateUsed', cellsrenderer: DateRender }
                 ]
             });
 
@@ -1977,6 +2190,14 @@
             });
             $('#MailerCompanyCombo input').on('focus', function () {
                 $("#MailerCompanyCombo").jqxComboBox('open');
+            });
+
+
+            $("#MailerCompanyCombo").on('bindingComplete', function (event) {
+                $("#MailerCompanyCombo").jqxComboBox('insertAt', '', 0);
+                $("#MailerCompanyCombo").on('change', function (event) {
+                    //Do nothing for now
+                });
             });
         }
 
@@ -2298,6 +2519,37 @@
 
         //#region SaveFunctions
 
+        function SaveMarketingCode() {
+
+            var thisMemberId = $("#MemberId").val();
+            var thisMarketingcode = $("#MarketingCode").val();
+            var thisOldMarketingCode = $("#OldMarketingCode").val();
+            var thisChangeUser = $("#txtLoggedinUsername").val();
+
+            var url = $("#localApiDomain").val() + "MarketingCodeSaves/SaveMarketingCode/";
+            //var url = "http://localhost:52839/api/MarketingCodeSaves/SaveMarketingCode/";
+
+            $.ajax({
+                type: "POST",
+
+                url: url,
+
+                data: {
+                    "MemberId": thisMemberId,
+                    "MarketingCode": thisMarketingcode,
+                    "OldMarketingCode": thisOldMarketingCode,
+                    "ChangedBy": thisChangeUser,
+                },
+                dataType: "json",
+                success: function (Response) {
+
+                },
+                error: function (request, status, error) {
+                    alert(error);
+                }
+            });
+        }
+
         function addCard() {
             var thisFPNumber = $("#addCardFPNumber").val();
             var thisIsPrimary = $("#addCardIsPrimary").is(':checked');
@@ -2430,7 +2682,8 @@
                     alert(error + " - " + request.responseJSON.message);
                 },
                 complete: function () {
-                    $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
+                    $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance"))); 
+                    $("#topPointsBalanceAccountBar").html(loadPoints(AccountId, $("#topPointsBalanceAccountBar")));
                     loadRedemptions(thisMemberId);
                     $('#jqxLoader').jqxLoader('close');
                     if (thisRedemptionId != "") {
@@ -2496,6 +2749,7 @@
         function clearMemberInfo() {
             $('.tabMemberInfo').find('input:text').val('');
             $("#topPointsBalance").html("");
+            $("#topPointsBalanceAccountBar").html("");
             $("#topMemberSince").html("");
             $("#topLastLogin").html
             $("#topName").html("");
@@ -2681,11 +2935,13 @@
                     $("#homeLocationCombo").jqxComboBox('selectItem', thisData.result.data.LocationId);
                     glbHomeLocationId = thisData.result.data.LocationId;
                     $("#MarketingCode").val(thisData.result.data.MarketingCode);
+                    $("#OldMarketingCode").val(thisData.result.data.MarketingCode);
                     $("#MarketingMailerCode").val(thisData.result.data.MarketingMailerCode);
                     $("#MailerCompanyCombo").jqxComboBox('selectItem', thisData.result.data.CompanyId);
                     glbCompanyId = thisData.result.data.CompanyId;
                     $("#GetEmail").prop("checked", thisData.result.data.GetEmail);
                     $("#statusCombo").jqxComboBox('selectItem', thisData.result.data.PreferredStatusName);
+                    
                 },
                 error: function (request, status, error) {
                     alert(error + " - " + request.responseJSON.message);
@@ -2699,7 +2955,9 @@
 
                     loadMemberActivity(PageMemberID);
                     loadAccountActivity();
-                    $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
+                    $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance"))); 
+                    $("#topPointsBalanceAccountBar").html(loadPoints(AccountId, $("#topPointsBalanceAccountBar")));
+                    $("#topLocationAccountBar").html($("#homeLocationCombo").jqxComboBox('getSelectedItem').label);
                     loadRate();
                     
                 }
@@ -2897,7 +3155,9 @@
                                 
                             <ul>
                                 <li>Account</li>
-                                <div class="collaspeButton dropup" id="collapseSearchBar">Search <span class="caret"></span></div>
+                                <div style="float:right;width:50%">
+                                    <div class="collaspeButton dropup" id="collapseSearchBar">Search <span class="caret"></span></div>
+                                </div>
                             </ul>
                             <div>
                                 YO
@@ -2929,7 +3189,14 @@
                             <li>Reservations</li>
                             <li>Referrals</li>
                             <li>Cards</li>
+                            <li>Archive</li>
                             <li>Modified</li>
+                            <div style="float:right">
+                                <label id="pointsLabelAccountBar" class="strong">Points Balance:</label>
+                                <label id="topPointsBalanceAccountBar" class="strong font-red right-buffer-15"></label>
+                                <label id="LocationLabelAccountBar" class="strong">Preferred Location:</label>
+                                <label id="topLocationAccountBar" class="strong font-red right-buffer-15"></label>
+                            </div>
                         </ul>
                         <div id="tabMemberInfo" class="tab-body tabMemberInfo">
                             <div class="row">
@@ -3037,7 +3304,7 @@
                                         <div class="form-group">
                                             <label for="RepCode" class="col-sm-3 col-md-4 control-label">Rep Code:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control NoMgr NoAsstMgr" id="MarketingCode" placeholder="">
+                                                <input type="text" class="form-control NoMgr NoAsstMgr" id="MarketingCode" placeholder=""><input type="text" style="display:none" id="OldMarketingCode" />
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -3329,6 +3596,16 @@
                                 <input type="button" id="addCard" value="Add" class="editor" />
                                 <input type="button" id="setCardPrimary" value="Set as Primary" class="editor" />
                                 <input type="button" id="combineMemberCards" value="Combine Member Cards" class="editor" />
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tabArchive" class="tab-body">
+                            <div class="row">
+                                <div class="col-sm-9 col-md-10">
+                                    <div id="jqxArchiveGrid"></div>
+                                </div>
+                                <div class="col-sm-3 col-md-2">
+                                <input type="button" id="btnArchiveSearch" value="Search" class="editor" />
                                 </div>
                             </div>
                         </div>
@@ -3639,6 +3916,70 @@
                                 <input type="button" id="cancelCombineMember" value="Cancel" />
                             </div>
                             <div class="col-sm-2 col-md-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%-- html for popup view manual edit --%>
+    <div id="popupViewManualEdit" style="display:none">
+        <div>Manual Edit Details</div>
+        <div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label for="addCardFPNumber" class="col-sm-3 col-md-4 control-label">FP Number:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="TaddCardFPNumber" placeholder="FPNumber" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="addCardIsPrimary" class="col-sm-3 col-md-4 control-label">Is Primary:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="form-control" id="TaddCardIsPrimary" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="addCardIsActive" class="col-sm-3 col-md-4 control-label">Is Active:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="form-control" id="TaddCardIsActive" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="addCardCreateDigitalCard" class="col-sm-3 col-md-4 control-label">Create Digital:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="form-control" id="TaddCardCreateDigitalCard" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="top-divider">
+                            <div class="col-sm-3 col-md-4">
+                            </div>
+                            <div class="col-sm-6 col-md-4">
+                                <input type="button" class="form-control" id="TaddCardSubmit" value="Add" />
+                            </div>
+                            <div class="col-sm-3 col-md-4">
                             </div>
                         </div>
                     </div>

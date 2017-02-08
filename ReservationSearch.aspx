@@ -35,6 +35,8 @@
 
             //#region SetupButtons
             $("#btnSearch").jqxButton({ width: '100%', height: 26 });
+            $("#cancelReservation").jqxButton({ width: '100%', height: 26 });
+            $("#addReservation").jqxButton({ width: '100%', height: 26 });
             //#endregion
 
             $("#btnSearch").on("click", function (event) {
@@ -42,6 +44,66 @@
                     loadGrid();
                 }
             });
+
+            // Cancel Reservation
+            $("#cancelReservation").on("click", function (event) {
+                var result = confirm("Do you want to cancel this reservation!");
+                if (result != true) {
+                    return null;
+                }
+
+                var ProcessList = "";
+                var first = true;
+                var getselectedrowindexes = $('#jqxReservationGrid').jqxGrid('getselectedrowindexes');
+
+                if (getselectedrowindexes.length > 0) {
+
+                    for (var index = 0; index < getselectedrowindexes.length; index++) {
+                        var selectedRowData = $('#jqxReservationGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
+                        if (first == true) {
+                            ProcessList = ProcessList + selectedRowData.ReservationId;
+                            first = false;
+                        }
+                        else {
+                            ProcessList = ProcessList + "," + selectedRowData.ReservationId;
+                        }
+                    }
+
+                    var thisReservationList = ProcessList.split(",");
+
+                }
+                else {
+                    return null;
+                }
+
+                for (var i = 0, len = thisReservationList.length; i < len; i++) {
+
+                    $.ajax({
+                        headers: {
+                            "Accept": "application/json",
+                            "Content-Type": "application/json",
+                            "AccessToken": $("#userGuid").val(),
+                            "ApplicationKey": $("#AK").val()
+                        },
+                        type: "DELETE",
+                        url: $("#apiDomain").val() + "reservations/" + thisReservationList[i],
+                        dataType: "json",
+                        success: function () {
+                            alert("Canceled!");
+                        },
+                        error: function (request, status, error) {
+                            alert(error + " - " + request.responseJSON.message);
+                        },
+                        complete: function () {
+                            thisMemberId = $("#MemberId").val();
+                            $('#jqxReservationGrid').jqxGrid('clearselection');
+                            $('#jqxReservationGrid').jqxGrid('clear');
+                            loadReservations();
+                        }
+                    });
+                }
+            });
+
         });
 
         // ============= Initialize Page ================== End
@@ -52,8 +114,8 @@
 
 
             // loading order histor
-            //var url = $("#localApiDomain").val() + "Reservations/GetReservation/" + ReservationId;
-            var url = "http://localhost:52839/api/Reservations/GetReservation/" + ReservationId;
+            var url = $("#localApiDomain").val() + "Reservations/GetReservation/" + ReservationId;
+            //var url = "http://localhost:52839/api/Reservations/GetReservation/" + ReservationId;
 
             var source =
             {
@@ -66,6 +128,7 @@
                     { name: 'CanceledDate' },
                     { name: 'FirstName' },
                     { name: 'LastName' },
+                    { name: 'FPNumber' },
                     { name: 'MemberId' },
                 ],
                 id: 'RedemptionId',
@@ -75,7 +138,7 @@
             };
 
             // create jqxgrid
-            $("#jqxReservation").jqxGrid(
+            $("#jqxReservationGrid").jqxGrid(
             {
                 pageable: true,
                 pagermode: 'simple',
@@ -91,15 +154,16 @@
                 filterable: true,
                 enablebrowserselection: true,
                 columns: [
-                       { text: 'ReservationId', datafield: 'ReservationId' },
-                       { text: 'ReservationNumber', datafield: 'ReservationNumber' },
-                       { text: 'ShortNameLocation', datafield: 'ShortNameLocation' },
-                       { text: 'StartDatetime', datafield: 'StartDatetime', cellsrenderer: DateRender },
-                       { text: 'EndDatetime', datafield: 'EndDatetime', cellsrenderer: DateTimeRender },
-                       { text: 'CanceledDate', datafield: 'CanceledDate', cellsrenderer: DateTimeRender },
-                       { text: 'FirstName', datafield: 'FirstName' },
-                       { text: 'LastName', datafield: 'LastName' },
-                       { text: 'MemberId', datafield: 'MemberId' },
+                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
+                       { text: 'Reservation#', datafield: 'ReservationNumber', width: '15%' },
+                       { text: 'Location', datafield: 'ShortNameLocation', width: '15%' },
+                       { text: 'Start Date', datafield: 'StartDatetime', cellsrenderer: DateRender, width: '10%' },
+                       { text: 'End Date', datafield: 'EndDatetime', cellsrenderer: DateTimeRender, width: '10%' },
+                       { text: 'Canceled Date', datafield: 'CanceledDate', cellsrenderer: DateTimeRender, width: '10%' },
+                       { text: 'First Name', datafield: 'FirstName', width: '10%' },
+                       { text: 'Last Name', datafield: 'LastName', width: '10%' },
+                       { text: 'FPNumber', datafield: 'FPNumber', width: '10%' },
+                       { text: 'MemberId', datafield: 'MemberId', width: '10%' },
                 ]
             });
         }
@@ -114,14 +178,14 @@
             <div class="row search-size FPR_SearchLeft">
                 <div class="col-sm-12 col-md-10 col-md-offset-1">
                     <div class="row search-size">
-                        <div class="col-sm-9">
+                        <div class="col-sm-10">
                             <div class="row search-size">
                                 <div class="col-sm-12">
                                     <input type="text" id="ReservationId" placeholder="Reservation #" />
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-2">
                             <div class="row search-size">
                                 <div class="col-sm-8 col-sm-offset-4">
                                     <div class="row search-size">
@@ -139,11 +203,31 @@
     </div><!-- /.container-fluid -->
    
     <div class="container-fluid container-970">
-        <div class="row ">
-            <div class="col-sm-12">
-                <div id="jqxReservation"></div>
+        <div class="row">
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
+                    <div class="row search-size">
+                        <div class="col-sm-10">
+                            <div class="row search-size">
+                                <div class="col-sm-12">
+                                    <div id="jqxReservationGrid"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="row search-size">
+                                <div class="col-sm-8 col-sm-offset-4">
+                                    <div class="row search-size">
+                                        <div class="col-sm-12">
+                                            <input type="button" id="addReservation" value="Add Reservation" class="editor" style="display:none;" />
+                                            <input type="button" id="cancelReservation" value="Cancel Reservation" class="editor" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
     </div><!-- /.container-fluid -->
 </asp:Content>
 

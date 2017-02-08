@@ -34,20 +34,61 @@
         $(document).ready(function () {
 
             loadLocationCombo();
+            
+            loadCompaniesCombo();
 
             //#region SetupButtons
             $("#btnSearch").jqxButton({ width: '100%', height: 26 });
+            $("#btnSetCompany").jqxButton({ width: '100%', height: 26 });
             //#endregion
 
             $("#btnSearch").on("click", function (event) {
+                loadGrid();
+            });
+
+            $("#btnSetCompany").on("click", function (event) {
+                var result = confirm("Do you want to set these member companies!");
+                if (result != true) {
+                    return null;
+                }
+
+                var ProcessList = "";
+                var first = true;
+                var getselectedrowindexes = $('#jqxMembers').jqxGrid('getselectedrowindexes');
+
+                if (getselectedrowindexes.length > 0) {
+
+                    for (var index = 0; index < getselectedrowindexes.length; index++) {
+                        var selectedRowData = $('#jqxMembers').jqxGrid('getrowdata', getselectedrowindexes[index]);
+                        if (first == true) {
+                            ProcessList = ProcessList + selectedRowData.MemberId;
+                            first = false;
+                        }
+                        else {
+                            ProcessList = ProcessList + "," + selectedRowData.MemberId;
+                        }
+                    }
+
+                }
+                else {
+                    return null;
+                }
+
+                var thisUser = $("#txtLoggedinUsername").val();
+                var thisCompanyId = $("#CompnayCombo").jqxComboBox('getSelectedItem').value;
+
+                PageMethods.UpdateMemberCompanyID(ProcessList, thisCompanyId, thisUser, DisplayPageMethodResults);
                 loadGrid();
             });
         });
 
         // ============= Initialize Page ================== End
 
-        function loadGrid(thisParameters)
+        function loadGrid()
         {
+            var parent = $("#jqxMembers").parent();
+            $("#jqxMembers").jqxGrid('destroy');
+            $("<div id='jqxMembers'></div>").appendTo(parent);
 
             // loading order histor
             var url = $("#localApiDomain").val() + "Members/SearchByCompanyLocation/";
@@ -74,12 +115,8 @@
             };
 
             // create jqxgrid
-            $("#jqxRedemption").jqxGrid(
+            $("#jqxMembers").jqxGrid(
             {
-                pageable: true,
-                pagermode: 'simple',
-                //pagermode: 'advanced',
-                pagesize: 12,
                 width: '100%',
                 height: 500,
                 source: source,
@@ -124,6 +161,44 @@
                 selectedIndex: 0,
                 displayMember: "NameOfLocation",
                 valueMember: "LocationId"
+            });
+        }
+
+        function loadCompaniesCombo() {
+            //set companies combobox
+            var companySource =
+            {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'id' },
+                    { name: 'name' }
+                ],
+                url: $("#localApiDomain").val() + "CompanyDropDowns/GetCompanies/",
+
+            };
+            var companyDataAdapter = new $.jqx.dataAdapter(companySource);
+            $("#CompnayCombo").jqxComboBox(
+            {
+                width: '300px',
+                height: 24,
+                source: companyDataAdapter,
+                selectedIndex: 0,
+                displayMember: "name",
+                valueMember: "id"
+            });
+            $('#CompnayCombo input').on('focus', function () {
+                $("#CompnayCombo").jqxComboBox('open');
+            });
+
+            $("#CompnayCombo").jqxComboBox({ enableBrowserBoundsDetection: true });
+
+            $("#CompnayCombo").on('bindingComplete', function (event) {
+                $("#CompnayCombo").jqxComboBox('insertAt', '', 0);
+                $("#CompnayCombo").on('change', function (event) {
+                    //Do nothing for now
+                });
             });
         }
 
@@ -175,7 +250,19 @@
     <div class="container-fluid container-970">
         <div class="row ">
             <div class="col-sm-12">
-                <div id="jqxRedemption"></div>
+                <div id="jqxMembers"></div>
+            </div>
+        </div>
+        <div class="row ">
+            <div class="col-sm-12">
+                <div style="margin-top:10px;width:100%;height:60px;background-color:bisque;border-radius:10px;padding:18px;">
+                    <div class="col-sm-10">
+                        <div  id="CompnayCombo"></div>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="button" id="btnSetCompany" value="Set Company" />
+                    </div>
+                </div>
             </div>
         </div>
     </div><!-- /.container-fluid -->

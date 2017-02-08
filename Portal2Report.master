@@ -1,7 +1,8 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Portal2.master.cs" Inherits="Portal2" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Portal2Report.master.cs" Inherits="Portal2Report" %>
 
 <!DOCTYPE html>
 
+<html lang="en">
 <head runat="server">
     <title></title>
     <meta charset="utf-8" />
@@ -11,7 +12,7 @@
     <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
     <script type="text/javascript" src="scripts/common.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="ReportStyle.css">
     <link rel="stylesheet" href="scripts/bootstrap.min.css">
     
  
@@ -172,4 +173,3 @@
 
 </body>
 </html>
-

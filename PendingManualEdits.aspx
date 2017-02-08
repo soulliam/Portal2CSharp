@@ -167,6 +167,8 @@
                     ]
                 });
 
+
+
             Security();
 
         });
@@ -234,6 +236,10 @@
                     { name: 'NameOfLocation' },
                     { name: 'LocationId' }
                 ],
+                loadComplete: function () {
+                    thisLocationId = getUrlParameter('location');
+                    $("#LocationCombo").jqxComboBox('selectItem', thisLocationId);
+                },
                 url: $("#localApiDomain").val() + "Locations/Locations/",
 
             };

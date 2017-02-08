@@ -42,6 +42,17 @@
                     loadGrid();
                 }
             });
+
+            $("#jqxRedemption").bind('rowdoubleclick', function (event) {
+                var row = event.args.rowindex;
+                var dataRecord = $("#jqxRedemption").jqxGrid('getrowdata', row);
+                var thisRedemptionId = dataRecord.RedemptionId;
+                var offset = $("#jqxRedemption").offset();
+                var thisMemberId = dataRecord.MemberId;
+                var toAddress = dataRecord.EmailAddress;
+
+                showRedemption(thisRedemptionId, toAddress, thisMemberId);
+            });
         });
 
         // ============= Initialize Page ================== End
@@ -67,6 +78,7 @@
                     { name: 'FirstName' },
                     { name: 'LastName' },
                     { name: 'MemberId' },
+                    { name: 'EmailAddress' },
                 ],
                 id: 'RedemptionId',
                 type: 'Get',
@@ -100,11 +112,57 @@
                        { text: 'FirstName', datafield: 'FirstName' },
                        { text: 'LastName', datafield: 'LastName' },
                        { text: 'MemberId', datafield: 'MemberId' },
+                       { text: 'EmailAddress', datafield: 'EmailAddress' },
                 ]
             });
         }
 
-        
+        function showRedemption(thisRedemptionId, toAddress, thisMemberId) {
+
+            var url = $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions/" + thisRedemptionId
+
+            $.ajax({
+                type: 'GET',
+                url: url,
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "AccessToken": $("#userGuid").val(),
+                    "ApplicationKey": $("#AK").val()
+                },
+                success: function (thisData) {
+                    $("#popupRedemption").css('display', 'block');
+                    $("#popupRedemption").css('visibility', 'hidden');
+
+                    $("#popupRedemption").jqxWindow({ position: { x: '25%', y: '7%' } });
+                    $('#popupRedemption').jqxWindow({ resizable: false });
+                    $('#popupRedemption').jqxWindow({ draggable: true });
+                    $('#popupRedemption').jqxWindow({ isModal: true });
+                    $("#popupRedemption").css("visibility", "visible");
+                    $('#popupRedemption').jqxWindow({ height: '675px', width: '35%' });
+                    $('#popupRedemption').jqxWindow({ minHeight: '270px', minWidth: '10%' });
+                    $('#popupRedemption').jqxWindow({ maxHeight: '700px', maxWidth: '50%' });
+                    $('#popupRedemption').jqxWindow({ showCloseButton: true });
+                    $('#popupRedemption').jqxWindow({ animationType: 'combined' });
+                    $('#popupRedemption').jqxWindow({ showAnimationDuration: 300 });
+                    $('#popupRedemption').jqxWindow({ closeAnimationDuration: 500 });
+                    $("#popupRedemption").jqxWindow('open');
+
+                    var thisCertificateID = thisData.result.data.CertificateID;
+                    var thisRedemptionType = thisData.result.data.RedemptionType.RedemptionType;
+                    thisRedemptionType = thisRedemptionType.replace(" ", "%20");
+                    var thisMemberName = thisData.result.data.Member.FirstName + '%20' + thisData.result.data.Member.LastName;
+                    var thisFPNumber = thisData.result.data.Member.PrimaryFPNumber;
+                    var thisQRCode = thisData.result.data.QrCodeString;
+                    var toAddress = $("#EmailAddress").val();
+
+                    document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?thisCertificateID=' + thisCertificateID + '&thisRedemptionType=' + thisRedemptionType + '&thisMemberName=' + thisMemberName + '&thisFPNumber=' + thisFPNumber + '&thisQRCode=' + thisQRCode + '&EmailAddress=' + toAddress;
+                },
+                error: function (request, status, error) {
+                    alert(error + " - " + request.responseJSON.message);
+                }
+            });
+        }
       
 
     </script>
@@ -145,4 +203,11 @@
             </div>
         </div>
     </div><!-- /.container-fluid -->
+
+    <div id="popupRedemption" style="display: none;">
+        <div>Redemption Details</div>
+        <div style="margin-left:20px;margin-top:10px;overflow:hidden;">
+            <iframe id="redemptionIframe" style="border:none;width:450px;height:700px;" ></iframe>
+        </div>
+    </div>
 </asp:Content>

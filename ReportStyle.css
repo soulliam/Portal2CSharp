@@ -1,0 +1,427 @@
+﻿
+
+
+/***** BRYAN STYLES *****/
+
+body.masterbody {
+    padding-top: 50px;
+    font-family: 'Roboto', sans-serif;
+    background-color: #494949;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+@media (min-width: 1200px) {
+    .container-970 {
+        /*max-width: 970px;*/
+    }
+}
+@media (max-width: 1200px) {
+    .container-970 {
+        width: 100%; /*this gives it the precise width to match the Bootstrap defaults*/
+    }
+}
+
+/* NAVIGATION */
+
+.navbar-default {
+    height: 50px;
+}
+.navbar-default,
+.navbar-collapse {
+    background-color: #E1E1E1;
+}
+.navbar-default .navbar-nav>li>a,
+.navbar-default .nav-justified>li>a {
+    color: #4A4A4A;
+}
+.nav>li>a {
+    position: relative;
+    display: block;
+    padding: 15px 0px;
+}
+.navbar-default .navbar-nav>.active>a, 
+.navbar-default .navbar-nav>.active>a:focus, 
+.navbar-default .navbar-nav>.active>a:hover,
+.navbar-default .nav-justified>.active>a, 
+.navbar-default .nav-justified>.active>a:focus, 
+.navbar-default .nav-justified>.active>a:hover {
+    background-color: #BFBFBF;
+}
+.dropdown-menu {
+    border-radius: 0 0 4px 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.25);
+    box-shadow: 0 1px 1px rgba(0,0,0,.25);
+    background-color: #e7e7e7;
+    border: 1px solid #e7e7e7;
+    margin-top: 0px;
+}
+.dropdown-menu>li>a {
+    padding: 8px 20px;
+}
+.dropdown-menu .divider {
+    background-color: rgba(0,0,0,.1);
+}
+
+/* TYPOGRAPHY */
+
+body,
+.dropdown-menu,
+.jqx-widget {
+    font-size: 13px;
+}
+@media (max-width: 767px) {
+    .nav>li>a {
+        padding: 15px 20px;
+    }
+    .dropdown-menu {
+        position: relative;
+        float: none;
+        border-radius: 0;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+    .dropdown-menu>li>a {
+        padding: 8px 30px;
+    }
+}
+@media (min-width: 992px) {
+}
+
+/* BUTTONS */
+
+.round {
+    border-radius: 13px;
+    overflow: hidden;
+}
+.btn-pca-green {
+    color: #4A4A4A;
+    background-color: #9ddd2d;
+    border-color: #87c41d;
+}
+.btn-pca-green:hover {
+    color: #4A4A4A;
+    background-color: #72ab11;
+    border-color: #5f9107;
+}
+.btn-pca-green.focus, .btn-pca-green:focus {
+    color: #4A4A4A;
+    background-color: #72ab11;
+    border-color: #4c7800;
+}
+
+
+
+/* TABLE */
+
+table {
+    background-color: #ffffff;
+}
+
+/* SEARCH FORM */
+
+.wrap-full-width {
+    width: 100%;
+    background: #494949 url(/images/bg-pattern.png) repeat-x top center;
+    background-size: auto 150px;
+}
+.wrap-search-container {
+    padding-top: 10px;
+    padding-bottom: 7px;
+}
+.wrap-search-options {
+    padding-top: 10px;
+    padding-bottom: 7px;
+}
+/*
+.search-size .form-group {
+    margin-bottom: 6px;
+}
+*/
+.search-size {
+    margin-right: -3px;
+    margin-left: -3px;
+}
+.search-size > div {
+    padding-right: 3px;
+    padding-left: 3px;
+}
+.search-size > .swapfields {
+    padding-right: 0px;
+    padding-left: 0px;
+}
+.search-size > .swapfields > div {
+    padding-right: 3px;
+    padding-left: 3px;
+}
+.search-size .form-control,
+.search-size .btn,
+.search-size .button,
+.search-size input,
+.search-size select,
+.search-size textarea {
+    height: 26px;
+    padding: 2px 6px;
+    margin-bottom: 6px;
+    box-sizing: inherit;
+}
+.tab-body input,
+.modal-body input {
+    height: 26px;
+    padding: 2px 6px;
+    margin-bottom: 10px;
+}
+.tab-body .jqx-max-size input,
+.tab-nested-body .jqx-max-size input,
+.modal-body .jqx-max-size input {
+    height: initial;
+}
+.modal-body textarea {
+    padding: 2px 6px;
+    margin-bottom: 10px;
+}
+.search-size .jqx-widget {
+    margin-bottom: 6px;
+}
+.tab-body .jqx-widget,
+.modal-body .jqx-widget {
+    margin-bottom: 10px;
+}
+.tab-body .jqx-radiobutton,
+.tab-body .checkbox,
+.modal-body .jqx-radiobutton,
+.modal-body .checkbox {
+    padding-top: 2px;
+    margin-top: 0px;
+}
+.search-size .checkbox,
+.search-size .radio {
+    color: #fff;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    height: 32px;
+}
+.search-size .checkbox label, 
+.search-size .radio label {
+    padding-top: 6px;
+}
+.checkbox input[type=checkbox], 
+.checkbox-inline input[type=checkbox], 
+.radio input[type=radio], 
+.radio-inline input[type=radio] {
+    height: inherit;
+    width: inherit;
+}
+.fp-jq-button {
+    display: block;
+    max-width: 100%;
+}
+
+/* 5 COLUMN GRID */
+/* http://www.wearesicc.com/quick-tips-5-column-layout-with-twitter-bootstrap/ */
+
+.col-xs-15,
+.col-sm-15,
+.col-md-15,
+.col-lg-15 {
+    position: relative;
+    min-height: 1px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+.col-xs-15 {
+    width: 100%;
+    float: left;
+}
+@media (min-width: 768px) {
+.col-sm-15 {
+        width: 20%;
+        float: left;
+    }
+}
+@media (min-width: 992px) {
+    .col-md-15 {
+        width: 20%;
+        float: left;
+    }
+}
+@media (min-width: 1200px) {
+    .col-lg-15 {
+        width: 20%;
+        float: left;
+    }
+}
+
+/* Customize the nav-justified links to be fill the entire space of the .navbar */
+
+.nav-justified {
+}
+.nav-justified > li > a {
+    padding-top: 18px;
+    padding-bottom: 15px;
+    margin-bottom: 0;
+    text-align: left;
+    height: 50px;
+    white-space: nowrap;
+}
+.nav-justified > .active > a,
+.nav-justified > .active > a:hover,
+.nav-justified > .active > a:focus {
+}
+.nav-justified > li:first-child > a {
+}
+.nav-justified > li:last-child > a {
+}
+
+@media (min-width: 768px) {
+    .nav-justified {
+        max-height: 52px;
+    }
+    .nav-justified > li > a {
+        text-align: center;
+    }
+    .nav-justified > li:first-child > a {
+    }
+    .nav-justified > li:last-child > a {
+    }
+}
+
+/* Responsive: Portrait tablets and up */
+@media screen and (min-width: 768px) {
+    /* Remove the padding we set earlier */
+    .masthead,
+    .marketing,
+    .footer {
+        padding-right: 0;
+        padding-left: 0;
+    }
+    .navbar-nav {
+        margin: 0 auto;
+        display: table;
+        table-layout: auto;
+        float: none;
+        width: 100%;
+    }
+    .navbar-nav>li {
+        display: table-cell;
+        float: none;
+        text-align: center;
+    }
+}
+
+ul.jqx-tabs-title-container > li:first-of-type {
+    margin-left: 20px;
+}
+
+.tab-body {
+    padding: 20px 20px 10px;
+}
+.tab-nested-body {
+    padding: 20px;
+}
+.modal-body {
+    padding: 15px 15px 5px;
+}
+
+.form-group {
+    margin-bottom: 0px;
+}
+
+label {
+    font-size: 11px;
+}
+
+.form-control {
+    font-size: 13px;
+}
+
+.bottom-divider {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+}
+.top-divider {
+    margin-top: 10px;
+    padding-top: 20px;
+    border-top: 1px solid #ccc;
+}
+
+.right-buffer-15 {
+    margin-right: 15px;
+}
+
+.font-normal {
+    font-weight: normal;
+}
+.font-red {
+    color: red;
+}
+
+
+.collaspeButton {
+    height: 24px;
+    text-align: center;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    border-color: gray;
+    padding-bottom: 5px;
+    padding-top: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    float: right;
+    margin-right: 4px;
+    cursor: pointer;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.collaspeButton:hover {
+    border-color: #999;
+    background: #e8e8e8;
+}
+
+.receipt-container {
+    background-image: url('./images/redemption.png');
+    background-repeat: no-repeat;
+    height: 555px;
+    width: 419px;
+    padding-top: 265px;
+}
+
+.redeption-style-1 {
+    text-align:center;
+    font-size:50px;
+    font-weight:600;
+    font-family:;
+    color:olivedrab;
+}
+.redeption-style-2 {
+    text-align:center;
+    font-size:22px;
+    font-weight:300;
+    font-family:Calibri;
+    color:grey;
+}
+.redeption-style-3 {
+    margin-top: 35px;
+}
+.redeption-style-4 {
+    font-size:14px;
+    font-weight:600;
+    color:grey;
+}
+.redeption-style-5 {
+    font-size:11px;
+    color:olivedrab;
+    margin-top:15px;
+}
+.redeption-style-6 {
+    float: right;
+    background-color: #ffffff;
+    height: 135px;
+    width: 135px;
+    margin-left: 16px;
+}
+
+.jqx-window-header > div:first-of-type {
+    margin-right: 15px;
+    margin-left: 15px;
+}

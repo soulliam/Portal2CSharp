@@ -47,7 +47,7 @@ public partial class MemberSearch : System.Web.UI.Page
             SqlConnection cn = new SqlConnection(thisADO.getMaxConnectionString());
 
             cn.Open();
-            SqlCommand cmd = new SqlCommand("dbo.GetManagerCreditForReceipt");
+            SqlCommand cmd = new SqlCommand("dbo.GetCreditForReceiptPCA");
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Connection = cn;
 
@@ -55,10 +55,10 @@ public partial class MemberSearch : System.Web.UI.Page
             SqlParameter thisReceiptNumber = cmd.Parameters.Add(new SqlParameter("@iReceiptNumber", SqlDbType.NVarChar, 20));
             SqlParameter thisColumnNumber = cmd.Parameters.Add(new SqlParameter("@iColumnNumber", SqlDbType.NVarChar, 20));
             SqlParameter thisShortTermNumber = cmd.Parameters.Add(new SqlParameter("@iShortTermNumber", SqlDbType.NVarChar, 20));
-            SqlParameter thisUserId = cmd.Parameters.Add(new SqlParameter("@iUserId", SqlDbType.UniqueIdentifier));
             SqlParameter thisLocationId = cmd.Parameters.Add(new SqlParameter("@iLocationId", SqlDbType.Int));
             SqlParameter thisMemberId = cmd.Parameters.Add(new SqlParameter("@iMemberId", SqlDbType.BigInt));
-
+            SqlParameter thisUserId = cmd.Parameters.Add(new SqlParameter("@iUserId", SqlDbType.NVarChar, 100));
+            
             if (Column == "")
             {
                 Column = null;
@@ -72,9 +72,9 @@ public partial class MemberSearch : System.Web.UI.Page
             thisReceiptNumber.Value = Receipt;
             thisColumnNumber.Value = Column;
             thisShortTermNumber.Value = null;
-            thisUserId.Value = Guid.Parse(thisGuid);
             thisLocationId.Value = LocationId;
             thisMemberId.Value = MemberId;
+            thisUserId.Value = SubmittedBy;
 
             using (SqlDataReader sdr = cmd.ExecuteReader())
             {
@@ -106,7 +106,7 @@ public partial class MemberSearch : System.Web.UI.Page
             SqlConnection cn = new SqlConnection(thisADO.getMaxConnectionString());
 
             cn.Open();
-            SqlCommand cmd = new SqlCommand("dbo.GetReceiptCredit");
+            SqlCommand cmd = new SqlCommand("dbo.GetReceiptCreditPCA");
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Connection = cn;
 
@@ -115,14 +115,14 @@ public partial class MemberSearch : System.Web.UI.Page
             SqlParameter thisExitDate = cmd.Parameters.Add(new SqlParameter("@iExitDate", SqlDbType.DateTime));
             SqlParameter thisAmountPaid = cmd.Parameters.Add(new SqlParameter("@iAmountPaid", SqlDbType.Float));
             SqlParameter thisLocationId = cmd.Parameters.Add(new SqlParameter("@iLocationId", SqlDbType.Int));
-            SqlParameter thisUserId = cmd.Parameters.Add(new SqlParameter("@iUserId", SqlDbType.UniqueIdentifier));
+            SqlParameter thisUserId = cmd.Parameters.Add(new SqlParameter("@iUserId", SqlDbType.NVarChar, 100));
 
             thisMemberId.Value = MemberId;
             thisEntryDate.Value = entryDate;
             thisExitDate.Value = exitDate;
             thisAmountPaid.Value = AmountPaid;
             thisLocationId.Value = LocationId;
-            thisUserId.Value = Guid.Parse(thisGuid);
+            thisUserId.Value = SubmittedBy;
 
             using (SqlDataReader sdr = cmd.ExecuteReader())
             {

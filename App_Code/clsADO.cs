@@ -76,7 +76,8 @@ namespace class_ADO
 
         public void updateOrInsert(string strSQL, bool Max)
         {
-          
+            try
+            {
                 string conn = "";
 
                 if (Max == true)
@@ -99,7 +100,13 @@ namespace class_ADO
                         con.Close();
                     }
                 }
-   
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+                
         }
 
         public object returnSingleValue(string strSQL, bool Max)

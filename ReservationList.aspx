@@ -47,6 +47,8 @@
                 $("#jqxgridOUT").jqxGrid('exportdata', 'pdf', 'jqxGrid');
             });
 
+            $("#btnView").jqxButton();
+
 
             $("#calendar").jqxDateTimeInput({ formatString: 'MM-dd-yyyy', width: '100%', height: '24px' });
 
@@ -108,8 +110,12 @@
                             $("#jqxgridOUT").jqxGrid('destroy');
                             $("<div id='jqxgridOUT'></div>").appendTo(parent);
 
-                            loadGridOut(item.value);
-                            loadGrid(item.value);
+                            if ($('#calendar').jqxDateTimeInput('disabled') == true) {
+                                $("#calendar").jqxDateTimeInput({ disabled: false });
+                                $("#btnView").jqxButton({ disabled: false });
+                            }
+                            
+                            
                         }
                     }
                 });
@@ -123,12 +129,15 @@
                 var parent = $("#jqxgridOUT").parent();
                 $("#jqxgridOUT").jqxGrid('destroy');
                 $("<div id='jqxgridOUT'></div>").appendTo(parent);
+            });
 
+            $("#btnView").on("click", function (event) {
                 loadGridOut($("#locationCombo").jqxComboBox('getSelectedItem').value);
                 loadGrid($("#locationCombo").jqxComboBox('getSelectedItem').value);
             });
 
-            
+            $("#calendar").jqxDateTimeInput({ disabled: true });
+            $("#btnView").jqxButton( { disabled: true });
             
             Security();
 
@@ -344,10 +353,11 @@
                 <div class="col-sm-2">
                     <div id="locationCombo"></div>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     <div id="calendar"></div>
+                    <input type="button" value="View" id='btnView' />
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                 </div>
                 <div class="col-sm-2">
                     <input type="button" value="Export Entrances" id='pdfExportIn' />

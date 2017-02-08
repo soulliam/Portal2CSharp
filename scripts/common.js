@@ -18,6 +18,7 @@ function Security() {
         }
     }
 
+    //don't display if not portal admin or RFR
     if (group.indexOf("Portal_RFR") <= -1 && group.indexOf("Portal_Superadmin") <= -1 && group.indexOf("Portal_Admin") <= -1) {
         //if (group.indexOf("frie") <= -1) {
         var elements = document.getElementsByClassName('RFR')
@@ -27,7 +28,8 @@ function Security() {
         }
     }
 
-    if (group.indexOf("Portal_Asstmanager") > -1) {
+    //disable if not portal admin or RFR
+    if (group.indexOf("Portal_RFR") <= -1 && group.indexOf("Portal_Superadmin") <= -1 && group.indexOf("Portal_Admin") <= -1) {
         var elements = document.getElementsByClassName('NoAsstMgr')
 
         for (var i = 0; i < elements.length; i++) {
@@ -177,6 +179,14 @@ function loadPoints(thisAccountId, textInput) {
         }
     });
 }
+
+//Javascript to get query string parameters
+function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+};
 
 
 // Use this to render location names if they only sent the ID
