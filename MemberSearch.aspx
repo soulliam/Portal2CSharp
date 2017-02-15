@@ -5,19 +5,16 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
    
-     
+
+    <link rel="stylesheet" href="/jqwidgets/styles/jqx.base.css" type="text/css" />
 
 
     <script type="text/javascript" src="scripts/Member/UpdateMember.js"></script>
     <script type="text/javascript" src="scripts/Member/MemberReservation.js"></script>
-
-    <link rel="stylesheet" href="/jqwidgets/styles/jqx.base.css" type="text/css" />
-
     <script type="text/javascript" src="jqwidgets/jqxcore.js"></script>
     <script type="text/javascript" src="jqwidgets/globalization/globalize.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxbuttons.js"></script>
-    <script type="text/javascript" src="jqwidgets/jqxgrid.js"></script>    
-    <script type="text/javascript" src="jqwidgets/jqxgrid.aggregates.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxgrid.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxcalendar.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxgrid.columnsreorder.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxgrid.columnsresize.js"></script>
@@ -31,7 +28,6 @@
     <script type="text/javascript" src="jqwidgets/jqxgrid.selection.js"></script> c
     <script type="text/javascript" src="jqwidgets/jqxgrid.sort.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxlistbox.js"></script>
-    <script type="text/javascript" src="jqwidgets/jqxmaskedinput.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxmenu.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxscrollbar.js"></script>    
     <script type="text/javascript" src="jqwidgets/jqxwindow.js"></script>
@@ -376,7 +372,14 @@
                 if (getselectedrowindexes.length > 0) {
 
                     for (var index = 0; index < getselectedrowindexes.length; index++) {
+
                         var selectedRowData = $('#jqxRedemptionGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
+                        if (selectedRowData.IsReturned == 1 || selectedRowData.BeenUsed == 1)
+                        {
+                            alert('You have selected a redemption that has been used or returned.  Please check you list and try again.');
+                            return null;
+                        }
+
                         if (first == true) {
                             ProcessList = ProcessList + selectedRowData.RedemptionId;
                             first = false;
@@ -435,7 +438,7 @@
                 if (result != true) {
                     return null;
                 }
-                $('#jqxLoader').jqxLoader('open');
+
                 //Get the selected rows RedemptionID
                 var thisMemberId = $("#MemberId").val();
                 var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
@@ -447,6 +450,12 @@
 
                     for (var index = 0; index < getselectedrowindexes.length; index++) {
                         var selectedRowData = $('#jqxRedemptionGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
+
+                        if (selectedRowData.IsReturned == 1 || selectedRowData.BeenUsed == 1) {
+                            alert('You have selected a redemption that has been used or returned.  Please check you list and try again.');
+                            return null;
+                        }
+
                         if (first == true) {
                             ProcessList = ProcessList + selectedRowData.RedemptionId;
                             first = false;
@@ -493,10 +502,11 @@
                             if (success == true) {
                                 alert("Returned!  Check activity for returned points.");
                             }
-                            $('#jqxLoader').jqxLoader('close');
                         }
                     })
                 }
+
+
             });
 
             // Cancel Reservation
@@ -576,7 +586,7 @@
                 var thisStreetAddress2 = $("#StreetAddress2").val();
                 var thisCityName = $("#CityName").val();
 
-                if ($("#stateCombo").jqxComboBox('getSelectedIndex') == 0) {
+                if ($("#stateCombo").jqxComboBox('getSelectedIndex') == -1) {
                     var thisStateId = 0;
                 } else {
                     var thisStateId = $("#stateCombo").jqxComboBox('getSelectedItem').value;
@@ -783,10 +793,22 @@
                 $('#popupCombineMembers').jqxWindow({ closeAnimationDuration: 500 });
                 $("#popupCombineMembers").jqxWindow('open');
 
-                var thisMemberId = $("#MemberId").val();
+                
+                var cardrows = $('#jqxCardGrid').jqxGrid('getrows');
 
-                $("#targetMember").val(thisMemberId);
+                if (cardrows.length > 0) {
 
+                    for (var index = 0; index < cardrows.length; index++) {
+                        if (cardrows[index].IsPrimary  == true) {
+                            $("#targetMember").val(cardrows[index].FPNumber);
+                        }
+                    }
+                }
+                else
+                {
+                    alert("This member doesn't have a card!");
+                    return null;
+                }
                
             });
 
@@ -796,8 +818,8 @@
                     return null;
                 }
 
-                thisTargetMemberId = $("#targetMember").val();
-                thisOriginMemberId = $("#orginMember").val();
+                thisTargetCard = $("#targetMember").val();
+                thisOriginCard = $("#orginMember").val();
                 thisCombinedBy = $("#txtLoggedinUsername").val();
 
                 var url = $("#localApiDomain").val() + "CombineMemberCardsController/CombineMemberCards/";
@@ -809,8 +831,8 @@
                     url: url,
                     
                     data: {
-                        "TargetMemberId": thisTargetMemberId,
-                        "OriginMemberId": thisOriginMemberId,
+                        "TargetCard": thisTargetCard,
+                        "OriginCard": thisOriginCard,
                         "CombinedBy": thisCombinedBy,
                     },
                     dataType: "json",
@@ -904,7 +926,7 @@
                 var thisGuid = $('#tempUserGuid').val()
 
                 if (checked == true) {
-                    
+                    PageMethods.SubmitReceipt1(newEntryDate, newReceiptNumber, "", submittedBy, thisLocationId, PageMemberID, thisGuid, DisplayPageMethodResults);
                     function onSucess(result) {
                         alert(result);
                     }
@@ -1081,7 +1103,7 @@
 
             $("#btnClear").on("click", function (event) {
                 $("div.FPR_SearchLeft input:text").val("");
-                $("#SearchFPNumber").jqxMaskedInput('clear');
+                $("#SearchFPNumber").val('');
                 $("#jqxSearchGrid").jqxGrid('clear');
                 
                 if ($("#jqxSearchGrid").is(":hidden")) {
@@ -1261,16 +1283,7 @@
             $("#jqxRadioTypeLost").jqxRadioButton({ groupName: 'ReceiptEntryDetail', width: 100, height: 24 });
             $("#jqxRadioTypeDamaged").jqxRadioButton({ groupName: 'ReceiptEntryDetail', width: 100, height: 24 });
 
-            //mask fpnumber in search bar
-            $("#SearchFPNumber").jqxMaskedInput(
-            {
-                theme: 'shinyblack',
-                width: '100%',
-                height: 24,
-                mask: '###-#####'
-            });
 
-            $('#SearchFPNumber').jqxMaskedInput({ textAlign: "right" });
 
             loadStateCombo();
             loadHomeLocationCombo();
@@ -1288,6 +1301,12 @@
             //#endregion
 
             Security();
+
+            if (getUrlParameter("MemberId") != "") {
+                findMember(getUrlParameter("MemberId"));
+                $("#MemberDetails").toggle();
+                $("#jqxSearchGrid").toggle();
+            };
 
         });
         
@@ -1307,15 +1326,16 @@
             var source =
             {
                 datafields: [
-                    { name: 'TransactionNumber' },
+                    
                     { name: 'ManualEditId' },
+                    { name: 'DateTimeOfEntry' },
+                    { name: 'DateTimeOfExit' },
+                    { name: 'ManualEditDate' },
+                    { name: 'Description' },
                     { name: 'PointsChanged' },
-                    { name: 'SubmittedBy' },
-                    { name: 'DateOfActivity' },
-                    { name: 'ActivityType' }
+                    { name: 'ParkingTransactionNumber' },
                 ],
 
-                id: 'TransactionNumber',
                 type: 'Get',
                 datatype: "json",
                 url: url
@@ -1332,21 +1352,19 @@
                 sortable: true,
                 altrows: true,
                 filterable: true,
-                enabletooltips: true,
+                columnsresize: true,
+                enablebrowserselection: true,
                 columns: [
-                      { text: 'TransactionNumber', datafield: 'TransactionNumber', width: '20%' },
-                      { text: 'ManualEditId', datafield: 'ManualEditId', width: '20%' },
+                      { text: 'ManualEditId', datafield: 'ManualEditId', hidden: true },
+                      { text: 'Entry', datafield: 'DateTimeOfEntry', width: '15%', cellsrenderer: DateTimeRender },
+                      { text: 'Exit', datafield: 'DateTimeOfExit', width: '15%', cellsrenderer: DateTimeRender },
+                      { text: 'Manual Edit Date', datafield: 'ManualEditDate', width: '15%', cellsrenderer: DateTimeRender },
+                      { text: 'Description', datafield: 'Description', width: '30%' },
                       { text: 'PointsChanged', datafield: 'PointsChanged', width: '10%' },
-                      { text: 'SubmittedBy', datafield: 'SubmittedBy', width: '20%', cellsrenderer: DateRender },
-                      { text: 'DateOfActivity', datafield: 'DateOfActivity', width: '20%', cellsrenderer: DateRender },
-                      { text: 'ActivityType', datafield: 'ActivityType', width: '10%' }
+                      { text: 'ParkingTransactionNumber', datafield: 'ParkingTransactionNumber', width: '20%' },
                 ]
             });
 
-            // defines redemption grid double click
-            $("#jqxArchiveGrid").bind('rowdoubleclick', function (event) {
-
-            });
         }
 
 
@@ -1627,9 +1645,9 @@
                       { text: 'ManualEditsId', datafield: 'ManualEditsId', hidden: true },
                       { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
                       { text: 'Points Changed', datafield: 'PointsChanged', width: '10%' },
-                      { text: 'Points', datafield: 'Points', width: '10%' },
-                      { text: 'Description', datafield: 'Description', width: '50%' },
-                      { text: 'Location', datafield: 'LocationId', width: '10%' },
+                      { text: 'Balance', datafield: 'Points', width: '10%' },
+                      { text: 'Description', datafield: 'Description', width: '40%' },
+                      { text: 'Location', datafield: 'LocationId', width: '10%', cellsrenderer: locatioinCellsrenderer },
                       { text: 'Date', datafield: 'Date', width: '10%', cellsrenderer: DateRender }
                 ]
             });
@@ -1829,12 +1847,10 @@
             var url = $("#localApiDomain").val() + "members/search";
             //var url = "http://localhost:52839/api/members/search";
 
-            if ($("#SearchFPNumber").jqxMaskedInput('value') != null && $("#SearchFPNumber").jqxMaskedInput('value') != "___-_____") {
-                var thisFPNumber = $("#SearchFPNumber").jqxMaskedInput('value');
+            if ($("#SearchFPNumber").val() != '') {
+                var thisFPNumber = $("#SearchFPNumber").val();
 
-                thisFPNumber = thisFPNumber.replace("-", "");
-
-                thisFPNumber = thisFPNumber.replace(/^(0+)/g, '');
+                thisFPNumber = thisFPNumber.replace(/\D/g, '');
 
                 thisFPNumber = padNumber(thisFPNumber, 8, "0");
             } else {
@@ -1999,6 +2015,35 @@
             $("#jqxRedemptionGrid").jqxComboBox('destroy');
             $("<div id='jqxRedemptionGrid'></div>").appendTo(parent);
 
+            var redemptionRenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+                switch (value) {
+                    case 0:
+                        return '<div style="margin-top: 10px;margin-left: 5px">NO</div>';
+                        break;
+                    case 1:
+                        return '<div style="margin-top: 10px;margin-left: 5px">YES</div>';
+                        break;
+                    case '0001-01-01T00:00:00':
+                        return '<div style="margin-top: 10px;margin-left: 5px">&nbsp;</div>';
+                        break;
+                    default:
+                        var thisDateTime = value;
+
+                        if (thisDateTime != "") {
+                            thisDateTime = thisDateTime.split("T");
+
+                            var thisDate = thisDateTime[0].split("-");
+
+                            var newDate = '<div style="margin-top: 10px;margin-left: 5px">' + thisDate[1] + "/" + thisDate[2] + "/" + thisDate[0] + '</div>';
+
+                            return newDate;
+                        } else {
+                            return "";
+                        }
+                        break;
+                }
+            }
+
             //Loads redemptions
             //var url = $("#apiDomain").val() + "members/" + PageMemberID + "/redemptions";
             var url = $("#localApiDomain").val() + "Redemptions/GetMemberRedemption/" + PageMemberID;
@@ -2049,9 +2094,9 @@
                       { text: 'CertificateId', datafield: 'CertificateId' },
                       { text: 'Redemption Type', datafield: 'RedemptionTypeName' },
                       { text: 'Redeem Date', datafield: 'RedeemDate', cellsrenderer: DateRender },
-                      { text: 'Returned', datafield: 'IsReturned' },
-                      { text: 'BeenUsed', datafield: 'BeenUsed' },
-                      { text: 'DateUsed', datafield: 'DateUsed', cellsrenderer: DateRender }
+                      { text: 'Returned', datafield: 'IsReturned', cellsrenderer: redemptionRenderer },
+                      { text: 'BeenUsed', datafield: 'BeenUsed', cellsrenderer: redemptionRenderer },
+                      { text: 'DateUsed', datafield: 'DateUsed', cellsrenderer: redemptionRenderer }
                 ]
             });
 
@@ -2928,7 +2973,13 @@
                     $("#IsActive").prop( "checked", thisData.result.data.IsActive);
                     $("#StreetAddress").val(thisData.result.data.StreetAddress);
                     $("#StreetAddress2").val(thisData.result.data.StreetAddress2);
-                    $("#stateCombo").jqxComboBox('selectItem', thisData.result.data.StateId);
+                    if (thisData.result.data.StateId == null) {
+                        $("#stateCombo").jqxComboBox('selectItem', 0);
+                    }
+                    else
+                    {
+                        $("#stateCombo").jqxComboBox('selectItem', thisData.result.data.StateId);
+                    }
                     $("#CityName").val(thisData.result.data.CityName);
                     $("#Zip").val(thisData.result.data.Zip);
                     $("#Company").val(thisData.result.data.Company);
@@ -2937,7 +2988,14 @@
                     $("#MarketingCode").val(thisData.result.data.MarketingCode);
                     $("#OldMarketingCode").val(thisData.result.data.MarketingCode);
                     $("#MarketingMailerCode").val(thisData.result.data.MarketingMailerCode);
-                    $("#MailerCompanyCombo").jqxComboBox('selectItem', thisData.result.data.CompanyId);
+                    if (thisData.result.data.CompanyId == null) {
+                        $("#MailerCompanyCombo").jqxComboBox('selectItem', 0);
+                    }
+                    else
+                    {
+                        $("#MailerCompanyCombo").jqxComboBox('selectItem', thisData.result.data.CompanyId);
+                    }
+                    
                     glbCompanyId = thisData.result.data.CompanyId;
                     $("#GetEmail").prop("checked", thisData.result.data.GetEmail);
                     $("#statusCombo").jqxComboBox('selectItem', thisData.result.data.PreferredStatusName);
@@ -2977,12 +3035,13 @@
                     thisReturn = thisReturn + "&LastName=" + $("#SearchLastName").val();
                 }
             }
-            if ($("#SearchFPNumber").jqxMaskedInput('value') != null && $("#SearchFPNumber").jqxMaskedInput('value') != "___-_____") {
-                var thisFPNumber = $("#SearchFPNumber").jqxMaskedInput('value');
 
-                thisFPNumber = thisFPNumber.replace("-", "");
+            if ($("#SearchFPNumber").val() != '') {
+                var thisFPNumber = $("#SearchFPNumber").val();
 
-                thisFPNumber = thisFPNumber.replace(/^(0+)/g, '');
+                thisFPNumber = thisFPNumber.replace(/\D/g, '');
+
+                thisFPNumber = padNumber(thisFPNumber, 8, "0");
 
                 if (thisReturn == "") {
                     thisReturn = thisReturn + "FPNumber=" + thisFPNumber;
@@ -3063,7 +3122,7 @@
                         <div class="col-sm-9">
                             <div class="row search-size">
                                 <div class="col-sm-15">
-                                    <div id="SearchFPNumber"></div>
+                                    <input type="text" id="SearchFPNumber" placeholder="Card Number" />
                                 </div>
                                 <div class="col-sm-15">
                                     <input type="text" id="SearchFirstName" placeholder="First Name" />
@@ -3155,7 +3214,9 @@
                                 
                             <ul>
                                 <li>Account</li>
-                                <div style="float:right;width:50%">
+                                <div style="float:right;width:25%">
+                                    <label id="pointsLabelAccountBar" class="strong">Points Balance:</label>
+                                    <label id="topPointsBalanceAccountBar" class="strong font-red right-buffer-15"></label>
                                     <div class="collaspeButton dropup" id="collapseSearchBar">Search <span class="caret"></span></div>
                                 </div>
                             </ul>
@@ -3192,8 +3253,6 @@
                             <li>Archive</li>
                             <li>Modified</li>
                             <div style="float:right">
-                                <label id="pointsLabelAccountBar" class="strong">Points Balance:</label>
-                                <label id="topPointsBalanceAccountBar" class="strong font-red right-buffer-15"></label>
                                 <label id="LocationLabelAccountBar" class="strong">Preferred Location:</label>
                                 <label id="topLocationAccountBar" class="strong font-red right-buffer-15"></label>
                             </div>
@@ -3304,7 +3363,7 @@
                                         <div class="form-group">
                                             <label for="RepCode" class="col-sm-3 col-md-4 control-label">Rep Code:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control NoMgr NoAsstMgr" id="MarketingCode" placeholder=""><input type="text" style="display:none" id="OldMarketingCode" />
+                                                <input type="text" class="form-control RFRJustDisable" id="MarketingCode" placeholder=""><input type="text" style="display:none" id="OldMarketingCode" />
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -3595,7 +3654,7 @@
                                 <input type="button" id="deleteCard" value="Delete" class="editor" />
                                 <input type="button" id="addCard" value="Add" class="editor" />
                                 <input type="button" id="setCardPrimary" value="Set as Primary" class="editor" />
-                                <input type="button" id="combineMemberCards" value="Combine Member Cards" class="editor" />
+                                <input type="button" id="combineMemberCards" value="Combine Member Cards" class="RFR" />
                                 </div>
                             </div>
                         </div>

@@ -209,21 +209,21 @@
             <div class="row search-size FPR_SearchLeft">
                 <div class="col-sm-12 col-md-10 col-md-offset-1">
                     <div class="row search-size">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="row search-size">
                                 <div class="col-sm-12">
                                     <div id="LocationCombo"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-1">
+                        <div class="col-sm-3">
                             <div class="row search-size">
                                 <div class="col-sm-12">
-                                    
+                                    <%--<div  id="CompnayCombo"></div>--%>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="row search-size">
                                 <div class="col-sm-12">
                                     <input type="text" id="CompanyName" placeholder="Company" />

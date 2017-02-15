@@ -28,8 +28,17 @@ function Security() {
         }
     }
 
-    //disable if not portal admin or RFR
     if (group.indexOf("Portal_RFR") <= -1 && group.indexOf("Portal_Superadmin") <= -1 && group.indexOf("Portal_Admin") <= -1) {
+        //if (group.indexOf("frie") <= -1) {
+        var elements = document.getElementsByClassName('RFRJustDisable')
+
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].disabled = true;
+        }
+    }
+
+    //disable if not portal admin or RFR
+    if (group.indexOf("Portal_RFR") <= -1 && group.indexOf("Portal_Superadmin") <= -1 && group.indexOf("Portal_Admin") <= -1 && group.indexOf("Portal_Manager") <= -1) {
         var elements = document.getElementsByClassName('NoAsstMgr')
 
         for (var i = 0; i < elements.length; i++) {
@@ -51,33 +60,47 @@ function Security() {
 //render dates for grid
 var DateRender = function (row, columnfield, value, defaulthtml, columnproperties) {
     // format date as string due to inconsistant date coversions
-    var thisDateTime = value;
+    switch (value) {
+        case '0001-01-01T00:00:00':
+            return '<div style="margin-top: 10px;margin-left: 5px">&nbsp;</div>';
+            break;
+        default:
+            var thisDateTime = value;
 
-    if (thisDateTime != "") {
-        thisDateTime = thisDateTime.split("T");
+            if (thisDateTime != "") {
+                thisDateTime = thisDateTime.split("T");
 
-        var thisDate = thisDateTime[0].split("-");
+                var thisDate = thisDateTime[0].split("-");
 
-        var newDate = '<div style="margin-top: 10px;margin-left: 5px">' + thisDate[1] + "/" + thisDate[2] + "/" + thisDate[0] + '</div>';
+                var newDate = '<div style="margin-top: 10px;margin-left: 5px">' + thisDate[1] + "/" + thisDate[2] + "/" + thisDate[0] + '</div>';
 
-        return newDate;
-    } else {
-        return "";
+                return newDate;
+            } else {
+                return "";
+            }
+            break;
     }
 
 };
 
 var DateTimeRender = function (row, columnfield, value, defaulthtml, columnproperties) {
     // format date as string due to inconsistant date coversions
-    var thisDateTime = value;
+    switch (value) {
+        case '0001-01-01T00:00:00':
+            return '<div style="margin-top: 10px;margin-left: 5px">&nbsp;</div>';
+            break;
+        default:
+            var thisDateTime = value;
 
-    if (thisDateTime != "") {
+            if (thisDateTime != "") {
 
-        var newDate = JsonDateTimeFormat(thisDateTime);
+                var newDate = JsonDateTimeFormat(thisDateTime);
 
-        return '<div style="margin-top: 10px;margin-left: 5px">' + newDate + '</div>';
-    } else {
-        return "";
+                return '<div style="margin-top: 10px;margin-left: 5px">' + newDate + '</div>';
+            } else {
+                return "";
+            }
+            break;
     }
 
 };

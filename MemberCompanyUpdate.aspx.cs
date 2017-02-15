@@ -25,7 +25,10 @@ public partial class MemberCompanyUpdate : System.Web.UI.Page
             for (int i = 0; i <= thisMemberIds.Length - 1; i++ )
             {
                 class_ADO.clsADO thisADO = new class_ADO.clsADO();
-                thisADO.updateOrInsert("Update MemberInformationMain set CompanyId = " + CompanyId + " where MemberId = " + thisMemberIds[i], true);
+
+                var strSQL = "Update MemberInformationMain set CompanyId = " + CompanyId + ", DateUpdated = '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "',  UpdateDatetime = '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "' where MemberId = " + thisMemberIds[i];
+
+                thisADO.updateOrInsert(strSQL, true);
 
                 class_Logging.clsLogging thisLog = new class_Logging.clsLogging();
                 thisLog.logChange(thisUser, thisMemberIds[i], "",Convert.ToString(CompanyId), "MemberInformationMain", "Multi-CompanyId Update", thisBatch);

@@ -122,7 +122,7 @@
                 datafields: [
                     { name: 'ReservationId' },
                     { name: 'ReservationNumber' },
-                    { name: 'ShortNameLocation' },
+                    { name: 'ShortLocationName' },
                     { name: 'StartDatetime' },
                     { name: 'EndDatetime' },
                     { name: 'CanceledDate' },
@@ -156,7 +156,7 @@
                 columns: [
                        { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
                        { text: 'Reservation#', datafield: 'ReservationNumber', width: '15%' },
-                       { text: 'Location', datafield: 'ShortNameLocation', width: '15%' },
+                       { text: 'Location', datafield: 'ShortLocationName', width: '15%' },
                        { text: 'Start Date', datafield: 'StartDatetime', cellsrenderer: DateRender, width: '10%' },
                        { text: 'End Date', datafield: 'EndDatetime', cellsrenderer: DateTimeRender, width: '10%' },
                        { text: 'Canceled Date', datafield: 'CanceledDate', cellsrenderer: DateTimeRender, width: '10%' },

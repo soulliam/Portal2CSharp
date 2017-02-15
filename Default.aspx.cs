@@ -30,8 +30,9 @@ public partial class _Default : System.Web.UI.Page
             {
                 groupList = groupList + ',' + group;
             }
-
         }
+
+        Session["UserName"] = user;
 
         Session["groupList"] = groupList;
 

@@ -106,7 +106,6 @@ public partial class ReportViewer : System.Web.UI.Page
 
         if (selectedNode.Parent != null)
         {
-
             ReportViewer1.Visible = true;
 
             ReportViewer1.ServerReport.ReportServerCredentials = new CustomReportCredentials("sqladmin", "DykwIa?Itmwg2bdyhwtl!", "pca");
@@ -120,8 +119,21 @@ public partial class ReportViewer : System.Web.UI.Page
 
             string reportLocation = Convert.ToString(TreeView1.SelectedValue).Replace(".rdl", "");
 
-            //serverReport.ReportPath = "/NewManager/General/ManagerAudit";
-            serverReport.ReportPath = reportLocation;
+            if (reportLocation.Contains("Marketing")) {
+                string ID = getRepID(Convert.ToString(Session["UserName"]));
+
+                ReportParameter[] parameters = new ReportParameter[2];
+
+                //not sure we need the userloginId param.
+                parameters[0] = new ReportParameter("UserLoginId", "1");
+                parameters[1] = new ReportParameter("ID", ID);
+                serverReport.ReportPath = reportLocation;
+                serverReport.SetParameters(parameters);
+            }
+            else
+            {
+                serverReport.ReportPath = reportLocation;
+            }
         }
     }
 
@@ -163,7 +175,7 @@ public partial class ReportViewer : System.Web.UI.Page
                 if (first == true)
                 {
                     thisGroup = i.Replace("PCA\\", "");
-                    whereClause = "Where (rtg.ReportGroup = '" + thisGroup + "' ";
+                    whereClause = "Where IsViewable = 1 and (rtg.ReportGroup = '" + thisGroup + "' ";
                     first = false;
                 }
                 else
@@ -194,5 +206,17 @@ public partial class ReportViewer : System.Web.UI.Page
         return groups;
     }
 
+    public string getRepID(string username)
+    {
+        clsADO thisADO = new clsADO();
 
+        username = username.Replace("PCA\\", "");
+
+        string strSQL = "Select ID from aspnetdb.dbo.aspnet_Users au " +
+                        "Inner Join MarketingReps mr on au.UserId = mr.UserId " +
+                        "Where au.UserName = '" + username + "'";
+        string RepId = Convert.ToString(thisADO.returnSingleValue(strSQL, false));
+
+        return RepId;
+    }
 }

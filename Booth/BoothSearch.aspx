@@ -259,7 +259,7 @@
             });
 
             $("#btnSearch").on("click", function (event) {
-               
+                document.getElementById('qrIframe').src = '';
                 getParametersAndSearch();
 
             });
@@ -302,6 +302,7 @@
             });
 
             $("#btnSearchClear").on("click", function (event) {
+                document.getElementById('qrIframe').src = '';
                 clearSearch();
             });
 
@@ -309,6 +310,7 @@
             $("#searchContainer").keypress(function (e) {
 
                 if (e.keyCode == 13) {
+                    document.getElementById('qrIframe').src = '';
                     getParametersAndSearch();
                 }
             });
