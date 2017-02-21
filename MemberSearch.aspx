@@ -37,6 +37,7 @@
     <script type="text/javascript" src="jqwidgets/jqxcheckbox.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxgrid.edit.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxdropdownbutton.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxinput.js"></script>
 
     <script type="text/javascript">
         var PageMemberID = 0;
@@ -46,6 +47,9 @@
         var group = '<%= Session["groupList"] %>';
         var glbCompanyId = 0;
         var glbHomeLocationId = 0;
+        var searchCompaniesLoaded = false;
+        var memberCompaniesLoaded = false;
+
 
         $(document).ready(function () {
 
@@ -74,10 +78,21 @@
             // Create jqxMemberInfoTabs.***************************************************************
             $('#jqxMemberInfoTabs').jqxTabs({ width: '100%', position: 'top' });
             $('#settings div').css('margin-top', '10px');
+
+            $('#jqxMemberInfoTabs').on('selected', function (event) {
+
+                var title = $('#jqxMemberInfoTabs').jqxTabs('getTitleAt', event.args.item);
+
+                if (title == "Modified") {
+                    loadModified($("#MemberId").val());
+                }
+            });
+
             $('#animation').on('change', function (event) {
                 var checked = event.args.checked;
                 $('#jqxMemberInfoTabs').jqxTabs({ selectionTracker: checked });
             });
+
 
             $('#contentAnimation').on('change', function (event) {
                 var checked = event.args.checked;
@@ -594,7 +609,13 @@
 
                 var thisZip = $("#Zip").val();
                 var thisCompany = $("#Company").val();
-                var thisTitleId = 1;
+
+                if ($("#titleCombo").jqxComboBox('getSelectedIndex') == 0 || $("#titleCombo").jqxComboBox('getSelectedIndex') == -1) {
+                    var thisLocationId = 0;
+                } else {
+                    var thisTitleId = $('#titleCombo').jqxComboBox('selectedIndex');;
+                }
+
                 var thisMarketingCode = $("#MarketingMailerCode").val();
                 var thisMemberId = $("#MemberId").val(); 
 
@@ -604,10 +625,10 @@
                     var thisLocationId = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
                 }
 
-                if ($("#MailerCompanyCombo").jqxComboBox('getSelectedIndex') == 0) {
+                if ($("#MailerCompanyComboID").val() == "" || $("#MailerCompanyCombo").val() == "") {
                     var thisCompanyId = 0;
                 } else {
-                    var thisCompanyId = $("#MailerCompanyCombo").jqxComboBox('getSelectedItem').value;
+                    var thisCompanyId = $("#MailerCompanyComboID").val();
                 }
                
                 var thisGetEmail = $("#GetEmail").prop("checked");
@@ -636,6 +657,11 @@
 
                 saveUpdateMemberInfo(phoneType, phoneNumber, thisMemberId, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2,
                                      thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, isRFR);
+
+                var thisLoggedinUsername = $("#txtLoggedinUsername").val();
+
+
+                PageMethods.LogMemberUpdate(thisLoggedinUsername, thisMemberId, '', '');
 
                 SaveMarketingCode();
 
@@ -1136,7 +1162,8 @@
                     $("#updateMemberInfo").css("visibility", "hidden");
                     $("#addPhone").jqxButton({ disabled: true });
                     $("#deleteEmail").jqxButton({ disabled: true });
-                    $("#MailerCompanyCombo").jqxComboBox({ disabled: true });
+                    //$("#MailerCompanyCombo").jqxComboBox({ disabled: true });
+                    $("#MailerCompanyCombo").attr("disabled", true);
                     $('#phoneGrid').jqxGrid({ editable: false });
 
 
@@ -1146,15 +1173,17 @@
                     $("#stateCombo").jqxComboBox({ disabled: false });
                     $("#homeLocationCombo").jqxComboBox({ disabled: false });
                     $("#editMember").val("Cancel Edit");
-                    $("#MailerCompanyCombo").jqxComboBox({ disabled: false });
+                    //$("#MailerCompanyCombo").jqxComboBox({ disabled: false });
+                    $("#MailerCompanyCombo").attr("disabled", false);
                     $("#updateMemberInfo").css("visibility", "visible");
                     $("#addPhone").jqxButton({ disabled: false });
                     $("#deleteEmail").jqxButton({ disabled: false });
                     $('#phoneGrid').jqxGrid({ editable: true });
 
-                    if (group.indexOf("RFR") > -1 || group.indexOf("Portal_Superadmin") > -1) {
-                        $("#MailerCompanyCombo").jqxComboBox({ disabled: false });
-                    }
+                    //if (group.indexOf("RFR") > -1 || group.indexOf("Portal_Superadmin") > -1) {
+                    //    //$("#MailerCompanyCombo").jqxComboBox({ disabled: false });
+                    //    $("#MailerCompanyCombo").attr("disabled", false);
+                    //}
                     Security();
                 }
             });
@@ -1179,6 +1208,12 @@
 
                     }
                 }
+            });
+
+            //Combobox insert placeholder
+            $("#titleCombo").on('bindingComplete', function (event) {
+                $("#titleCombo").jqxComboBox('insertAt', '', 0);
+                $("#titleCombo").jqxComboBox('selectIndex', 0);
             });
 
             //#endregion
@@ -1247,8 +1282,6 @@
                 }
             });
 
-
-            loadLocationCombo();
            
             $("#AccountTabContent").toggle();
             $("#updateMemberInfo").css("visibility", "hidden");
@@ -1273,7 +1306,8 @@
             $("#homeLocationCombo").jqxComboBox({ disabled: true });
             $("#addPhone").jqxButton({ disabled: true });
             $("#deleteEmail").jqxButton({ disabled: true });
-            $("#MailerCompanyCombo").jqxComboBox({ disabled: true });
+            //$("#MailerCompanyCombo").jqxComboBox({ disabled: true });
+            
             
 
             // Setup Radio Buttons for simple Receipt Entry form+++++++++++++++++++++++++++++++++++++++++++++
@@ -1283,23 +1317,19 @@
             $("#jqxRadioTypeLost").jqxRadioButton({ groupName: 'ReceiptEntryDetail', width: 100, height: 24 });
             $("#jqxRadioTypeDamaged").jqxRadioButton({ groupName: 'ReceiptEntryDetail', width: 100, height: 24 });
 
-
-
+            //this one needs to load on page load
+            loadCompaniesSearchCombo();
+            
+            loadLocationCombo();
+            loadTitle();
             loadStateCombo();
             loadHomeLocationCombo();
             loadReceiptLocationCombo();
             loadmanualEditTypesCombo();
-            loadCompaniesCombo();
-
-
-            // setup reservation popup these are in Member/Scripts/MemberReservation.js
-            loadReservationLocationCombo();
-            loadReservationCalendars();
-            loadReservationPaymentMethodId();
             loadStatus();
 
-            //#endregion
 
+            
             Security();
 
             if (getUrlParameter("MemberId") != "") {
@@ -1307,6 +1337,7 @@
                 $("#MemberDetails").toggle();
                 $("#jqxSearchGrid").toggle();
             };
+            //#endregion
 
         });
         
@@ -1836,6 +1867,7 @@
         }
 
         function loadSearchResults(thisParameters) {
+            
 
             var parent = $("#jqxSearchGrid").parent();
             $("#jqxSearchGrid").jqxGrid('destroy');
@@ -1861,7 +1893,7 @@
                
             }
 
-            var data = { "FPNumber": thisFPNumber, "FirstName": $("#SearchFirstName").val(), "LastName": $("#SearchLastName").val(), "EmailAddress": $("#SearchEmail").val(), "HomePhone": $("#SearchPhoneNumber").val(), "Company": $("#SearchCompany").val(), "MailerCompany": $("#SearchMailerCompany").val(), "MarketingCode": $("#SearchMailerCode").val(), "UserName": $("#SearchUserName").val() };
+            var data = { "FPNumber": thisFPNumber, "FirstName": $("#SearchFirstName").val(), "LastName": $("#SearchLastName").val(), "EmailAddress": $("#SearchEmail").val(), "HomePhone": $("#SearchPhoneNumber").val(), "Company": $("#SearchCompany").val(), "MailerCompany": $("#MailerCompanySearchCombo").jqxInput('val').value, "MarketingCode": $("#SearchMailerCode").val(), "UserName": $("#SearchUserName").val() };
 
             var source =
             {
@@ -1899,6 +1931,7 @@
                 enablebrowserselection: true,
                 ready: function ()
                 {
+                    loadCompaniesCombo();
                     //var datainformations = $("#jqxSearchGrid").jqxGrid("getdatainformation");
                     //var rowscounts = datainformations.rowscount;
                     //alert(rowscounts);
@@ -1980,6 +2013,8 @@
                 ]
             });
 
+
+
             // defines redemption grid double click
             $("#jqxNotesGrid").bind('rowdoubleclick', function (event) {
                 var row = event.args.rowindex;
@@ -2005,6 +2040,60 @@
 
                 $("#txtNote").val(dataRecord.Note);
                 $("#saveNote").css("visibility", "hidden");
+            });
+        }
+
+        function loadModified(PageMemberID) {
+            //Loads card list
+            var parent = $("#jqxModifiedGrid").parent();
+            $("#jqxModifiedGrid").jqxGrid('destroy');
+            $("<div id='jqxModifiedGrid'></div>").appendTo(parent);
+
+            var url = $("#localApiDomain").val() + "Audits/GetAudits/" + PageMemberID;
+            //var url = "http://localhost:52839/api/Audits/GetAudits/" + PageMemberID;
+
+            var source =
+            {
+                datafields: [
+                    { name: 'MemberId' },
+                    { name: 'FirstName' },
+                    { name: 'LastName' },
+                    { name: 'DataChanged' },
+                    { name: 'OldValue' },
+                    { name: 'NewValue' },
+                    { name: 'ChangeType' },
+                    { name: 'changeUser' },
+                    { name: 'changeDate' }
+                ],
+
+                type: 'Get',
+                datatype: "json",
+                url: url
+            };
+
+            // create jqxNotesGrid
+            $("#jqxModifiedGrid").jqxGrid(
+            {
+                theme: 'shinyblack',
+                width: '100%',
+                height: 450,
+                source: source,
+                rowsheight: 35,
+                sortable: true,
+                altrows: true,
+                filterable: true,
+                enabletooltips: true,
+                columns: [
+                      { text: 'MemberId', datafield: 'MemberId', hidden: true },
+                      { text: 'FirstName', datafield: 'FirstName', width: '10%' },
+                      { text: 'LastName', datafield: 'LastName', width: '10%' },
+                      { text: 'DataChanged', datafield: 'DataChanged', width: '15%' },
+                      { text: 'OldValue', datafield: 'OldValue', width: '15%' },
+                      { text: 'NewValue', datafield: 'NewValue', width: '15%' },
+                      { text: 'Who', datafield: 'ChangeType', width: '10%' },
+                      { text: 'changeUser', datafield: 'changeUser', width: '10%' },
+                      { text: 'changeDate', datafield: 'changeDate', width: '15%', cellsrenderer: DateTimeRender }
+                ]
             });
         }
 
@@ -2181,7 +2270,6 @@
         //#region LoadComboBoxes
 
         function loadStatus() {
-            //set companies combobox
             var statusSource =
             {
                 datatype: "json",
@@ -2210,9 +2298,46 @@
         }
 
         function loadCompaniesCombo() {
-            //set companies combobox
-            var companySource =
-            {
+            if (memberCompaniesLoaded == true) {
+                return null;
+            }
+
+            ////set companies combobox
+            //var companySource =
+            //{
+            //    datatype: "json",
+            //    type: "Get",
+            //    root: "data",
+            //    datafields: [
+            //        { name: 'id' },
+            //        { name: 'name' }
+            //    ],
+            //    //url: $("#localApiDomain").val() + "CompanyDropDowns/GetCompanies/",
+            //    url: "http://localhost:52839/api/CompanyDropDowns/GetCompanies/",
+
+            //};
+            //var companyDataAdapter = new $.jqx.dataAdapter(companySource);
+
+            //$("#MailerCompanyCombo").jqxComboBox(
+            //{
+            //    width: '100%',
+            //    height: 24,
+            //    source: companyDataAdapter,
+            //    selectedIndex: 0,
+            //    displayMember: "name",
+            //    valueMember: "id"
+            //});
+
+
+            //$("#MailerCompanyCombo").on('bindingComplete', function (event) {
+            //    $("#MailerCompanyCombo").jqxComboBox('insertAt', '', 0);
+            //    memberCompaniesLoaded = true;
+            //});
+
+            //********************************************************************
+
+            // prepare the data
+            var source = {
                 datatype: "json",
                 type: "Get",
                 root: "data",
@@ -2221,29 +2346,164 @@
                     { name: 'name' }
                 ],
                 url: $("#localApiDomain").val() + "CompanyDropDowns/GetCompanies/",
+                //url: "http://localhost:52839/api/CompanyDropDowns/GetCompanies/",
 
             };
-            var companyDataAdapter = new $.jqx.dataAdapter(companySource);
-            $("#MailerCompanyCombo").jqxComboBox(
-            {
-                width: '100%',
-                height: 24,
-                source: companyDataAdapter,
-                selectedIndex: 0,
+            var companies = new Array();
+            var dataAdapter = new $.jqx.dataAdapter(source, {
+                autoBind: true,
+                loadComplete: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        companies.push({
+                            label: data[i].name,
+                            value: data[i].id
+                        });
+                    };
+                }
+            });
+
+            // Create a jqxInput
+            $("#MailerCompanyCombo").jqxInput({
+                placeHolder: "",
                 displayMember: "name",
-                valueMember: "id"
+                valueMember: "id",
+                width: '100%',
+                height: 25,
+                disabled:false,
+                source: function (query, response) {
+                    var item = query.split(/,\s*/).pop();
+                    // update the search query.
+                    $("#MailerCompanyCombo").jqxInput({
+                        query: item
+                    });
+                    response(companies);
+                },
+                renderer: function (itemValue, inputValue) {
+                    var terms = inputValue.split(/,\s*/);
+                    // remove the current input
+                    terms.pop();
+                    // add the selected item
+                    terms.push(itemValue);
+                    // add placeholder to get the comma-and-space at the end
+                    terms.push("");
+                    var value = terms.join(" ");
+                    return value;
+                },
+
             });
-            $('#MailerCompanyCombo input').on('focus', function () {
-                $("#MailerCompanyCombo").jqxComboBox('open');
+            $("#MailerCompanyCombo").on('select', function (event) {
+                if (event.args) {
+                    var item = event.args.item;
+                    if (item) {
+                        //alert("Value: " + item.value + ", " + "Label: " + item.label);
+                        $("#MailerCompanyComboID").val(item.value);
+                    }
+                }
             });
 
+        }
 
-            $("#MailerCompanyCombo").on('bindingComplete', function (event) {
-                $("#MailerCompanyCombo").jqxComboBox('insertAt', '', 0);
-                $("#MailerCompanyCombo").on('change', function (event) {
-                    //Do nothing for now
-                });
+        function loadCompaniesSearchCombo() {
+            if (searchCompaniesLoaded == true) {
+                return null;
+            }
+
+            ////set companies combobox
+            //var companySource =
+            //{
+            //    datatype: "json",
+            //    type: "Get",
+            //    root: "data",
+            //    datafields: [
+            //        { name: 'id' },
+            //        { name: 'name' }
+            //    ],
+            //    //url: $("#localApiDomain").val() + "CompanyDropDowns/GetCompanies/",
+            //    url: "http://localhost:52839/api/CompanyDropDowns/GetCompanies/",
+
+            //};
+            //var companyDataAdapter = new $.jqx.dataAdapter(companySource);
+
+            //$("#MailerCompanySearchCombo").jqxComboBox(
+            //{
+            //    width: '100%',
+            //    height: 24,
+            //    source: companyDataAdapter,
+            //    selectedIndex: 0,
+            //    displayMember: "name",
+            //    valueMember: "id"
+            //});
+
+
+            //$("#MailerCompanySearchCombo").on('bindingComplete', function (event) {
+            //    $("#MailerCompanySearchCombo").jqxComboBox('insertAt', '', 0);
+            //    $("#MailerCompanySearchCombo").jqxComboBox({ dropDownWidth: 300 });
+            //    searchCompaniesLoaded = true
+            //});
+
+            //************************************************************************
+
+            // prepare the data
+            var source = {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'id' },
+                    { name: 'name' }
+                ],
+                url: $("#localApiDomain").val() + "CompanyDropDowns/GetCompanies/",
+                //url: "http://localhost:52839/api/CompanyDropDowns/GetCompanies/",
+
+            };
+            var companies = new Array();
+            var dataAdapter = new $.jqx.dataAdapter(source, {
+                autoBind: true,
+                loadComplete: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        companies.push({
+                            label: data[i].name,
+                            value: data[i].id
+                        });
+                    };
+                }
             });
+
+            // Create a jqxInput
+            $("#MailerCompanySearchCombo").jqxInput({
+                placeHolder: "Company:",
+                displayMember: "name",
+                valueMember: "id",
+                width: 200,
+                height: 25,
+                source: function (query, response) {
+                    var item = query.split(/,\s*/).pop();
+                    // update the search query.
+                    $("#MailerCompanySearchCombo").jqxInput({
+                        query: item
+                    });
+                    response(companies);
+                },
+                renderer: function (itemValue, inputValue) {
+                    var terms = inputValue.split(/,\s*/);
+                    // remove the current input
+                    terms.pop();
+                    // add the selected item
+                    terms.push(itemValue);
+                    // add placeholder to get the comma-and-space at the end
+                    terms.push("");
+                    var value = terms.join(" ");
+                    return value;
+                }
+            });
+
+            //$('#getValueMember').jqxButton({
+            //    template: 'warning'
+            //}).click(function () {
+            //    var valueMember = $("#stuName").jqxInput('val').value;
+            //    alert(valueMember);
+            //});
+
         }
 
         function loadRate() {
@@ -2435,6 +2695,37 @@
             });
         }
 
+        function loadTitle() {
+            //set up the title combobox
+            var titleSource =
+            {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'TitleName' },
+                    { name: 'TitleId' }
+                ],
+                beforeSend: function (jqXHR, settings) {
+                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+                },
+                url: $("#apiDomain").val() + "titles/",
+
+            };
+            var titleDataAdapter = new $.jqx.dataAdapter(titleSource);
+            $("#titleCombo").jqxComboBox(
+            {
+                theme: 'shinyblack',
+                width: '100%',
+                height: 24,
+                source: titleDataAdapter,
+                selectedIndex: 0,
+                displayMember: "TitleName",
+                valueMember: "TitleId"
+            });
+            
+        }
+
         function loadStateCombo() {
             //set up the state combobox
             var stateSource =
@@ -2565,6 +2856,10 @@
         //#region SaveFunctions
 
         function SaveMarketingCode() {
+
+            if ($("#MarketingCode").val() == $("#OldMarketingCode").val()) {
+                return null;
+            }
 
             var thisMemberId = $("#MemberId").val();
             var thisMarketingcode = $("#MarketingCode").val();
@@ -2804,6 +3099,7 @@
             $("#jqxRedemptionGrid").jqxGrid('clear');
             $("#jqxReservationGrid").jqxGrid('clear');
             $("#jqxCardGrid").jqxGrid('clear');
+            $("#titleCombo").jqxComboBox('selectItem', 0);
         }
 
         function findMember(PageMemberID) {
@@ -2847,6 +3143,12 @@
         }
 
         function loadMember(PageMemberID) {
+            
+            ////// setup reservation popup these are in Member/Scripts/MemberReservation.js
+            loadReservationLocationCombo();
+            loadReservationCalendars();
+            loadReservationPaymentMethodId();
+            
             
             clearMemberInfo();
             
@@ -2965,6 +3267,13 @@
                     {
                         $("#topName").html(thisData.result.data.FirstName + " " + thisData.result.data.LastName)
                     }
+
+                    if (thisData.result.data.TitleId == null) {
+                        $("#titleCombo").jqxComboBox('selectItem', 0);
+                    } else {
+                        $("#titleCombo").jqxComboBox('selectItem', thisData.result.data.TitleId);
+                    }
+
                     $("#MemberId").val(thisData.result.data.MemberId);
                     $("#FirstName").val(thisData.result.data.FirstName);
                     $("#LastName").val(thisData.result.data.LastName);
@@ -2988,14 +3297,21 @@
                     $("#MarketingCode").val(thisData.result.data.MarketingCode);
                     $("#OldMarketingCode").val(thisData.result.data.MarketingCode);
                     $("#MarketingMailerCode").val(thisData.result.data.MarketingMailerCode);
-                    if (thisData.result.data.CompanyId == null) {
-                        $("#MailerCompanyCombo").jqxComboBox('selectItem', 0);
-                    }
-                    else
-                    {
-                        $("#MailerCompanyCombo").jqxComboBox('selectItem', thisData.result.data.CompanyId);
-                    }
+
+                    //if (thisData.result.data.CompanyId == null) {
+                    //    $("#MailerCompanyCombo").jqxComboBox('selectItem', 0);
+                    //}
+                    //else
+                    //{
+                    //    $("#MailerCompanyCombo").jqxComboBox('selectItem', thisData.result.data.CompanyId);
+                    //}
                     
+                    getCompanyName(thisData.result.data.CompanyId, $("#MailerCompanyCombo"));
+
+                    //$("#MailerCompanyCombo").val(thisCompanyName);
+                    $("#MailerCompanyCombo").attr("data-value", thisData.result.data.CompanyId);
+                    $("#MailerCompanyComboID").val(thisData.result.data.CompanyId);
+
                     glbCompanyId = thisData.result.data.CompanyId;
                     $("#GetEmail").prop("checked", thisData.result.data.GetEmail);
                     $("#statusCombo").jqxComboBox('selectItem', thisData.result.data.PreferredStatusName);
@@ -3013,7 +3329,8 @@
 
                     loadMemberActivity(PageMemberID);
                     loadAccountActivity();
-                    $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance"))); 
+
+                    $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
                     $("#topPointsBalanceAccountBar").html(loadPoints(AccountId, $("#topPointsBalanceAccountBar")));
                     $("#topLocationAccountBar").html($("#homeLocationCombo").jqxComboBox('getSelectedItem').label);
                     loadRate();
@@ -3070,11 +3387,11 @@
                     thisReturn = thisReturn + "&Company=" + $("#SearchCompany").val();
                 }
             }
-            if ($("#SearchMailerCompany").val() != "") {
+            if ($("#MailerCompanySearchCombo").val() != "") {
                 if (thisReturn == "") {
-                    thisReturn = thisReturn + "MarketingMailerCode=" + $("#SearchMailerCompany").val();
+                    thisReturn = thisReturn + "MailerCompany=" + $("#MailerCompanySearchCombo").jqxInput('val').value;
                 } else {
-                    thisReturn = thisReturn + "&MarketingMailerCode=" + $("#SearchMailerCompany").val();
+                    thisReturn = thisReturn + "&MailerCompany=" + $("#MailerCompanySearchCombo").jqxInput('val').value;
                 }
             }
             if ($("#SearchEmail").val() != "") {
@@ -3145,7 +3462,8 @@
                                     <input type="text" id="SearchCompany" placeholder="Company" />
                                 </div>
                                 <div class="col-sm-15">
-                                    <input type="text" id="SearchMailerCompany" placeholder="Mailer Company" />
+                                    <%--<div id="MailerCompanySearchCombo"></div>--%>
+                                    <input type="text" id="MailerCompanySearchCombo" />
                                 </div>
                                 <div class="col-sm-15">
                                     <input type="text" id="SearchMailerCode" placeholder="Mailer Code"  />
@@ -3285,7 +3603,7 @@
                                         <div class="form-group">
                                             <label for="Title" class="col-sm-3 col-md-4 control-label">Title:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="Title" placeholder="">
+                                                <div id="titleCombo"></div>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -3369,7 +3687,9 @@
                                         <div class="form-group">
                                             <label for="MailerCo" class="col-sm-3 col-md-4 control-label">Mailer Company:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <div id="MailerCompanyCombo" class="NoAsstMgr"></div>
+                                                <%--<div id="MailerCompanyCombo" class="NoAsstMgr"></div>--%>
+                                                <input type="text" id="MailerCompanyCombo" class="NoAsstMgr" />
+                                                <input type="text" id="MailerCompanyComboID" style="display:none;" />
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -3668,7 +3988,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="tabModified" class="tab-body"></div>
+                        <div id="tabModified" class="tab-body">
+                            <div class="col-sm-12 col-md-12">
+                                <div id="jqxModifiedGrid"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

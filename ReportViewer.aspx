@@ -21,6 +21,8 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $("#mainSplitter").jqxSplitter({ width: '100%', height: 750, panels: [{ size: 300 }] });
+
+            Security();
         });
     </script>
 

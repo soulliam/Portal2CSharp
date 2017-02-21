@@ -181,7 +181,6 @@ function DisplayPageMethodResults(ResultString) {
 
 //loads points to a label from an AccountID
 function loadPoints(thisAccountId, textInput) {
-
     $.ajax({
         type: 'GET',
         url: $("#apiDomain").val() + "accounts/" + thisAccountId + "/points",
@@ -199,6 +198,32 @@ function loadPoints(thisAccountId, textInput) {
         },
         complete: function () {
 
+        }
+    });
+}
+
+function getCompanyName(CompanyID, jqxinput) {
+    
+    var url = $("#localApiDomain").val() + "CompanyDropDowns/GetCompanyName/" + CompanyID;
+    //var url = "http://localhost:52839/api/CompanyDropDowns/GetCompanyName/" + CompanyID;
+
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        success: function (data) {
+            if (data.length > 0) {
+                var thisCompanyName = data[0].name;
+                jqxinput.val(thisCompanyName);
+                jqxinput.attr("disabled", true);
+                return thisCompanyName;
+            } else {
+                return 0;
+            }
+
+        },
+        error: function (request, status, error) {
+            return 0;
         }
     });
 }

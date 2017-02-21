@@ -22,7 +22,7 @@ namespace class_Logging
                               changeTable + "', '" + changeNote + "', " + intBatch + ", -1)";
 
             clsADO writeLog = new clsADO();
-            writeLog.updateOrInsert(strSQL, false);
+            writeLog.updateOrInsert(strSQL, true);
         }
 
         public int getBatch()
@@ -30,7 +30,7 @@ namespace class_Logging
             clsADO maxBatch = new clsADO();
             int intMaxBatch = 0;
 
-            intMaxBatch = Convert.ToInt32(maxBatch.returnSingleValue("Select Max(changeBatch) from changeLog", false));
+            intMaxBatch = Convert.ToInt32(maxBatch.returnSingleValue("Select Max(changeBatch) from changeLog", true));
 
             int nextBatch = intMaxBatch + 1;
 

@@ -168,7 +168,14 @@
                 return null;
             }
 
-            var url = $("#apiDomain").val() + "locations/" + thisLocationId + "/reservations";
+            var thisDay = new Date($("#calendar").val());
+
+            thisDay = DateFormat(thisDay)
+            thisDay = thisDay.replace(/\//g, "A");
+
+            //Master Grid
+            var url = $("#localApiDomain").val() + "Reservations/GetReservationIncomingDate/" + thisDay + "_" + thisLocationId;
+            //var url = "http://localhost:52839/api/Reservations/GetReservationIncomingDate/" + thisDay + "_" + thisLocationId;
 
             var source =
             {
@@ -177,52 +184,48 @@
                     { name: 'ReservationNumber' },
                     { name: 'StartDatetime' },
                     { name: 'EndDatetime' },
-                    { name: 'FirstName', map: 'MemberInformation>FirstName' },
-                    { name: 'LastName', map: 'MemberInformation>LastName' },
-                    { name: 'IsGuest', map: 'MemberInformation>IsGuest', type: 'boolean' }
+                    { name: 'FirstName', },
+                    { name: 'LastName', },
+                    { name: 'FPNumber', },
+                    { name: 'IsGuest', type: 'boolean' },
+                    { name: 'Options', type: 'boolean' }
                 ],
-                beforeSend: function (jqXHR, settings) {
-                    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
-                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
-                },
-                id: 'CityID',
+                id: 'ReservationId',
                 type: 'Get',
                 datatype: "json",
                 url: url,
-                pagesize: 6,
-                root: "data"
+                pagesize: 6
             };
 
-            var addDefaultfilter = function () {
-                var datefiltergroup = new $.jqx.filter();
-                var operator = 0;
-                var strToday = "";
-                var strNextDay = "";
-                var today = new Date($("#calendar").val());
-                var NextDay = new Date($("#calendar").val());
+            var initrowdetails = function (index, parentElement, gridElement, record) {
+                var id = record.uid.toString();
+                var grid = $($(parentElement).children()[0]);
+                //Detail Grid Source
+                var url = $("#localApiDomain").val() + "LocationHasFeatures/GetFeature/" + id;
+                //var url = "http://localhost:52839/api/LocationHasFeatures/GetFeature/" + id;
 
-                NextDay = DateFormat(NextDay)
-                strNextDay = NextDay.toString() + ' 23:59:59'
+                var detailSource =
+                {
+                    datafields: [
+                        { name: 'LocationHasFeatureId' },
+                        { name: 'OptionalExtrasName' }
+                    ],
+                    datatype: "json",
+                    url: url
+                };
 
-                today = DateFormat(today);
-                strToday = today.toString() + ' 00:00:00'
+                var nestedGridAdapter = new $.jqx.dataAdapter(detailSource);
 
-                var filtervalue = strToday;
-                var filtercondition = 'GREATER_THAN_OR_EQUAL';
-                var filter1 = datefiltergroup.createfilter('datefilter', filtervalue, filtercondition);
-
-                filtervalue = strNextDay;
-                filtercondition = 'LESS_THAN_OR_EQUAL';
-                var filter2 = datefiltergroup.createfilter('datefilter', filtervalue, filtercondition);
-
-                datefiltergroup.addfilter(operator, filter1);
-                datefiltergroup.addfilter(operator, filter2);
-
-                //$("#jqxProgress").jqxGrid('addfilter', 'Status', statusfiltergroup);
-                $("#jqxgrid").jqxGrid('addfilter', 'StartDatetime', datefiltergroup);
-                $("#jqxgrid").jqxGrid('applyfilters');
-            }
-
+                if (grid != null) {
+                    grid.jqxGrid({
+                        source: nestedGridAdapter, //width: 780, height: 200,
+                        columns: [
+                          { text: 'LocationHasFeatureId', datafield: 'LocationHasFeatureId', hidden: true },
+                          { text: 'Optional Extras', datafield: 'OptionalExtrasName' }
+                        ]
+                    });
+                }
+            }
             // creage jqxgrid
             $("#jqxgrid").jqxGrid(
             {
@@ -235,9 +238,12 @@
                 pageable: true,
                 pagermode: 'simple',
                 filterable: true,
-                ready: function () {
-                    addDefaultfilter();
-                },
+                rowdetails: true,
+                initrowdetails: initrowdetails,
+                rowdetailstemplate: { rowdetails: "<div id='grid' style='margin: 10px;'></div>", rowdetailsheight: 220, rowdetailshidden: true },
+                //ready: function () {
+                //    $("#jqxgrid").jqxGrid('showrowdetails', 1);
+                //},
                 columns: [
                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
                       { text: 'ReservationNumber', datafield: 'ReservationNumber' },
@@ -245,7 +251,9 @@
                       { text: 'EndDatetime', datafield: 'EndDatetime', cellsrenderer: DateRenderWithTime },
                       { text: 'First Name', datafield: 'FirstName' },
                       { text: 'LastName', datafield: 'LastName' },
-                      { text: 'IsGuest', datafield: 'IsGuest', columntype: 'checkbox' }
+                      { text: 'FPNumber', datafield: 'FPNumber' },
+                      { text: 'IsGuest', datafield: 'IsGuest', columntype: 'checkbox' },
+                      { text: 'Options', datafield: 'Options', columntype: 'checkbox' }
                 ]
             });
 
@@ -256,60 +264,33 @@
                 return null;
             }
 
-            var url = $("#apiDomain").val() + "locations/" + thisLocationId + "/reservations";
+            var thisDay = new Date($("#calendar").val());
+
+            thisDay = DateFormat(thisDay)
+            thisDay = thisDay.replace(/\//g, "A");
+
+            var url = $("#localApiDomain").val() + "Reservations/GetReservationOutGoingDate/" + thisDay + "_" + thisLocationId;
+            //var url = "http://localhost:52839/api/Reservations/GetReservationOutGoingDate/" + thisDay + "_" + thisLocationId;
 
             var source =
             {
                 datafields: [
-                    { name: 'ReservationId' },
+                    { name: 'ReservationId', type: 'string' },
                     { name: 'ReservationNumber' },
                     { name: 'StartDatetime' },
                     { name: 'EndDatetime' },
-                    { name: 'FirstName', map: 'MemberInformation>FirstName' },
-                    { name: 'LastName', map: 'MemberInformation>LastName' },
-                    { name: 'IsGuest', map: 'MemberInformation>IsGuest', type: 'boolean' }
+                    { name: 'FirstName', },
+                    { name: 'LastName', },
+                    { name: 'FPNumber', },
+                    { name: 'IsGuest', type: 'boolean' }
                 ],
-                beforeSend: function (jqXHR, settings) {
-                    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
-                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
-                },
-                id: 'CityID',
+                id: 'ReservationId',
                 type: 'Get',
                 datatype: "json",
                 url: url,
-                pagesize: 6,
-                root: "data"
+                pagesize: 6
             };
 
-            var addDefaultfilter = function () {
-                var datefiltergroup = new $.jqx.filter();
-                var operator = 0;
-                var strToday = "";
-                var strNextDay = "";
-                var today = new Date($("#calendar").val());
-                var NextDay = new Date($("#calendar").val());
-
-                NextDay = DateFormat(NextDay)
-                strNextDay = NextDay.toString() + ' 23:59:59'
-
-                today = DateFormat(today);
-                strToday = today.toString() + ' 00:00:00'
-
-                var filtervalue = strToday;
-                var filtercondition = 'GREATER_THAN_OR_EQUAL';
-                var filter1 = datefiltergroup.createfilter('datefilter', filtervalue, filtercondition);
-
-                filtervalue = strNextDay;
-                filtercondition = 'LESS_THAN_OR_EQUAL';
-                var filter2 = datefiltergroup.createfilter('datefilter', filtervalue, filtercondition);
-
-                datefiltergroup.addfilter(operator, filter1);
-                datefiltergroup.addfilter(operator, filter2);
-
-                //$("#jqxProgress").jqxGrid('addfilter', 'Status', statusfiltergroup);
-                $("#jqxgridOUT").jqxGrid('addfilter', 'EndDatetime', datefiltergroup);
-                $("#jqxgridOUT").jqxGrid('applyfilters');
-            }
 
             // creage jqxgrid
             $("#jqxgridOUT").jqxGrid(
@@ -323,9 +304,6 @@
                 pageable: true,
                 pagermode: 'simple',
                 filterable: true,
-                ready: function () {
-                    addDefaultfilter();
-                },
                 columns: [
                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
                       { text: 'ReservationNumber', datafield: 'ReservationNumber' },
@@ -333,6 +311,7 @@
                       { text: 'EndDatetime', datafield: 'EndDatetime', cellsrenderer: DateRenderWithTime },
                       { text: 'First Name', datafield: 'FirstName' },
                       { text: 'LastName', datafield: 'LastName' },
+                      { text: 'FPNumber', datafield: 'FPNumber' },
                       { text: 'IsGuest', datafield: 'IsGuest', columntype: 'checkbox' }
                 ]
             });

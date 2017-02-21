@@ -112,8 +112,8 @@
             //Loads SearchList from parameters
 
             //var url = $("#apiDomain").val() + "members/search?" + thisParameters;
-            var url = "http://localhost:52839/api/SearchTransactions/SearchTransactions/";
-            //var url = $("#localApiDomain").val() + "Redemptions/SetBeenUsed/";
+            //var url = "http://localhost:52839/api/SearchTransactions/SearchTransactions/";
+            var url = $("#localApiDomain").val() + "SearchTransactions/SearchTransactions/";
 
             if (calendarChanged == false) {
                 var thisEntryDate = '';
@@ -160,12 +160,12 @@
 
                 },
                 columns: [
-                      { text: 'EntryDate', datafield: 'EntryDate', width: '15%', cellsrenderer: DateTimeRender },
-                      { text: 'DateTimeOfTransaction', datafield: 'DateTimeOfTransaction', width: '15%', cellsrenderer: DateTimeRender },
+                      { text: 'Entry Date', datafield: 'EntryDate', width: '15%', cellsrenderer: DateTimeRender },
+                      { text: 'Exit Date', datafield: 'DateTimeOfTransaction', width: '15%', cellsrenderer: DateTimeRender },
                       { text: 'FPNumber', datafield: 'FPNumber', width: '10%' },
-                      { text: 'AmountPaid', datafield: 'AmountPaid', width: '10%' },
+                      { text: 'Amount Paid', datafield: 'AmountPaid', width: '10%' },
                       { text: 'Status', datafield: 'Status', width: '30%' },
-                      { text: 'ReceiptNumber', datafield: 'ReceiptNumber', width: '10%' },
+                      { text: 'Receipt #', datafield: 'ReceiptNumber', width: '10%' },
                       { text: 'MemberId', datafield: 'MemberId', width: '10%' },
                 ]
             });
@@ -244,7 +244,7 @@
             </div>
             <div class="col-sm-2">
                 
-                <div style="margin-top:40px;margin-right:20px;">
+                <div style="margin-top:40px;margin-right:20px;display:none;">
                     <input type="text" id="txtAssignTransaction" placeholder="Add to Card" />
                     <input type="button" id="btnAssignTransaction" style="margin-top:15px;"" value="Add to Card" class="editor" />
                 </div>

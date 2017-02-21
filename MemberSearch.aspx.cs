@@ -12,6 +12,8 @@ using System.Web.Script.Services;
 using System.Web.Script.Serialization;
 using System.Text;
 using System.Data;
+using class_Logging;
+using class_ADO;
 
 public partial class MemberSearch : System.Web.UI.Page
 {
@@ -145,6 +147,21 @@ public partial class MemberSearch : System.Web.UI.Page
 
     }
 
+    [System.Web.Services.WebMethod]
+    public static string LogMemberUpdate(string thisUserName, string thisMemberId, string thisOld, string thisNew)
+    {
+        try
+        {
+            clsLogging LogMemberUpdate = new clsLogging();
+
+            LogMemberUpdate.logChange(thisUserName, thisMemberId, thisOld, thisNew, "MemberInformation", "Member Information Updated", -1);
+            return "Request Made";
+        }
+        catch (Exception ex)
+        {
+            return Convert.ToString(ex);
+        }
+    }
 
 
 }
