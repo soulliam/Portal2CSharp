@@ -91,7 +91,7 @@
                                 }
                             }
                         }
-                        ReceiveShip(selectedRowData.StartingNumber, selectedRowData.EndingNumber);
+                        ReceiveShip(selectedRowData.StartingNumber, selectedRowData.EndingNumber, selectedRowData.CardHistoryId);
                     }
                     loadGrid();
                 } else {
@@ -133,24 +133,25 @@
             $("#LocationCombo").on('select', function (event) {
                 if (event.args) {
                     var item = event.args.item;
-                    if (item) {
-                        loadGrid(item.value)
-                        $("#shipReceiveLocation").val(item.value);
-                        $("#popupLocation").jqxWindow('hide');
+                    if (item.index > 0) {
+                        if (item) {
+                            loadGrid(item.value)
+                            $("#shipReceiveLocation").val(item.value);
+                            $("#popupLocation").jqxWindow('hide');
+                        }
                     }
-
                 }
             });
         }
 
-        function loadGrid(thisLocationID)
-        {
+        function loadGrid(thisLocationnId) {
             var parent = $("#jqxShipments").parent();
             $("#jqxShipments").jqxGrid('destroy');
             $("<div id='jqxShipments'></div>").appendTo(parent);
 
             // loading order histor
-            var url = $("#localApiDomain").val() + "CardDistHistorys/Get/-1";
+            var url = $("#localApiDomain").val() + "CardDistHistorys/Get/-4_" + thisLocationnId;
+            //var url = "http://localhost:52839/api/CardDistHistorys/Get/-4_" + thisLocationnId;
 
             var source =
             {
@@ -160,26 +161,38 @@
                     { name: 'StartingNumber' },
                     { name: 'EndingNumber' },
                     { name: 'NumberOfCards' },
-                    { name: 'CardDistributionActivityDescription' },
+                    { name: 'RecordedBy' },
                     { name: 'RecordedBy' },
                     { name: 'ActivityId' },
-                    { name: 'LocationId' },
-                    { name: 'NameOfLocation' }
+                    { name: 'ReceivedDate' },
+                    { name: 'ReceviedBy' },
                 ],
-                id: 'ManualEditId',
                 type: 'Get',
                 datatype: "json",
                 url: url,
             };
 
+            var receiveDateRenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+                if (value == '0001-01-01T00:00:00') {
+                    return '<div style="margin-top: 10px;margin-left: 5px">&nbsp;</div>'
+                } else {
+                    var thisDateTime = value;
+
+                    if (thisDateTime != "") {
+                        thisDateTime = thisDateTime.split("T");
+
+                        var thisDate = thisDateTime[0].split("-");
+
+                        var newDate = '<div style="margin-top: 10px;margin-left: 5px">' + thisDate[1] + "/" + thisDate[2] + "/" + thisDate[0] + '</div>';
+
+                        return newDate;
+                    }
+                }
+            }
+
             // creage jqxgrid
             $("#jqxShipments").jqxGrid(
             {
-                editable: true,
-                pageable: true,
-                pagermode: 'simple',
-                //pagermode: 'advanced',
-                pagesize: 12,
                 width: '100%',
                 height: 500,
                 source: source,
@@ -188,67 +201,41 @@
                 sortable: true,
                 altrows: true,
                 filterable: true,
-                ready: function () {
-                    // create a filter group for the ActivityId column.
-                    var ActivityFilterGroup = new $.jqx.filter();
-                    // operator between the filters in the filter group. 1 is for OR. 0 is for AND.
-                    var filter_or_operator = 1;
-                    var filtercondition = 'equal';
-
-                    var ActivityType_1 = 2;
-                    var ActivityFilter = ActivityFilterGroup.createfilter('numericfilter', ActivityType_1, filtercondition);
-
-                    var ActivityType_2 = 3;
-                    var ActivityFilter1 = ActivityFilterGroup.createfilter('numericfilter', ActivityType_2, filtercondition);
-
-                    var ActivityFilterGroup1 = new $.jqx.filter();
-                    var filter_or_operator1 = 0;
-                    var filterLocationId = thisLocationID;
-                    var ActivityFilter2 = ActivityFilterGroup.createfilter('numericfilter', filterLocationId, filtercondition);
-
-                    // add the filters to the filter group.
-                    ActivityFilterGroup.addfilter(filter_or_operator, ActivityFilter);
-                    ActivityFilterGroup.addfilter(filter_or_operator, ActivityFilter1);
-                    ActivityFilterGroup1.addfilter(filter_or_operator1, ActivityFilter2);
-                    
-                    $("#jqxShipments").jqxGrid('addfilter', 'ActivityId', ActivityFilterGroup);
-                    $("#jqxShipments").jqxGrid('addfilter', 'LocationId', ActivityFilterGroup1);
-                    $("#jqxShipments").jqxGrid('applyfilters');
-                },
                 columns: [
-                       { text: 'CardHistoryId', datafield: 'CardHistoryId', hidden: true },
-                       { text: 'LocationId', datafield: 'LocationId' },
-                       { text: 'ActivityDate', datafield: 'ActivityDate' },
-                       { text: 'StartingNumber', datafield: 'StartingNumber' },
-                       { text: 'EndingNumber', datafield: 'EndingNumber' },
-                       { text: 'NumberOfCards', datafield: 'NumberOfCards' },
-                       { text: 'Activity', datafield: 'CardDistributionActivityDescription' },
-                       { text: 'User', datafield: 'RecordedBy' },
-                       { text: 'Location', datafield: 'NameOfLocation' },
+                       { text: 'CardHistoryId', datafield: 'CardHistoryId' },
+                       { text: 'Ship Date', datafield: 'ActivityDate', cellsrenderer: DateRender },
+                       { text: 'Starting Card', datafield: 'StartingNumber' },
+                       { text: 'Ending Card', datafield: 'EndingNumber' },
+                       { text: 'Number Of Cards', datafield: 'NumberOfCards' },
+                       { text: 'Shipped By', datafield: 'RecordedBy' },
+                       { text: 'Received Date', datafield: 'ReceivedDate', cellsrenderer: receiveDateRenderer },
+                       { text: 'Received By', datafield: 'ReceviedBy' },
                        { text: 'ActivityId', datafield: 'ActivityId', hidden: true }
                 ]
             });
         }
 
-        function ReceiveShip(StartingNumber, EndingNumber) {
-            Date.prototype.toMMDDYYYYString = function () { return isNaN(this) ? 'NaN' : [this.getMonth() > 8 ? this.getMonth() + 1 : '0' + (this.getMonth() + 1), this.getDate() > 9 ? this.getDate() : '0' + this.getDate(), this.getFullYear()].join('/') }
+        function ReceiveShip(StartingNumber, EndingNumber, CardHistoryId) {
+            var myDate = new Date();
 
-            //alert(new Date().toMMDDYYYYString());
+            myDate = DateTimeFormat(myDate);
 
             var Quantity = parseInt(EndingNumber) - parseInt(StartingNumber);
 
-            //alert('ADT:' + ActivityDateValue + 'AID:' + ActivityIdValue + 'F:' + $("#FirstCardValue").val() + ' Last:' + $("#LastCardValue").val() + ' Qt:' + $("#QuantityValue").val() + ' OCDt:' + $("#OrderConfirmationDateValue").val() + 'DP:' + $("#DistributionPointValue").val() + ' bus:' + $("#BusOrRepIDValue").val() + ' sft:' + $("#ShiftValue").val() + ' dt:' + new Date().toJSON() + ' Usr:' + $("#txtLoggedinUsername").val())
+            var thisLocationId = $("#shipReceiveLocation").val();
+
+
             $.post($("#localApiDomain").val() + "CardDistHistorys/Post",
-                { 'ActivityDate': new Date().toMMDDYYYYString(), 'ActivityId': 3, 'StartingNumber': StartingNumber, 'EndingNumber': EndingNumber, 'NumberOfCards': Quantity, 'OrderConfirmationDate': '1/1/1900', 'DistributionPoint': 0, 'BusOrRepID': null, 'Shift': null, 'RecordDate': new Date().toMMDDYYYYString(), 'RecordedBy': $("#txtLoggedinUsername").val(), 'LocationId': $("#userLocation").val() },
+            //$.post("http://localhost:52839/api/CardDistHistorys/Post",
+                { 'ActivityDate': myDate, 'ActivityId': 7, 'StartingNumber': StartingNumber, 'EndingNumber': EndingNumber, 'NumberOfCards': Quantity, 'OrderConfirmationDate': '1/1/1900', 'DistributionPoint': "", 'BusOrRepID': null, 'Shift': null, 'RecordDate': myDate, 'RecordedBy': $("#txtLoggedinUsername").val(), 'CardHistoryId': CardHistoryId, 'LocationId': thisLocationId },
                 function (data, status) {
                     switch (status) {
                         case 'success':
-                            $("#statusMessage").attr("class", "status");
-                            $("#statusMessage").html('Cards were created received');
+                            alert('Cards have been received!');
+                            loadGrid(thisLocationId);
                             break;
                         default:
-                            $("#statusMessage").attr("class", "warning");
-                            $("#statusMessage").html('An Error occurred: ' + status + "\n Data:" + data);
+                            alert('An Error occurred: ' + status + "\n Data:" + data);
                             break;
                     }
                 }

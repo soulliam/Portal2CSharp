@@ -109,7 +109,34 @@
                 $("#locationCombo").jqxComboBox('insertAt', 'Pick a Location', 0);
             });
 
+            //Check key strokes for whether card is in DB for different history types Order = 1
+            $("#firstCard").keyup(function () {
+                cardVal = $("#firstCard").val();
+                verifyCard(cardVal, '2', $("#firstCard"));
+            });
 
+            $("#lastCard").keyup(function () {
+                if (parseInt($("#lastCard").val()) < parseInt($("#firstCard").val())) {
+                    $("#lastCard").css('background-color', '#ff6666');
+                } else {
+                    $("#lastCard").css('background-color', '#ffffff');
+                }
+                if (parseInt($("#lastCard").val()) > parseInt($("#availableCard").html())) {
+                    alert("Last card to shipp is greater than the last card ordered and received.")
+                    $("#lastCard").css('background-color', '#ff6666');
+                    return null;
+                }
+            });
+
+            $("#shipAmount").keyup(function () {
+                cardVal = parseInt($("#lastShipped").val()) + parseInt($("#shipAmount").val());
+                if (cardVal > parseInt($("#availableCard").html())) {
+                    alert("Last card shipped plus your amount is greater than the last card ordered and received.")
+                    $("#shipAmount").css('background-color', '#ff6666');
+                    return null;
+                }
+                verifyCard(cardVal, '2', $("#shipAmount"));
+            });
 
         });
 
@@ -125,7 +152,8 @@
             $("<div id='jqxShipping'></div>").appendTo(parent);
 
             // loading order histor
-            var url = $("#localApiDomain").val() + "CardDistHistorys/Get/-1";
+            var url = $("#localApiDomain").val() + "CardDistHistorys/Get/-3";
+            //var url = "http://localhost:52839/api/CardDistHistorys/Get/-3";
 
             var source =
             {
@@ -135,7 +163,6 @@
                     { name: 'StartingNumber' },
                     { name: 'EndingNumber' },
                     { name: 'NumberOfCards' },
-                    { name: 'CardDistributionActivityDescription' },
                     { name: 'RecordedBy' },
                     { name: 'ActivityId' },
                     { name: 'NameOfLocation' },
@@ -177,11 +204,10 @@
                 },
                 columns: [
                        { text: 'CardHistoryId', datafield: 'CardHistoryId', hidden: true },
-                       { text: 'ActivityDate', datafield: 'ActivityDate' },
-                       { text: 'StartingNumber', datafield: 'StartingNumber' },
-                       { text: 'EndingNumber', datafield: 'EndingNumber' },
+                       { text: 'Ship Date', datafield: 'ActivityDate', cellsrenderer: DateRender },
+                       { text: 'Starting Card', datafield: 'StartingNumber' },
+                       { text: 'Ending Card', datafield: 'EndingNumber' },
                        { text: 'NumberOfCards', datafield: 'NumberOfCards' },
-                       { text: 'Activity', datafield: 'CardDistributionActivityDescription' },
                        { text: 'User', datafield: 'RecordedBy' },
                        { text: 'Location', datafield: 'NameOfLocation' },
                        { text: 'ActivityId', datafield: 'ActivityId', hidden: true }
@@ -216,6 +242,7 @@
             $.ajax({
                 type: 'GET',
                 url: $("#localApiDomain").val() + 'CardDistHistorys/GetHighestCardNumberOrderReceived/',
+                //url: "http://localhost:52839/api/CardDistHistorys/GetHighestCardNumberOrderReceived/",
                 success: function (data) {
                     $("#availableCard").html(data[0].maxShipped);
                 },
@@ -245,6 +272,17 @@
         }
 
         function placeShip() {
+            if ($("#shipAmount").css("background-color") == "rgb(255, 102, 102)" || $("#lastCard").css("background-color") == "rgb(255, 102, 102)" || $("#firstCard").css("background-color") == "rgb(255, 102, 102)") {
+                alert("One of your cards has already been shipped!");
+                return null;
+            };
+
+            if (parseInt($("#lastCard").val()) < parseInt($("#firstCard").val())) {
+                alert("Your last card is greater than your first card!");
+                return null;
+            };
+
+
             if ($("#locationCombo").jqxComboBox('selectedIndex') == 0) {
                 alert("You must pick a location!");
                 return;
@@ -263,7 +301,7 @@
                     return;
                 }
                 StartingNumber = parseInt($("#lastShipped").val()) + 1;
-                EndingNumber = parseInt(StartingNumber) + parseInt($("#shipAmount").val());
+                EndingNumber = parseInt(StartingNumber) + parseInt($("#shipAmount").val()) - 1;
                 Quantiy = $("#shipAmount").val();
             }
             if ($("#specShip").is(":visible")) {
@@ -277,20 +315,14 @@
                 Quantity = parseInt(EndingNumber) - parseInt(StartingNumber);
             }
             
-
-            //alert('ADT:' + ActivityDateValue + 'AID:' + ActivityIdValue + 'F:' + $("#FirstCardValue").val() + ' Last:' + $("#LastCardValue").val() + ' Qt:' + $("#QuantityValue").val() + ' OCDt:' + $("#OrderConfirmationDateValue").val() + 'DP:' + $("#DistributionPointValue").val() + ' bus:' + $("#BusOrRepIDValue").val() + ' sft:' + $("#ShiftValue").val() + ' dt:' + new Date().toJSON() + ' Usr:' + $("#txtLoggedinUsername").val())
             $.post($("#localApiDomain").val() + "CardDistHistorys/Post",
-                { 'ActivityDate': ActivityDateValue, 'ActivityId': 2, 'StartingNumber': StartingNumber, 'EndingNumber': EndingNumber, 'NumberOfCards': Quantiy, 'OrderConfirmationDate': '1/1/1900', 'DistributionPoint': 0, 'BusOrRepID': null, 'Shift': null, 'RecordDate': new Date(), 'RecordedBy': $("#txtLoggedinUsername").val(), 'LocationId': $("#locationCombo").jqxComboBox('getSelectedItem').value },
+                { 'ActivityDate': ActivityDateValue, 'ActivityId': 2, 'StartingNumber': StartingNumber, 'EndingNumber': EndingNumber, 'NumberOfCards': Quantiy, 'OrderConfirmationDate': '1/1/1900', 'DistributionPoint': "", 'BusOrRepID': null, 'Shift': null, 'RecordDate': new Date(), 'RecordedBy': $("#txtLoggedinUsername").val(), 'LocationId': $("#locationCombo").jqxComboBox('getSelectedItem').value },
                 function (data, status) {
                     switch (status) {
                         case 'success':
-                            $("#statusMessage").attr("class", "status");
-                            $("#statusMessage").html('Cards were created successfully');
                             alert('Cards were created successfully');
                             break;
                         default:
-                            $("#statusMessage").attr("class", "warning");
-                            $("#statusMessage").html('An Error occurred: ' + status + "\n Data:" + data);
                             alert('An Error occurred: ' + status + "\n Data:" + data);
                             break;
                     }
@@ -321,7 +353,7 @@
                                 </div>
                                 <div id="regShip" class="swapfields">
                                     <div class="col-sm-15">
-                                        <input type="text" id="lastShipped" placeholder="Last Card Shipped" />
+                                        <input type="text" id="lastShipped" placeholder="Last Card Shipped" disabled />
                                     </div>
                                     <div class="col-sm-15">
                                         <input type="text" id="shipAmount" placeholder="Amount to Ship"  />

@@ -61,7 +61,8 @@ public partial class ReportViewer : System.Web.UI.Page
                 TreeView1.Nodes.Add(child);
 
                 var strSQL = "SELECT '/' + ReportSection + '/' + ReportWithExtension as ReportId, ReportName as ReportSection from ReportList2 r2 " +
-                             "Inner Join ReportToGroup rtg on r2.ReportId = rtg.ReportId " + whereClause + " and ReportSection = '" + child.Text + "'";
+                             "Inner Join ReportToGroup rtg on r2.ReportId = rtg.ReportId " + whereClause + " and ReportSection = '" + child.Text + "' " +
+                             "Group by ReportName, ReportWithExtension, ReportSection";
 
                 //var strSQL = "SELECT '/' + ReportSection + '/' + ReportWithExtension as ReportId, ReportName as ReportSection FROM ReportList2 WHERE ReportSection = '" + child.Text + "'";
 
@@ -121,18 +122,26 @@ public partial class ReportViewer : System.Web.UI.Page
 
             if (reportLocation.Contains("Marketing")) {
                 string ID = getRepID(Convert.ToString(Session["UserName"]));
+                TextBox1.Text = ID;
+                //string ID = "86";
+                string userId = getOldPortalGuid(Convert.ToString(Session["UserName"]));
 
                 ReportParameter[] parameters = new ReportParameter[2];
 
                 //not sure we need the userloginId param.
-                parameters[0] = new ReportParameter("UserLoginId", "1");
+                parameters[0] = new ReportParameter("UserLoginId", userId);
                 parameters[1] = new ReportParameter("ID", ID);
                 serverReport.ReportPath = reportLocation;
                 serverReport.SetParameters(parameters);
             }
             else
             {
+                ReportParameter[] parameters = new ReportParameter[1];
+                string userId = getOldPortalGuid(Convert.ToString(Session["UserName"]));
+                //not sure we need the userloginId param.
+                parameters[0] = new ReportParameter("UserLoginId", userId);
                 serverReport.ReportPath = reportLocation;
+                serverReport.SetParameters(parameters);
             }
         }
     }
@@ -215,8 +224,27 @@ public partial class ReportViewer : System.Web.UI.Page
         string strSQL = "Select ID from aspnetdb.dbo.aspnet_Users au " +
                         "Inner Join MarketingReps mr on au.UserId = mr.UserId " +
                         "Where au.UserName = '" + username + "'";
+        //string strSQL = "Select ID from aspnetdb.dbo.aspnet_Users au " +
+        //                "Inner Join MarketingReps mr on au.UserId = mr.UserId " +
+        //                "Where au.UserName = 'sdissinger'";
         string RepId = Convert.ToString(thisADO.returnSingleValue(strSQL, false));
 
         return RepId;
+    }
+
+    public string getOldPortalGuid(string username)
+    {
+        clsADO thisADO = new clsADO();
+
+        username = username.Replace("PCA\\", "");
+
+        string strSQL = "Select UserId from aspnetdb.dbo.aspnet_Users au " +
+                        "Where au.UserName = '" + username + "'";
+        //string strSQL = "Select ID from aspnetdb.dbo.aspnet_Users au " +
+        //                "Inner Join MarketingReps mr on au.UserId = mr.UserId " +
+        //                "Where au.UserName = 'sdissinger'";
+        string UserId = Convert.ToString(thisADO.returnSingleValue(strSQL, false));
+
+        return UserId;
     }
 }

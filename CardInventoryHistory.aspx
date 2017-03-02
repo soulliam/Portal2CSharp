@@ -61,7 +61,6 @@
                     { name: 'ActivityDate' },
                     { name: 'StartingNumber' },
                     { name: 'EndingNumber' },
-                    { name: 'NumberOfCards' },
                     { name: 'DistributionPoint' },
                     { name: 'BusOrRepId' },
                     { name: 'CardDistributionActivityDescription' },
@@ -92,15 +91,14 @@
                 filterable: true,
                 columns: [
                        { text: 'CardHistoryId', datafield: 'CardHistoryId', hidden: true },
-                       { text: 'ActivityDate', datafield: 'ActivityDate' },
-                       { text: 'StartingNumber', datafield: 'StartingNumber' },
-                       { text: 'EndingNumber', datafield: 'EndingNumber' },
-                       { text: 'NumberOfCards', datafield: 'NumberOfCards' },
-                       { text: 'DistributionPoint', datafield: 'DistributionPoint' },
-                       { text: 'BusOrRepId', datafield: 'BusOrRepId' },
-                       { text: 'Activity', datafield: 'CardDistributionActivityDescription' },
-                       { text: 'User', datafield: 'RecordedBy' },
-                       { text: 'Location', datafield: 'NameOfLocation' },
+                       { text: 'Activity Date', datafield: 'ActivityDate', cellsrenderer: DateRender, width: '15%' },
+                       { text: 'Starting Card', datafield: 'StartingNumber', width: '10%' },
+                       { text: 'Ending Card', datafield: 'EndingNumber', width: '10%' },
+                       { text: 'Distribution Point', datafield: 'DistributionPoint', width: '10%' },
+                       { text: 'Distribute To', datafield: 'BusOrRepId', width: '10%' },
+                       { text: 'Activity', datafield: 'CardDistributionActivityDescription', width: '15%' },
+                       { text: 'User', datafield: 'RecordedBy', width: '15%' },
+                       { text: 'Location', datafield: 'NameOfLocation', width: '15%' },
                        { text: 'ActivityId', datafield: 'ActivityId', hidden: true }
                 ]
             });

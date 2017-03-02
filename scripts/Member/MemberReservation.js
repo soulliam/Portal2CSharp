@@ -1,4 +1,87 @@
-﻿function loadReservationLocationCombo() {
+﻿function addReservation() {
+    var thisMemberId = $("#MemberId").val();;
+    var thisLocationId = $("#reservationLocationCombo").jqxComboBox('getSelectedItem').value;
+    var thisStartDatetime = $("#reservationStartDate").val();
+    var thisEndDatetime = $("#reservationEndDate").val();;
+    var thisReservationFeeId = $("#reservationFeeInputValue").val();
+    var thisPaymentMethodId = $("#reservationPaymentMethodId").jqxComboBox('getSelectedItem').value;
+    var thisFeeDollars = $("#reservationFeeInput").val();
+    var thisFeePoints = $("#reservationFeePointsInput").val();
+    if (typeof $("#reservationFeeCreditCombo").jqxComboBox('getSelectedItem') != "undefined" && $("#reservationFeeCreditCombo").jqxComboBox('getSelectedItem') != null && $("#reservationFeeCreditCombo").jqxComboBox('getSelectedItem') != '') {
+        var thisReservationFeeCreditId = $("#reservationFeeCreditCombo").jqxComboBox('getSelectedItem').value;
+    } else {
+        var thisReservationFeeCreditId = "";
+    }
+
+    if (typeof $("#reservationFeeDiscountIdGrid").jqxGrid('getselectedrowindex') != "undefined" && $("#reservationFeeDiscountIdGrid").jqxGrid('getselectedrowindex') != null && $("#reservationFeeDiscountIdGrid").jqxGrid('getselectedrowindex') != -1) {
+        var data = $('#reservationFeeDiscountIdGrid').jqxGrid('getrowdata', $("#reservationFeeDiscountIdGrid").jqxGrid('getselectedrowindex'));
+        var thisReservationFeeDiscountId = data.ReservationFeeDiscountId;
+    } else {
+        var thisReservationFeeDiscountId = "";
+    }
+
+    var thisCreditCardId = '';
+    var thisEstimatedReservationCost = $("#EstimatedReservationCost").val();
+    var thisMemberNote = $("#ReservationNote").val();;
+    var thisTermsAndConditionsFlag = $("#reservationTermsAndConditionsFlag").is(":checked");
+    var thisSendNotificationsFlag = $("#SendNotificationsFlag").is(":checked");
+    var thisSaveReservationPreferencesFlag = true;
+
+    var data = {
+        "MemberId": thisMemberId,
+        "LocationId": thisLocationId,
+        "StartDatetime": thisStartDatetime,
+        "EndDatetime": thisEndDatetime,
+        "ReservationFeeId": thisReservationFeeId,
+        "PaymentMethodId": thisPaymentMethodId,
+        "FeeDollars": thisFeeDollars,
+        "FeePoints": thisFeePoints,
+        "ReservationFeeCreditId": thisReservationFeeCreditId,
+        "ReservationFeeDiscountId": thisReservationFeeDiscountId,
+        "CreditCardId": thisCreditCardId,
+        "EstimatedReservationCost": thisEstimatedReservationCost,
+        "MemberNote": thisMemberNote,
+        "MemberNote": thisMemberNote,
+        "TermsAndConditionsFlag": thisTermsAndConditionsFlag,
+        "SendNotificationsFlag": thisSendNotificationsFlag,
+        "SaveReservationPreferencesFlag": thisSaveReservationPreferencesFlag
+    };
+
+
+    data.ReservationFeatures = new Array();
+    var items = $("#reservationFeatures").jqxComboBox('getCheckedItems');
+    var checkedItems = "";
+    $.each(items, function (index) {
+        data.ReservationFeatures.push({
+            "LocationHasFeatureId": this.value
+        });
+    });
+
+    $.ajax({
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "AccessToken": $("#userGuid").val(),
+            "ApplicationKey": $("#AK").val()
+        },
+        type: "POST",
+        data: JSON.stringify(data),
+        url: $("#apiDomain").val() + "reservations/",
+        dataType: "json",
+        success: function () {
+            alert("Reservation Created.")
+        },
+        error: function (request, status, error) {
+            alert(error);
+        },
+        complete: function () {
+            loadReservations(thisMemberId);
+        }
+    });
+}
+
+
+function loadReservationLocationCombo() {
     //set up the location combobox
     var locationSource =
     {
@@ -15,37 +98,45 @@
     var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
     $("#reservationLocationCombo").jqxComboBox(
     {
-        width: 400,
-        height: 25,
+        theme: 'shinyblack',
+        width: '100%',
+        height: 24,
         source: locationDataAdapter,
         selectedIndex: 0,
         displayMember: "NameOfLocation",
         valueMember: "LocationId"
     });
-    $("#reservationLocationCombo").on('select', function (event) {
-        if (event.args) {
+    $("#reservationLocationCombo").on('change', function (event) {
+        var thisLocationId = $("#reservationLocationCombo").jqxComboBox('getSelectedItem').value;
+        loadReservationFeatures(thisLocationId)
 
-            var item = event.args.item;
-            if (item) {
-                var featureLocation = $('#reservationLocationCombo').jqxComboBox('getSelectedItem').value
+        var url = $("#localApiDomain").val() + "Locations/GetLocationsAirportID/" + thisLocationId;
+        //var url = "http://localhost:52839/api/Locations/GetLocationsAirportID/" + thisLocationId;
 
-                loadReservationFeatures(featureLocation);
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "json",
+            success: function (data) {
+                $("#airportId").val(data[0].AirportId);
+            },
+            error: function (request, status, error) {
+                alert(error);
             }
-        }
+        });
     });
-
 }
 
 // set up reservation start date
 function loadReservationCalendars() {
-    $("#reservationStartDate").jqxDateTimeInput({ formatString: 'MM-dd-yyyy', width: '400px', height: '25px' });
+    $("#reservationStartDate").jqxDateTimeInput({ formatString: 'MM-dd-yyyy HH:mm', showTimeButton: true, width: '400px', height: '25px' });
     $('#reservationStartDate').on('change', function (event) {
         var thisDate = event.args.date;
         var type = event.args.type;
 
         setReservationFee(thisDate);
     });
-    $("#reservationEndDate").jqxDateTimeInput({ formatString: 'MM-dd-yyyy', width: '400px', height: '25px' }); reservationEndDate
+    $("#reservationEndDate").jqxDateTimeInput({ formatString: 'MM-dd-yyyy HH:mm', showTimeButton: true, width: '400px', height: '25px' });
 }
 
 function loadReservationFeatures(thisLocationId) {
@@ -62,7 +153,7 @@ function loadReservationFeatures(thisLocationId) {
         beforeSend: function (jqXHR, settings) {
             jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
         },
-        url: $("#apiDomain").val() + "locations/" + thisLocationId + "/features",
+        url: $("#apiDomain").val() + "locations/location-has-feature/" + thisLocationId,
 
     };
 
@@ -81,11 +172,9 @@ function loadReservationFeatures(thisLocationId) {
 
 function loadReservationPaymentMethodId() {
     var data = [
-                { id: 1, title: "Use New Card" },
                 { id: 2, title: "Use My Points" },
                 { id: 3, title: "Reservation Fee Credit" },
-                { id: 4, title: "Reservation Fee Discount Code" },
-                { id: 5, title: "Use Existing Card" }
+                { id: 4, title: "Reservation Fee Discount Code" }
     ];
 
     var source =
@@ -116,65 +205,27 @@ function loadReservationPaymentMethodId() {
             if (item) {
                 switch(item.value)
                 {
-                    case "1":
-                        $("#reservationSavedCreditCardInfo").hide(); 
-                        $("#reservationFeeDollars").hide();
-                        $("#reservationFeePoints").hide();
-                        $("#reservationFeeDiscountIdDDB").hide();
-                        $("#reservationFeeCreditId").hide();
-                        $("#reservationCreditCardInfo").show();
-                        break;
                     case "2":
 
                         break;
                     case "3":
                         getReservationFeeCredit();
+
                         break;
                     case "4":
                         getReservationFeeDiscountId();
-                        break;
-                    case "5":
-                        getExistingCreditCards();
                         break;
                 }
             }
         }
     });
 
-    function getReservationFeeCredit() {
-        var thisMemberId = $("#MemberId").val();
-
-        $.ajax({
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "AccessToken": $("#userGuid").val(),
-                "ApplicationKey": $("#AK").val()
-            },
-            type: "GET",
-            url: $("#apiDomain").val() + "reservation-credits-reservation/members/" + thisMemberId,
-            dataType: "json",
-            success: function (thisData) {
-                reservationFeeDollars
-                $("#reservationSavedCreditCardInfo").hide();
-                $("#reservationCreditCardInfo").hide();
-                $("#reservationFeeDollars").hide();
-                $("#reservationFeePoints").hide();
-                $("#reservationFeeDiscountIdDDB").hide();
-                $("#reservationFeeCreditId").show();
-                $("#reservationFeeCreditId").val(thisData.result.data[0].ReservationFeeCreditId);
-            },
-            error: function (request, status, error) {
-                alert("Error retrieving reservation credit fee");
-            },
-            complete: function () {
-
-            }
-        });
-    };
+    
 }
 
 function getReservationFeeDiscountId() {
+
+
     //Get discount codes for Member
     var thisMemberId = $("#MemberId").val();
     var url = $("#apiDomain").val() + "discount-codes?MemberId=" + thisMemberId;
@@ -182,12 +233,7 @@ function getReservationFeeDiscountId() {
     $("#reservationFeeDiscountIdDDB").jqxDropDownButton({
         width: 400, height: 25
     });
-    $("#reservationSavedCreditCardInfo").hide();
-    $("#reservationCreditCardInfo").hide();
-    $("#reservationFeeDollars").hide();
-    $("#reservationFeePoints").hide();
-    $("#reservationFeeCreditId").hide();
-    $("#reservationFeeDiscountIdDDB").show();
+
     $("#reservationFeeDiscountIdDDB").jqxDropDownButton('setContent', "Please Select");
 
     var source =
@@ -218,18 +264,17 @@ function getReservationFeeDiscountId() {
     var dataAdapter = new $.jqx.dataAdapter(source);
     $("#reservationFeeDiscountIdGrid").jqxGrid(
     {
-        width: 1000,
+        width: 600,
         source: dataAdapter,
-        pageable: true,
-        autoheight: true,
+        height: 250,
         columnsresize: true,
         columns: [
                 { text: 'ReservationFeeDiscountId', datafield: 'ReservationFeeDiscountId', hidden: true },
                 { text: 'DiscountCode', datafield: 'DiscountCode' },
-                { text: 'EffectiveDatetime', datafield: 'EffectiveDatetime' },
-                { text: 'ExpiresDatetime', datafield: 'ExpiresDatetime' },
-                { text: 'MaxUseCount', datafield: 'MaxUseCount' },
-                { text: 'ActualUseCount', datafield: 'ActualUseCount' },
+                { text: 'EffectiveDatetime', datafield: 'EffectiveDatetime', cellsrenderer: DateTimeRender },
+                { text: 'ExpiresDatetime', datafield: 'ExpiresDatetime', cellsrenderer: DateTimeRender },
+                { text: 'MaxUseCount', datafield: 'MaxUseCount', hidden: true },
+                { text: 'ActualUseCount', datafield: 'ActualUseCount', hidden: true },
                 { text: 'MemberId', datafield: 'MemberId', hidden: true },
                 { text: 'IsValid', datafield: 'IsValid' }
         ]
@@ -247,78 +292,100 @@ function getReservationFeeDiscountId() {
 
 }
 
-function getExistingCreditCards() {
-    $("#reservationCreditCardInfo").hide();
-    $("#reservationFeeDollars").hide();
-    $("#reservationFeePoints").hide();
-    $("#reservationFeeDiscountIdDDB").hide();
-    $("#reservationFeeCreditId").hide();
-    $("#reservationSavedCreditCardInfo").show();
+function setReservationFee(thisDate) {
 
+    var justDate = DateFormat(thisDate);
+    var thisLocationId = $('#reservationLocationCombo').jqxComboBox('getSelectedItem').value;
+    var thisMemberId = $("#MemberId").val();
+    var url = $("#apiDomain").val() + "reservation-fees?locationId=" + thisLocationId + "&startDatetime=" + justDate;
+
+
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        beforeSend: function (jqXHR, settings) {
+            jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
+            jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+        },
+        success: function (data) {
+            $("#reservationFeeInput").val(data.result.data.FeeDollars);
+            $("#reservationFeeInputValue").val(data.result.data.ReservationFeeId);
+            $("#reservationFeePointsInput").val(data.result.data.FeePoints);
+        },
+        error: function (request, status, error) {
+            alert(error);
+        }
+    });
+
+
+    
+}
+
+function getEstCost() {
+    var thisLocationId = $('#reservationLocationCombo').jqxComboBox('getSelectedItem').value;
+    var thisAirport = $("#airportId").val();
+    var thisStartDate = $("#reservationStartDate").val();
+    var thisEndDate = $("#reservationEndDate").val();
+    var url = $("#apiDomain").val() + "airports/" + thisAirport + "/locations/rates?startDatetime=" + thisStartDate + "&endDatetime=" + thisEndDate;
+
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        beforeSend: function (jqXHR, settings) {
+            jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
+            jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+        },
+        success: function (data) {
+            for (i = 0; i < data.result.ResultCount; i++) {
+                if (data.result.data.Locations[i].LocationId == thisLocationId){
+                    $("#EstimatedReservationCost").val(data.result.data.Locations[i].Charges.EstimatedTotalCharges);
+                }
+            }
+        },
+        error: function (request, status, error) {
+            alert(request.responseJSON.message);
+        }
+    });
+
+
+
+}
+
+function getReservationFeeCredit() {
     var thisMemberId = $("#MemberId").val();
 
+    //set up the location combobox
     var locationSource =
     {
         datatype: "json",
         type: "Get",
         root: "data",
         datafields: [
-            { name: 'CardMaskedNo' },
-            { name: 'CreditCardId' }
+            { name: 'CreatedDatetime' },
+            { name: 'ReservationFeeCreditId' }
         ],
         beforeSend: function (jqXHR, settings) {
-            jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
             jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
         },
-        url: $("#apiDomain").val() + "members/" + thisMemberId + "/credit-cards",
-
+        url: $("#apiDomain").val() + "reservation-credits-reservation/members/" + thisMemberId,
     };
+
+    $("#reservationFeeCreditCombo").on('bindingComplete', function (event) {
+        $("#reservationFeeCreditCombo").jqxComboBox('insertAt', '', 0);
+        $("#reservationFeeCreditCombo").jqxComboBox('selectItem', 0);
+    });
+
     var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
-    $("#reservationSavedCreditCards").jqxComboBox(
+    $("#reservationFeeCreditCombo").jqxComboBox(
     {
         width: 400,
         height: 25,
         source: locationDataAdapter,
         selectedIndex: 0,
-        displayMember: "CardMaskedNo",
-        valueMember: "CreditCardId"
+        displayMember: "CreatedDatetime",
+        valueMember: "ReservationFeeCreditId"
     });
 
-    $("#reservationSavedCreditCardInfo").show();
-
-}
-
-function setReservationFee(thisDate) {
-    var thisLocationId = $('#reservationLocationCombo').jqxComboBox('getSelectedItem').value;
-
-    var justDate = DateFormat(thisDate);
-
-    alert(justDate);
-    var reservationFeeIdSource =
-    {
-        datatype: "json",
-        type: "Get",
-        root: "data",
-        datafields: [
-            { name: 'FeeDollars', cellsformat: 'c2' },
-            { name: 'ReservationFeeId' }
-        ],
-        beforeSend: function (jqXHR, settings) {
-            jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
-            jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
-        },
-        url: $("#apiDomain").val() + "reservation-fees?locationId=" + thisLocationId + "&startDatetime=" + justDate,
-
-    };
-    var reservationFeeIdDataAdapter = new $.jqx.dataAdapter(reservationFeeIdSource);
-    $("#reservationFeeIdCombo").jqxComboBox(
-    {
-        width: 400,
-        height: 25,
-        source: reservationFeeIdDataAdapter,
-        selectedIndex: 0,
-        displayMember: "FeeDollars",
-        valueMember: "ReservationFeeId"
-    });
-}
-
+};

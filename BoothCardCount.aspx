@@ -76,9 +76,11 @@
 
             // saving new or changed city
             $("#Save").click(function () {
-                Date.prototype.toMMDDYYYYString = function () { return isNaN(this) ? 'NaN' : [this.getMonth() > 8 ? this.getMonth() + 1 : '0' + (this.getMonth() + 1), this.getDate() > 9 ? this.getDate() : '0' + this.getDate(), this.getFullYear()].join('/') }
+                var myDate = new Date();
 
-                var data = { 'Shift1': $("#Shift1").val(), 'Shift2': $("#Shift2").val(), 'Shift3': $("#Shift3").val(), 'Total': $("#Total").val(), 'BoothCardCountDate': new Date().toMMDDYYYYString(), 'LocationId': $("#boothLocation").val() };
+                myDate = DateTimeFormat(myDate);
+
+                var data = { 'Shift1': $("#Shift1").val(), 'Shift2': $("#Shift2").val(), 'Shift3': $("#Shift3").val(), 'Total': $("#Total").val(), 'BoothCardCountDate': myDate, 'LocationId': $("#boothLocation").val() };
 
                 $.ajax({
                     type: "POST",
@@ -175,8 +177,8 @@
         //Loads count grid
         function loadGrid(thisLocationId) {
 
-            var url = $("#localApiDomain").val() + "BoothCardCounts/GetBoothCardCount/" + thisLocationId;;
-            //var url = "http://localhost:52839/api/BoothCardCounts/GetBoothCardCount/" + thisLocationId;
+            //var url = $("#localApiDomain").val() + "BoothCardCounts/GetBoothCardCount/" + thisLocationId;;
+            var url = "http://localhost:52839/api/BoothCardCounts/GetBoothCardCount/" + thisLocationId;
 
 
             var source =

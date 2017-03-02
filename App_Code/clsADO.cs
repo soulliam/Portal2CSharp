@@ -73,6 +73,40 @@ namespace class_ADO
 
         }
 
+        public string getPark09ConnectionString()
+        {
+            try
+            {
+                var result = "";
+                try
+                {
+                    System.Configuration.Configuration rootWebConfig1 = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("/Portal2CSharp");
+
+                    if (rootWebConfig1.AppSettings.Settings.Count > 0)
+                    {
+                        System.Configuration.KeyValueConfigurationElement customSetting = rootWebConfig1.AppSettings.Settings["Park08ConnectionString"];
+                        if (customSetting != null)
+                            result = customSetting.Value;
+                        else
+                            Console.WriteLine("No ConStrMax application string");
+                    }
+
+                    return result;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
+
+        }
+
 
         public void updateOrInsert(string strSQL, bool Max)
         {
@@ -144,8 +178,34 @@ namespace class_ADO
                 return thisReturn;
         }
 
+        public object returnSingleValuePark09(string strSQL)
+        {
+
+            object thisReturn = null;
+            string conn = "";
+
+            conn = getPark09ConnectionString();
+
+            using (SqlConnection con = new SqlConnection(conn))
+            {
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    cmd.CommandText = strSQL;
+                    cmd.Connection = con;
+                    con.Open();
+                    using (SqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        while (sdr.Read())
+                        {
+                            thisReturn = sdr[0];
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            return thisReturn;
+        }
 
 
-        
     }
 }

@@ -19,6 +19,8 @@
     <script type="text/javascript" src="jqwidgets/jqxscrollbar.js"></script>
 
     <script type="text/javascript">
+        var group = '<%= Session["groupList"] %>';
+
         $(document).ready(function () {
             $("#mainSplitter").jqxSplitter({ width: '100%', height: 750, panels: [{ size: 300 }] });
 
@@ -38,6 +40,7 @@
             </div> 
         </div>        
     </div>
+    <asp:TextBox ID="TextBox1" runat="server"></asp:TextBox>
 </asp:Content>
 
 

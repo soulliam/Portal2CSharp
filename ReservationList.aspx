@@ -199,7 +199,8 @@
 
             var initrowdetails = function (index, parentElement, gridElement, record) {
                 var id = record.uid.toString();
-                var grid = $($(parentElement).children()[0]);
+                var grid = $($(parentElement).children()[0]);
+
                 //Detail Grid Source
                 var url = $("#localApiDomain").val() + "LocationHasFeatures/GetFeature/" + id;
                 //var url = "http://localhost:52839/api/LocationHasFeatures/GetFeature/" + id;
@@ -225,7 +226,8 @@
                         ]
                     });
                 }
-            }
+            }
+
             // creage jqxgrid
             $("#jqxgrid").jqxGrid(
             {
@@ -239,6 +241,7 @@
                 pagermode: 'simple',
                 filterable: true,
                 rowdetails: true,
+                editable: true,
                 initrowdetails: initrowdetails,
                 rowdetailstemplate: { rowdetails: "<div id='grid' style='margin: 10px;'></div>", rowdetailsheight: 220, rowdetailshidden: true },
                 //ready: function () {
@@ -304,6 +307,7 @@
                 pageable: true,
                 pagermode: 'simple',
                 filterable: true,
+                editable: true,
                 columns: [
                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
                       { text: 'ReservationNumber', datafield: 'ReservationNumber' },

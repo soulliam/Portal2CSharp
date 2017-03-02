@@ -260,6 +260,42 @@
 
             //#region ButtonClicks
 
+            $("#cancelReservationForm").on("click", function (event) {
+                $('#reservationFeeDiscountIdGrid').jqxGrid('clearselection');
+
+                $("#reservationFeeDiscountIdDDB").jqxDropDownButton('setContent', "Please Select");
+
+                $("#reservationStartDate").jqxDateTimeInput('today');
+                $("#reservationEndDate").jqxDateTimeInput('today');
+                $("#reservationFeeInput").val('');
+                $("#reservationFeePointsInput").val('');
+                $("#reservationFeeInputValue").val('');
+                $("#EstimatedReservationCost").val('');
+                $("#reservationTermsAndConditionsFlag").prop('checked', false);
+                $("#SendNotificationsFlag").prop('checked', false);
+                $("#reservationPaymentMethodId").jqxComboBox('selectItem', 0);
+                $("#ReservationNote").val('');
+
+                var parent = $("#reservationFeatures").parent();
+                $("#reservationFeatures").jqxComboBox('destroy');
+                $("<div id='reservationFeatures'></div>").appendTo(parent);
+
+                var parent = $("#reservationFeeCreditCombo").parent();
+                $("#reservationFeeCreditCombo").jqxComboBox('destroy');
+                $("<div id='reservationFeeCreditCombo'></div>").appendTo(parent);
+
+                $("#popupReservation").jqxWindow('hide'); 
+                
+            });
+
+            $("#saveReservation").on("click", function (event) {
+                addReservation();
+            });
+
+            $("#getEstCost").on("click", function (event) {
+                getEstCost();
+            });
+
             //Goto pending manualedits button
             $("#manualEditPending").on("click", function (event) {
                 var homeLocation = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
@@ -355,24 +391,28 @@
 
             //Add Reservation
             $("#addReservation").on("click", function (event) {
+                var thisLocationId = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
 
                 $("#popupReservation").css('display', 'block');
                 $("#popupReservation").css('visibility', 'hidden');
 
                 var offset = $("#jqxMemberInfoTabs").offset();
-                $("#popupReservation").jqxWindow({ position: { x: '25%', y: '30%' } });
+                $("#popupReservation").jqxWindow({ position: { x: '10%', y: '5%' } });
                 $('#popupReservation').jqxWindow({ resizable: false });
                 $('#popupReservation').jqxWindow({ draggable: true });
                 $('#popupReservation').jqxWindow({ isModal: true });
                 $("#popupReservation").css("visibility", "visible");
-                $('#popupReservation').jqxWindow({ height: '400px', width: '50%' });
+                $('#popupReservation').jqxWindow({ height: '650px', width: '50%' });
                 $('#popupReservation').jqxWindow({ minHeight: '400px', minWidth: '50%' });
-                $('#popupReservation').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
-                $('#popupReservation').jqxWindow({ showCloseButton: true });
+                $('#popupReservation').jqxWindow({ maxHeight: '650px', maxWidth: '50%' });
+                $('#popupReservation').jqxWindow({ showCloseButton: false });
                 $('#popupReservation').jqxWindow({ animationType: 'combined' });
                 $('#popupReservation').jqxWindow({ showAnimationDuration: 300 });
                 $('#popupReservation').jqxWindow({ closeAnimationDuration: 500 });
                 $("#popupReservation").jqxWindow('open');
+
+                getReservationFeeCredit();
+                $("#reservationLocationCombo").jqxComboBox('selectItem', thisLocationId);
             });
 
             // mark redemption used button click
@@ -616,7 +656,7 @@
                     var thisTitleId = $('#titleCombo').jqxComboBox('selectedIndex');;
                 }
 
-                var thisMarketingCode = $("#MarketingMailerCode").val();
+                var thisMarketingCode =  $("#MarketingCode").val();
                 var thisMemberId = $("#MemberId").val(); 
 
                 if ($("#homeLocationCombo").jqxComboBox('getSelectedIndex') == 0) {
@@ -663,7 +703,7 @@
 
                 PageMethods.LogMemberUpdate(thisLoggedinUsername, thisMemberId, '', '');
 
-                SaveMarketingCode();
+                //SaveMarketingCode();
 
                 $("#editMember").trigger("click");
                 
@@ -682,7 +722,7 @@
                 $('#addCardWindow').jqxWindow({ height: '250px', width: '50%' });
                 $('#addCardWindow').jqxWindow({ minHeight: '250px', minWidth: '50%' });
                 $('#addCardWindow').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
-                $('#addCardWindow').jqxWindow({ showCloseButton: true });
+                $('#addCardWindow').jqxWindow({ showCloseButton: false });
                 $('#addCardWindow').jqxWindow({ animationType: 'combined' });
                 $('#addCardWindow').jqxWindow({ showAnimationDuration: 300 });
                 $('#addCardWindow').jqxWindow({ closeAnimationDuration: 500 });
@@ -1191,6 +1231,13 @@
 
             //#region Combobox Event Setup
 
+
+            $("#homeLocationCombo").on('bindingComplete', function (event) {
+                $("#homeLocationCombo").on('change', function (event) {
+                    $("#topLocationAccountBar").html($("#homeLocationCombo").jqxComboBox('getSelectedItem').label);
+                });
+            });
+
             //Combobox insert placeholder
             $("#LocationCombo").on('bindingComplete', function (event) {
                 $("#LocationCombo").jqxComboBox('insertAt', 'Location', 0);
@@ -1331,6 +1378,7 @@
 
             
             Security();
+
 
             if (getUrlParameter("MemberId") != "") {
                 findMember(getUrlParameter("MemberId"));
@@ -1638,6 +1686,7 @@
                 altrows: true,
                 filterable: true,
                 columnsresize: true,
+                editable: true,
                 ready: function (records) {
                     var rows = $("#jqxMemberActivityGrid").jqxGrid('getrows');
 
@@ -2788,13 +2837,8 @@
                 displayMember: "NameOfLocation",
                 valueMember: "LocationId"
             });
-            $("#homeLocationCombo").on('select', function (event) {
-                if (event.args) {
-                    var item = event.args.item;
-                    if (item) {
-
-                    }
-                }
+            $("#homeLocationCombo").on('bindingComplete', function (event) {
+                $("#homeLocationCombo").jqxComboBox('insertAt', 'Location', 0);
             });
         }
 
@@ -3332,7 +3376,7 @@
 
                     $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
                     $("#topPointsBalanceAccountBar").html(loadPoints(AccountId, $("#topPointsBalanceAccountBar")));
-                    $("#topLocationAccountBar").html($("#homeLocationCombo").jqxComboBox('getSelectedItem').label);
+                    //$("#topLocationAccountBar").html($("#homeLocationCombo").jqxComboBox('getSelectedItem').label);
                     loadRate();
                     
                 }
@@ -3958,7 +4002,7 @@
                                     <div id="jqxReservationGrid"></div>
                                 </div>
                                 <div class="col-sm-3 col-md-2">
-                                    <input type="button" id="addReservation" value="Add Reservation" class="editor" style="display:none;" />
+                                    <input type="button" id="addReservation" value="Add Reservation" class="editor" />
                                     <input type="button" id="cancelReservation" value="Cancel Reservation" class="editor" />
                                 </div>
                             </div>
@@ -4102,7 +4146,7 @@
                             <div class="form-group">
                                 <label for="reservationLocationCombo" class="col-sm-3 col-md-4 control-label">Location:</label>
                                 <div class="col-sm-9 col-md-8">
-                                    <div id="reservationLocationCombo"></div>
+                                    <div id="reservationLocationCombo"></div><input id="airportId" style="display:none;" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -4118,9 +4162,15 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="reservationFeeIdCombo" class="col-sm-3 col-md-4 control-label">Reservation Fee:</label>
+                                <label for="reservationFeeIdCombo" class="col-sm-3 col-md-4 control-label">Fee in $:</label>
                                 <div class="col-sm-9 col-md-8">
-                                    <div id="reservationFeeIdCombo"></div>
+                                    <input id="reservationFeeInput" /><input id="reservationFeeInputValue" style="display:none;" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reservationFeePoints" class="col-sm-3 col-md-4 control-label">Fee in Points:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" id="reservationFeePointsInput" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -4135,36 +4185,30 @@
                                     <div id="reservationPaymentMethodId"></div>
                                 </div>
                             </div>
-                            <div class="form-group" style="display:none !important;">
-                                <label for="reservationFeeDollars" class="col-sm-3 col-md-4 control-label">Fee Dollars:</label>
+                            <div class="form-group">
+                                <label for="reservationFeeCreditCombo" class="col-sm-3 col-md-4 control-label">Credits:</label>
                                 <div class="col-sm-9 col-md-8">
-                                    <input type="text" id="reservationFeeDollars" value="4.95" />
+                                    <div id="reservationFeeCreditCombo"></div>
                                 </div>
                             </div>
-                            <div class="form-group" style="display:none !important;">
-                                <label for="reservationFeePoints" class="col-sm-3 col-md-4 control-label">Fee Points:</label>
+                            <div class="form-group">
+                                <label for="reservationFeeDiscountIdGrid" class="col-sm-3 col-md-4 control-label">Discounts:</label>
                                 <div class="col-sm-9 col-md-8">
-                                    <input type="text" id="reservationFeePoints" value="8" />
+                                    <div id="reservationFeeDiscountIdDDB">
+                                        <div id="reservationFeeDiscountIdGrid"></div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group" style="display:none !important;">
-                                <label for="reservationFeeCreditId" class="col-sm-3 col-md-4 control-label">Fee Points:</label>
+                            <div class="form-group">
+                                <label for="EstimatedReservationCost" class="col-sm-3 col-md-4 control-label">Est. Cost:</label>
                                 <div class="col-sm-9 col-md-8">
-                                    <input type="text" id="reservationFeeCreditId" value="4.95" placeholder="Reservation Fee Credit" disabled />
+                                    <input type="text" id="EstimatedReservationCost" placeholder="Estimated Reservation Cost" /><input type="button" id="getEstCost" value="Get Cost" />
                                 </div>
                             </div>
-                            <div id="reservationFeeDiscountIdGrid" style="display:none !important;"></div>
-                            <div id="reservationCreditCardId"></div>
-                            <div class="form-group" style="display:none !important;">
-                                <label for="EstimatedReservationCost" class="col-sm-3 col-md-4 control-label">Fee Points:</label>
+                            <div class="form-group">
+                                <label for="ReservationNote" class="col-sm-3 col-md-4 control-label">Notes:</label>
                                 <div class="col-sm-9 col-md-8">
-                                    <input type="text" id="EstimatedReservationCost" value="Estimated Reservation Cost" />
-                                </div>
-                            </div>
-                            <div class="form-group" style="display:none !important;">
-                                <label for="MemberNote" class="col-sm-3 col-md-4 control-label">Fee Points:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" id="MemberNote" value="Member Note" />
+                                    <textarea id="ReservationNote" rows="4"></textarea>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -4187,21 +4231,7 @@
                                     </div>
                                 </div>
                             </div>
-                                
-                            <div id="reservationCreditCardInfo" style="float:right;display:none !important;">
-                                <div>Save: <input type="checkbox" id="reservationCreditCardIsSave" /></div>
-                                <div><input type="text" id="reservationCreditCardNameOnCard" placeholder="Name On Card" /></div>
-                                <div><input type="text" id="reservationCreditCardCardNo" placeholder="Card Number" /></div>
-                                <div><input type="text" id="reservationCreditZipCode" placeholder="Zip Code" /></div>
-                                <div><input type="text" id="reservationCreditExpirationMonth" placeholder="Exp Month" /></div>
-                                <div><input type="text" id="reservationCreditExpirationYear" placeholder="Exp Year" /></div>
-                                <div><input type="text" id="reservationCreditCVVNumber" placeholder="CVVN" /></div>
-                                <div>Primary: <input type="Checkbox" id="reservationIsPrimary" /></div>
-                            </div>
-                            <div id="reservationSavedCreditCardInfo" style="float:right;display:none !important;">
-                                <div><div id="reservationSavedCreditCards"></div></div>
-                            </div>
-
+                            
                         </div>
                     </div>
                 </div>

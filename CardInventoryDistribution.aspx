@@ -28,6 +28,14 @@
     <script type="text/javascript" src="jqwidgets/jqxwindow.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxcheckbox.js"></script>
 
+    <style>
+        /*form coloring received shipment rows*/
+        .shimpmentClass
+        {
+            background-color: aquamarine;
+        }
+    </style>
+
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
 
@@ -58,14 +66,34 @@
             //#endregion
 
             $("#btnSaveDistribution").on("click", function (event) {
-                DistributCards();
+                var getselectedrowindexes = $('#jqxDistribution').jqxGrid('getselectedrowindexes');
+                if (getselectedrowindexes.length > 1) {
+                    alert("Only pick one received shipment to distribute from at a time.");
+                    return null;
+                }
+
+                if (getselectedrowindexes.length > 0) {
+                    for (var index = 0; index < getselectedrowindexes.length; index++) {
+                        var selectedRowData = $('#jqxDistribution').jqxGrid('getrowdata', getselectedrowindexes[index]);
+                        if (true == false) {
+                            alert("This is an 'Shipment Received' row!");
+                            return;
+                        }
+                        DistributCards(selectedRowData.CardHistoryId);
+                    }
+                    loadGrid($("#LocationCombo").jqxComboBox('getSelectedItem').value);
+                } else {
+
+                    alert("No received cards selected!");
+                }
+                
             });
 
             // set up source combo
             var source = [
                     "Pick a Source",
                     "Booth",
-                    "Bus",
+                    //"Bus",
                     "Rep"];
 
             $("#jqxDistPoint").jqxComboBox({ source: source, selectedIndex: 0, width: '100%', height: '24' });
@@ -79,6 +107,7 @@
                             loadBuses();
                             $("#jqxBus").toggle();
                             if ($("#jqxRep").is(":visible")) {
+                                $("#jqxRep").val('');
                                 $("#jqxRep").toggle();
                             }
                         }
@@ -86,14 +115,17 @@
                             loadReps();
                             $("#jqxRep").toggle();
                             if ($("#jqxBus").is(":visible")) {
+                                $("#jqxBus").val('');
                                 $("#jqxBus").toggle();
                             }
                         }
                         if (item.label == "Booth") {
                             if ($("#jqxRep").is(":visible")) {
+                                $("#jqxRep").val('');
                                 $("#jqxRep").toggle();
                             }
                             if ($("#jqxBus").is(":visible")) {
+                                $("#jqxBus").val('');
                                 $("#jqxBus").toggle();
                             }
                         }
@@ -114,14 +146,24 @@
             $("#jqxBus").toggle();
             $("#jqxRep").toggle();
 
+
+            $("#LocationCombo").on('bindingComplete', function (event) {
+                $("#LocationCombo").jqxComboBox('insertAt', 'Pick a Location', 0);
+                $("#LocationCombo").jqxComboBox('selectIndex', 0);
+            });
+
             $("#LocationCombo").on('select', function (event) {
                 if (event.args) {
                     var item = event.args.item;
+                    if (item.index <= 0) {
+                        return null;
+                    }
                     if (item) {
                         loadGrid($("#LocationCombo").jqxComboBox('getSelectedItem').value);
                     }
                 }
             });
+
         });
 
        
@@ -137,8 +179,8 @@
             $("<div id='jqxDistribution'></div>").appendTo(parent);
 
             // loading order histor
-            var url = $("#localApiDomain").val() + "CardDistHistorys/Get/" + thisLocationId;
-            //var url = "http://localhost:52839/api/CardDistHistorys/Get/" + thisLocationId;
+            var url = $("#localApiDomain").val() + "CardDistHistorys/Get/-5_" + thisLocationId;
+            //var url = "http://localhost:52839/api/CardDistHistorys/Get/-5_" + thisLocationId;
 
             var source =
             {
@@ -147,26 +189,24 @@
                     { name: 'ActivityDate' },
                     { name: 'StartingNumber' },
                     { name: 'EndingNumber' },
-                    { name: 'NumberOfCards' },
                     { name: 'DistributionPoint' },
                     { name: 'BusOrRepId' },
-                    { name: 'CardDistributionActivityDescription' },
-                    { name: 'RecordedBy' },
                     { name: 'ActivityId' },
                 ],
-                id: 'ManualEditId',
                 type: 'Get',
                 datatype: "json",
                 url: url,
             };
 
+            var cellclassname = function (row, column, value, data) {
+                if (data.DistributionPoint == "") {
+                    return "shimpmentClass";
+                } 
+            };
+
             // creage jqxgrid
             $("#jqxDistribution").jqxGrid(
             {
-                //pageable: true,
-                //pagermode: 'simple',
-                //pagermode: 'advanced',
-                //pagesize: 12,
                 width: '100%',
                 height: 500,
                 source: source,
@@ -174,30 +214,14 @@
                 sortable: true,
                 altrows: true,
                 filterable: true,
-                ready: function () {
-                    // create a filter group for the FirstName column.
-                    var ActivityFilterGroup = new $.jqx.filter();
-                    // operator between the filters in the filter group. 1 is for OR. 0 is for AND.
-                    var filter_or_operator = 1;
-                    // create a number filter with 'equal' condition.
-                    var filtervalue = 4;
-                    var filtercondition = 'equal';
-                    var ActivityFilter1 = ActivityFilterGroup.createfilter('numericfilter', filtervalue, filtercondition);
-                    // add the filters to the filter group.
-                    ActivityFilterGroup.addfilter(filter_or_operator, ActivityFilter1);
-                    $("#jqxDistribution").jqxGrid('addfilter', 'ActivityId', ActivityFilterGroup);
-                    $("#jqxDistribution").jqxGrid('applyfilters');
-                },
+                selectionmode: 'checkbox',
                 columns: [
                        { text: 'CardHistoryId', datafield: 'CardHistoryId', hidden: true },
-                       { text: 'ActivityDate', datafield: 'ActivityDate', cellsrenderer: DateRender },
-                       { text: 'StartingNumber', datafield: 'StartingNumber' },
-                       { text: 'EndingNumber', datafield: 'EndingNumber' },
-                       { text: 'NumberOfCards', datafield: 'NumberOfCards' },
-                       { text: 'DistributionPoint', datafield: 'DistributionPoint' },
-                       { text: 'BusOrRepId', datafield: 'BusOrRepId' },
-                       { text: 'Activity', datafield: 'CardDistributionActivityDescription' },
-                       { text: 'User', datafield: 'RecordedBy' },
+                       { text: 'ActivityDate', datafield: 'ActivityDate', cellsrenderer: DateRender, cellclassname: cellclassname, width: '18%' },
+                       { text: 'Starting Card', datafield: 'StartingNumber', cellclassname: cellclassname, width: '20%' },
+                       { text: 'Ending Card', datafield: 'EndingNumber', cellclassname: cellclassname, width: '20%' },
+                       { text: 'Distributed To', datafield: 'DistributionPoint', cellclassname: cellclassname, width: '20%' },
+                       { text: 'Name', datafield: 'BusOrRepId', cellclassname: cellclassname, width: '20%' },
                        { text: 'ActivityId', datafield: 'ActivityId', hidden: true }
                 ]
             });
@@ -237,13 +261,13 @@
 
         }
 
-        function DistributCards() {
+        function DistributCards(CardHistoryId) {
             var StartingNumber = $("#firstCard").val();
             var EndingNumber = $("#lastCard").val();
-            if ($("#jqxBus").val() != "") {
+            if ($("#jqxBus").is(":visible")) {
                 var Bus = $("#jqxBus").jqxComboBox('getSelectedItem').label;
             }
-            if ($("#jqxRep").val() != "") {
+            if ($("#jqxRep").is(":visible")) {
                 var Rep = $("#jqxRep").jqxComboBox('getSelectedItem').label;
             }
             var thisLocationId = $("#LocationCombo").jqxComboBox('getSelectedItem').value;
@@ -252,6 +276,7 @@
             
 
             if (typeof Bus == "undefined" && typeof Rep == "undefined") {
+                RepBus = "Booth";
                 DistPoint = "Booth";
             } else {
                 if (typeof Bus != "undefined") {
@@ -264,13 +289,13 @@
             }
 
 
-            Date.prototype.toMMDDYYYYString = function () { return isNaN(this) ? 'NaN' : [this.getMonth() > 8 ? this.getMonth() + 1 : '0' + (this.getMonth() + 1), this.getDate() > 9 ? this.getDate() : '0' + this.getDate(), this.getFullYear()].join('/') }
+            var myDate = new Date();
 
-            //alert(new Date().toMMDDYYYYString());
+            myDate = DateTimeFormat(myDate);
 
             var Quantity = parseInt(EndingNumber) - parseInt(StartingNumber);
             
-            var data = { 'ActivityDate': new Date().toMMDDYYYYString(), 'ActivityId': 4, 'StartingNumber': StartingNumber, 'EndingNumber': EndingNumber, 'NumberOfCards': Quantity, 'OrderConfirmationDate': '1/1/1900', 'DistributionPoint': DistPoint, 'BusOrRepID': RepBus, 'Shift': null, 'RecordDate': new Date().toMMDDYYYYString(), 'RecordedBy': $("#txtLoggedinUsername").val(), 'LocationId': thisLocationId };
+            var data = { 'ActivityDate': myDate, 'ActivityId': 4, 'StartingNumber': StartingNumber, 'EndingNumber': EndingNumber, 'NumberOfCards': Quantity, 'OrderConfirmationDate': '1/1/1900', 'DistributionPoint': DistPoint, 'BusOrRepID': RepBus, 'Shift': null, 'RecordDate': myDate, 'RecordedBy': $("#txtLoggedinUsername").val(), 'LocationId': thisLocationId, 'CardHistoryId': CardHistoryId };
 
             $.ajax({
                 async: false,
@@ -292,23 +317,6 @@
 
             });
 
-            //$.post($("#localApiDomain").val() + "CardDistHistorys/Post",
-            //    { 'ActivityDate': new Date().toMMDDYYYYString(), 'ActivityId': 4, 'StartingNumber': StartingNumber, 'EndingNumber': EndingNumber, 'NumberOfCards': Quantity, 'OrderConfirmationDate': '1/1/1900', 'DistributionPoint': DistPoint, 'BusOrRepID': RepBus, 'Shift': null, 'RecordDate': new Date().toMMDDYYYYString(), 'RecordedBy': $("#txtLoggedinUsername").val(), 'LocationId': thisLocationId },
-            //    function (data, status) {
-            //        switch (status) {
-            //            case 'success':
-            //                $("#statusMessage").attr("class", "status");
-            //                $("#statusMessage").html('Cards were created received');
-            //                alert('Cards were distributed.');
-            //                break;
-            //            default:
-            //                $("#statusMessage").attr("class", "warning");
-            //                $("#statusMessage").html('An Error occurred: ' + status + "\n Data:" + data);
-            //                alert('An Error occurred: ' + status + "\n Data:" + data);
-            //                break;
-            //        }
-            //    }
-            //);
 
             $("#jqxBus").jqxComboBox('selectIndex', 0);
             $("#jqxRep").jqxComboBox('selectIndex', 0);

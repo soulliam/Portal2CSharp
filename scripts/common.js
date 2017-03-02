@@ -298,3 +298,31 @@ var locatioinCellsrenderer = function (row, columnfield, value, defaulthtml, col
             return 'Error';
     }
 }
+
+//verifys whether a card is in the DB for different types of history
+function verifyCard(CardNumber, Historytype, cardTest) {
+    var cardNumber;
+
+     var url = $("#localApiDomain").val() + 'CardDistHistorys/ConfirmNumbers/' + Historytype + '_' + CardNumber;
+    //var url = 'http://localhost:52839/api/CardDistHistorys/ConfirmNumbers/' + Historytype + '_' + CardNumber;
+
+    $.ajax({
+        type: 'GET',
+        url: url,
+        success: function (data) {
+            if (data.length > 0) {
+                cardTest.css('background-color', '#ff6666');
+            } else {
+                cardTest.css('background-color', '#ffffff');
+            }
+
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert("Error: " + errorThrown);
+            ardTest = false;
+        }
+    });
+
+    //return $("#LastCardAPIResult").val();
+    return cardNumber;
+}

@@ -5,177 +5,243 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
-    <script type="text/javascript">
-        var data = generatedata(500);
-        var source =
-        {
-            localdata: data,
-            datafields:
-            [
-                { name: 'available', type: 'bool' },
-                { name: 'date', type: 'date' },
-                { name: 'range', map: 'date' },
+    <style>
+        ul {list-style-type: none;}
+        body {font-family: Verdana, sans-serif;}
 
-            ],
-            datatype: "array"
-        };
-        var addDefaultfilter = function () {
-            var datefiltergroup = new $.jqx.filter();
-            var operator = 0;
-            var today = new Date();
-
-            var weekago = new Date();
-
-            weekago.setDate((today.getDate() - 10));
-
-            var filtervalue = weekago;
-            var filtercondition = 'GREATER_THAN_OR_EQUAL';
-            var filter4 = datefiltergroup.createfilter('datefilter', filtervalue, filtercondition);
-
-            filtervalue = today;
-            filtercondition = 'LESS_THAN_OR_EQUAL';
-            var filter5 = datefiltergroup.createfilter('datefilter', filtervalue, filtercondition);
-
-            datefiltergroup.addfilter(operator, filter4);
-            datefiltergroup.addfilter(operator, filter5);
-
-            //$("#jqxProgress").jqxGrid('addfilter', 'Status', statusfiltergroup);
-            $("#jqxgrid").jqxGrid('addfilter', 'range', datefiltergroup);
-            $("#jqxgrid").jqxGrid('applyfilters');
+        /* Month header */
+        .month {
+            padding: 40px 25px;
+            background: #1abc9c;
         }
-        var dataAdapter = new $.jqx.dataAdapter(source);
-        $("#jqxgrid").jqxGrid(
-        {
-            width: 850,
-            source: dataAdapter,
-            showfilterrow: true,
-            filterable: true,
-            selectionmode: 'multiplecellsextended',
-            ready: function () {
-                addDefaultfilter();
-            },
-            columns: [
-              { text: 'Range', datafield: 'range', filtertype: 'range', cellsalign: 'right', width: '35%', cellsformat: 'd' }
-            ]
+
+        /* Month list */
+        .month ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        .month label {
+            color: white;
+            font-size: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .month div {
+            color: white;
+            font-size: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .month ul li {
+            color: white;
+            font-size: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        /* Previous button inside month header */
+        .month .prev {
+            float: left;
+            padding-top: 10px;
+        }
+
+        /* Next button */
+        .month .next {
+            float: right;
+            padding-top: 10px;
+        }
+
+        /* Weekdays (Mon-Sun) */
+        .weekdays {
+            margin: 0;
+            padding: 10px 0;
+            background-color:#ddd;
+        }
+
+        .weekdays li {
+            display: inline-block;
+            width: 13.6%;
+            color: #666;
+            text-align: center;
+        }
+
+        /* Days (1-31) */
+        .days {
+            padding: 10px 0;
+            background: #eee;
+            margin: 0;
+        }
+
+        .days li {
+            list-style-type: none;
+            display: inline-block;
+            width: 14%;
+            text-align: center;
+            margin-bottom: 5px;
+            font-size:12px;
+            color:#777;
+        }
+
+        /* Highlight the "current" day */
+        .days li .active {
+            padding: 5px;
+            background: #1abc9c;
+            color: white !important
+        }
+    </style>
+
+    <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="scripts/common.js"></script>
+
+    <link rel="stylesheet" href="jqwidgets/styles/jqx.base.css" type="text/css" />
+    <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxcore.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxdraw.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxbargauge.js"></script>
+
+
+    <script>
+        var d = new Date();
+        d = new Date(d.getFullYear(), d.getMonth(), 1);
+
+        $(document).ready(function () { 
+            createCalendar(1);
+
+            $("#prev").on("click", function (event) {
+                createCalendar(3);
+            });
+
+            $("#next").on("click", function (event) {
+                createCalendar(2);
+            });
+
+            
+
         });
-        $('#clearfilteringbutton').jqxButton({ height: 25 });
-        $('#clearfilteringbutton').click(function () {
-            $("#jqxgrid").jqxGrid('clearfilters');
-        });
+
+        function createCalendar(direction) {
+
+            var list = document.getElementById("days");
+            list.innerHTML = '';
+
+
+            switch(direction) {
+                case 1:
+                    break;
+                case 2:
+                    d = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+                    break;
+                case 3:
+                    d = new Date(d.getFullYear(), d.getMonth() - 1, 1);
+                    break;
+                default:
+                    break;
+            }
+
+            
+            var month = new Array();
+            month[0] = "January";
+            month[1] = "February";
+            month[2] = "March";
+            month[3] = "April";
+            month[4] = "May";
+            month[5] = "June";
+            month[6] = "July";
+            month[7] = "August";
+            month[8] = "September";
+            month[9] = "October";
+            month[10] = "November";
+            month[11] = "December";
+            var n = month[d.getMonth()];
+
+            $("#month").html(n);
+
+            var month = d.getMonth();
+            var year = d.getFullYear();
+
+            var FirstDay = new Date(year, month, 1);
+            var LastDay = new Date(year, month + 1, 0);
+
+            var firstDayOfWeek = 0;
+
+            while (firstDayOfWeek < FirstDay.getDay()){
+                var node = document.createElement("li"); 
+                var textnode = document.createTextNode(''); 
+                node.appendChild(textnode); 
+                document.getElementById("days").appendChild(node);
+                firstDayOfWeek = firstDayOfWeek + 1;
+            }
+
+            while (FirstDay <= LastDay) {
+
+                var thisDate = FirstDay.getDate();
+
+                $("#days").append("<li><label style='font-size:large;font-weight:bold;'>" + thisDate + "</lable><div id='barGauge" + thisDate + "'></div></li");
+
+                //var node = document.createElement("li"); 
+                //var textnode = document.createTextNode(thisDate + " <div id='barGauge'></div>"); 
+                //node.appendChild(textnode);
+                //document.getElementById("days").appendChild(node);
+
+                var thisCharet = "barGauge" + thisDate;
+
+                var Ins = 200;
+                var Outs = 167;
+                var OnLot = 300;
+
+                $('#' + thisCharet).jqxBarGauge({
+                    relativeInnerRadius: 0.1,
+                    barSpacing: 2,
+                    colorScheme: "scheme02", width: 220, height: 220,
+                    values: [Ins, Outs, OnLot], max: 300, tooltip: {
+                        visible: true, formatFunction: function (value) {
+                            var realVal = parseInt(value);
+                            return ('Year: 2016<br/>Price Index:' + realVal);
+                        },
+                    }
+                });
+
+                
+                if (FirstDay.getDate() != LastDay.getDate()){
+                    FirstDay.setDate(FirstDay.getDate() + 1);
+                } else {
+                    FirstDay.setDate('1/1/2200');
+                }
+
+            } 
+        }
     </script>
 </head>
 <body>
+    
     <form id="form1" runat="server">
-        <div>
-                 <table>
-                    <tr>
-                        <td colspan="4">
-                            <div id="jqxFeatureGrid"></div>
-                        </td>
-                    </tr>
-                     <tr>
-                        <td colspan="4">
-                            
-                        </td>
-                    </tr>
-                      <tr>
-                        <td colspan="4">
-                            <div id="featureCombo"></div>
-                        </td>
-                    </tr>
-                     <tr>
-                        <td colspan="4">
-                           
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            Sort Order:
-                        </td>
-                        <td>
-                            <input type="text" id="FeatureSortOrder" />
-                        </td>
-                        <td>
-                            Charge Amount:
-                        </td>
-                        <td>
-                            <input type="text" id="FeatureChargeAmount" />
-                        </td>
-                    </tr>
-                     <tr>
-                        <td>
-                            Charge Note:
-                        </td>
-                        <td>
-                            <input type="text" id="FeatureChargeNote" />
-                        </td>
-                        <td>
-                            Effective Date:
-                        </td>
-                        <td>
-                            <input type="text" id="FeatureEffectiveDate" />
-                        </td>
-                    </tr>
-                     <tr>
-                        <td>
-                            Optional Extras Name:
-                        </td>
-                        <td>
-                            <input type="text" id="FeatureOptionalExtrasName" />
-                        </td>
-                        <td>
-                            Optional Extras Description:
-                        </td>
-                        <td>
-                            <input type="text" id="FeatureOptionalExtrasDescription" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            Max Available:
-                        </td>
-                        <td>
-                            <input type="text" id="MaxAvailable" />
-                        </td>
-                        <td>
-                            Date Available:
-                        </td>
-                        <td>
-                            <input type="text" id="FeatureAvailableDatetime" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="4">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            Reservation Text?:
-                        </td>
-                        <td>
-                            <input id="AddToReservationText" type="checkbox" />
-                        </td>
-                        <td>
-                            Display?:
-                        </td>
-                        <td>
-                            <input type="checkbox" id="IsDisplayed" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="4">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <input id="addFeature" type="button" value="Add" />
-                        </td>
-                        <td colspan="2" align="right">
-                            <input id="cancelFeature" type="button" value="Cancel" />
-                        </td>
-                    </tr>
-                </table>
-            </div>
+        <div class="month"> 
+            <label class="month" id="month"></label>
+        </div>
+
+        <div class="month">
+            <div id="prev" class="prev">&#10094;</div>
+            <div id="next" class="next" style="float:right;">&#10095;</div>
+        </div>
+        <ul class="weekdays">
+            <li>Su</li>
+            <li>Mo</li>
+            <li>Tu</li>
+            <li>We</li>
+            <li>Th</li>
+            <li>Fr</li>
+            <li>Sa</li>
+        </ul>
+        
+        <ul id="days" class="days"> 
+
+        </ul>
     </form>
+
+    
 </body>
 </html>

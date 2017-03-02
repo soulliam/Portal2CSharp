@@ -61,18 +61,7 @@
 
             $("#jqxCheckBox").jqxCheckBox({ width: 120, height: 25 });
 
-            $("#jqxSearchGrid").bind('rowdoubleclick', function (event) {
-                var getselectedrowindexes = $('#jqxSearchGrid').jqxGrid('getselectedrowindexes');
-                if (getselectedrowindexes.length > 0) {
-                    // returns the selected row's data.
-                    var selectedRowData = $('#jqxgrid').jqxGrid('getrowdata', getselectedrowindexes[0]);
-
-                    var thisMemberId = selectedRowData.MemberId;
-                }
-
-                var MemberSearchURL = './MemberSearch.aspx?' + thisMemberId;
-                window.open(MemberSearchURL);
-            });
+            
 
         });
 
@@ -112,8 +101,8 @@
             //Loads SearchList from parameters
 
             //var url = $("#apiDomain").val() + "members/search?" + thisParameters;
-            //var url = "http://localhost:52839/api/SearchTransactions/SearchTransactions/";
-            var url = $("#localApiDomain").val() + "SearchTransactions/SearchTransactions/";
+            var url = "http://localhost:52839/api/SearchTransactions/SearchTransactions/";
+            //var url = $("#localApiDomain").val() + "SearchTransactions/SearchTransactions/";
 
             if (calendarChanged == false) {
                 var thisEntryDate = '';
@@ -133,9 +122,11 @@
             var source =
             {
                 datafields: [
+                    { name: 'FirstName' },
+                    { name: 'LastName' },
+                    { name: 'FPNumber' },
                     { name: 'EntryDate' },
                     { name: 'DateTimeOfTransaction' },
-                    { name: 'FPNumber' },
                     { name: 'AmountPaid' },
                     { name: 'Status' },
                     { name: 'ReceiptNumber' },
@@ -156,20 +147,34 @@
                 source: source,
                 columnsresize: true,
                 enablebrowserselection: true,
-                ready: function () {
+                //ready: function () {
 
-                },
+                //},
                 columns: [
-                      { text: 'Entry Date', datafield: 'EntryDate', width: '15%', cellsrenderer: DateTimeRender },
-                      { text: 'Exit Date', datafield: 'DateTimeOfTransaction', width: '15%', cellsrenderer: DateTimeRender },
-                      { text: 'FPNumber', datafield: 'FPNumber', width: '10%' },
-                      { text: 'Amount Paid', datafield: 'AmountPaid', width: '10%' },
-                      { text: 'Status', datafield: 'Status', width: '30%' },
+                      { text: 'First Name', datafield: 'FirstName', width: '10%' },
+                      { text: 'Last Name', datafield: 'LastName', width: '10%' },
+                      { text: 'FPNumber', datafield: 'FPNumber', width: '7%' },
+                      { text: 'Entry Date', datafield: 'EntryDate', width: '13%', cellsrenderer: DateTimeRender },
+                      { text: 'Exit Date', datafield: 'DateTimeOfTransaction', width: '13%', cellsrenderer: DateTimeRender },
+                      { text: 'Paid', datafield: 'AmountPaid', width: '7%' },
+                      { text: 'Status', datafield: 'Status', width: '20%' },
                       { text: 'Receipt #', datafield: 'ReceiptNumber', width: '10%' },
                       { text: 'MemberId', datafield: 'MemberId', width: '10%' },
                 ]
             });
 
+            $("#jqxSearchGrid").bind('rowdoubleclick', function (event) {
+                var getselectedrowindexes = $('#jqxSearchGrid').jqxGrid('getselectedrowindexes');
+                if (getselectedrowindexes.length > 0) {
+                    // returns the selected row's data.
+                    var selectedRowData = $('#jqxSearchGrid').jqxGrid('getrowdata', getselectedrowindexes[0]);
+
+                    var thisMemberId = selectedRowData.MemberId;
+                }
+
+                var MemberSearchURL = './MemberSearch.aspx?MemberId=' + thisMemberId;
+                window.open(MemberSearchURL);
+            });
 
         }
 

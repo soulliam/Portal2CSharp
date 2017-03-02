@@ -58,6 +58,22 @@
             });
 
             $("#specOrder").toggle();
+
+            //Check key strokes for whether card is in DB for different history types Order = 1
+            $("#firstCard").keyup(function () {
+                cardVal = $("#firstCard").val();
+                verifyCard(cardVal, '1', $("#firstCard"));
+            });
+
+            $("#lastCard").keyup(function () {
+                cardVal = $("#lastCard").val();
+                verifyCard(cardVal, '1', $("#lastCard"));
+            });
+
+            $("#orderAmount").keyup(function () {
+                cardVal = parseInt($("#lastOrdered").val()) + parseInt($("#orderAmount").val());
+                verifyCard(cardVal, '1', $("#orderAmount"));
+            }); 
         });
 
         // ============= Initialize Page ================== End
@@ -84,7 +100,6 @@
                     { name: 'RecordedBy' },
                     { name: 'ActivityId' }
                 ],
-                id: 'ManualEditId',
                 type: 'Get',
                 datatype: "json",
                 url: url,
@@ -93,39 +108,21 @@
             // creage jqxgrid
             $("#jqxOrders").jqxGrid(
             {
-                //pageable: true,
-                //pagermode: 'simple',
-                //pagermode: 'advanced',
-                //pagesize: 12,
                 width: '100%',
                 height: 500,
                 source: source,
-                selectionmode: 'checkbox',
                 rowsheight: 35,
                 sortable: true,
                 altrows: true,
                 filterable: true,
-                ready: function () {
-                    // create a filter group for the FirstName column.
-                    var fnameFilterGroup = new $.jqx.filter();
-                    // operator between the filters in the filter group. 1 is for OR. 0 is for AND.
-                    var filter_or_operator = 1;
-                    // create a string filter with 'contains' condition.
-                    var filtervalue = 1;
-                    var filtercondition = 'contains';
-                    var fnameFilter1 = fnameFilterGroup.createfilter('stringfilter', filtervalue, filtercondition);
-                    fnameFilterGroup.addfilter(filter_or_operator, fnameFilter1);
-                    $("#jqxOrders").jqxGrid('addfilter', 'ActivityId', fnameFilterGroup);
-                    $("#jqxOrders").jqxGrid('applyfilters');
-                },
                 columns: [
-                       { text: 'CardHistoryId', datafield: 'CardHistoryId' },
-                       { text: 'ActivityDate', datafield: 'ActivityDate' },
-                       { text: 'StartingNumber', datafield: 'StartingNumber' },
-                       { text: 'EndingNumber', datafield: 'EndingNumber' },
-                       { text: 'NumberOfCards', datafield: 'NumberOfCards' },
-                       { text: 'Activity', datafield: 'CardDistributionActivityDescription' },
-                       { text: 'User', datafield: 'RecordedBy' },
+                       { text: 'CardHistoryId', datafield: 'CardHistoryId', hidden: true },
+                       { text: 'Activity Date', datafield: 'ActivityDate', cellsrenderer: DateRender, width: '15%' },
+                       { text: 'Startingn Card', datafield: 'StartingNumber', width: '17%' },
+                       { text: 'Ending Card', datafield: 'EndingNumber', width: '17%' },
+                       { text: 'Number Of Cards', datafield: 'NumberOfCards', width: '17%' },
+                       { text: 'Activity', datafield: 'CardDistributionActivityDescription', width: '17%' },
+                       { text: 'Order By', datafield: 'RecordedBy', width: '17%' },
                        { text: 'ActivityId', datafield: 'ActivityId', hidden: true }
                 ]
             });
@@ -150,9 +147,18 @@
             return cardNumber;
         }
 
-
-
         function placeOrder() {
+            if ($("#orderAmount").css("background-color") == "rgb(255, 102, 102)" || $("#lastCard").css("background-color") == "rgb(255, 102, 102)" || $("#firstCard").css("background-color") == "rgb(255, 102, 102)") {
+                alert("One of your cards has already been ordered!");
+                return null;
+            };
+
+            if (parseInt($("#lastCard").val()) < parseInt($("#firstCard").val())) {
+                alert("Your last card is greater than your first card!");
+                return null;
+            };
+            
+
             var ActivityDateCode = $('#jqxdatetimeinputOrder').jqxDateTimeInput('getDate');
             var ActivityDateValue = ActivityDateCode.toJSON();
             var ActivityIdValue = $("#Card_Activity").val();
@@ -162,7 +168,7 @@
 
             if ($("#regOrder").is(":visible")) {
                 StartingNumber = parseInt($("#lastOrdered").val()) + 1;
-                EndingNumber = parseInt(StartingNumber) + parseInt($("#orderAmount").val());
+                EndingNumber = parseInt(StartingNumber) + parseInt($("#orderAmount").val() - 1);
                 Quantiy = $("#orderAmount").val();
             }
             if ($("#specOrder").is(":visible")) {
@@ -179,23 +185,23 @@
                 return;
             }
 
-            //alert('ADT:' + ActivityDateValue + 'AID:' + ActivityIdValue + 'F:' + $("#FirstCardValue").val() + ' Last:' + $("#LastCardValue").val() + ' Qt:' + $("#QuantityValue").val() + ' OCDt:' + $("#OrderConfirmationDateValue").val() + 'DP:' + $("#DistributionPointValue").val() + ' bus:' + $("#BusOrRepIDValue").val() + ' sft:' + $("#ShiftValue").val() + ' dt:' + new Date().toJSON() + ' Usr:' + $("#txtLoggedinUsername").val())
-            $.post("http://localhost:52839/api/CardDistHistorys/Post",
-                { 'ActivityDate': ActivityDateValue, 'ActivityId': 1, 'StartingNumber': StartingNumber, 'EndingNumber': EndingNumber, 'NumberOfCards': Quantiy, 'OrderConfirmationDate': '1/1/1900', 'DistributionPoint': null, 'BusOrRepID': null, 'Shift': null, 'RecordDate': new Date(), 'RecordedBy': $("#txtLoggedinUsername").val() },
+            var thisDate = new Date();
+            $.post($("#localApiDomain").val() + "CardDistHistorys/Post",
+            //$.post("http://localhost:52839/api/CardDistHistorys/Post",
+                { 'ActivityDate': ActivityDateValue, 'ActivityId': 1, 'StartingNumber': StartingNumber, 'EndingNumber': EndingNumber, 'NumberOfCards': Quantiy, 'OrderConfirmationDate': '1/1/1900', 'DistributionPoint': "", 'BusOrRepID': null, 'Shift': null, 'RecordDate': null, 'RecordedBy': $("#txtLoggedinUsername").val(), 'CreateDatetime': null, 'CreateUserId': -1 },
                 function (data, status) {
                     switch (status) {
                         case 'success':
-                            $("#statusMessage").attr("class", "status");
-                            $("#statusMessage").html('Cards were created successfully');
+                            loadGrid();
+                            $("#lastOrdered").val(EndingNumber);
+                            alert('Cards were created successfully');
                             break;
                         default:
-                            $("#statusMessage").attr("class", "warning");
-                            $("#statusMessage").html('An Error occurred: ' + status + "\n Data:" + data);
+                            alert('An Error occurred: ' + status + "\n Data:" + data);
                             break;
                     }
                 }
             );
-
         }
 
     </script>
@@ -212,7 +218,7 @@
                                 </div>
                                 <div id="regOrder" class="swapfields">
                                     <div class="col-sm-15">
-                                        <input type="text" id="lastOrdered" placeholder="Last Card Ordered" />
+                                        <input type="text" id="lastOrdered" placeholder="Last Card Ordered" disabled />
                                     </div>
                                     <div class="col-sm-15">
                                         <input type="text" id="orderAmount" placeholder="Amount to Order"  />
