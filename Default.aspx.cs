@@ -32,6 +32,11 @@ public partial class _Default : System.Web.UI.Page
             }
         }
 
+        if (groupList.IndexOf("PCA\\Portal") < 0)
+        {
+            Response.Redirect("http://www.thefastpark.com");
+        }
+
         Session["UserName"] = user;
 
         Session["groupList"] = groupList;

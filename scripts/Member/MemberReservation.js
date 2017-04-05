@@ -39,6 +39,8 @@
         "ReservationFeeCreditId": thisReservationFeeCreditId,
         "ReservationFeeDiscountId": thisReservationFeeDiscountId,
         "CreditCardId": thisCreditCardId,
+        "PayPalPaymentId": "",
+        "PayPalPayerId": "",
         "EstimatedReservationCost": thisEstimatedReservationCost,
         "MemberNote": thisMemberNote,
         "MemberNote": thisMemberNote,
@@ -69,10 +71,10 @@
         url: $("#apiDomain").val() + "reservations/",
         dataType: "json",
         success: function () {
-            alert("Reservation Created.")
+            swal("Reservation Created.")
         },
         error: function (request, status, error) {
-            alert(error);
+            swal(error);
         },
         complete: function () {
             loadReservations(thisMemberId);
@@ -121,7 +123,7 @@ function loadReservationLocationCombo() {
                 $("#airportId").val(data[0].AirportId);
             },
             error: function (request, status, error) {
-                alert(error);
+                swal(error);
             }
         });
     });
@@ -314,7 +316,7 @@ function setReservationFee(thisDate) {
             $("#reservationFeePointsInput").val(data.result.data.FeePoints);
         },
         error: function (request, status, error) {
-            alert(error);
+            swal(error);
         }
     });
 
@@ -345,7 +347,7 @@ function getEstCost() {
             }
         },
         error: function (request, status, error) {
-            alert(request.responseJSON.message);
+            swal(request.responseJSON.message);
         }
     });
 

@@ -148,6 +148,49 @@ public partial class MemberSearch : System.Web.UI.Page
     }
 
     [System.Web.Services.WebMethod]
+    public static string combineCards(string sourceCard, string targetCard, string submittedBy)
+    {
+        try
+        {
+
+            class_ADO.clsADO thisADO = new class_ADO.clsADO();
+
+            SqlConnection cn = new SqlConnection(thisADO.getLocalConnectionString());
+
+            cn.Open();
+            SqlCommand cmd = new SqlCommand("dbo.CombineCards");
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Connection = cn;
+
+            SqlParameter thisSourceCard = cmd.Parameters.Add(new SqlParameter("@sourceCard", SqlDbType.NVarChar));
+            SqlParameter thisTargetCard = cmd.Parameters.Add(new SqlParameter("@targetCard", SqlDbType.NVarChar));
+            SqlParameter thisSubmittedBy = cmd.Parameters.Add(new SqlParameter("@submittedBy", SqlDbType.NVarChar));
+
+            thisSourceCard.Value = sourceCard;
+            thisTargetCard.Value = targetCard;
+            thisSubmittedBy.Value = submittedBy;
+
+            using (SqlDataReader sdr = cmd.ExecuteReader())
+            {
+                while (sdr.Read())
+                {
+                    return Convert.ToString(sdr["ErrorMessage"]);
+                }
+            }
+
+            cn.Close();
+
+            return "Error";
+        }
+        catch (Exception ex)
+        {
+            return ex.ToString();
+        }
+
+
+    }
+
+    [System.Web.Services.WebMethod]
     public static string LogMemberUpdate(string thisUserName, string thisMemberId, string thisOld, string thisNew)
     {
         try

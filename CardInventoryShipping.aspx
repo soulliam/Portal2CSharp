@@ -30,6 +30,7 @@
 
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
+        var group = '<%= Session["groupList"] %>';
 
         $(document).ready(function () {
             loadGrid();
@@ -122,7 +123,7 @@
                     $("#lastCard").css('background-color', '#ffffff');
                 }
                 if (parseInt($("#lastCard").val()) > parseInt($("#availableCard").html())) {
-                    alert("Last card to shipp is greater than the last card ordered and received.")
+                    alert("Last card to ship is greater than the last card ordered and received.")
                     $("#lastCard").css('background-color', '#ff6666');
                     return null;
                 }
@@ -137,6 +138,8 @@
                 }
                 verifyCard(cardVal, '2', $("#shipAmount"));
             });
+
+            Security();
 
         });
 
@@ -173,6 +176,11 @@
                 url: url,
             };
 
+            var padCard = function (row, columnfield, value, defaulthtml, columnproperties) {
+                var newValue = padNumber(value, 8, '0');
+                return '<div style="margin-top: 10px;margin-left: 5px">' + newValue + '</div>';
+            }
+
             // creage jqxgrid
             $("#jqxShipping").jqxGrid(
             {
@@ -205,9 +213,9 @@
                 columns: [
                        { text: 'CardHistoryId', datafield: 'CardHistoryId', hidden: true },
                        { text: 'Ship Date', datafield: 'ActivityDate', cellsrenderer: DateRender },
-                       { text: 'Starting Card', datafield: 'StartingNumber' },
-                       { text: 'Ending Card', datafield: 'EndingNumber' },
-                       { text: 'NumberOfCards', datafield: 'NumberOfCards' },
+                       { text: 'Starting Card', datafield: 'StartingNumber', cellsrenderer: padCard },
+                       { text: 'Ending Card', datafield: 'EndingNumber', cellsrenderer: padCard },
+                       { text: 'NumberOfCards', datafield: 'NumberOfCards', cellsformat: 'n' },
                        { text: 'User', datafield: 'RecordedBy' },
                        { text: 'Location', datafield: 'NameOfLocation' },
                        { text: 'ActivityId', datafield: 'ActivityId', hidden: true }
@@ -295,6 +303,9 @@
             var EndingNumber = 0;
             var Quantiy = 0;
 
+            StartingNumber = $("#firstCard").val();
+            EndingNumber = $("#lastCard").val();
+
             if ($("#regShip").is(":visible")) {
                 if ($("#shipAmount").val() == "") {
                     alert("You must select an amount of cards to ship!");
@@ -310,8 +321,6 @@
                     return;
                 }
 
-                StartingNumber = $("#firstCard").val();
-                EndingNumber = $("#lastCard").val();
                 Quantity = parseInt(EndingNumber) - parseInt(StartingNumber);
             }
             
@@ -364,10 +373,10 @@
                                 </div>
                                 <div id="specShip" class="swapfields">
                                     <div class="col-sm-15">
-                                        <input type="text" id="firstCard" placeholder="First Card" />
+                                        <input type="number" id="firstCard" placeholder="First Card" />
                                     </div>
                                     <div class="col-sm-15">
-                                        <input type="text" id="lastCard" placeholder="Last Card"  />
+                                        <input type="number" id="lastCard" placeholder="Last Card"  />
                                     </div>
                                     <div class="col-sm-15">
                                         <div id="jqxdatetimeinputSpecShip"></div>

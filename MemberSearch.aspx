@@ -52,7 +52,21 @@
 
 
         $(document).ready(function () {
-
+            $(function () {
+                $('body').on('mousedown', '.popupCombinMembers, .market', function () {
+                    $(this).addClass('draggable').parents().on('mousemove', function (e) {
+                        $('.draggable').offset({
+                            top: e.pageY - $('.draggable').outerHeight() / 2,
+                            left: e.pageX - $('.draggable').outerWidth() / 2
+                        }).on('mouseup', function () {
+                            $(this).removeClass('draggable');
+                        });
+                    });
+                    e.preventDefault();
+                }).on('mouseup', function () {
+                    $('.draggable').removeClass('draggable');
+                });
+            });
 
             //#region TabSetup            
 
@@ -309,52 +323,114 @@
 
             //Delte email and set status
             $("#deleteEmail").on("click", function (event) {
-                var result = confirm("Do you want to delete this member's email?");
-                if (result != true) {
-                    return null;
-                }
+                //var result = confirm("Do you want to delete this member's email?");
+                //if (result != true) {
+                //    return null;
+                //}
 
-                var thisMemberId = $("#MemberId").val();
-                var url = $("#localApiDomain").val() + "Members/DeleteEmail/" + thisMemberId;
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to delete this member's email?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then(function () {
+                    var thisMemberId = $("#MemberId").val();
+                    var url = $("#localApiDomain").val() + "Members/DeleteEmail/" + thisMemberId;
 
-                $.ajax({
-                    type: "GET",
-                    url: url,
-                    dataType: "json",
-                    success: function (data) {
-                        alert("Email Deleted!")
-                        $("#EmailAddress").val('');
-                    },
-                    error: function (request, status, error) {
-                        alert(error);
-                    }
-                });
+                    $.ajax({
+                        type: "GET",
+                        url: url,
+                        dataType: "json",
+                        success: function (data) {
+                            swal(
+                              'Deleted!',
+                              'Your email has been deleted.',
+                              'success'
+                            )
+                            $("#EmailAddress").val('');
+                        },
+                        error: function (request, status, error) {
+                            swal(error);
+                        }
+                    });
+                    
+                })
             });
 
 
             //Create Redemptions
             $("#1DayRedemption").on("click", function (event) {
-                var result = confirm("Do you want to create a redemption!");
-                if (result != true) {
-                    return null;
-                }
-                CreateRedemption(1, 3, 1)
+                //var result = confirm("Do you want to create a redemption!");
+                //if (result != true) {
+                //    return null;
+                //}
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to create a redemption!",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, create it!'
+                }).then(function () {
+                    CreateRedemption(1, 3, 1);
+                    swal(
+                      'Created!',
+                      'Your redemption has been created.',
+                      'success'
+                    )
+                })
             });
 
             $("#3DayRedemption").on("click", function (event) {
-                var result = confirm("Do you want to create a redemption!");
-                if (result != true) {
-                    return null;
-                }
-                CreateRedemption(2, 3, 1)
+                //var result = confirm("Do you want to create a redemption!");
+                //if (result != true) {
+                //    return null;
+                //}
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to create a redemption!",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, create it!'
+                }).then(function () {
+                    CreateRedemption(2, 3, 1);
+                    swal(
+                      'Created!',
+                      'Your redemption has been created.',
+                      'success'
+                    )
+                })
+                
             });
 
             $("#1WeekRedemption").on("click", function (event) {
-                var result = confirm("Do you want to create a redemption!");
-                if (result != true) {
-                    return null;
-                }
-                CreateRedemption(3, 3, 1)
+                //var result = confirm("Do you want to create a redemption!");
+                //if (result != true) {
+                //    return null;
+                //}
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to create a redemption!",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, create it!'
+                }).then(function () {
+                    CreateRedemption(3, 3, 1);
+                    swal(
+                      'Created!',
+                      'Your redemption has been created.',
+                      'success'
+                    )
+                })
+                
             });
 
             // open import status page in new page or tab
@@ -382,7 +458,7 @@
                         window.open(marketingURL);
                     },
                     error: function (request, status, error) {
-                        alert(error);
+                        swal(error);
                     }
                 });
 
@@ -417,212 +493,253 @@
 
             // mark redemption used button click
             $("#markUsedRedemption").on("click", function (event) {
-                //Get the selected rows RedemptionID
-                var thisMemberId = $("#MemberId").val();
                 var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
-                var thisUser = $("#txtLoggedinUsername").val();
-                var ProcessList = "";
-                var first = true;
-
-                if (getselectedrowindexes.length > 0) {
-
-                    for (var index = 0; index < getselectedrowindexes.length; index++) {
-
-                        var selectedRowData = $('#jqxRedemptionGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
-                        if (selectedRowData.IsReturned == 1 || selectedRowData.BeenUsed == 1)
-                        {
-                            alert('You have selected a redemption that has been used or returned.  Please check you list and try again.');
-                            return null;
-                        }
-
-                        if (first == true) {
-                            ProcessList = ProcessList + selectedRowData.RedemptionId;
-                            first = false;
-                        }
-                        else {
-                            ProcessList = ProcessList + "," + selectedRowData.RedemptionId;
-                        }
-                    }
-
-                    var thisRedemptionList = ProcessList.split(",");
-
-                }
-                else {
-                    alert("You must select a redemption to mark used.");
+                if (getselectedrowindexes.length <= 0) {
+                    swal("You have not selected a redemption.")
                     return null;
                 }
 
-                for (var i = 0, len = thisRedemptionList.length; i < len; i++) {
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to mark this as used?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, use it!'
+                }).then(function () {
+                    //Get the selected rows RedemptionID
+                    var thisMemberId = $("#MemberId").val();
+                    var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
+                    var thisUser = $("#txtLoggedinUsername").val();
+                    var ProcessList = "";
+                    var first = true;
 
-                    $.ajax({
-                        type: "POST",
-                        //url: "http://localhost:52839/api/Redemptions/SetBeenUsed/",
-                        url: $("#localApiDomain").val() + "Redemptions/SetBeenUsed/",
+                    if (getselectedrowindexes.length > 0) {
 
-                        data: {
-                            "RedemptionId": thisRedemptionList[i],
-                            "UpdateExternalUserData": thisUser,
-                        },
-                        dataType: "json",
-                        success: function (Response) {
-                            success = true;
-                        },
-                        error: function (request, status, error) {
-                            alert(error);
-                        },
-                        complete: function () {
-                            if (success == true) {
-                                alert("Saved!  Marked as used.");
-                                loadRedemptions(thisMemberId);
-                                loadMemberActivity(thisMemberId);
+                        for (var index = 0; index < getselectedrowindexes.length; index++) {
+
+                            var selectedRowData = $('#jqxRedemptionGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
+                            if (selectedRowData.IsReturned == 1 || selectedRowData.BeenUsed == 1) {
+                                swal('You have selected a redemption that has been used or returned.  Please check you list and try again.');
+                                return null;
+                            }
+
+                            if (first == true) {
+                                ProcessList = ProcessList + selectedRowData.RedemptionId;
+                                first = false;
+                            }
+                            else {
+                                ProcessList = ProcessList + "," + selectedRowData.RedemptionId;
                             }
                         }
-                    });
-                }
+
+                        var thisRedemptionList = ProcessList.split(",");
+
+                    }
+                    else {
+                        swal("You must select a redemption to mark used.");
+                        return null;
+                    }
+
+                    for (var i = 0, len = thisRedemptionList.length; i < len; i++) {
+
+                        $.ajax({
+                            type: "POST",
+                            //url: "http://localhost:52839/api/Redemptions/SetBeenUsed/",
+                            url: $("#localApiDomain").val() + "Redemptions/SetBeenUsed/",
+
+                            data: {
+                                "RedemptionId": thisRedemptionList[i],
+                                "UpdateExternalUserData": thisUser,
+                            },
+                            dataType: "json",
+                            success: function (Response) {
+                                success = true;
+                            },
+                            error: function (request, status, error) {
+                                swal(error);
+                            },
+                            complete: function () {
+                                if (success == true) {
+                                    swal(
+                                      'Done!',
+                                      'Your redemption has been used.',
+                                      'success'
+                                    )
+                                    loadRedemptions(thisMemberId);
+                                    loadMemberActivity(thisMemberId);
+                                }
+                            }
+                        });
+                    }
+
+                    
+                })
+
             });
 
             //return redemption
             $("#returnRedemption").on("click", function (event) {
                 var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
                 if (getselectedrowindexes.length <= 0) {
-                    alert("You have not selected a redemption.")
+                    swal("You have not selected a redemption.")
                     return null;
                 }
 
-                var result = confirm("Do you want to return this redemption!");
-                if (result != true) {
-                    return null;
-                }
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to return this redemption?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, return it!'
+                }).then(function () {
 
-                //Get the selected rows RedemptionID
-                var thisMemberId = $("#MemberId").val();
-                var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
-                var ProcessList = "";
-                var first = true;
+                    //Get the selected rows RedemptionID
+                    var thisMemberId = $("#MemberId").val();
+                    var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
+                    var ProcessList = "";
+                    var first = true;
 
 
-                if (getselectedrowindexes.length > 0) {
+                    if (getselectedrowindexes.length > 0) {
 
-                    for (var index = 0; index < getselectedrowindexes.length; index++) {
-                        var selectedRowData = $('#jqxRedemptionGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
+                        for (var index = 0; index < getselectedrowindexes.length; index++) {
+                            var selectedRowData = $('#jqxRedemptionGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
 
-                        if (selectedRowData.IsReturned == 1 || selectedRowData.BeenUsed == 1) {
-                            alert('You have selected a redemption that has been used or returned.  Please check you list and try again.');
-                            return null;
-                        }
+                            if (selectedRowData.IsReturned == 1 || selectedRowData.BeenUsed == 1) {
+                                swal('You have selected a redemption that has been used or returned.  Please check you list and try again.');
+                                return null;
+                            }
 
-                        if (first == true) {
-                            ProcessList = ProcessList + selectedRowData.RedemptionId;
-                            first = false;
-                        }
-                        else {
-                            ProcessList = ProcessList + "," + selectedRowData.RedemptionId;
-                        }
-                    }
-
-                    var thisRedemptionList = ProcessList.split(",");
-
-                }
-                else {
-                    return null;
-                }
-
-                for (var i = 0, len = thisRedemptionList.length; i < len; i++) {
-
-                    var putUrl = $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions/" + thisRedemptionList[i];
-
-                    $.ajax({
-                        headers: {
-                            "Accept": "application/json",
-                            "Content-Type": "application/json",
-                            "AccessToken": $("#userGuid").val(),
-                            "ApplicationKey": $("#AK").val()
-                        },
-                        type: "PUT",
-                        url: putUrl,
-                        dataType: "json",
-                        success: function (response) {
-                            //Clear the redemption grid and reload
-                            $('#jqxRedemptionGrid').jqxGrid('clearselection');
-                            $('#jqxRedemptionGrid').jqxGrid('clear');
-                            $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
-                            $("#topPointsBalanceAccountBar").html(loadPoints(AccountId, $("#topPointsBalanceAccountBar")));
-                            loadRedemptions(thisMemberId);
-                            loadMemberActivity(thisMemberId);
-                        },
-                        error: function (request, status, error) {
-                            alert(error + " - " + request.responseJSON.message);
-                        },
-                        complete: function () {
-                            if (success == true) {
-                                alert("Returned!  Check activity for returned points.");
+                            if (first == true) {
+                                ProcessList = ProcessList + selectedRowData.RedemptionId;
+                                first = false;
+                            }
+                            else {
+                                ProcessList = ProcessList + "," + selectedRowData.RedemptionId;
                             }
                         }
-                    })
-                }
 
+                        var thisRedemptionList = ProcessList.split(",");
 
+                    }
+                    else {
+                        return null;
+                    }
+
+                    for (var i = 0, len = thisRedemptionList.length; i < len; i++) {
+
+                        var putUrl = $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions/" + thisRedemptionList[i];
+
+                        $.ajax({
+                            headers: {
+                                "Accept": "application/json",
+                                "Content-Type": "application/json",
+                                "AccessToken": $("#userGuid").val(),
+                                "ApplicationKey": $("#AK").val()
+                            },
+                            type: "PUT",
+                            url: putUrl,
+                            dataType: "json",
+                            success: function (response) {
+                                //Clear the redemption grid and reload
+                                $('#jqxRedemptionGrid').jqxGrid('clearselection');
+                                $('#jqxRedemptionGrid').jqxGrid('clear');
+                                $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
+                                $("#topPointsBalanceAccountBar").html(loadPoints(AccountId, $("#topPointsBalanceAccountBar")));
+                                loadRedemptions(thisMemberId);
+                                loadMemberActivity(thisMemberId);
+                            },
+                            error: function (request, status, error) {
+                                swal(error + " - " + request.responseJSON);
+                            },
+                            complete: function () {
+                                
+                            }
+                        })
+                    }
+
+                })
             });
 
             // Cancel Reservation
             $("#cancelReservation").on("click", function (event) {
-                var result = confirm("Do you want to cancel this reservation!");
-                if (result != true) {
+                var getselectedrowindexes = $('#jqxReservationGrid').jqxGrid('getselectedrowindexes');
+                if (getselectedrowindexes.length <= 0) {
+                    swal("You have not selected a reservation.")
                     return null;
                 }
 
-                var ProcessList = "";
-                var first = true;
-                var getselectedrowindexes = $('#jqxReservationGrid').jqxGrid('getselectedrowindexes');
 
-                if (getselectedrowindexes.length > 0) {
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to cancel this reservation?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, cancel it!'
+                }).then(function () {
+                    var ProcessList = "";
+                    var first = true;
+                    var getselectedrowindexes = $('#jqxReservationGrid').jqxGrid('getselectedrowindexes');
 
-                    for (var index = 0; index < getselectedrowindexes.length; index++) {
-                        var selectedRowData = $('#jqxReservationGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
-                        if (first == true) {
-                            ProcessList = ProcessList + selectedRowData.ReservationId;
-                            first = false;
+                    if (getselectedrowindexes.length > 0) {
+
+                        for (var index = 0; index < getselectedrowindexes.length; index++) {
+                            var selectedRowData = $('#jqxReservationGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
+                            if (first == true) {
+                                ProcessList = ProcessList + selectedRowData.ReservationId;
+                                first = false;
+                            }
+                            else {
+                                ProcessList = ProcessList + "," + selectedRowData.ReservationId;
+                            }
                         }
-                        else {
-                            ProcessList = ProcessList + "," + selectedRowData.ReservationId;
-                        }
+
+                        var thisReservationList = ProcessList.split(",");
+
+                    }
+                    else {
+                        return null;
                     }
 
-                    var thisReservationList = ProcessList.split(",");
+                    for (var i = 0, len = thisReservationList.length; i < len; i++) {
+
+                        $.ajax({
+                            headers: {
+                                "Accept": "application/json",
+                                "Content-Type": "application/json",
+                                "AccessToken": $("#userGuid").val(),
+                                "ApplicationKey": $("#AK").val()
+                            },
+                            type: "DELETE",
+                            url: $("#apiDomain").val() + "reservations/" + thisReservationList[i],
+                            dataType: "json",
+                            success: function () {
+                            },
+                            error: function (request, status, error) {
+                                swal(error + " - " + request.responseJSON);
+                            },
+                            complete: function () {
+                                swal(
+                                  'Canceled!',
+                                  'Your reservation has been canceled.',
+                                  'success'
+                                )
+                                thisMemberId = $("#MemberId").val();
+                                $('#jqxReservationGrid').jqxGrid('clearselection');
+                                $('#jqxReservationGrid').jqxGrid('clear');
+                                loadReservations(thisMemberId);
+                            }
+                        });
+                    }
                     
-                }
-                else
-                {
-                    return null;
-                }
+                })
 
-                for (var i = 0, len = thisReservationList.length; i < len; i++) {
-
-                    $.ajax({
-                        headers: {
-                            "Accept": "application/json",
-                            "Content-Type": "application/json",
-                            "AccessToken": $("#userGuid").val(),
-                            "ApplicationKey": $("#AK").val()
-                        },
-                        type: "DELETE",
-                        url: $("#apiDomain").val() + "reservations/" + thisReservationList[i],
-                        dataType: "json",
-                        success: function () {
-                        },
-                        error: function (request, status, error) {
-                            alert(error + " - " + request.responseJSON.message);
-                        },
-                        complete: function () {
-                            alert("Canceled!");
-                            thisMemberId = $("#MemberId").val();
-                            $('#jqxReservationGrid').jqxGrid('clearselection');
-                            $('#jqxReservationGrid').jqxGrid('clear');
-                            loadReservations(thisMemberId);
-                        }
-                    });
-                }
-                
             });
 
             $("#addPhone").on("click", function (event) {
@@ -651,7 +768,7 @@
                 var thisCompany = $("#Company").val();
 
                 if ($("#titleCombo").jqxComboBox('getSelectedIndex') == 0 || $("#titleCombo").jqxComboBox('getSelectedIndex') == -1) {
-                    var thisLocationId = 0;
+                    var thisTitleId = 0;
                 } else {
                     var thisTitleId = $('#titleCombo').jqxComboBox('selectedIndex');;
                 }
@@ -659,7 +776,7 @@
                 var thisMarketingCode =  $("#MarketingCode").val();
                 var thisMemberId = $("#MemberId").val(); 
 
-                if ($("#homeLocationCombo").jqxComboBox('getSelectedIndex') == 0) {
+                if ($("#homeLocationCombo").jqxComboBox('getSelectedIndex') == 0 || $("#homeLocationCombo").jqxComboBox('getSelectedIndex') == -1) {
                     var thisLocationId = 0;
                 } else {
                     var thisLocationId = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
@@ -677,7 +794,7 @@
                 var rows = $('#phoneGrid').jqxGrid('getrows');
                 
                 if (rows.length > 4) {
-                    alert("Only four phone numbers permitted!")
+                    swal("Only four phone numbers permitted!")
                     return null;
                 }
 
@@ -736,104 +853,132 @@
 
             //Delete Card from Member
             $("#deleteCard").on("click", function (event) {
-                var result = confirm("Do you want to delete this card!");
-                if (result != true) {
-                    return null;
-                }
+                //var result = confirm("Do you want to delete this card!");
+                //if (result != true) {
+                //    return null;
+                //}
 
-                var rowCount = $('#jqxCardGrid').jqxGrid('getrows');
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to delete this card?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then(function () {
+                    var rowCount = $('#jqxCardGrid').jqxGrid('getrows');
 
-                if (rowCount.length == 1) {
-                    alert("There is only one card assigned to this account!")
-                    return null;
-                }
-
-                var getselectedrowindexes = $('#jqxCardGrid').jqxGrid('getselectedrowindexes');
-
-                if (getselectedrowindexes.length > 0) {
-                    for (var index = 0; index < getselectedrowindexes.length; index++) {
-                        var selectedRowData = $('#jqxCardGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
-
-                        var url = $("#apiDomain").val() + "members/cards/" + selectedRowData.CardId;
-
-                        $.ajax({
-                            headers: {
-                                "Accept": "application/json",
-                                "Content-Type": "application/json",
-                                "AccessToken": $("#userGuid").val(),
-                                "ApplicationKey": $("#AK").val()
-                            },
-                            type: "Delete",
-                            url: url,
-
-                            dataType: "json",
-                            success: function () {
-                                alert("Deleted!");
-                                thisMemberId = $("#MemberId").val();
-                                $('#jqxCardGrid').jqxGrid('clearselection');
-                                $('#jqxCardGrid').jqxGrid('clear');
-                                loadCards(thisMemberId);
-                            },
-                            error: function (request, status, error) {
-                                alert(error);
-                            }
-                        });
+                    if (rowCount.length == 1) {
+                        swal("There is only one card assigned to this account!")
+                        return null;
                     }
-                }
+
+                    var getselectedrowindexes = $('#jqxCardGrid').jqxGrid('getselectedrowindexes');
+
+                    if (getselectedrowindexes.length > 0) {
+                        for (var index = 0; index < getselectedrowindexes.length; index++) {
+                            var selectedRowData = $('#jqxCardGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
+
+                            var url = $("#apiDomain").val() + "members/cards/" + selectedRowData.CardId;
+
+                            $.ajax({
+                                headers: {
+                                    "Accept": "application/json",
+                                    "Content-Type": "application/json",
+                                    "AccessToken": $("#userGuid").val(),
+                                    "ApplicationKey": $("#AK").val()
+                                },
+                                type: "Delete",
+                                url: url,
+
+                                dataType: "json",
+                                success: function () {
+                                    swal(
+                                        'Deleted!',
+                                        'Your card has been deleted.',
+                                        'success'
+                                    )
+                                    thisMemberId = $("#MemberId").val();
+                                    $('#jqxCardGrid').jqxGrid('clearselection');
+                                    $('#jqxCardGrid').jqxGrid('clear');
+                                    loadCards(thisMemberId);
+                                },
+                                error: function (request, status, error) {
+                                    swal(error);
+                                }
+                            });
+                        }
+                    }
+                })
             });
 
             //Set Card As Primary
             $("#setCardPrimary").on("click", function (event) {
-                var result = confirm("Do you want to set this card as primary?");
-                if (result != true) {
-                    return null;
-                }
 
-                var getselectedrowindexes = $('#jqxCardGrid').jqxGrid('getselectedrowindexes');
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to set this card as primary?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, set it!'
+                }).then(function () {
+                    var getselectedrowindexes = $('#jqxCardGrid').jqxGrid('getselectedrowindexes');
 
-                //We can only do this to one card
-                if (getselectedrowindexes.length > 1) {
-                    alert("Please only select one card to set as primary!")
-                    return null;
-                }
-
-                if (getselectedrowindexes.length > 0) {
-                    for (var index = 0; index < getselectedrowindexes.length; index++) {
-                        var selectedRowData = $('#jqxCardGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
-
-                        var thisMemberId = $("#MemberId").val();
-
-                        var url = $("#apiDomain").val() + "members/" + thisMemberId + "/cards/" + selectedRowData.CardId + "/primary";
-
-                        $.ajax({
-                            headers: {
-                                "Accept": "application/json",
-                                "Content-Type": "application/json",
-                                "AccessToken": $("#userGuid").val(),
-                                "ApplicationKey": $("#AK").val()
-                            },
-                            type: "Put",
-                            url: url,
-
-                            dataType: "json",
-                            success: function () {
-                                alert("Success!");
-                                thisMemberId = $("#MemberId").val();
-                                $('#jqxCardGrid').jqxGrid('clearselection');
-                                $('#jqxCardGrid').jqxGrid('clear');
-                                loadCards(thisMemberId);
-                            },
-                            error: function (request, status, error) {
-                                alert(error);
-                            }
-                        });
-
+                    //We can only do this to one card
+                    if (getselectedrowindexes.length > 1) {
+                        swal("Please only select one card to set as primary!")
+                        return null;
                     }
-                }
+
+                    if (getselectedrowindexes.length > 0) {
+                        for (var index = 0; index < getselectedrowindexes.length; index++) {
+                            var selectedRowData = $('#jqxCardGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
+
+                            var thisMemberId = $("#MemberId").val();
+
+                            var url = $("#apiDomain").val() + "members/" + thisMemberId + "/cards/" + selectedRowData.CardId + "/primary";
+
+                            $.ajax({
+                                headers: {
+                                    "Accept": "application/json",
+                                    "Content-Type": "application/json",
+                                    "AccessToken": $("#userGuid").val(),
+                                    "ApplicationKey": $("#AK").val()
+                                },
+                                type: "Put",
+                                url: url,
+
+                                dataType: "json",
+                                success: function () {
+                                    swal(
+                                      'Set!',
+                                      'Your card has been set as primary.',
+                                      'success'
+                                    )
+                                    thisMemberId = $("#MemberId").val();
+                                    $('#jqxCardGrid').jqxGrid('clearselection');
+                                    $('#jqxCardGrid').jqxGrid('clear');
+                                    loadCards(thisMemberId);
+                                },
+                                error: function (request, status, error) {
+                                    swal(error);
+                                }
+                            });
+
+                        }
+                    }
+                    
+                })
+
+                
             });
 
             // close combine card popup
             $("#cancelCombineMember").on("click", function (event) {
+                $("#popupCombineMembers").css('display', 'none');
                 $("#popupCombineMembers").jqxWindow('hide');
                 $("#targetMember").val('');
             });
@@ -843,78 +988,109 @@
             $("#combineMemberCards").on("click", function (event) {
 
                 $("#popupCombineMembers").css('display', 'block');
-                $("#popupCombineMembers").css('visibility', 'hidden');
+                $("#popupCombineMembers").css('width', '400px');
+                $("#popupCombineMembers").css('position', 'fixed');
+                $("#popupCombineMembers").css('top', '50%');
+                $("#popupCombineMembers").css('left', '50%');
+                $("#popupCombineMembers").css('transform', 'translate(-50%, -50%)');
+                $("#popupCombineMembers").css('background-color', '#F0EDED');
+                $("#popupCombineMembers").css('border-radius', '9px 9px 9px 9px');
+                $("#popupCombineMembers").css('z-index', '999');
 
-                var offset = $("#jqxMemberInfoTabs").offset();
-                $("#popupCombineMembers").jqxWindow({ position: { x: '30%', y: '30%' } });
-                $('#popupCombineMembers').jqxWindow({ resizable: false });
-                $('#popupCombineMembers').jqxWindow({ draggable: true });
-                $('#popupCombineMembers').jqxWindow({ isModal: true });
-                $("#popupCombineMembers").css("visibility", "visible");
-                $('#popupCombineMembers').jqxWindow({ height: '15%', width: '30%' });
-                $('#popupCombineMembers').jqxWindow({ minHeight: '25%', minWidth: '30%' });
-                $('#popupCombineMembers').jqxWindow({ showCloseButton: true });
-                $('#popupCombineMembers').jqxWindow({ animationType: 'combined' });
-                $('#popupCombineMembers').jqxWindow({ showAnimationDuration: 300 });
-                $('#popupCombineMembers').jqxWindow({ closeAnimationDuration: 500 });
-                $("#popupCombineMembers").jqxWindow('open');
+                //$("#popupCombineMembers").css('visibility', 'hidden');
+
+                //var offset = $("#jqxMemberInfoTabs").offset();
+                //$("#popupCombineMembers").jqxWindow({ position: { x: '30%', y: '30%' } });
+                //$('#popupCombineMembers').jqxWindow({ resizable: false });
+                //$('#popupCombineMembers').jqxWindow({ draggable: true });
+                //$('#popupCombineMembers').jqxWindow({ isModal: false });
+                //$("#popupCombineMembers").css("visibility", "visible");
+                //$('#popupCombineMembers').jqxWindow({ height: '15%', width: '30%' });
+                //$('#popupCombineMembers').jqxWindow({ minHeight: '25%', minWidth: '30%' });
+                //$('#popupCombineMembers').jqxWindow({ showCloseButton: true });
+                //$('#popupCombineMembers').jqxWindow({ animationType: 'combined' });
+                //$('#popupCombineMembers').jqxWindow({ showAnimationDuration: 300 });
+                //$('#popupCombineMembers').jqxWindow({ closeAnimationDuration: 500 });
+                //$("#popupCombineMembers").jqxWindow('open');
 
                 
-                var cardrows = $('#jqxCardGrid').jqxGrid('getrows');
+                //var cardrows = $('#jqxCardGrid').jqxGrid('getrows');
 
-                if (cardrows.length > 0) {
+                //if (cardrows.length > 0) {
 
-                    for (var index = 0; index < cardrows.length; index++) {
-                        if (cardrows[index].IsPrimary  == true) {
-                            $("#targetMember").val(cardrows[index].FPNumber);
-                        }
-                    }
-                }
-                else
-                {
-                    alert("This member doesn't have a card!");
-                    return null;
-                }
+                //    for (var index = 0; index < cardrows.length; index++) {
+                //        if (cardrows[index].IsPrimary  == true) {
+                //            $("#targetMember").val(cardrows[index].FPNumber);
+                //        }
+                //    }
+                //}
+                //else
+                //{
+                //    swal("This member doesn't have a card!");
+                //    return null;
+                //}
                
             });
 
             $("#saveCombineMember").on("click", function (event) {
-                var result = confirm("Do you want combine cards?");
-                if (result != true) {
+                var result = confirm("Do you want to combine cards?");
+                if (result == true) {
+                    var thisTargetCard = $("#targetMember").val();
+                    var thisSourceCard = $("#orginMember").val();
+                    var thisCombinedBy = $("#txtLoggedinUsername").val();
+
+                    PageMethods.combineCards(thisSourceCard, thisTargetCard, thisCombinedBy, DisplayPageMethodResults);
                     return null;
                 }
 
-                thisTargetCard = $("#targetMember").val();
-                thisOriginCard = $("#orginMember").val();
-                thisCombinedBy = $("#txtLoggedinUsername").val();
 
-                var url = $("#localApiDomain").val() + "CombineMemberCardsController/CombineMemberCards/";
-                //var url = "http://localhost:52839/api/CombineMemberCardsController/CombineMemberCards/";
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to combine cards?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, combine them!'
+                }).then(function () {
+                    var thisTargetCard = $("#targetMember").val();
+                    var thisSourceCard = $("#orginMember").val();
+                    var thisCombinedBy = $("#txtLoggedinUsername").val();
+                    
+                    
 
-                $.ajax({
-                    type: "POST",
-                    
-                    url: url,
-                    
-                    data: {
-                        "TargetCard": thisTargetCard,
-                        "OriginCard": thisOriginCard,
-                        "CombinedBy": thisCombinedBy,
-                    },
-                    dataType: "json",
-                    success: function (Response) {
-                        alert("Success!");
-                        $("#popupCombineMembers").jqxWindow('hide');
-                        thisMemberId = $("#MemberId").val();
-                        $('#jqxCardGrid').jqxGrid('clearselection');
-                        $('#jqxCardGrid').jqxGrid('clear');
-                        $("#targetMember").val('');
-                        loadCards(thisMemberId);
-                    },
-                    error: function (request, status, error) {
-                        alert(error);
-                    }
-                });
+                    //var url = $("#localApiDomain").val() + "CombineMemberCardsController/CombineMemberCards/";
+                    ////var url = "http://localhost:52839/api/CombineMemberCardsController/CombineMemberCards/";
+
+                    //$.ajax({
+                    //    type: "POST",
+
+                    //    url: url,
+
+                    //    data: {
+                    //        "TargetCard": thisTargetCard,
+                    //        "OriginCard": thisOriginCard,
+                    //        "CombinedBy": thisCombinedBy,
+                    //    },
+                    //    dataType: "json",
+                    //    success: function (Response) {
+                    //        swal(
+                    //          'Combined!',
+                    //          Response,
+                    //          'success'
+                    //        )
+                    //        $("#popupCombineMembers").jqxWindow('hide');
+                    //        thisMemberId = $("#MemberId").val();
+                    //        $('#jqxCardGrid').jqxGrid('clearselection');
+                    //        $('#jqxCardGrid').jqxGrid('clear');
+                    //        $("#targetMember").val('');
+                    //        loadCards(thisMemberId);
+                    //    },
+                    //    error: function (request, status, error) {
+                    //        swal(error);
+                    //    }
+                    //});
+                })
 
             });
 
@@ -971,12 +1147,12 @@
                     },
                     dataType: "json",
                     success: function (Response) {
-                        alert("Saved!");
+                        swal("Saved!");
                         $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance"))); 
                         $("#topPointsBalanceAccountBar").html(loadPoints(AccountId, $("#topPointsBalanceAccountBar")));
                     },
                     error: function (request, status, error) {
-                        alert(error);
+                        swal(error);
                     }
                 });
             });
@@ -994,20 +1170,20 @@
                 if (checked == true) {
                     PageMethods.SubmitReceipt1(newEntryDate, newReceiptNumber, "", submittedBy, thisLocationId, PageMemberID, thisGuid, DisplayPageMethodResults);
                     function onSucess(result) {
-                        alert(result);
+                        swal(result);
                     }
                     function onError(result) {
-                        alert('Error Submitting Receipt.');
+                        swal('Error Submitting Receipt.');
                     }
                 }
                 else
                 {
                     PageMethods.SubmitReceipt1(newEntryDate, "", newReceiptNumber, submittedBy, thisLocationId, PageMemberID, thisGuid, DisplayPageMethodResults);
                     function onSucess(result) {
-                        alert(result);
+                        swal(result);
                     }
                     function onError(result) {
-                        alert('Error Submitting Receipt.');
+                        swal('Error Submitting Receipt.');
                     }
                 }
             });
@@ -1025,10 +1201,10 @@
 
                 PageMethods.SubmitReceipt2(PageMemberID, newEntryDate, newExitDate, newAmountPaid, thisLocationId, submittedBy, thisGuid, DisplayPageMethodResults);
                 function onSucess(result) {
-                    alert(result);
+                    swal(result);
                 }
                 function onError(result) {
-                    alert('Error Submitting Receipt.');
+                    swal('Error Submitting Receipt.');
                 }
             });
 
@@ -1040,10 +1216,10 @@
 
                 PageMethods.SendEmail(thisMemberEmail, "RFRTeam@thefastpark.com", "APF Login Instructions", newPasswordBody, true, onSucess, onError);
                 function onSucess(result) {
-                    alert(result);
+                    swal(result);
                 }
                 function onError(result) {
-                    alert('Something wrong.');
+                    swal('Error instructions not sent.');
                 }
             });
 
@@ -1072,7 +1248,7 @@
             //Send new Password
             $("#SendNewPassword").on("click", function (event) {
                 var thisMemberEmail = $("#EmailAddress").val();
-                alert($("#apiDomain").val() + "members/forgot-password?Email=" + thisMemberEmail);
+                //swal($("#apiDomain").val() + "members/forgot-password?Email=" + thisMemberEmail);
 
                 $.ajax({
                     headers: {
@@ -1085,10 +1261,10 @@
                     url: $("#apiDomain").val() + "members/forgot-password?Email=" + thisMemberEmail,
                     dataType: "json",
                     success: function () {
-                        alert("Forgot Password Instructions Sent!");
+                        swal("Forgot Password Instructions Sent!");
                     },
                     error: function (request, status, error) {
-                        alert(error + " - " + request.responseJSON.message);
+                        swal(error + " - " + request.responseJSON);
                     }
                 });
             });
@@ -1134,7 +1310,7 @@
                 //loadSearchResults();
                 //var datainformations = $("#jqxSearchGrid").jqxGrid("getdatainformation");
                 //var rowscounts = datainformations.rowscount;
-                //alert(rowscounts);
+                //swal(rowscounts);
                 //if (rowscounts = 1) {
                 //    var dataRecord = $("#jqxSearchGrid").jqxGrid('getrowdata', 0);
                 //    findMember(dataRecord.MemberId);
@@ -1503,7 +1679,7 @@
                   
                 },
                 error: function (request, status, error) {
-                    alert(error + " - " + request.responseJSON.message);
+                    swal(error + " - " + request.responseJSON);
                 }
 
             });
@@ -1656,7 +1832,7 @@
                     { name: 'Points'},
                     { name: 'Description' },
                     { name: 'LocationId' },
-                    { name: 'Date' }
+                    { name: 'Date', type: 'date' }
                 ],
 
                 type: 'Get',
@@ -1686,7 +1862,7 @@
                 altrows: true,
                 filterable: true,
                 columnsresize: true,
-                editable: true,
+                selectionmode: 'multiplecells',
                 ready: function (records) {
                     var rows = $("#jqxMemberActivityGrid").jqxGrid('getrows');
 
@@ -1728,7 +1904,8 @@
                       { text: 'Balance', datafield: 'Points', width: '10%' },
                       { text: 'Description', datafield: 'Description', width: '40%' },
                       { text: 'Location', datafield: 'LocationId', width: '10%', cellsrenderer: locatioinCellsrenderer },
-                      { text: 'Date', datafield: 'Date', width: '10%', cellsrenderer: DateRender }
+                      //{ text: 'Date', datafield: 'Date', width: '10%', cellsrenderer: DateRender }
+                      { text: 'Date', datafield: 'Date', width: '10%', cellsformat: 'MM/dd/yyyy' }
                 ]
             });
 
@@ -1808,7 +1985,7 @@
                             document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?thisCertificateID=' + thisCertificateID + '&thisRedemptionType=' + thisRedemptionType + '&thisMemberName=' + thisMemberName + '&thisFPNumber=' + thisFPNumber + '&thisQRCode=' + thisQRCode + '&EmailAddress=' + toAddress;
                         },
                         error: function (request, status, error) {
-                            alert(error + " - " + request.responseJSON.message);
+                            swal(error + " - " + request.responseJSON);
                         }
                     });
                     return null;
@@ -1846,7 +2023,7 @@
                             //var thisCertificateID = thisData.result.data.CertificateID;
                         },
                         error: function (request, status, error) {
-                            alert(error + " - " + request.responseJSON.message);
+                            swal(error + " - " + request.responseJSON);
                         }
                     });
                     return null;
@@ -1953,6 +2130,8 @@
                     { name: 'Company' },
                     { name: 'EmailAddress' },
                     { name: 'Home' },
+                    { name: 'UserName' },
+                    { name: 'CompanyId' },
                     { name: 'MemberId' }
                 ],
                 id: 'MemberId',
@@ -1983,7 +2162,7 @@
                     loadCompaniesCombo();
                     //var datainformations = $("#jqxSearchGrid").jqxGrid("getdatainformation");
                     //var rowscounts = datainformations.rowscount;
-                    //alert(rowscounts);
+                    //swal(rowscounts);
                     //if (rowscounts = 1) {
                     //    var dataRecord = $("#jqxSearchGrid").jqxGrid('getrowdata', 0);
                     //    findMember(dataRecord.MemberId);
@@ -2007,12 +2186,14 @@
 
                           }
                       },
-                      { text: 'First Name', datafield: 'FirstName', width: '15%' },
-                      { text: 'Last Name', datafield: 'LastName', width: '19%' },
+                      { text: 'First Name', datafield: 'FirstName', width: '10%' },
+                      { text: 'Last Name', datafield: 'LastName', width: '12%' },
                       { text: 'Primary Card', datafield: 'FPNumber', width: '8%' },
                       { text: 'Company', datafield: 'Company', width: '14%' },
-                      { text: 'Email', datafield: 'EmailAddress', width: '20%' },
-                      { text: 'Home', datafield: 'Home', width: '12%' },
+                      { text: 'Email', datafield: 'EmailAddress', width: '18%' },
+                      { text: 'Home', datafield: 'Home', width: '10%' },
+                      { text: 'UserName', datafield: 'UserName', width: '10%' },
+                      { text: 'CompanyId', datafield: 'CompanyId', width: '7%' },
                       { text: 'MemberId', datafield: 'MemberId', width: '8%'},
                 ]
             });
@@ -2197,7 +2378,8 @@
                     { name: 'RedeemDate' },
                     { name: 'IsReturned' },
                     { name: 'BeenUsed' },
-                    { name: 'DateUsed' }
+                    { name: 'DateUsed' },
+                    { name: 'RedemptionSourceName' }
                 ],
 
                 id: 'RedemptionId',
@@ -2234,7 +2416,8 @@
                       { text: 'Redeem Date', datafield: 'RedeemDate', cellsrenderer: DateRender },
                       { text: 'Returned', datafield: 'IsReturned', cellsrenderer: redemptionRenderer },
                       { text: 'BeenUsed', datafield: 'BeenUsed', cellsrenderer: redemptionRenderer },
-                      { text: 'DateUsed', datafield: 'DateUsed', cellsrenderer: redemptionRenderer }
+                      { text: 'DateUsed', datafield: 'DateUsed', cellsrenderer: redemptionRenderer },
+                      { text: 'Source', datafield: 'RedemptionSourceName' }
                 ]
             });
 
@@ -2444,7 +2627,7 @@
                 if (event.args) {
                     var item = event.args.item;
                     if (item) {
-                        //alert("Value: " + item.value + ", " + "Label: " + item.label);
+                        //swal("Value: " + item.value + ", " + "Label: " + item.label);
                         $("#MailerCompanyComboID").val(item.value);
                     }
                 }
@@ -2550,7 +2733,7 @@
             //    template: 'warning'
             //}).click(function () {
             //    var valueMember = $("#stuName").jqxInput('val').value;
-            //    alert(valueMember);
+            //    swal(valueMember);
             //});
 
         }
@@ -2643,7 +2826,7 @@
                     obj.locationList = results[2];
                 },
                 error: function (request, status, error) {
-                    alert(error);
+                    swal(error);
                 }
             });
 
@@ -2853,7 +3036,7 @@
                     { name: 'NameOfLocation' },
                     { name: 'LocationId' }
                 ],
-                url: $("#localApiDomain").val() + "Locations/Locations/",
+                url: $("#localApiDomain").val() + "Locations/LocationsAll/",
 
             };
             var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
@@ -2878,7 +3061,7 @@
                     { name: 'NameOfLocation' },
                     { name: 'LocationId' }
                 ],
-                url: $("#localApiDomain").val() + "Locations/Locations/",
+                url: $("#localApiDomain").val() + "Locations/LocationsAll/",
 
             };
             var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
@@ -2929,7 +3112,7 @@
 
                 },
                 error: function (request, status, error) {
-                    alert(error);
+                    swal(error);
                 }
             });
         }
@@ -2958,10 +3141,10 @@
                 }),
                 dataType: "json",
                 success: function () {
-                    alert("Saved!");
+                    swal("Card Added!");
                 },
                 error: function (request, status, error) {
-                    alert(error + " - " + request.responseJSON.message);
+                    swal(error + " - " + request.responseJSON);
                 },
                 complete: function () {
                     thisMemberId = $("#MemberId").val();
@@ -2992,11 +3175,11 @@
                 data: { "MemberId": memberId, "Note": note, "Date": thisDate, "SubmittedBy": submittedBy, "CreateDatetime": thisDate, "CreateUserId": -1, "UpdateDatetime": null, "UpdateUserId": null, "IsDeleted": 0, "CreateExternalUserData": null, "UpdateExternalUserData": null },
                 dataType: "json",
                 success: function () {
-                    alert("Saved!");
+                    swal("Saved!");
                     loadNotes($("#MemberId").val());
                 },
                 error: function (request, status, error) {
-                    alert(error);
+                    swal(error);
                 }
             });
 
@@ -3063,7 +3246,7 @@
                     var toAddress = $("#EmailAddress").val();
                 },
                 error: function (request, status, error) {
-                    alert(error + " - " + request.responseJSON.message);
+                    swal(error + " - " + request.responseJSON);
                 },
                 complete: function () {
                     $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance"))); 
@@ -3071,10 +3254,21 @@
                     loadRedemptions(thisMemberId);
                     $('#jqxLoader').jqxLoader('close');
                     if (thisRedemptionId != "") {
-                        var result = confirm("A redemption has been sent to the member.  Do you want to view it?");
-                        if (result == true) {
+                        //var result = confirm("A redemption has been sent to the member.  Do you want to view it?");
+                        //if (result == true) {
+                        //    showRedemption(thisRedemptionId, toAddress, thisMemberId);
+                        //}
+                        swal({
+                            title: 'A redemption has been sent to the member.',
+                            text: "Do you want to view it?",
+                            type: 'question',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, I want to see it!'
+                        }).then(function () {
                             showRedemption(thisRedemptionId, toAddress, thisMemberId);
-                        }
+                        })
                     }
                 }
             });
@@ -3122,7 +3316,7 @@
                     document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?thisCertificateID=' + thisCertificateID + '&thisRedemptionType=' + thisRedemptionType + '&thisMemberName=' + thisMemberName + '&thisFPNumber=' + thisFPNumber + '&thisQRCode=' + thisQRCode + '&EmailAddress=' + toAddress;
                 },
                 error: function (request, status, error) {
-                    alert(error + " - " + request.responseJSON.message);
+                    swal(error + " - " + request.responseJSON);
                 }
             });
         }
@@ -3176,12 +3370,12 @@
                             //loads members from account number
                             loadMemberList(acctNum, thisData.result.data.MemberId);
                         } else {
-                            alert("Member has no account assigned!")
+                            swal("Member has no account assigned!")
                         }
                     }
                 },
                 error: function (request, status, error) {
-                    alert(error + " - " + request.responseJSON.message);
+                    swal(error + " - " + request.responseJSON);
                 }
             });
         }
@@ -3362,7 +3556,7 @@
                     
                 },
                 error: function (request, status, error) {
-                    alert(error + " - " + request.responseJSON.message);
+                    swal(error + " - " + request.responseJSON);
                 },
                 complete: function () {
 
@@ -3536,7 +3730,7 @@
                             <div class="row search-size">
                                 <div class="col-sm-8 col-sm-offset-4">
                                     <div class="row search-size">
-                                        <div class="col-sm-12">
+                                        <div class="col-sm-12 market">
                                             <input type="button" id="btnMarketing" value="Marketing"  />
                                         </div>
                                     </div>
@@ -4294,8 +4488,8 @@
     </div>
 
     <%-- html for combine cards --%>
-    <div id="popupCombineMembers" class="popupCombinMembers" style="display:none">
-        <div>Combine Members</div>
+    <div id="popupCombineMembers" class="popupCombinMembers" style="display:none;border:1px solid black;">
+        <div style="background-color:#ccc;width:100%;border-radius:9px 9px 0px 0px;font-weight:bold;text-align:center">Combine Members</div>
         <div>
             <div class="modal-body">
                 <div class="row">

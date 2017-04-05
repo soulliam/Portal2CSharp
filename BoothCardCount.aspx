@@ -30,8 +30,10 @@
 
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
+       var group = '<%= Session["groupList"] %>';
+
         $(document).ready(function () {
-            
+            $("#date").jqxDateTimeInput({ formatString: 'MM-dd-yyyy', width: '100%', height: '24px' });
             
             var locationString = $("#userLocation").val();
             var locationResult = locationString.split(",");
@@ -64,8 +66,8 @@
                 $('#popupWindow').jqxWindow({ draggable: true });
                 $('#popupWindow').jqxWindow({ isModal: true });
                 $("#popupWindow").css("visibility", "visible");
-                $('#popupWindow').jqxWindow({ height: '270px', width: '50%' });
-                $('#popupWindow').jqxWindow({ minHeight: '270px', minWidth: '50%' });
+                $('#popupWindow').jqxWindow({ height: '300px', width: '50%' });
+                $('#popupWindow').jqxWindow({ minHeight: '300px', minWidth: '50%' });
                 $('#popupWindow').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
                 $('#popupWindow').jqxWindow({ showCloseButton: true });
                 $('#popupWindow').jqxWindow({ animationType: 'combined' });
@@ -78,7 +80,7 @@
             $("#Save").click(function () {
                 var myDate = new Date();
 
-                myDate = DateTimeFormat(myDate);
+                myDate = $("#date").val();
 
                 var data = { 'Shift1': $("#Shift1").val(), 'Shift2': $("#Shift2").val(), 'Shift3': $("#Shift3").val(), 'Total': $("#Total").val(), 'BoothCardCountDate': myDate, 'LocationId': $("#boothLocation").val() };
 
@@ -171,14 +173,16 @@
                 }
             });
 
+            Security();
+
         });
         // ============= Initialize Page ================== End
 
         //Loads count grid
         function loadGrid(thisLocationId) {
 
-            //var url = $("#localApiDomain").val() + "BoothCardCounts/GetBoothCardCount/" + thisLocationId;;
-            var url = "http://localhost:52839/api/BoothCardCounts/GetBoothCardCount/" + thisLocationId;
+            var url = $("#localApiDomain").val() + "BoothCardCounts/GetBoothCardCount/" + thisLocationId;;
+            //var url = "http://localhost:52839/api/BoothCardCounts/GetBoothCardCount/" + thisLocationId;
 
 
             var source =
@@ -198,7 +202,51 @@
                 datatype: "json",
                 url: url,
                 pagesize: 12,
-                root: "data"
+                root: "data",
+                //updaterow: function (rowid, rowdata, commit) {
+                //    //check to see if manager
+                //    //disable if not portal admin/RFR/Mgr/AsstMgr/Audit
+                //    if (group.indexOf("Portal_RFR") <= -1 && group.indexOf("Portal_Superadmin") <= -1 && group.indexOf("Portal_Admin") <= -1 && group.indexOf("Portal_Manager") <= -1 && group.indexOf("Portal_Manager") <= -1 && group.indexOf("Portal_Asstmanager") <= -1 && group.indexOf("Portal_Auditadmin") <= -1) {
+                //        return null;
+                //    }
+
+                //    // synchronize with the server - send update command
+                //    var thisEntryDate = rowdata.EntryDate;
+                //    var thisSubmittedDate = JsonDateTimeFormat(rowdata.SubmittedDate);
+
+                //    var date = new Date(thisEntryDate);
+                //    mnth = date.getMonth() + 1;
+                //    day = date.getDate();
+                //    thisEntryDate = mnth + '/' + day + '/' + date.getFullYear();
+
+                //    var data = {
+                //        'PendingReceiptId': rowdata.PendingReceiptId,
+                //        'memberName': rowdata.memberName,
+                //        'ReceiptNumber': rowdata.ReceiptNumber,
+                //        'EntryDate': thisEntryDate,
+                //        'SubmittedDate': thisSubmittedDate,
+                //        'UpdateExternalUserData': rowdata.UpdateExternalUserData
+                //    };
+                //    $.ajax({
+                //        type: "POST",
+                //        dataType: 'json',
+                //        //url: "http://localhost:52839/api/PendingReceipts/UpdatePendingReceipt/",
+                //        url: $("#localApiDomain").val() + "PendingReceipts/UpdatePendingReceipt/",
+                //        data: data,
+                //        success: function (data, status, xhr) {
+                //            // update command is executed.
+                //            alert("Updated!");
+                //        },
+                //        error: function (jqXHR, textStatus, errorThrown) {
+                //            // update failed.
+                //            alert(errorThrown);
+                //        },
+                //        complete: function () {
+                //            var thisLocationID = $("#pendingReceiptLocation").val();
+                //            loadGrid(thisLocationID);
+                //        }
+                //    });
+                //}
             };
 
             // creage jqxgrid
@@ -210,8 +258,8 @@
                 rowsheight: 35,
                 sortable: true,
                 altrows: true,
-                pageable: true,
-                pagermode: 'simple',
+                selectionmode: 'singlecell',
+                //editable: true,
                 filterable: true,
                 columns: [
                       
@@ -236,8 +284,8 @@
             $('#popupWindow').jqxWindow({ draggable: true });
             $('#popupWindow').jqxWindow({ isModal: true });
             $("#popupWindow").css("visibility", "visible");
-            $('#popupWindow').jqxWindow({ height: '270px', width: '50%' });
-            $('#popupWindow').jqxWindow({ minHeight: '270px', minWidth: '50%' });
+            $('#popupWindow').jqxWindow({ height: '300px', width: '50%' });
+            $('#popupWindow').jqxWindow({ minHeight: '300px', minWidth: '50%' });
             $('#popupWindow').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
             $('#popupWindow').jqxWindow({ showCloseButton: true });
             $('#popupWindow').jqxWindow({ animationType: 'combined' });
@@ -340,6 +388,12 @@
                                 <label for="Total" class="col-sm-3 col-md-4 control-label">Total:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <input type="text" class="form-control" id="Total" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="Date" class="col-sm-3 col-md-4 control-label">Date:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <div id="date"></div>
                                 </div>
                             </div>
                         </div>

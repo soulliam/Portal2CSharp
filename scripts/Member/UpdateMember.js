@@ -5,6 +5,35 @@
     } else {
         url = $("#apiDomain").val() + "members/" + thisMemberId;
     }
+
+
+    //data = JSON.stringify({
+    //    "UserName": thisUserName,
+    //    "FirstName": thisFirstName,
+    //    "LastName": thisLastName,
+    //    "Suffix": "",
+    //    "EmailAddress": thisEmailAddress,
+    //    "StreetAddress": thisStreetAddress,
+    //    "StreetAddress2": thisStreetAddress2,
+    //    "CityName": thisCityName,
+    //    "StateId": thisStateId,
+    //    "Zip": thisZip,
+    //    "Password": "",
+    //    "VerifyPassword": "",
+    //    "Company": thisCompany,
+    //    "TitleId": thisTitleId,
+    //    "MarketingCode": thisMarketingCode,
+    //    "LocationId": thisLocationId,
+    //    "PhoneList": [
+    //    {
+    //        "Number": phoneNumber[0],
+    //        "PhoneTypeId": phoneType[0]
+    //    }
+    //    ],
+    //    "GetEmail": thisGetEmail,
+    //    "EmailReceiptsFlag": true,
+    //    "CompanyId": thisCompanyId
+    //});
     
 
     switch (phoneType.length) {
@@ -33,22 +62,23 @@
                     "VerifyPassword": "",
                     "Company": thisCompany,
                     "TitleId": thisTitleId,
-                    "MarketingCode": thisMarketingCode,
+                    "CorporateDiscountCode": "",
                     "LocationId": thisLocationId,
                     "PhoneList": [],
                     "GetEmail": thisGetEmail,
                     "EmailReceiptsFlag": true,
-                    "CompanyId": thisCompanyId
+                    "CompanyId": thisCompanyId,
+                    "MarketingCode": thisMarketingCode
                 }),
                 dataType: "json",
                 success: function () {
                     $('#jqxLoader').jqxLoader('close');
-                    alert("Saved!");
+                    swal("Saved!");
                     
                 },
                 error: function (request, status, error) {
                     $('#jqxLoader').jqxLoader('close');
-                    alert(error + " - " + request.responseJSON.message);
+                    swal(error + " - " + request.responseJSON.message);
                 },
                 complete: function () {
                     $('#jqxLoader').jqxLoader('close');
@@ -80,7 +110,7 @@
                     "VerifyPassword": "",
                     "Company": thisCompany,
                     "TitleId": thisTitleId,
-                    "MarketingCode": thisMarketingCode,
+                    "CorporateDiscountCode": "",
                     "LocationId": thisLocationId,
                     "PhoneList": [
                     {
@@ -90,16 +120,17 @@
                     ],
                     "GetEmail": thisGetEmail,
                     "EmailReceiptsFlag": true,
-                    "CompanyId": thisCompanyId
+                    "CompanyId": thisCompanyId,
+                    "MarketingCode": thisMarketingCode
                 }),
                 dataType: "json",
                 success: function () {
                     $('#jqxLoader').jqxLoader('close');
-                    alert("Saved!");
+                    swal("Saved!");
                 },
                 error: function (request, status, error) {
                     $('#jqxLoader').jqxLoader('close');
-                    alert(error + " - " + request.responseJSON.message);
+                    swal(error + " - " + request.responseJSON.message);
                 },
                 complete: function () {
                     $('#jqxLoader').jqxLoader('close');
@@ -131,7 +162,7 @@
                     "VerifyPassword": "",
                     "Company": thisCompany,
                     "TitleId": thisTitleId,
-                    "MarketingCode": thisMarketingCode,
+                    "CorporateDiscountCode": "",
                     "LocationId": thisLocationId,
                     "PhoneList": [
                     {
@@ -145,16 +176,17 @@
                     ],
                     "GetEmail": true,
                     "EmailReceiptsFlag": true,
-                    "CompanyId": thisCompanyId
+                    "CompanyId": thisCompanyId,
+                    "MarketingCode": thisMarketingCode
                 }),
                 dataType: "json",
                 success: function () {
                     $('#jqxLoader').jqxLoader('close');
-                    alert("Saved!");
+                    swal("Saved!");
                 },
                 error: function (request, status, error) {
                     $('#jqxLoader').jqxLoader('close');
-                    alert(error + " - " + request.responseJSON.message);
+                    swal(error + " - " + request.responseJSON.message);
                 },
                 complete: function () {
                     $('#jqxLoader').jqxLoader('close');
@@ -186,7 +218,7 @@
                     "VerifyPassword": "",
                     "Company": thisCompany,
                     "TitleId": thisTitleId,
-                    "MarketingCode": thisMarketingCode,
+                    "CorporateDiscountCode": "",
                     "LocationId": thisLocationId,
                     "PhoneList": [
                     {
@@ -204,16 +236,17 @@
                     ],
                     "GetEmail": true,
                     "EmailReceiptsFlag": true,
-                    "CompanyId": thisCompanyId
+                    "CompanyId": thisCompanyId,
+                    "MarketingCode": thisMarketingCode
                 }),
                 dataType: "json",
                 success: function () {
                     $('#jqxLoader').jqxLoader('close');
-                    alert("Saved!");
+                    swal("Saved!");
                 },
                 error: function (request, status, error) {
                     $('#jqxLoader').jqxLoader('close');
-                    alert(error + " - " + request.responseJSON.message);
+                    swal(error + " - " + request.responseJSON.message);
                 },
                 complete: function () {
                     $('#jqxLoader').jqxLoader('close');
@@ -245,7 +278,7 @@
                     "VerifyPassword": "",
                     "Company": thisCompany,
                     "TitleId": thisTitleId,
-                    "MarketingCode": thisMarketingCode,
+                    "CorporateDiscountCode": "",
                     "LocationId": thisLocationId,
                     "PhoneList": [
                     {
@@ -267,16 +300,17 @@
                     ],
                     "GetEmail": true,
                     "EmailReceiptsFlag": true,
-                    "CompanyId": thisCompanyId
+                    "CompanyId": thisCompanyId,
+                    "MarketingCode": thisMarketingCode,
                 }),
                 dataType: "json",
                 success: function () {
                     $('#jqxLoader').jqxLoader('close');
-                    alert("Saved!");
+                    swal("Saved!");
                 },
                 error: function (request, status, error) {
                     $('#jqxLoader').jqxLoader('close');
-                    alert(error + " - " + request.responseJSON.message);
+                    swal(error + " - " + request.responseJSON.message);
                 },
                 complete: function () {
                     $('#jqxLoader').jqxLoader('close');
@@ -284,7 +318,7 @@
             });
             break;
         default:
-            alert("Phone list Error");
+            swal("Phone list Error");
     }
 }
 

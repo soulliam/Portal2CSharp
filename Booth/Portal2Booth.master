@@ -11,6 +11,11 @@
     <script type="text/javascript" src="/scripts/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="/scripts/bootstrap.min.js"></script>
     <script type="text/javascript" src="../scripts/common.js"></script>
+    <script type="text/javascript" src="../scripts/parsley.min.js"></script>
+
+    <script src="../scripts/es6-promise.auto.min.js"></script>
+    <script src="../scripts/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="../scripts/sweetalert2.min.css">
 
     <link rel="stylesheet" type="text/css" href="/StyleSheet.css">
     <link rel="stylesheet" href="/scripts/bootstrap.min.css">
@@ -55,7 +60,7 @@
     <div class="wrapper">
         <form runat="server">
             <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
-            <asp:TextBox runat="server" ID="userGuid" style="display:none">CFFD30DB60EF441BB190FEF767613F8B</asp:TextBox>
+            <asp:TextBox runat="server" ID="userGuid" style="display:none">78442A02ECB64EB1BACBA6FA84FA4C1C</asp:TextBox>
             <asp:TextBox runat="server" ID="tempUserGuid" style="display:none"></asp:TextBox>
             <asp:TextBox runat="server" ID="AK" style="display:none">301C01F6-450E-4D97-B522-CD69EF25B574</asp:TextBox>
             <asp:TextBox runat="server" ID="apiDomain" style="display:none">https://apistage.thefastpark.com/api/v1/</asp:TextBox>

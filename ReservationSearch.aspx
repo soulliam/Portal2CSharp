@@ -30,6 +30,7 @@
 
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
+        var group = '<%= Session["groupList"] %>';
 
         $(document).ready(function () {
 
@@ -104,6 +105,7 @@
                 }
             });
 
+            Security();
         });
 
         // ============= Initialize Page ================== End

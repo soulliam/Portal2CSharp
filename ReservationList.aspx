@@ -102,13 +102,6 @@
                     if (event.args) {
                         var item = event.args.item;
                         if (item) {
-                            var parent = $("#jqxgrid").parent();
-                            $("#jqxgrid").jqxGrid('destroy');
-                            $("<div id='jqxgrid'></div>").appendTo(parent);
-
-                            var parent = $("#jqxgridOUT").parent();
-                            $("#jqxgridOUT").jqxGrid('destroy');
-                            $("<div id='jqxgridOUT'></div>").appendTo(parent);
 
                             if ($('#calendar').jqxDateTimeInput('disabled') == true) {
                                 $("#calendar").jqxDateTimeInput({ disabled: false });
@@ -164,6 +157,10 @@
         };
 
         function loadGrid(thisLocationId) {
+            var parent = $("#jqxgrid").parent();
+            $("#jqxgrid").jqxGrid('destroy');
+            $("<div id='jqxgrid'></div>").appendTo(parent);
+
             if (thisLocationId == 0) {
                 return null;
             }
@@ -188,7 +185,8 @@
                     { name: 'LastName', },
                     { name: 'FPNumber', },
                     { name: 'IsGuest', type: 'boolean' },
-                    { name: 'Options', type: 'boolean' }
+                    { name: 'Options', type: 'boolean' },
+                    { name: 'ReservationStatusName' }
                 ],
                 id: 'ReservationId',
                 type: 'Get',
@@ -241,13 +239,32 @@
                 pagermode: 'simple',
                 filterable: true,
                 rowdetails: true,
-                editable: true,
                 initrowdetails: initrowdetails,
                 rowdetailstemplate: { rowdetails: "<div id='grid' style='margin: 10px;'></div>", rowdetailsheight: 220, rowdetailshidden: true },
                 //ready: function () {
                 //    $("#jqxgrid").jqxGrid('showrowdetails', 1);
                 //},
                 columns: [
+                      {
+                          text: 'Complete', datafield: 'Complete', columntype: 'button', cellsrenderer: function () {
+                              return "Complete";
+                          }, buttonclick: function (row) {
+                              var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', row);
+                              $.ajax({
+                                  url: $("#localApiDomain").val() + "Reservations/CompleteReservation/" + dataRecord.ReservationId,
+                                  //url: "http://localhost:52839/api/Reservations/CompleteReservation/" + dataRecord.ReservationId,
+                                  type: 'Get',
+                                  success: function (response) {
+                                      swal("Set as Completed!");
+                                      loadGrid($("#locationCombo").jqxComboBox('getSelectedItem').value);
+                                  },
+                                  error: function (request, status, error) {
+                                      alert(error);
+                                  }
+                              });
+                              
+                          }
+                      },
                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
                       { text: 'ReservationNumber', datafield: 'ReservationNumber' },
                       { text: 'StartDatetime', datafield: 'StartDatetime', filtertype: 'range', cellsrenderer: DateRenderWithTime },
@@ -256,13 +273,18 @@
                       { text: 'LastName', datafield: 'LastName' },
                       { text: 'FPNumber', datafield: 'FPNumber' },
                       { text: 'IsGuest', datafield: 'IsGuest', columntype: 'checkbox' },
-                      { text: 'Options', datafield: 'Options', columntype: 'checkbox' }
+                      { text: 'Options', datafield: 'Options', columntype: 'checkbox' },
+                      { text: 'Status', datafield: 'ReservationStatusName' }
                 ]
             });
 
         }
 
         function loadGridOut(thisLocationId) {
+            var parent = $("#jqxgridOUT").parent();
+            $("#jqxgridOUT").jqxGrid('destroy');
+            $("<div id='jqxgridOUT'></div>").appendTo(parent);
+
             if (thisLocationId == 0) {
                 return null;
             }
@@ -285,7 +307,8 @@
                     { name: 'FirstName', },
                     { name: 'LastName', },
                     { name: 'FPNumber', },
-                    { name: 'IsGuest', type: 'boolean' }
+                    { name: 'IsGuest', type: 'boolean' },
+                    { name: 'ReservationStatusName' }
                 ],
                 id: 'ReservationId',
                 type: 'Get',
@@ -307,7 +330,6 @@
                 pageable: true,
                 pagermode: 'simple',
                 filterable: true,
-                editable: true,
                 columns: [
                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
                       { text: 'ReservationNumber', datafield: 'ReservationNumber' },
@@ -316,7 +338,8 @@
                       { text: 'First Name', datafield: 'FirstName' },
                       { text: 'LastName', datafield: 'LastName' },
                       { text: 'FPNumber', datafield: 'FPNumber' },
-                      { text: 'IsGuest', datafield: 'IsGuest', columntype: 'checkbox' }
+                      { text: 'IsGuest', datafield: 'IsGuest', columntype: 'checkbox' },
+                      { text: 'Status', datafield: 'ReservationStatusName' }
                 ]
             });
 

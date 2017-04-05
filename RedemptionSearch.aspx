@@ -30,6 +30,7 @@
 
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
+        var group = '<%= Session["groupList"] %>';
 
         $(document).ready(function () {
 
@@ -53,6 +54,8 @@
 
                 showRedemption(thisRedemptionId, toAddress, thisMemberId);
             });
+
+            Security();
         });
 
         // ============= Initialize Page ================== End

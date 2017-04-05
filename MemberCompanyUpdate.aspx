@@ -30,6 +30,7 @@
 
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
+        var group = '<%= Session["groupList"] %>';
 
         $(document).ready(function () {
 
@@ -80,6 +81,8 @@
                 PageMethods.UpdateMemberCompanyID(ProcessList, thisCompanyId, thisUser, DisplayPageMethodResults);
                 loadGrid();
             });
+
+            Security();
         });
 
         // ============= Initialize Page ================== End

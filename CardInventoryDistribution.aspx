@@ -38,9 +38,9 @@
 
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
+        var group = '<%= Session["groupList"] %>';
 
         $(document).ready(function () {
-
             var locationString = $("#userLocation").val();
             var locationResult = locationString.split(",");
 
@@ -55,10 +55,19 @@
                     }
 
                 }
+                LoadLocationPopup(thisLocationString);
+                var offset = $("#CardDistribution").offset();
+                $("#popupLocation").jqxWindow({ position: { x: parseInt(offset.left) + 500, y: parseInt(offset.top) - 40 } });
+                $('#popupLocation').jqxWindow({ width: "325px", height: "300px" });
+                $('#popupLocation').jqxWindow({ isModal: true, modalOpacity: 0.7 });
+                $('#popupLocation').jqxWindow({ showCloseButton: false });
+                $("#popupLocation").css("visibility", "visible");
+                $("#popupLocation").jqxWindow({ title: 'Pick a Location' });
+                $("#popupLocation").jqxWindow('open');
             }
-
-            LoadLocationPopup(thisLocationString);
-
+            else {
+                $("#distributionLocation").val(locationResult[0]);
+            }
             
 
             //#region SetupButtons
@@ -163,6 +172,73 @@
                     }
                 }
             });
+        
+            //Check key strokes for whether card is in DB for different history types Order = 1
+            $("#firstCard").keyup(function () {
+                $("#errorMessage").html('');
+                var cardVal = $("#firstCard").val();
+
+                if (cardVal == "") {
+                    return null;
+                }
+
+                var rowIndex = $("#jqxDistribution").jqxGrid('getselectedrowindexes');
+
+                if (rowIndex.length > 1) {
+                    $("#errorMessage").html("You've selected more than one received group of cards.");
+                    $("#firstCard").css('background-color', '#ff6666');
+                    return null;
+                } else if (rowIndex.length < 1) {
+                    $("#errorMessage").html("You have not selected a received group of cards.");
+                    $("#firstCard").css('background-color', '#ff6666');
+                    return null;
+                } else if (rowIndex.length = 1) {
+                    var item = $('#jqxDistribution').jqxGrid('getrowdata', rowIndex);
+
+                    if (cardVal < parseInt(item.StartingNumber) || cardVal > parseInt(item.EndingNumber)) {
+                        $("#errorMessage").html("Your start card is outside the range of the received group.");
+                        $("#firstCard").css('background-color', '#ff6666');
+                    } else {
+                        verifyCard(cardVal, '4', $("#firstCard"));
+                    }
+                }
+
+            });
+
+            $("#lastCard").keyup(function () {
+                $("#errorMessage").html('');
+
+                var cardVal = $("#lastCard").val();
+
+                if (cardVal == "") {
+                    return null;
+                }
+
+                var rowIndex = $("#jqxDistribution").jqxGrid('getselectedrowindexes');
+
+                if (rowIndex.length > 1) {
+                    $("#errorMessage").html("You've selected more than one received group of cards.");
+                    $("#lastCard").css('background-color', '#ff6666');
+                    return null;
+                } else if (rowIndex.length < 1) {
+                    $("#errorMessage").html("You have not selected a received group of cards.");
+                    $("#lastCard").css('background-color', '#ff6666');
+                    return null;
+                } else if (rowIndex.length = 1) {
+                    var item = $('#jqxDistribution').jqxGrid('getrowdata', rowIndex);
+
+                    if (cardVal < parseInt(item.StartingNumber) || cardVal > parseInt(item.EndingNumber)) {
+                        $("#errorMessage").html("Your last card is outside the range of the received group.");
+                        $("#lastCard").css('background-color', '#ff6666');
+                    } else {
+                        verifyCard(cardVal, '4', $("#lastCard"));
+                    }
+                }
+
+
+            });
+            
+            Security();
 
         });
 
@@ -204,6 +280,11 @@
                 } 
             };
 
+            var padCard = function (row, columnfield, value, defaulthtml, columnproperties) {
+                var newValue = padNumber(value, 8, '0');
+                return '<div style="margin-top: 10px;margin-left: 5px">' + newValue + '</div>';
+            }
+
             // creage jqxgrid
             $("#jqxDistribution").jqxGrid(
             {
@@ -218,8 +299,8 @@
                 columns: [
                        { text: 'CardHistoryId', datafield: 'CardHistoryId', hidden: true },
                        { text: 'ActivityDate', datafield: 'ActivityDate', cellsrenderer: DateRender, cellclassname: cellclassname, width: '18%' },
-                       { text: 'Starting Card', datafield: 'StartingNumber', cellclassname: cellclassname, width: '20%' },
-                       { text: 'Ending Card', datafield: 'EndingNumber', cellclassname: cellclassname, width: '20%' },
+                       { text: 'Starting Card', datafield: 'StartingNumber', cellclassname: cellclassname, width: '20%', cellsrenderer: padCard },
+                       { text: 'Ending Card', datafield: 'EndingNumber', cellclassname: cellclassname, width: '20%', cellsrenderer: padCard },
                        { text: 'Distributed To', datafield: 'DistributionPoint', cellclassname: cellclassname, width: '20%' },
                        { text: 'Name', datafield: 'BusOrRepId', cellclassname: cellclassname, width: '20%' },
                        { text: 'ActivityId', datafield: 'ActivityId', hidden: true }
@@ -262,6 +343,17 @@
         }
 
         function DistributCards(CardHistoryId) {
+            if ($("#lastCard").css("background-color") == "rgb(255, 102, 102)" || $("#firstCard").css("background-color") == "rgb(255, 102, 102)") {
+                alert("One of your cards has already been ordered!");
+                return null;
+            };
+
+            if (parseInt($("#lastCard").val()) < parseInt($("#firstCard").val())) {
+                alert("Your last card is greater than your first card!");
+                return null;
+            };
+
+
             var StartingNumber = $("#firstCard").val();
             var EndingNumber = $("#lastCard").val();
             if ($("#jqxBus").is(":visible")) {
@@ -417,13 +509,26 @@
                 displayMember: "NameOfLocation",
                 valueMember: "LocationId"
             });
+            $("#LocationCombo").on('select', function (event) {
+                if (event.args) {
+                    var item = event.args.item;
+                    if (item.index > 0) {
+                        if (item) {
+                            loadGrid(item.value)
+                            $("#distributionLocation").val(item.value);
+                            $("#popupLocation").jqxWindow('hide');
+                        }
+                    }
+                }
+            });
 
         }
 
 
     </script>
+    <input type="text" id="distributionLocation" style="display:none;" />
     <input type="text" id="boothLocation" style="display:none;" />
-    <div id="CardInventoryShipping" class="container-fluid container-970 wrap-search-options">
+    <div id="CardDistribution" class="container-fluid container-970 wrap-search-options">
         <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
             <div class="row search-size FPR_SearchLeft">
                 <div class="col-sm-12 col-md-10 col-md-offset-1">
@@ -431,7 +536,7 @@
                         <div class="col-sm-9">
                             <div class="row search-size">
                                 <div class="col-sm-4">
-                                    <div id="LocationCombo"></div>
+                                    <%--<div id="LocationCombo"></div>--%>
                                 </div>
                                 <div class="col-sm-2">
                                     <input type="text" id="firstCard" placeholder="First Card" />
@@ -461,6 +566,9 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
+                    <label id="errorMessage" style="color:white;font-size:large;"></label>
+                </div>
             </div>
         </div>
     </div><!-- /.container-fluid -->
@@ -473,6 +581,12 @@
             </div>
         </div>
     </div><!-- /.container-fluid -->
+
+    <div id="popupLocation" style="visibility: hidden">
+        <div>
+            <div id="LocationCombo" style="float:left;"></div>
+        </div>
+    </div>
 
 </asp:Content>
 

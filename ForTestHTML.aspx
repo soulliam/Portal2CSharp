@@ -102,6 +102,8 @@
     <script type="text/javascript" src="jqwidgets/jqxcore.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxdraw.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxbargauge.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxchart.core.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxdata.js"></script>
 
 
     <script>
@@ -182,29 +184,66 @@
 
                 $("#days").append("<li><label style='font-size:large;font-weight:bold;'>" + thisDate + "</lable><div id='barGauge" + thisDate + "'></div></li");
 
-                //var node = document.createElement("li"); 
-                //var textnode = document.createTextNode(thisDate + " <div id='barGauge'></div>"); 
-                //node.appendChild(textnode);
-                //document.getElementById("days").appendChild(node);
-
                 var thisCharet = "barGauge" + thisDate;
 
-                var Ins = 200;
-                var Outs = 167;
-                var OnLot = 300;
+                //var Ins = 200;
+                //var Outs = 167;
+                //var OnLot = 300;
 
-                $('#' + thisCharet).jqxBarGauge({
-                    relativeInnerRadius: 0.1,
-                    barSpacing: 2,
-                    colorScheme: "scheme02", width: 220, height: 220,
-                    values: [Ins, Outs, OnLot], max: 300, tooltip: {
-                        visible: true, formatFunction: function (value) {
-                            var realVal = parseInt(value);
-                            return ('Year: 2016<br/>Price Index:' + realVal);
+                //$('#' + thisCharet).jqxBarGauge({
+                //    relativeInnerRadius: 0.1,
+                //    barSpacing: 2,
+                //    colorScheme: "scheme02", width: 220, height: 220,
+                //    values: [Ins, Outs, OnLot], max: 300, tooltip: {
+                //        visible: true, formatFunction: function (value) {
+                //            var realVal = parseInt(value);
+                //            return ('Year: 2016<br/>Price Index:' + realVal);
+                //        },
+                //    }
+                //});
+
+                var source =
+                {
+                    type: 'Get',
+                    datatype: "json",
+                    datafields: [
+                        { name: 'DayName' },
+                        { name: 'startsCount' },
+                        { name: 'endsCount' }
+                    ],
+                    url: 'http://localhost:52839/api/ReservationReports/GetReservationReport/' + '2'
+                };
+                var dataAdapter = new $.jqx.dataAdapter(source, { async: true, autoBind: true, loadError: function (xhr, status, error) { alert('Error loading "' + source.url + '" : ' + error); } });
+
+                var settings = {
+                    source: dataAdapter,
+                    xAxis:
+                        {
+                            dataField: 'DayName',
+                            gridLines: { visible: true },
+                            valuesOnTicks: false
                         },
-                    }
-                });
-
+                    colorScheme: 'scheme01',
+                    columnSeriesOverlap: false,
+                    seriesGroups:
+                        [
+                            {
+                                type: 'column',
+                                valueAxis:
+                                {
+                                    visible: true,
+                                    unitInterval: 10,
+                                    title: { text: 'Ins<br>' }
+                                },
+                                series: [
+                                        { dataField: 'startsCount', displayText: 'Ins' },
+                                        { dataField: 'endsCount', displayText: 'Outs' }
+                                ]
+                            }
+                        ]
+                };
+                // setup the chart
+                $('#' + thisCharet).jqxChart(settings);
                 
                 if (FirstDay.getDate() != LastDay.getDate()){
                     FirstDay.setDate(FirstDay.getDate() + 1);

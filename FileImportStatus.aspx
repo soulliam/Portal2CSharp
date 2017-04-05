@@ -3,10 +3,14 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
     
     <script type="text/javascript">
+        var group = '<%= Session["groupList"] %>';
+
         $(document).ready(function () {
             var today = new Date();
             var today = (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear();
             $("#time").text(today);
+
+            Security();
         });
         
     </script>

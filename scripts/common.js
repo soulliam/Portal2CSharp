@@ -1,68 +1,125 @@
 ﻿//Security Setup
 function Security() {
-    if (group.indexOf("Booth") <= -1) {
-        $("#BoothLink").remove();
+
+    //Set entire memu to disabled.  Grab the old href if pointer-events not supported
+    $('.menuSecurity').each(function () {
+        //$('.menuSecurity').addClass('disabled');
+        var old = $(this).attr('href');
+        $(this).attr('temp-hrf', old);   // store real href in data-hrf attribute
+        $(this).attr('href', '#');
+    });
+    
+    // enable all Supreradmin elements set href to stored href in case pointer-events not supported
+    if (group.indexOf("Portal_Superadmin") > -1) {
+        $('.Portal_Superadmin').each(function () {
+            $('.Portal_Superadmin').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
     }
 
-    if (group.indexOf("Portal_Auditadmin") <= -1) {
-        $("#ReservationMaintenanceLink").remove();
+    if (group.indexOf("Portal_Siteadmin") > -1) {
+        $('.Portal_Siteadmin').each(function () {
+            $('.Portal_Siteadmin').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
     }
 
-    //if (group.indexOf("Portal_Admin") <= -1 && group.indexOf("Portal_Auditadmin") <= -1 && group.indexOf("Portal_Manager") <= -1 && group.indexOf("Portal_RFR") <= -1 && group.indexOf("Portal_Superadmin") <= -1) {
-    if (group.indexOf("Portal_Edit") <= -1) {
-    //if (group.indexOf("frie") <= -1) {
-        var elements = document.getElementsByClassName('editor')
-
-        for (var i = 0; i < elements.length; i++) {
-            elements[i].style.display = "none";
-        }
+    if (group.indexOf("Portal_Asstmanager") > -1) {
+        $('.Portal_Asstmanager').each(function () {
+            $('.Portal_Asstmanager').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
     }
 
-    //don't display if not portal admin or RFR
-    if (group.indexOf("Portal_RFR") <= -1 && group.indexOf("Portal_Superadmin") <= -1 && group.indexOf("Portal_Admin") <= -1) {
-        //if (group.indexOf("frie") <= -1) {
-        var elements = document.getElementsByClassName('RFR')
-
-        for (var i = 0; i < elements.length; i++) {
-            elements[i].style.display = "none";
-        }
+    if (group.indexOf("Portal_Auditadmin") > -1) {
+        $('.Portal_Auditadmin').each(function () {
+            $('.Portal_Auditadmin').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
     }
 
-    if (group.indexOf("Portal_RFR") <= -1 && group.indexOf("Portal_Superadmin") <= -1 && group.indexOf("Portal_Admin") <= -1) {
-        //if (group.indexOf("frie") <= -1) {
-        var elements = document.getElementsByClassName('RFRJustDisable')
-
-        for (var i = 0; i < elements.length; i++) {
-            elements[i].disabled = true;
-        }
-    }
-
-    //disable if not portal admin or RFR
-    if (group.indexOf("Portal_RFR") <= -1 && group.indexOf("Portal_Superadmin") <= -1 && group.indexOf("Portal_Admin") <= -1 && group.indexOf("Portal_Manager") <= -1) {
-        var elements = document.getElementsByClassName('NoAsstMgr')
-
-        for (var i = 0; i < elements.length; i++) {
-            elements[i].disabled = true;
-        }
+    if (group.indexOf("Portal_Insurance") > -1) {
+        $('.Portal_Insurance').each(function () {
+            $('.Portal_Insurance').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
     }
 
     if (group.indexOf("Portal_Manager") > -1) {
-        var elements = document.getElementsByClassName('NoMgr')
-
-        for (var i = 0; i < elements.length; i++) {
-            elements[i].disabled = true;
-        }
+        $('.Portal_Manager').each(function () {
+            $('.Portal_Manager').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
     }
 
+    if (group.indexOf("Portal_Marketing") > -1) {
+        $('.Portal_Marketing').each(function () {
+            $('.Portal_Marketing').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
+    }
 
+    if (group.indexOf("Portal_Mechanic") > -1) {
+        $('.Portal_Mechanic').each(function () {
+            $('.Portal_Mechanic').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
+    }
+
+    if (group.indexOf("Portal_RFR") > -1) {
+        $('.Portal_RFR').each(function () {
+            $('.Portal_RFR').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
+    }
+
+    if (group.indexOf("Portal_Users") > -1) {
+        $('.Portal_Users').each(function () {
+            $('.Portal_Users').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
+    }
+
+    if (group.indexOf("Portal_Vehiclesadmin") > -1) {
+        $('.Portal_Vehiclesadmin').each(function () {
+            $('.Portal_Vehiclesadmin').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
+    }
+
+    if (group.indexOf("Booth") > -1 && group.indexOf("BoothOnly") < 0) {
+        $('.Portal_Vehiclesadmin').each(function () {
+            $('.Portal_Vehiclesadmin').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
+    }
 }
 
 //render dates for grid
 var DateRender = function (row, columnfield, value, defaulthtml, columnproperties) {
     // format date as string due to inconsistant date coversions
-    switch (value) {
-        case '0001-01-01T00:00:00':
+    switch (true) {
+        case (value == '0001-01-01T00:00:00'):
             return '<div style="margin-top: 10px;margin-left: 5px">&nbsp;</div>';
+            break;
+        case (String(value).indexOf("GMT") > -1):
+            var date = new Date(value);
+            mnth = date.getMonth() + 1;
+            day = date.getDate();
+            var thisDate = mnth + '/' + day + '/' + date.getFullYear();
+            var newDate = '<div style="margin-top: 10px;margin-left: 5px">' + thisDate + '</div>';
             break;
         default:
             var thisDateTime = value;
@@ -318,7 +375,7 @@ function verifyCard(CardNumber, Historytype, cardTest) {
 
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert("Error: " + errorThrown);
+            swal("Error: " + errorThrown);
             ardTest = false;
         }
     });

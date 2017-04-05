@@ -148,6 +148,21 @@
 
             //save receipt request
             $("#receiptSave").on("click", function (event) {
+                if ($("#receiptNumber").val() == '') {
+                    alert("Receipt number is required!")
+                    return null;
+                }
+
+                var today = new Date();
+                today = DateFormat(today);
+                var selectedDate = new Date($('#jqxReceiptCalendar').jqxCalendar('getDate'));
+                selectedDate = DateFormat(selectedDate);
+
+                if (selectedDate > today) {
+                    alert("The receipt entry date must be in the past.");
+                    return null;
+                }
+                
                 var thisReceiptNumber = $("#receiptNumber").val();
                 var thisReceptDate = $('#jqxReceiptCalendar').jqxCalendar('getDate');
                 var thisMemberId = $("#MemberId").html();
@@ -168,6 +183,7 @@
 
             //open receipt entry
             $("#btnReceipt").on("click", function (event) {
+
                 $("#popupReceipt").css('display', 'block');
                 $("#popupReceipt").css('visibility', 'hidden');
 
@@ -590,7 +606,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions",
+                url: $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions?fromBooth=true",
                 dataType: "json",
                 data: JSON.stringify([{
                     "RedemptionTypeId": thisRedemptionTypeId,
@@ -779,6 +795,8 @@
             //Loads SearchList from parameters
 
             var url = $("#apiDomain").val() + "members/search?" + thisParameters;
+            var thisAccessToken = $("#userGuid").val();
+            var thisApplicatoinKey = $("#AK").val();
 
             var source =
             {
@@ -796,8 +814,8 @@
                 datatype: "json",
                 url: url,
                 beforeSend: function (jqXHR, settings) {
-                    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
-                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+                    jqXHR.setRequestHeader('AccessToken', thisAccessToken);
+                    jqXHR.setRequestHeader('ApplicationKey', thisApplicatoinKey);
                 },
                 root: "data"
             };

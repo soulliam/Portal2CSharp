@@ -35,14 +35,16 @@ public partial class ReportViewer : System.Web.UI.Page
 
             var whereClause = getPortalGroups();
 
-            var strSQL = "select Distinct(ReportSection) as ReportSection, 0 as ReportId from ReportList2 r2 " +
+            if (whereClause != "")
+            {
+                var strSQL = "select Distinct(ReportSection) as ReportSection, 0 as ReportId from ReportList2 r2 " +
                          "Inner Join ReportToGroup rtg on r2.ReportId = rtg.ReportId " + whereClause;
 
-            //var strSQL = "select Distinct(ReportSection) as ReportSection, 0 as ReportId from ReportList2 order by ReportSection ";
+                //var strSQL = "select Distinct(ReportSection) as ReportSection, 0 as ReportId from ReportList2 order by ReportSection ";
 
-            DataTable dt = this.GetData(strSQL);
-            this.PopulateTreeView(dt, 0, null, whereClause);
-
+                DataTable dt = this.GetData(strSQL);
+                this.PopulateTreeView(dt, 0, null, whereClause);
+            }
         }
 
     }

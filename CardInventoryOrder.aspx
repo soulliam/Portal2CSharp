@@ -22,17 +22,20 @@
     <script type="text/javascript" src="jqwidgets/jqxgrid.selection.js"></script> 
     <script type="text/javascript" src="jqwidgets/jqxgrid.sort.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxlistbox.js"></script>
-    <script type="text/javascript" src="jqwidgets/jqxmaskedinput.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxmenu.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxscrollbar.js"></script>    
     <script type="text/javascript" src="jqwidgets/jqxwindow.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxcheckbox.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxloader.js"></script>
 
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
+        var group = '<%= Session["groupList"] %>';
 
         $(document).ready(function () {
             loadGrid();
+
+            $("#jqxLoader").jqxLoader({ width: 100, height: 60, imagePosition: 'top' });
 
             //#region SetupButtons
             $("#placeOrder").jqxButton({ width: '100%', height: 26 });
@@ -73,7 +76,9 @@
             $("#orderAmount").keyup(function () {
                 cardVal = parseInt($("#lastOrdered").val()) + parseInt($("#orderAmount").val());
                 verifyCard(cardVal, '1', $("#orderAmount"));
-            }); 
+            });
+
+            Security();
         });
 
         // ============= Initialize Page ================== End
@@ -85,8 +90,8 @@
             $("<div id='jqxOrders'></div>").appendTo(parent);
 
             // loading order histor
-            var url = $("#localApiDomain").val() + "CardDistHistorys/Get/-1";
-            //var url = "http://localhost:52839/api/CardDistHistorys/Get/-1";
+            //var url = $("#localApiDomain").val() + "CardDistHistorys/Get/-1";
+            var url = "http://localhost:52839/api/CardDistHistorys/Get/-1";
 
             var source =
             {
@@ -98,12 +103,18 @@
                     { name: 'NumberOfCards' },
                     { name: 'CardDistributionActivityDescription' },
                     { name: 'RecordedBy' },
+                    { name: 'Notes' },
                     { name: 'ActivityId' }
                 ],
                 type: 'Get',
                 datatype: "json",
                 url: url,
             };
+
+            var padCard = function (row, columnfield, value, defaulthtml, columnproperties) {
+                var newValue = padNumber(value, 8, '0');
+                return '<div style="margin-top: 10px;margin-left: 5px">' + newValue + '</div>';
+            }
 
             // creage jqxgrid
             $("#jqxOrders").jqxGrid(
@@ -117,12 +128,13 @@
                 filterable: true,
                 columns: [
                        { text: 'CardHistoryId', datafield: 'CardHistoryId', hidden: true },
-                       { text: 'Activity Date', datafield: 'ActivityDate', cellsrenderer: DateRender, width: '15%' },
-                       { text: 'Startingn Card', datafield: 'StartingNumber', width: '17%' },
-                       { text: 'Ending Card', datafield: 'EndingNumber', width: '17%' },
-                       { text: 'Number Of Cards', datafield: 'NumberOfCards', width: '17%' },
-                       { text: 'Activity', datafield: 'CardDistributionActivityDescription', width: '17%' },
-                       { text: 'Order By', datafield: 'RecordedBy', width: '17%' },
+                       { text: 'Order Date', datafield: 'ActivityDate', cellsrenderer: DateRender, width: '15%' },
+                       { text: 'Starting Card', datafield: 'StartingNumber', width: '15%', cellsrenderer: padCard },
+                       { text: 'Ending Card', datafield: 'EndingNumber', width: '15%', cellsrenderer: padCard },
+                       { text: 'Number Of Cards', datafield: 'NumberOfCards', width: '12%', cellsformat: 'n' },
+                       { text: 'Activity', datafield: 'CardDistributionActivityDescription', width: '15%' },
+                       { text: 'Order By', datafield: 'RecordedBy', width: '13%' },
+                       { text: 'Notes', datafield: 'Notes', width: '15%' },
                        { text: 'ActivityId', datafield: 'ActivityId', hidden: true }
                 ]
             });
@@ -185,6 +197,7 @@
                 return;
             }
 
+            $('#jqxLoader').jqxLoader('open');
             var thisDate = new Date();
             $.post($("#localApiDomain").val() + "CardDistHistorys/Post",
             //$.post("http://localhost:52839/api/CardDistHistorys/Post",
@@ -195,6 +208,7 @@
                             loadGrid();
                             $("#lastOrdered").val(EndingNumber);
                             alert('Cards were created successfully');
+                            $('#jqxLoader').jqxLoader('close');
                             break;
                         default:
                             alert('An Error occurred: ' + status + "\n Data:" + data);
@@ -205,13 +219,13 @@
         }
 
     </script>
-
+    <div id="jqxLoader"></div>
     <div id="CardInventoryOrder" class="container-fluid container-970 wrap-search-options">
         <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
             <div class="row search-size FPR_SearchLeft">
                 <div class="col-sm-12 col-md-10 col-md-offset-1">
                     <div class="row search-size">
-                        <div class="col-sm-9">
+                        <div class="col-sm-8">
                             <div class="row search-size">
                                 <div class="col-sm-15">
                                     <input type="button" id="orderType" value="Order: Regular" />
@@ -240,7 +254,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-2">
+                            <input type="text" id="notes" placeholder="Notes" />
+                        </div>
+                        <div class="col-sm-2">
                             <div class="row search-size">
                                 <div class="col-sm-8 col-sm-offset-4">
                                     <div class="row search-size">

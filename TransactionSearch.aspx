@@ -36,6 +36,7 @@
 
     <script type="text/javascript">
         var calendarChanged = false;
+        var group = '<%= Session["groupList"] %>';
 
         $(document).ready(function () {
             $("#btnSearch").jqxButton();
@@ -61,7 +62,7 @@
 
             $("#jqxCheckBox").jqxCheckBox({ width: 120, height: 25 });
 
-            
+            Security();
 
         });
 
@@ -76,7 +77,7 @@
                     { name: 'NameOfLocation' },
                     { name: 'LocationId' }
                 ],
-                url: $("#localApiDomain").val() + "Locations/Locations/",
+                url: $("#localApiDomain").val() + "Locations/LocationsAll/",
 
             };
             var locationDataAdapter = new $.jqx.dataAdapter(locationSource);

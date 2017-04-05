@@ -31,6 +31,7 @@
 
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
+        var group = '<%= Session["groupList"] %>';
 
         $(document).ready(function () {
 
@@ -83,6 +84,8 @@
                 }
             });
 
+            Security();
+
         });
 
         // ============= Initialize Page ================== End
@@ -134,6 +137,11 @@
                 }
             }
 
+            var padCard = function (row, columnfield, value, defaulthtml, columnproperties) {
+                var newValue = padNumber(value, 8, '0');
+                return '<div style="margin-top: 10px;margin-left: 5px">' + newValue + '</div>';
+            }
+
             // creage jqxgrid
             $("#jqxOrders").jqxGrid(
             {
@@ -147,10 +155,10 @@
                 filterable: true,
                 columns: [
                        { text: 'CardHistoryId', datafield: 'CardHistoryId' },
-                       { text: 'ActivityDate', datafield: 'ActivityDate' },
-                       { text: 'StartingNumber', datafield: 'StartingNumber' },
-                       { text: 'EndingNumber', datafield: 'EndingNumber' },
-                       { text: 'NumberOfCards', datafield: 'NumberOfCards' },
+                       { text: 'Order Date', datafield: 'ActivityDate', cellsrenderer: DateRender },
+                       { text: 'Starting Card', datafield: 'StartingNumber', cellsrenderer: padCard },
+                       { text: 'Ending Card', datafield: 'EndingNumber', cellsrenderer: padCard },
+                       { text: 'Number Of Cards', datafield: 'NumberOfCards', cellsformat: 'n' },
                        { text: 'Order By', datafield: 'RecordedBy' },
                        { text: 'Received Date', datafield: 'ReceivedDate', cellsrenderer: receiveDateRenderer },
                        { text: 'Received By', datafield: 'ReceviedBy' },

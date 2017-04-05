@@ -30,7 +30,7 @@
     <script type="text/javascript" src="jqwidgets/jqxwindow.js"></script>
 
     <script type="text/javascript">
-
+        var group = '<%= Session["groupList"] %>';
 
         var thisNewCity = false; //determines whether a new City is being made so the feature grid doesn't get set 
 
@@ -164,6 +164,7 @@
                 $("#stateCombo").jqxComboBox('selectItem', 1);
             });
 
+            Security();
 
         });
         // ============= Initialize Page ================== End

@@ -30,6 +30,7 @@
 
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
+        var group = '<%= Session["groupList"] %>';
 
         $(document).ready(function () {
 
@@ -42,6 +43,8 @@
                     loadGrid();
                 }
             });
+
+            Security();
         });
 
         // ============= Initialize Page ================== End

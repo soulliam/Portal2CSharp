@@ -31,10 +31,11 @@
 
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
+        var group = '<%= Session["groupList"] %>';
 
         $(document).ready(function () {
 
-            var locationString = $("#userLocation").val();
+            var locationString = String($("#userLocation").val());
             var locationResult = locationString.split(",");
 
             if (locationResult.length > 1) {
@@ -60,6 +61,7 @@
             }
             else {
                 $("#shipReceiveLocation").val(locationResult[0]);
+                loadGrid($("#shipReceiveLocation").val());
             }
 
             //insert place holder in location combo box
@@ -99,7 +101,8 @@
                     alert("No orders selected!");
                 }
             });
-
+        
+            Security();
         });
 
         // ============= Initialize Page ================== End
@@ -135,7 +138,7 @@
                     var item = event.args.item;
                     if (item.index > 0) {
                         if (item) {
-                            loadGrid(item.value)
+                            loadGrid(item.value);
                             $("#shipReceiveLocation").val(item.value);
                             $("#popupLocation").jqxWindow('hide');
                         }
@@ -204,9 +207,9 @@
                 columns: [
                        { text: 'CardHistoryId', datafield: 'CardHistoryId' },
                        { text: 'Ship Date', datafield: 'ActivityDate', cellsrenderer: DateRender },
-                       { text: 'Starting Card', datafield: 'StartingNumber' },
-                       { text: 'Ending Card', datafield: 'EndingNumber' },
-                       { text: 'Number Of Cards', datafield: 'NumberOfCards' },
+                       { text: 'Starting Card', datafield: 'StartingNumber', cellsformat: 'n' },
+                       { text: 'Ending Card', datafield: 'EndingNumber', cellsformat: 'n' },
+                       { text: 'Number Of Cards', datafield: 'NumberOfCards', cellsformat: 'n' },
                        { text: 'Shipped By', datafield: 'RecordedBy' },
                        { text: 'Received Date', datafield: 'ReceivedDate', cellsrenderer: receiveDateRenderer },
                        { text: 'Received By', datafield: 'ReceviedBy' },
