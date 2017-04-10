@@ -53,7 +53,7 @@
 
         $(document).ready(function () {
             $(function () {
-                $('body').on('mousedown', '.popupCombinMembers, .market', function () {
+                $('body').on('mousedown', '#popupCombineMembers', function () {
                     $(this).addClass('draggable').parents().on('mousemove', function (e) {
                         $('.draggable').offset({
                             top: e.pageY - $('.draggable').outerHeight() / 2,
@@ -61,8 +61,8 @@
                         }).on('mouseup', function () {
                             $(this).removeClass('draggable');
                         });
+                        e.preventDefault();
                     });
-                    e.preventDefault();
                 }).on('mouseup', function () {
                     $('.draggable').removeClass('draggable');
                 });
@@ -1033,15 +1033,24 @@
             });
 
             $("#saveCombineMember").on("click", function (event) {
-                var result = confirm("Do you want to combine cards?");
-                if (result == true) {
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to combine cards?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, combine them!'
+                }).then(function () {
                     var thisTargetCard = $("#targetMember").val();
                     var thisSourceCard = $("#orginMember").val();
                     var thisCombinedBy = $("#txtLoggedinUsername").val();
 
                     PageMethods.combineCards(thisSourceCard, thisTargetCard, thisCombinedBy, DisplayPageMethodResults);
                     return null;
-                }
+                });
+
+                return null;
 
 
                 swal({
@@ -4553,7 +4562,7 @@
     </div>
 
     <%-- html for combine cards --%>
-    <div id="popupCombineMembers" class="popupCombinMembers" style="display:none;border:1px solid black;">
+    <div id="popupCombineMembers" class="popupCombineMembers" style="display:none;border:1px solid black;">
         <div style="background-color:#ccc;width:100%;border-radius:9px 9px 0px 0px;font-weight:bold;text-align:center">Combine Members</div>
         <div>
             <div class="modal-body">

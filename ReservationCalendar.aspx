@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ForTestHTML.aspx.cs" Inherits="ForTestHTML" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ReservationCalendar.aspx.cs" Inherits="ForTestHTML" %>
 
 <!DOCTYPE html>
 
@@ -105,6 +105,16 @@
     <script type="text/javascript" src="jqwidgets/jqxchart.core.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxdata.js"></script>
 
+    <script type="text/javascript" src="scripts/jquery.jqplot.js"></script>
+    <script type="text/javascript" src="scripts/jqplot.barRenderer.js"></script>
+    <script type="text/javascript" src="scripts/jqplot.categoryAxisRenderer.js"></script>
+    <script type="text/javascript" src="scripts/jqplot.pointLabels.js"></script>
+    <script type="text/javascript" src="scripts/jqplot.cursor.js"></script>
+    <script type="text/javascript" src="scripts/jqplot.highlighter.js"></script>
+    <link rel="stylesheet" type="text/css" href="scripts/jquery.jqplot.css" />
+    
+
+
 
     <script>
         var d = new Date();
@@ -179,12 +189,67 @@
             }
 
             while (FirstDay <= LastDay) {
+                var thisEntry = 0;
+                var thisExit = 0;
+                var thisOnLot = 0;
+                var thisDay = FirstDay.getDate();
 
-                var thisDate = FirstDay.getDate();
+                $("#days").append("<li><label style='font-size:large;font-weight:bold;'>" + thisDay + "</lable><div id='barGauge" + thisDay + "' style='height:200px;width:200px;'></div></li");
 
-                $("#days").append("<li><label style='font-size:large;font-weight:bold;'>" + thisDate + "</lable><div id='barGauge" + thisDate + "'></div></li");
+                var thisCharet = "barGauge" + thisDay;
+                var thisDate = DateFormat(FirstDay);
+                thisDate = thisDate.replace(/\//g, '-')
 
-                var thisCharet = "barGauge" + thisDate;
+                var url = "http://localhost:52839/api/ReservationReports/GetReservationReport/" + '2_' + thisDate;
+
+                $.ajax({
+                    async:false,
+                    type: "GET",
+                    url: url,
+                    dataType: "json",
+                    success: function (data) {
+                        thisEntry = data.startsCount;
+                        thisExit = data.endsCount;
+                        thisOnLot = data.onLot;
+
+                        $.jqplot.config.enablePlugins = true;
+                        var s1 = [thisEntry, thisExit, thisOnLot];
+                        var ticks = ['Entry', 'Exit', 'On Lot'];
+
+                        plot1 = $.jqplot(thisCharet, [s1], {
+                            // Only animate if we're not using excanvas (not in IE 7 or IE 8)..
+                            animate: !$.jqplot.use_excanvas,
+                            seriesDefaults: {
+                                renderer: $.jqplot.BarRenderer,
+                                pointLabels: { show: true }
+                            },
+                            axes: {
+                                xaxis: {
+                                    renderer: $.jqplot.CategoryAxisRenderer,
+                                    ticks: ticks
+                                }
+                            },
+                            highlighter: {
+                                show: true,
+                                sizeAdjust: 7.5
+                            },
+                            cursor: {
+                                show: false
+                            }
+                        });
+
+                    },
+                    error: function (request, status, error) {
+                        alert(error);
+                    }
+                });
+
+
+                //$('#chart1').bind('jqplotDataClick',
+                //    function (ev, seriesIndex, pointIndex, data) {
+                //        $('#info1').html('series: ' + seriesIndex + ', point: ' + pointIndex + ', data: ' + data);
+                //    }
+                //);
 
                 //var Ins = 200;
                 //var Outs = 167;
@@ -202,49 +267,6 @@
                 //    }
                 //});
 
-                var source =
-                {
-                    type: 'Get',
-                    datatype: "json",
-                    datafields: [
-                        { name: 'DayName' },
-                        { name: 'startsCount' },
-                        { name: 'endsCount' }
-                    ],
-                    url: 'http://localhost:52839/api/ReservationReports/GetReservationReport/' + '2'
-                };
-                var dataAdapter = new $.jqx.dataAdapter(source, { async: true, autoBind: true, loadError: function (xhr, status, error) { alert('Error loading "' + source.url + '" : ' + error); } });
-
-                var settings = {
-                    source: dataAdapter,
-                    xAxis:
-                        {
-                            dataField: 'DayName',
-                            gridLines: { visible: true },
-                            valuesOnTicks: false
-                        },
-                    colorScheme: 'scheme01',
-                    columnSeriesOverlap: false,
-                    seriesGroups:
-                        [
-                            {
-                                type: 'column',
-                                valueAxis:
-                                {
-                                    visible: true,
-                                    unitInterval: 10,
-                                    title: { text: 'Ins<br>' }
-                                },
-                                series: [
-                                        { dataField: 'startsCount', displayText: 'Ins' },
-                                        { dataField: 'endsCount', displayText: 'Outs' }
-                                ]
-                            }
-                        ]
-                };
-                // setup the chart
-                $('#' + thisCharet).jqxChart(settings);
-                
                 if (FirstDay.getDate() != LastDay.getDate()){
                     FirstDay.setDate(FirstDay.getDate() + 1);
                 } else {

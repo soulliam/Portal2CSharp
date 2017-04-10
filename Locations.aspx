@@ -212,8 +212,8 @@
                         url: PostUrl,
                         type: 'POST',
                         data: JSON.stringify({
-                            "NameOfLocation": "sample string 1",
-                            "DisplayName": "sample string 2",
+                            "NameOfLocation": newNameOfLocation,
+                            "DisplayName": newDisplayName,
                             "ShortLocationName": "sample string 3",
                             "FacilityNumber": "sample string 4",
                             "SkiDataVersion": 1,
@@ -247,7 +247,7 @@
                             "IsActiveFlag": true,
                             "ManagerImageUrl": "sample string 32",
                             "MemberRateText": "sample string 33",
-                            "ImageUrl": "sample string 34",
+                            "ImageUrl": newSkiDataIMP,
                             "Imp": "sample 35",
                             "SiteURL": "sample string 36"
                         }),
@@ -793,7 +793,7 @@
                     { name: 'StateId', map: 'State>StateId' },
                     { name: 'StateName', map: 'State>StateName' },
                     { name: 'LocationContactEmail' },
-                    { name: 'IMP' },
+                    { name: 'Imp' },
                     { name: 'LocationHasFeatureId' },
                     { name: 'SiteURL' },
                     { name: 'FirstName', map: 'MarketingRep>FirstName' },
@@ -901,7 +901,7 @@
                                   $("#brandCombo").jqxComboBox('selectItem', dataRecord.BrandId);
                                   $("#airportCombo").jqxComboBox('selectItem', dataRecord.AirportId);
                                   $("#LocationContactEmail").val(dataRecord.LocationContactEmail);
-                                  $("#SkiDataIMP").val(dataRecord.IMP);
+                                  $("#SkiDataIMP").val(dataRecord.Imp);
                                   $("#SiteURL").val(dataRecord.SiteURL);
                                   $("#cityCombo").jqxComboBox('selectItem', dataRecord.CityId);
                                   $("#DistanceFromAirport").val(dataRecord.DistanceFromAirport);
@@ -961,7 +961,7 @@
                       { text: 'BrandName', datafield: 'BrandName', hidden: true },
                       { text: 'LocationContactEmail', datafield: 'LocationContactEmail', hidden: true },
                       { text: 'SiteURL', datafield: 'SiteURL', hidden: true },
-                      { text: 'IMP', datafield: 'IMP', hidden: true },
+                      { text: 'Imp', datafield: 'Imp', hidden: true },
                       { text: 'City', datafield: 'CityName', hidden: true },
                       { text: 'State', datafield: 'StateName', hidden: true },
                       { text: 'Marketing Rep', datafield: 'FirstName', cellsrenderer: function(row, column, value, defaultSettings, columnSettings, rowdata )
