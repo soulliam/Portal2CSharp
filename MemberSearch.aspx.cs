@@ -186,8 +186,6 @@ public partial class MemberSearch : System.Web.UI.Page
         {
             return ex.ToString();
         }
-
-
     }
 
     [System.Web.Services.WebMethod]

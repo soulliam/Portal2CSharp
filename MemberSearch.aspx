@@ -1996,12 +1996,16 @@
                     var thisManualEditId = dataRecord.ManualEditsId
 
                     var url = $("#localApiDomain").val() + "ManualEdits/ManualEditById/" + thisManualEditId;
-
+                    //var url = "http://localhost:52839/api/ManualEdits/ManualEditById/" + thisManualEditId;
                     $.ajax({
                         type: 'GET',
                         url: url,
                         
                         success: function (thisData) {
+                            var notes = String(thisData[0].Notes);
+                            var explanation = String(thisData[0].Explanation);
+
+                            $("#ManualEditNote").html(notes);
 
                             $("#popupViewManualEdit").css('display', 'block');
                             $("#popupViewManualEdit").css('visibility', 'hidden');
@@ -2011,7 +2015,7 @@
                             $('#popupViewManualEdit').jqxWindow({ draggable: true });
                             $('#popupViewManualEdit').jqxWindow({ isModal: true });
                             $("#popupViewManualEdit").css("visibility", "visible");
-                            $('#popupViewManualEdit').jqxWindow({ height: '675px', width: '35%' });
+                            $('#popupViewManualEdit').jqxWindow({ height: '300px', width: '35%' });
                             $('#popupViewManualEdit').jqxWindow({ minHeight: '270px', minWidth: '10%' });
                             $('#popupViewManualEdit').jqxWindow({ maxHeight: '700px', maxWidth: '50%' });
                             $('#popupViewManualEdit').jqxWindow({ showCloseButton: true });
@@ -2497,6 +2501,60 @@
                 ]
             });
         }
+
+        function loadReferrals(PageMemberID) {
+
+            var parent = $("#jqxReferralGrid").parent();
+            $("#jqxReferralGrid").jqxComboBox('destroy');
+            $("<div id='jqxReferralGrid'></div>").appendTo(parent);
+
+            // load reservations to list
+            var url = $("#apiDomain").val() + "members/" + PageMemberID + "/referrals";
+
+            var source =
+            {
+                datafields: [
+                    { name: 'Name' },
+                    { name: 'ReferralType' },
+                    { name: 'ReferralDate' },
+                    { name: 'SignedDate' },
+                    { name: 'ParkingDate' },
+                    { name: 'PointsAwarded' }
+                ],
+
+                id: 'CertificateID',
+                type: 'Get',
+                datatype: "json",
+                url: url,
+                beforeSend: function (jqXHR, settings) {
+                    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
+                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+                },
+                root: "data"
+            };
+
+            // create Reservation Grid
+            $("#jqxReferralGrid").jqxGrid(
+            {
+                width: '100%',
+                height: 450,
+                source: source,
+                rowsheight: 35,
+                sortable: true,
+                altrows: true,
+                filterable: true,
+                enablebrowserselection: true,
+                columns: [
+                      { text: 'Name', datafield: 'Name', width: '26%' },
+                      { text: 'ReferralType', datafield: 'ReferralType', width: '10%' },
+                      { text: 'ReferralDate', datafield: 'ReferralDate', width: '16%', cellsrenderer: DateRender },
+                      { text: 'SignedDate', datafield: 'SignedDate', width: '16%', cellsrenderer: DateRender },
+                      { text: 'ParkingDate', datafield: 'ParkingDate', width: '16%', cellsrenderer: DateRender },
+                      { text: 'PointsAwarded', datafield: 'PointsAwarded', width: '16%' }
+                ]
+            });
+        }
+
         //#endregion
 
         //#region LoadComboBoxes
@@ -3567,6 +3625,7 @@
 
                     loadMemberActivity(PageMemberID);
                     loadAccountActivity();
+                    loadReferrals(PageMemberID);
 
                     $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
                     $("#topPointsBalanceAccountBar").html(loadPoints(AccountId, $("#topPointsBalanceAccountBar")));
@@ -4201,7 +4260,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="tabReferrals" class="tab-body"></div>
+                        <div id="tabReferrals" class="tab-body">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                    <div id="jqxReferralGrid"></div>
+                                </div>
+                            </div>
+                        </div>
                         <div id="tabCards" class="tab-body">
                             <div class="row">
                                 <div class="col-sm-9 col-md-10">
@@ -4533,62 +4598,12 @@
 
     <%-- html for popup view manual edit --%>
     <div id="popupViewManualEdit" style="display:none">
-        <div>Manual Edit Details</div>
+        <div>Manual Edit Notes</div>
         <div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
-                        <div class="form-horizontal">
-                            <div class="form-group">
-                                <label for="addCardFPNumber" class="col-sm-3 col-md-4 control-label">FP Number:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" class="form-control" id="TaddCardFPNumber" placeholder="FPNumber" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="addCardIsPrimary" class="col-sm-3 col-md-4 control-label">Is Primary:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" class="form-control" id="TaddCardIsPrimary" />
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="addCardIsActive" class="col-sm-3 col-md-4 control-label">Is Active:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" class="form-control" id="TaddCardIsActive" />
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="addCardCreateDigitalCard" class="col-sm-3 col-md-4 control-label">Create Digital:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" class="form-control" id="TaddCardCreateDigitalCard" />
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="top-divider">
-                            <div class="col-sm-3 col-md-4">
-                            </div>
-                            <div class="col-sm-6 col-md-4">
-                                <input type="button" class="form-control" id="TaddCardSubmit" value="Add" />
-                            </div>
-                            <div class="col-sm-3 col-md-4">
-                            </div>
-                        </div>
+                        <textarea id="ManualEditNote" cols="50" rows="10"></textarea>  
                     </div>
                 </div>
             </div>
