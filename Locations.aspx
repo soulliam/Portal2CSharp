@@ -313,6 +313,47 @@
 
                         var putUrl = $("#apiDomain").val() + "locations/" + selectedLocationId //ID of the location to update
 
+                        var test = JSON.stringify({
+                            "NameOfLocation": newNameOfLocation,
+                            "DisplayName": newDisplayName,
+                            "ShortLocationName": newShortLocationName,
+                            "FacilityNumber": newFacilityNumber,
+                            "SkiDataVersion": newSkiDataVersion,
+                            "SkiDataLocation": newSkiDataLocation,
+                            "LocationAddress": newLocationAddress,
+                            "LocationCity": newLocationCity,
+                            "BrandId": newBrandId,
+                            "AirportId": newAirportId,
+                            "Capacity": newCapacity,
+                            "CityId": newCityId,
+                            "LocationStateId": newLocationStateId,
+                            "LocationZipCode": newLocationZipCode,
+                            "LocationPhoneNumber": newLocationPhoneNumber,
+                            "LocationFaxNumber": newLocationFaxNumber,
+                            "Description": newDescription,
+                            "Alert": newAlert,
+                            "DailyRate": newDailyRate,
+                            "Slug": newSlug,
+                            "RateQualifications": newRateQualifications,
+                            "Manager": newManager,
+                            "ManagerEmail": newManagerEmail,
+                            "LocationContactEmail": newLocationContactEmail,
+                            "LocationHighlights": newLocationHighlights,
+                            "RateText": newRateText,
+                            "DistanceFromAirport": newDistanceFromAirport,
+                            "Latitude": newLatitude,
+                            "Longitude": newLongitude,
+                            "SpecialFlagsText": newSpecialFlagsText,
+                            "SpecialFlagsInformation": newSpecialFlagsInformation,
+                            "GoogleLink": newGoogleLink,
+                            "IsActiveFlag": newIsActiveFlag,
+                            "ManagerImageUrl": newManagerImageUrl,
+                            "MemberRateText": newMemberRateText,
+                            "ImageUrl": newImageUrl,
+                            "Imp": newIMP,
+                            "SiteURL": newSiteURL
+                        });
+
                         $.ajax({
                             headers: {
                                 "Accept": "application/json",

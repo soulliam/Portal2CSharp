@@ -129,13 +129,13 @@
                 altrows: true,
                 filterable: true,
                 columns: [
-                       { text: 'MemberId', datafield: 'MemberId', width: '7%' },
+                       { text: 'MemberId', datafield: 'MemberId', width: '10%' },
                        { text: 'FirstName', datafield: 'FirstName', width: '10%' },
                        { text: 'LastName', datafield: 'LastName', width: '10%' },
                        { text: 'FPNumber', datafield: 'FPNumber', width: '10%' },
-                       { text: 'Company', datafield: 'Company', width: '40%' },
+                       { text: 'Company', datafield: 'Company', width: '25%' },
                        { text: 'CompanyId', datafield: 'CompanyId', width: '10%' },
-                       { text: 'EmailAddress', datafield: 'EmailAddress', width: '10%' }
+                       { text: 'EmailAddress', datafield: 'EmailAddress', width: '25%' }
                 ]
             });
         }

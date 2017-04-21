@@ -1,18 +1,18 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ReservationCalendar.aspx.cs" Inherits="ForTestHTML" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Portal2.master" AutoEventWireup="true" CodeFile="ReservationCalendarReport.aspx.cs" Inherits="ReservationCalendarReport" %>
 
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title></title>
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
     <style>
+        td {
+            width: 14%;
+            font-weight:bold;
+        }
+
         ul {list-style-type: none;}
         body {font-family: Verdana, sans-serif;}
 
         /* Month header */
         .month {
-            padding: 25px 25px;
-            background: #1abc9c;
+            padding: 5px 25px;
         }
 
         /* Month list */
@@ -45,32 +45,32 @@
         /* Previous button inside month header */
         .month .prev {
             float: left;
-            padding-top: 10px;
+            padding-top: 0px;
         }
 
         /* Next button */
         .month .next {
             float: right;
-            padding-top: 10px;
+            padding-top: 0px;
         }
 
         /* Weekdays (Mon-Sun) */
         .weekdays {
             margin: 0;
-            padding: 10px 0;
+            padding: 5px 0;
             background-color:#ddd;
         }
 
         .weekdays li {
-            display: inline-block;
-            width: 13.6%;
+            width: 100%;
             color: #666;
             text-align: center;
+            font-weight: bold;
         }
 
         /* Days (1-31) */
         .days {
-            padding: 10px 0;
+            padding: 7px 0;
             background: #eee;
             margin: 0;
         }
@@ -87,7 +87,7 @@
 
         /* Highlight the "current" day */
         .days li .active {
-            padding: 5px;
+            padding: 3px;
             background: #1abc9c;
             color: white !important
         }
@@ -117,6 +117,8 @@
 
 
     <script>
+        var group = '<%= Session["groupList"] %>';
+
         var d = new Date();
         d = new Date(d.getFullYear(), d.getMonth(), 1);
 
@@ -223,29 +225,6 @@
                     }
                 });
 
-
-                //$('#chart1').bind('jqplotDataClick',
-                //    function (ev, seriesIndex, pointIndex, data) {
-                //        $('#info1').html('series: ' + seriesIndex + ', point: ' + pointIndex + ', data: ' + data);
-                //    }
-                //);
-
-                //var Ins = 200;
-                //var Outs = 167;
-                //var OnLot = 300;
-
-                //$('#' + thisCharet).jqxBarGauge({
-                //    relativeInnerRadius: 0.1,
-                //    barSpacing: 2,
-                //    colorScheme: "scheme02", width: 220, height: 220,
-                //    values: [Ins, Outs, OnLot], max: 300, tooltip: {
-                //        visible: true, formatFunction: function (value) {
-                //            var realVal = parseInt(value);
-                //            return ('Year: 2016<br/>Price Index:' + realVal);
-                //        },
-                //    }
-                //});
-
                 if (FirstDay.getDate() != LastDay.getDate()){
                     FirstDay.setDate(FirstDay.getDate() + 1);
                 } else {
@@ -254,32 +233,49 @@
 
             } 
         }
+
+        Security();
     </script>
-</head>
-<body>
-    <form id="form1" runat="server">
-        <div class="month"> 
-            <div><label class="month" id="month"></label></div>
-            <div class="month">
-            <div id="prev" class="prev" style="cursor:pointer">&#10094;</div>
-            <div id="next" class="next" style="float:right;cursor:pointer">&#10095;</div>
-            </div>
-        </div>
-        <ul class="weekdays">
-            <li>Su</li>
-            <li>Mo</li>
-            <li>Tu</li>
-            <li>We</li>
-            <li>Th</li>
-            <li>Fr</li>
-            <li>Sa</li>
-        </ul>
+
+
+    <div class="month">
+        <div><label class="month" id="month"></label></div>
+        <div id="prev" class="prev" style="cursor:pointer;color:white;font-size:x-large;font-weight:bold;">&#10094;</div>
+        <div id="next" class="next" style="float:right;cursor:pointer;color:white;font-size:x-large;font-weight:bold;">&#10095;</div>
+    </div>
+
+    <div style="width:100%">
+        <table style="width:98%;text-align:center;">
+            <tr>
+                <td>
+                    Su
+                </td>
+                <td>
+                    Mo
+                </td>
+                <td>
+                    Tu
+                </td>
+                <td>
+                    We
+                </td>
+                <td>
+                    Th
+                </td>
+                <td>
+                    Fr
+                </td>
+                <td>
+                    Sa
+                </td>
+            </tr>
+        </table>
+    </div>
         
-        <ul id="days" class="days"> 
+    <ul id="days" class="days"> 
 
-        </ul>
-    </form>
+    </ul>
 
-    
-</body>
-</html>
+</asp:Content>
+
+

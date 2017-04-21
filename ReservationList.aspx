@@ -49,6 +49,34 @@
 
             $("#btnView").jqxButton();
 
+            $("#setComplete").jqxButton();
+            $("#setComplete").on("click", function () {
+                
+                var rowindexes = $('#jqxgrid').jqxGrid('getselectedrowindexes');
+
+                if (rowindexes.length > 0) {
+                    for (var index = 0; index < rowindexes.length; index++) {
+                        var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', rowindexes[index]);
+                        $.ajax({
+                            async: false,
+                            url: $("#localApiDomain").val() + "Reservations/CompleteReservation/" + dataRecord.ReservationId,
+                            //url: "http://localhost:52839/api/Reservations/CompleteReservation/" + dataRecord.ReservationId,
+                            type: 'Get',
+                            success: function (response) {
+                                
+                            },
+                            error: function (request, status, error) {
+                                alert(error);
+                            },
+                            complete: function () {
+                                
+                            }
+                        });
+                    }
+                    loadGrid($("#locationCombo").jqxComboBox('getSelectedItem').value);
+                    swal("Complete");
+                }
+            });
 
             $("#calendar").jqxDateTimeInput({ formatString: 'MM-dd-yyyy', width: '100%', height: '24px' });
 
@@ -240,31 +268,12 @@
                 filterable: true,
                 rowdetails: true,
                 initrowdetails: initrowdetails,
+                selectionmode: 'checkbox',
                 rowdetailstemplate: { rowdetails: "<div id='grid' style='margin: 10px;'></div>", rowdetailsheight: 220, rowdetailshidden: true },
                 //ready: function () {
                 //    $("#jqxgrid").jqxGrid('showrowdetails', 1);
                 //},
                 columns: [
-                      {
-                          text: 'Complete', datafield: 'Complete', columntype: 'button', cellsrenderer: function () {
-                              return "Complete";
-                          }, buttonclick: function (row) {
-                              var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', row);
-                              $.ajax({
-                                  url: $("#localApiDomain").val() + "Reservations/CompleteReservation/" + dataRecord.ReservationId,
-                                  //url: "http://localhost:52839/api/Reservations/CompleteReservation/" + dataRecord.ReservationId,
-                                  type: 'Get',
-                                  success: function (response) {
-                                      swal("Set as Completed!");
-                                      loadGrid($("#locationCombo").jqxComboBox('getSelectedItem').value);
-                                  },
-                                  error: function (request, status, error) {
-                                      alert(error);
-                                  }
-                              });
-                              
-                          }
-                      },
                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
                       { text: 'ReservationNumber', datafield: 'ReservationNumber' },
                       { text: 'StartDatetime', datafield: 'StartDatetime', filtertype: 'range', cellsrenderer: DateRenderWithTime },
@@ -277,7 +286,6 @@
                       { text: 'Status', datafield: 'ReservationStatusName' }
                 ]
             });
-
         }
 
         function loadGridOut(thisLocationId) {
@@ -369,7 +377,8 @@
                     <input type="button" value="Export Entrances" id='pdfExportIn' />
                 </div>
                 <div class="col-sm-2">
-                    <input type="button" value="Export Exits" id='pdfExportOut' />
+                    <div><input type="button" value="Export Exits" id='pdfExportOut' /></div>
+                    <div><input type="button" value="Set Completed" id="setComplete" /></div>
                 </div>
             </div>
         </div>
