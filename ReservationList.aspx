@@ -30,13 +30,17 @@
     <script type="text/javascript" src="jqwidgets/jqxdata.export.js"></script> 
     <script type="text/javascript" src="jqwidgets/jqxgrid.export.js"></script> 
     <script type="text/javascript" src="jqwidgets/jqxcheckbox.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxtabs.js"></script>
 
     <script type="text/javascript">
         var group = '<%= Session["groupList"] %>';
 
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
-            
+            var count = 0;
+
+            $('#jqxTabs').jqxTabs({ width: '100%', height: 600, position: 'top' });
+
             $("#pdfExportIn").jqxButton();
             $("#pdfExportIn").click(function () {
                 $("#jqxgrid").jqxGrid('exportdata', 'pdf', 'jqxGrid');
@@ -72,8 +76,17 @@
                                 
                             }
                         });
+
+                        count = count + 1;
                     }
                     loadGrid($("#locationCombo").jqxComboBox('getSelectedItem').value);
+                    
+                    var thisUser = $("#txtLoggedinUsername").val();
+                    var thisLocationID = $("#locationCombo").jqxComboBox('getSelectedItem').value;
+                    var d = new Date();
+                    var thisDate = DateFormat(d);
+
+                    PageMethods.LogSetComplete(thisUser, thisLocationID, thisDate, 'There were ' + count + ' set as complete', DisplayPageMethodResults);
                     swal("Complete");
                 }
             });
@@ -258,17 +271,16 @@
             $("#jqxgrid").jqxGrid(
             {
                 width: '100%',
-                height: 300,
+                height: 550,
                 source: source,
                 rowsheight: 35,
                 sortable: true,
                 altrows: true,
-                pageable: true,
-                pagermode: 'simple',
                 filterable: true,
                 rowdetails: true,
                 initrowdetails: initrowdetails,
                 selectionmode: 'checkbox',
+                enablebrowserselection: true,
                 rowdetailstemplate: { rowdetails: "<div id='grid' style='margin: 10px;'></div>", rowdetailsheight: 220, rowdetailshidden: true },
                 //ready: function () {
                 //    $("#jqxgrid").jqxGrid('showrowdetails', 1);
@@ -330,13 +342,11 @@
             $("#jqxgridOUT").jqxGrid(
             {
                 width: '100%',
-                height: 300,
+                height: 550,
                 source: source,
                 rowsheight: 35,
                 sortable: true,
                 altrows: true,
-                pageable: true,
-                pagermode: 'simple',
                 filterable: true,
                 columns: [
                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
@@ -384,12 +394,24 @@
         </div>
     </div>  
     
-    <div id="holdIn">
-        <div id="jqxgrid"></div>
+    <div  style="margin:15px;">
+        <div id='jqxTabs'>
+            <ul>
+                <li style="margin-left: 30px;">Entrances</li>
+                <li>Exits</li>
+            </ul>
+            <div>
+                <div id="holdIn">
+                    <div id="jqxgrid"></div>
+                </div>
+            </div>
+            <div>
+                <div id="holdOut">
+                    <div id="jqxgridOUT"></div>
+                </div>
+            </div>
+        </div>
     </div>
-    <br />
-    <div id="holdOut">
-        <div id="jqxgridOUT"></div>
-    </div>
+    
 </asp:Content>
 

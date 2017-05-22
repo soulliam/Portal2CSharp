@@ -175,6 +175,11 @@
                 url: url,
             };
 
+            var padCard = function (row, columnfield, value, defaulthtml, columnproperties) {
+                var newValue = padNumber(value, 8, '0');
+                return '<div style="margin-top: 10px;margin-left: 5px">' + newValue + '</div>';
+            }
+
             var receiveDateRenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
                 if (value == '0001-01-01T00:00:00') {
                     return '<div style="margin-top: 10px;margin-left: 5px">&nbsp;</div>'
@@ -207,8 +212,8 @@
                 columns: [
                        { text: 'CardHistoryId', datafield: 'CardHistoryId' },
                        { text: 'Ship Date', datafield: 'ActivityDate', cellsrenderer: DateRender },
-                       { text: 'Starting Card', datafield: 'StartingNumber', cellsformat: 'n' },
-                       { text: 'Ending Card', datafield: 'EndingNumber', cellsformat: 'n' },
+                       { text: 'Starting Card', datafield: 'StartingNumber', cellsrenderer: padCard },
+                       { text: 'Ending Card', datafield: 'EndingNumber', cellsrenderer: padCard },
                        { text: 'Number Of Cards', datafield: 'NumberOfCards', cellsformat: 'n' },
                        { text: 'Shipped By', datafield: 'RecordedBy' },
                        { text: 'Received Date', datafield: 'ReceivedDate', cellsrenderer: receiveDateRenderer },

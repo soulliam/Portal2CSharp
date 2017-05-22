@@ -1,5 +1,6 @@
 ﻿//Security Setup
 function Security() {
+    
 
     //Set entire memu to disabled.  Grab the old href if pointer-events not supported
     $('.menuSecurity').each(function () {
@@ -79,6 +80,9 @@ function Security() {
             $('.Portal_RFR').removeClass('disabled');
             var old = $(this).attr('temp-hrf');
             if (old != "") $(this).attr('href', old);
+
+            //enable communication type check boxes
+            $('.communicationType').prop("disabled", false);
         });
     }
 
@@ -99,8 +103,8 @@ function Security() {
     }
 
     if (group.indexOf("Booth") > -1 && group.indexOf("BoothOnly") < 0) {
-        $('.Portal_Vehiclesadmin').each(function () {
-            $('.Portal_Vehiclesadmin').removeClass('disabled');
+        $('.Booth').each(function () {
+            $('.Booth').removeClass('disabled');
             var old = $(this).attr('temp-hrf');
             if (old != "") $(this).attr('href', old);
         });

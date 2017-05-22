@@ -101,8 +101,8 @@
                         $("#Company1ID").val(item.value);
                         var thisCompanyId = item.value;
 
-                        //var url = $("#localApiDomain").val() + "CombineCompanysController/CompanyInfo/" + thisCompanyId;
-                        var url = "http://localhost:52839/api/CombineCompanysController/CompanyInfo/" + thisCompanyId;
+                        var url = $("#localApiDomain").val() + "CombineCompanysController/CompanyInfo/" + thisCompanyId;
+                        //var url = "http://localhost:52839/api/CombineCompanysController/CompanyInfo/" + thisCompanyId;
 
                         $.ajax({
                             type: "GET",
@@ -122,8 +122,8 @@
                             }
                         });
 
-                        //var url = $("#localApiDomain").val() + "CombineCompanysController/GetActivity/" + thisCompanyId;
-                        var url = "http://localhost:52839/api/CombineCompanysController/GetActivity/" + thisCompanyId;
+                        var url = $("#localApiDomain").val() + "CombineCompanysController/GetActivity/" + thisCompanyId;
+                        //var url = "http://localhost:52839/api/CombineCompanysController/GetActivity/" + thisCompanyId;
 
                         $.ajax({
                             type: "GET",
@@ -202,8 +202,8 @@
                             }
                         });
 
-                        //var url = $("#localApiDomain").val() + "CombineCompanysController/GetActivity/" + thisCompanyId;
-                        var url = "http://localhost:52839/api/CombineCompanysController/GetActivity/" + thisCompanyId;
+                        var url = $("#localApiDomain").val() + "CombineCompanysController/GetActivity/" + thisCompanyId;
+                        //var url = "http://localhost:52839/api/CombineCompanysController/GetActivity/" + thisCompanyId;
 
                         $.ajax({
                             type: "GET",
@@ -238,7 +238,7 @@
                     var thisCompany1 = $("#Company1ID").val();
                     var thisCompany2 = $("#Company2ID").val();
 
-                    PageMethods.combineCards(thisCompany2, thisCompany1, DisplayPageMethodResults);
+                    PageMethods.combineCompany(thisCompany2, thisCompany1, DisplayPageMethodResults);
                     return null;
                 });
 

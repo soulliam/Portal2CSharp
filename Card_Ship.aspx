@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="Portal2.master" AutoEventWireup="true" CodeFile="CardInventoryShipping.aspx.cs" Inherits="CardInventoryShipping" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="Portal2.master" AutoEventWireup="true" CodeFile="Card_Ship.aspx.cs" Inherits="CardInventoryShipping" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
     <link rel="stylesheet" href="jqwidgets/styles/jqx.base.css" type="text/css" />
@@ -37,6 +37,7 @@
 
             //#region SetupButtons
             $("#placeShip").jqxButton({ width: '100%', height: 26 });
+            $("#receiveShip").jqxButton({ width: '100%', height: 26 });
             $("#shipType").jqxToggleButton({ width: '100%', height: 26, toggled: false });
             $("#shipType").on('click', function () {
                 $("#regShip").toggle();
@@ -81,7 +82,7 @@
                 
             });
 
-            //set up the location combobox
+            //set up the to location combobox
             var locationSource =
             {
                 datatype: "json",
@@ -91,11 +92,11 @@
                     { name: 'NameOfLocation' },
                     { name: 'LocationId' }
                 ],
-                url: $("#localApiDomain").val() + "Locations/Locations/",
-
+                //url: $("#localApiDomain").val() + "CardLocations/Locations/",
+                url: "http://localhost:52839/api/CardLocations/Locations/",
             };
             var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
-            $("#locationCombo").jqxComboBox(
+            $("#tolocationCombo").jqxComboBox(
             {
                 width: 200,
                 height: 21,
@@ -106,14 +107,44 @@
             });
 
 
-            $("#locationCombo").on('bindingComplete', function (event) {
-                $("#locationCombo").jqxComboBox('insertAt', 'Pick a Location', 0);
+            $("#tolocationCombo").on('bindingComplete', function (event) {
+                $("#tolocationCombo").jqxComboBox('insertAt', 'To Location', 0);
+            });
+
+            //set up the from location combobox
+            var locationSource =
+            {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'NameOfLocation' },
+                    { name: 'LocationId' }
+                ],
+                //url: $("#localApiDomain").val() + "CardLocations/Locations/",
+                url: "http://localhost:52839/api/CardLocations/Locations/",
+
+            };
+            var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
+            $("#fromlocationCombo").jqxComboBox(
+            {
+                width: 200,
+                height: 21,
+                source: locationDataAdapter,
+                selectedIndex: 0,
+                displayMember: "NameOfLocation",
+                valueMember: "LocationId"
+            });
+
+            $("#fromlocationCombo").on('bindingComplete', function (event) {
+                $("#fromlocationCombo").jqxComboBox('insertAt', 'From Location', 0);
             });
 
             //Check key strokes for whether card is in DB for different history types Order = 1
             $("#firstCard").keyup(function () {
+                if ($("#firstCard").val() == '') { return null; }
                 cardVal = $("#firstCard").val();
-                verifyCard(cardVal, '2', $("#firstCard"));
+                verifyCard(cardVal, $("#firstCard"));
             });
 
             $("#lastCard").keyup(function () {
@@ -130,13 +161,61 @@
             });
 
             $("#shipAmount").keyup(function () {
+                if ($("#shipAmount").val() == '') { return null; }
                 cardVal = parseInt($("#lastShipped").val()) + parseInt($("#shipAmount").val());
                 if (cardVal > parseInt($("#availableCard").html())) {
                     alert("Last card shipped plus your amount is greater than the last card ordered and received.")
                     $("#shipAmount").css('background-color', '#ff6666');
                     return null;
                 }
-                verifyCard(cardVal, '2', $("#shipAmount"));
+                verifyCard(cardVal, $("#shipAmount"));
+            });
+
+            function verifyCard(CardNumber, cardTest) {
+                var cardNumber;
+
+                //var url = $("#localApiDomain").val() + 'CardOrders/ConfirmNumbers/' + Historytype + '_' + CardNumber;
+                var url = 'http://localhost:52839/api/CardShips/ConfirmNumbers/' + CardNumber;
+
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    success: function (data) {
+                        if (data.length > 0) {
+                            cardTest.css('background-color', '#ff6666');
+                        } else {
+                            cardTest.css('background-color', '#ffffff');
+                        }
+
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        swal("Error: " + errorThrown);
+                        ardTest = false;
+                    }
+                });
+
+                //return $("#LastCardAPIResult").val();
+                return cardNumber;
+            }
+
+            $("#receiveShip").on("click", function (event) {
+                var getselectedrowindexes = $('#jqxShipping').jqxGrid('getselectedrowindexes');
+                if (getselectedrowindexes.length > 0) {
+                    for (var index = 0; index < getselectedrowindexes.length; index++) {
+                        var selectedRowData = $('#jqxShipping').jqxGrid('getrowdata', getselectedrowindexes[index]);
+
+                        if (selectedRowData.CardShipReceivedBy != null) {
+                            alert("This shipment has been received.");
+                            return null;
+                        }
+
+                        ReceiveShip(selectedRowData.CardShipID, $("#txtLoggedinUsername").val());
+                    }
+                    loadGrid();
+                } else {
+
+                    alert("No orders selected!");
+                }
             });
 
             Security();
@@ -155,20 +234,23 @@
             $("<div id='jqxShipping'></div>").appendTo(parent);
 
             // loading order histor
-            var url = $("#localApiDomain").val() + "CardDistHistorys/Get/-3";
-            //var url = "http://localhost:52839/api/CardDistHistorys/Get/-3";
+            //var url = $("#localApiDomain").val() + "CardShips/GetShipments";
+            var url = "http://localhost:52839/api/CardShips/GetShipments";
 
             var source =
             {
                 datafields: [
-                    { name: 'CardHistoryId' },
-                    { name: 'ActivityDate' },
-                    { name: 'StartingNumber' },
-                    { name: 'EndingNumber' },
+                    { name: 'CardShipID' },
+                    { name: 'CardShipFromName' },
+                    { name: 'CardShipShippedBy' },
+                    { name: 'CardShipDate' },
+                    { name: 'CardShipStartNumber' },
+                    { name: 'CardShipEndNumber' },
                     { name: 'NumberOfCards' },
-                    { name: 'RecordedBy' },
-                    { name: 'ActivityId' },
-                    { name: 'ShortLocationName' },
+                    { name: 'CardShipReceivedBy' },
+                    { name: 'CardShipReceiveDate' },
+                    { name: 'CardShipToName' },
+                    { name: 'CardShipStatus' }
                 ],
                 id: 'ManualEditId',
                 type: 'Get',
@@ -181,13 +263,14 @@
                 return '<div style="margin-top: 10px;margin-left: 5px">' + newValue + '</div>';
             }
 
+            var numberOfCards = function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
+                var newValue = rowdata.CardShipEndNumber - rowdata.CardShipStartNumber + 1;
+                return '<div style="margin-top: 10px;margin-left: 5px">' + newValue + '</div>';
+            }
+
             // creage jqxgrid
             $("#jqxShipping").jqxGrid(
             {
-                //pageable: true,
-                //pagermode: 'simple',
-                //pagermode: 'advanced',
-                //pagesize: 12,
                 width: '100%',
                 height: 500,
                 source: source,
@@ -195,30 +278,19 @@
                 sortable: true,
                 altrows: true,
                 filterable: true,
-                ready: function () {
-                    var filtergroup = new $.jqx.filter();
-
-                    var filtervalue = 2;
-                    var filtercondition = 'EQUAL';
-                    var filter1 = filtergroup.createfilter('numericfilter', filtervalue, filtercondition);
-
-                    // operator between the filters in the filter group. 1 is for OR. 0 is for AND.
-                    var filter_or_operator = 1;
-
-                    filtergroup.addfilter(filter_or_operator, filter1);
-
-                    $("#jqxShipping").jqxGrid('addfilter', 'ActivityId', filtergroup);
-                    $("#jqxShipping").jqxGrid('applyfilters');
-                },
+                selectionmode: 'checkbox',
                 columns: [
-                       { text: 'CardHistoryId', datafield: 'CardHistoryId', hidden: true },
-                       { text: 'Ship Date', datafield: 'ActivityDate', cellsrenderer: DateRender },
-                       { text: 'Starting Card', datafield: 'StartingNumber', cellsrenderer: padCard },
-                       { text: 'Ending Card', datafield: 'EndingNumber', cellsrenderer: padCard },
-                       { text: 'NumberOfCards', datafield: 'NumberOfCards', cellsformat: 'n' },
-                       { text: 'User', datafield: 'RecordedBy' },
-                       { text: 'Location', datafield: 'ShortLocationName' },
-                       { text: 'ActivityId', datafield: 'ActivityId', hidden: true }
+                       { text: 'CardShipID', datafield: 'CardShipID', hidden: true },
+                       { text: 'Ship Origin', datafield: 'CardShipFromName' },
+                       { text: 'Shipped By', datafield: 'CardShipShippedBy' },
+                       { text: 'Ship Date', datafield: 'CardShipDate', cellsrenderer: DateRender },
+                       { text: 'Start Number', datafield: 'CardShipStartNumber', cellsrenderer: padCard },
+                       { text: 'End Number', datafield: 'CardShipEndNumber', cellsrenderer: padCard },
+                       { text: 'NumberOfCards', datafield: 'NumberOfCards', cellsrenderer: numberOfCards },
+                       { text: 'Received By', datafield: 'CardShipReceivedBy' },
+                       { text: 'Receive Date', datafield: 'CardShipReceiveDate', cellsrenderer: DateRender },
+                       { text: 'Destination', datafield: 'CardShipToName' },
+                       { text: 'Status', datafield: 'CardShipStatus' }
                 ]
             });
         }
@@ -226,10 +298,10 @@
         function GetLastCardShipped() {
             var cardNumber;
 
-
             $.ajax({
                 type: 'GET',
-                url: $("#localApiDomain").val() + 'CardDistHistorys/GetLastShipped/',
+                //url: $("#localApiDomain").val() + 'CardShips/GetLastShipped/',
+                url: 'http://localhost:52839/api/CardShips/GetLastShipped/',
                 success: function (data) {
                     $("#lastShipped").val(data[0].maxShipped);
                 },
@@ -291,17 +363,15 @@
             };
 
 
-            if ($("#locationCombo").jqxComboBox('selectedIndex') == 0) {
+            if ($("#tolocationCombo").jqxComboBox('selectedIndex') == 0) {
                 alert("You must pick a location!");
                 return;
             }
 
-            var ActivityDateCode = $('#jqxdatetimeinputShip').jqxDateTimeInput('getDate');
-            var ActivityDateValue = ActivityDateCode.toJSON();
-            var ActivityIdValue = $("#Card_Activity").val();
+            var toLocation = $("#tolocationCombo").jqxComboBox('getSelectedItem').value;
+            var fromLocation = $("#fromlocationCombo").jqxComboBox('getSelectedItem').value
             var StartingNumber = 0;
             var EndingNumber = 0;
-            var Quantity = 0;
 
 
             if ($("#regShip").is(":visible")) {
@@ -311,8 +381,8 @@
                 }
                 StartingNumber = parseInt($("#lastShipped").val()) + 1;
                 EndingNumber = parseInt(StartingNumber) + parseInt($("#shipAmount").val()) - 1;
-                Quantity = $("#shipAmount").val();
             }
+
             if ($("#specShip").is(":visible")) {
 
                 StartingNumber = parseInt($("#firstCard").val());
@@ -322,16 +392,15 @@
                     alert("You must set a starting card and an ending card to do a special order.");
                     return;
                 }
-
-                Quantity = parseInt(EndingNumber) - parseInt(StartingNumber) + 1;
             }
-            
-            $.post($("#localApiDomain").val() + "CardDistHistorys/Post",
-                { 'ActivityDate': ActivityDateValue, 'ActivityId': 2, 'StartingNumber': StartingNumber, 'EndingNumber': EndingNumber, 'NumberOfCards': Quantity, 'OrderConfirmationDate': '1/1/1900', 'DistributionPoint': "", 'BusOrRepID': null, 'Shift': null, 'RecordDate': new Date(), 'RecordedBy': $("#txtLoggedinUsername").val(), 'LocationId': $("#locationCombo").jqxComboBox('getSelectedItem').value },
+
+            $.post("http://localhost:52839/api/CardShips/ShipCards",
+            //$.post($("#localApiDomain").val() + "CardDistHistorys/Post",
+                { 'CardShipFrom': fromLocation, 'CardShipTo': toLocation, 'CardShipShippedBy': $("#txtLoggedinUsername").val(), 'CardShipStartNumber': StartingNumber, 'CardShipEndNumber': EndingNumber },
                 function (data, status) {
                     switch (status) {
                         case 'success':
-                            alert('Cards were created successfully');
+                            alert('Cards were shipped successfully');
                             break;
                         default:
                             alert('An Error occurred: ' + status + "\n Data:" + data);
@@ -340,6 +409,23 @@
                 }
             );
 
+        }
+
+        function ReceiveShip(CardShipId, ReceivedBy) {
+            $.post("http://localhost:52839/api/CardShips/Update",
+                { 'CardShipId': CardShipId, 'CardShipReceivedBy': ReceivedBy },
+                function (data, status) {
+                    switch (status) {
+                        case 'success':
+                            loadGrid();
+                            alert('Cards were received successfully');
+                            break;
+                        default:
+                            alert('An Error occurred: ' + status + "\n Data:" + data);
+                            break;
+                    }
+                }
+            );
         }
 
     </script>
@@ -354,8 +440,9 @@
                         </div>
                     </div>
                     <div class="row search-size">
-                        <div class="col-sm-3">
-                            <div id="locationCombo"></div>
+                        <div class="col-sm-2">
+                            <div id="fromlocationCombo"></div>
+                            <div id="tolocationCombo"></div>
                         </div>
                         <div class="col-sm-7">
                             <div class="row search-size">
@@ -386,13 +473,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-3">
                             <div class="row search-size">
-                                <div class="col-sm-8 col-sm-offset-4">
-                                    <div class="row search-size">
-                                        <div class="col-sm-12">
-                                            <input type="button" id="placeShip" value="Place Shipping" />
-                                        </div>
+                                <div class="row search-size">
+                                    <div class="col-sm-6">
+                                        <input type="button" id="placeShip" value="Place Shipping" />
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="button" id="receiveShip" value="Receive Shipping" />
                                     </div>
                                 </div>
                             </div>

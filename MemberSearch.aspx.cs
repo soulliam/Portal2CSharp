@@ -204,5 +204,24 @@ public partial class MemberSearch : System.Web.UI.Page
         }
     }
 
+    [System.Web.Services.WebMethod]
+    public static string logCertificate(string thisUserName, string thisMemberId, string NumberOfRedemption, string RedemptionTypeID)
+    {
+        try
+        {
+            clsADO getRedemptionType = new clsADO();
 
+            string strRedemptionType = Convert.ToString(getRedemptionType.returnSingleValue("select RedemptionTypeName from RedemptionTypes where RedemptionTypeId =  " + RedemptionTypeID, true));
+
+            clsLogging logSearch = new clsLogging();
+
+            logSearch.logChange(thisUserName, thisMemberId, NumberOfRedemption, strRedemptionType, "", "Portal Certificate", logSearch.getBatch());
+
+            return "";
+        }
+        catch (Exception ex)
+        {
+            return Convert.ToString(ex);
+        }
+    }
 }

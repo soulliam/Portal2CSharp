@@ -52,21 +52,23 @@
 
 
         $(document).ready(function () {
-            $(function () {
-                $('body').on('mousedown', '#popupCombineMembers', function () {
-                    $(this).addClass('draggable').parents().on('mousemove', function (e) {
-                        $('.draggable').offset({
-                            top: e.pageY - $('.draggable').outerHeight() / 2,
-                            left: e.pageX - $('.draggable').outerWidth() / 2
-                        }).on('mouseup', function () {
-                            $(this).removeClass('draggable');
-                        });
-                        e.preventDefault();
-                    });
-                }).on('mouseup', function () {
-                    $('.draggable').removeClass('draggable');
-                });
-            });
+
+            ////Drag function
+            //$(function () {
+            //    $('body').on('mousedown', '#popupCombineMembers', function () {
+            //        $(this).addClass('draggable').parents().on('mousemove', function (e) {
+            //            $('.draggable').offset({
+            //                top: e.pageY - $('.draggable').outerHeight() / 2,
+            //                left: e.pageX - $('.draggable').outerWidth() / 2
+            //            }).on('mouseup', function () {
+            //                $(this).removeClass('draggable');
+            //            });
+            //            e.preventDefault();
+            //        });
+            //    }).on('mouseup', function () {
+            //        $('.draggable').removeClass('draggable');
+            //    });
+            //});
 
             //#region TabSetup            
 
@@ -189,12 +191,14 @@
                 $("#transferCard").jqxButton();
                 $("#addCard").jqxButton();
                 $("#deleteCard").jqxButton();
+                $("#UnDeleteCard").jqxButton();
                 $("#setCardPrimary").jqxButton();
                 $("#combineMemberCards").jqxButton();
                 $("#saveCombineMember").jqxButton();
                 $("#cancelCombineMember").jqxButton();
 
                 $("#addCardSubmit").jqxButton(); 
+                $("#cancelCardSubmit").jqxButton();
 
                 $("#saveReservation").jqxButton();
                 $("#cancelReservationForm").jqxButton();
@@ -478,9 +482,9 @@
                 $('#popupReservation').jqxWindow({ draggable: true });
                 $('#popupReservation').jqxWindow({ isModal: true });
                 $("#popupReservation").css("visibility", "visible");
-                $('#popupReservation').jqxWindow({ height: '650px', width: '50%' });
-                $('#popupReservation').jqxWindow({ minHeight: '400px', minWidth: '50%' });
-                $('#popupReservation').jqxWindow({ maxHeight: '650px', maxWidth: '50%' });
+                $('#popupReservation').jqxWindow({ height: '650px', width: '800px' });
+                $('#popupReservation').jqxWindow({ minHeight: '400px', minWidth: '800px' });
+                $('#popupReservation').jqxWindow({ maxHeight: '650px', maxWidth: '800px' });
                 $('#popupReservation').jqxWindow({ showCloseButton: false });
                 $('#popupReservation').jqxWindow({ animationType: 'combined' });
                 $('#popupReservation').jqxWindow({ showAnimationDuration: 300 });
@@ -489,6 +493,8 @@
 
                 getReservationFeeCredit();
                 $("#reservationLocationCombo").jqxComboBox('selectItem', thisLocationId);
+                $("#reservationPaymentMethodId").jqxComboBox('selectItem', 3);
+                $("#reservationFeeCreditCombo").jqxComboBox('selectItem', 3);
             });
 
             // mark redemption used button click
@@ -788,8 +794,6 @@
                     var thisCompanyId = $("#MailerCompanyComboID").val();
                 }
                
-                var thisGetEmail = $("#GetEmail").prop("checked");
-
                 var first = true;
                 var rows = $('#phoneGrid').jqxGrid('getrows');
                 
@@ -811,6 +815,17 @@
                 if (group.indexOf("Portal_RFR") > 0) {
                     isRFR = true;
                 }
+
+                var thisGetEmail = $("#GetEmail").prop("checked");
+                var thisTravelAlert = $("#TravelAlert").prop("checked");
+                var thisEmailReceipts = $("#EmailReceipts").prop("checked");
+                var thisRedeemEmail = $("#RedeemEmail").prop("checked");
+                var thisProfileUpdateEmail = $("#ProfileUpdateEmail").prop("checked");
+                var thisReservationChangeEmail = $("#ReservationChangeEmail").prop("checked");
+                var thisReservationConfirmationEmail = $("#ReservationConfirmationEmail").prop("checked");
+                var thisReservationReminder = $("#ReservationReminder").prop("checked");
+
+                saveEmailPrefs(thisMemberId, thisEmailReceipts, thisGetEmail, thisTravelAlert, thisRedeemEmail, thisProfileUpdateEmail, thisReservationChangeEmail, thisReservationConfirmationEmail, thisReservationReminder)
 
                 saveUpdateMemberInfo(phoneType, phoneNumber, thisMemberId, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2,
                                      thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, isRFR);
@@ -849,6 +864,10 @@
             //call add card function on click
             $("#addCardSubmit").on("click", function (event) {
                 addCard();
+            });
+
+            $("#cancelCardSubmit").on("click", function (event) {
+                $("#addCardWindow").jqxWindow('close');
             });
 
             //Delete Card from Member
@@ -897,6 +916,57 @@
                                     swal(
                                         'Deleted!',
                                         'Your card has been deleted.',
+                                        'success'
+                                    )
+                                    thisMemberId = $("#MemberId").val();
+                                    $('#jqxCardGrid').jqxGrid('clearselection');
+                                    $('#jqxCardGrid').jqxGrid('clear');
+                                    loadCards(thisMemberId);
+                                },
+                                error: function (request, status, error) {
+                                    swal(error);
+                                }
+                            });
+                        }
+                    }
+                })
+            });
+
+            $("#UnDeleteCard").on("click", function (event) {
+
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to Un-delete this card?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Un-delete it!'
+                }).then(function () {
+                    var rowCount = $('#jqxCardGrid').jqxGrid('getrows');
+
+                    if (rowCount.length == 1) {
+                        swal("There is only one card assigned to this account!")
+                        return null;
+                    }
+
+                    var getselectedrowindexes = $('#jqxCardGrid').jqxGrid('getselectedrowindexes');
+
+                    if (getselectedrowindexes.length > 0) {
+                        for (var index = 0; index < getselectedrowindexes.length; index++) {
+                            var selectedRowData = $('#jqxCardGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
+
+                            var url = $("#localApiDomain").val() + "Cards/UnDeleteCard/" + selectedRowData.CardId;
+                            //var url = "http://localhost:52839/api/Cards/UnDeleteCard/" + selectedRowData.CardId;
+
+                            $.ajax({
+                                type: "GET",
+                                url: url,
+                                dataType: "json",
+                                success: function () {
+                                    swal(
+                                        'Un-Deleted!',
+                                        'Your card has been Un-deleted.',
                                         'success'
                                     )
                                     thisMemberId = $("#MemberId").val();
@@ -986,121 +1056,120 @@
 
             //Open Combine card popup
             $("#combineMemberCards").on("click", function (event) {
+                //New Pop up to deal with swal z-index issue
+                //$("#popupCombineMembers").css('display', 'block');
+                //$("#popupCombineMembers").css('width', '400px');
+                //$("#popupCombineMembers").css('position', 'fixed');
+                //$("#popupCombineMembers").css('top', '50%');
+                //$("#popupCombineMembers").css('left', '50%');
+                //$("#popupCombineMembers").css('transform', 'translate(-50%, -50%)');
+                //$("#popupCombineMembers").css('background-color', '#F0EDED');
+                //$("#popupCombineMembers").css('border-radius', '9px 9px 9px 9px');
+                //$("#popupCombineMembers").css('z-index', '999');
 
-                $("#popupCombineMembers").css('display', 'block');
-                $("#popupCombineMembers").css('width', '400px');
-                $("#popupCombineMembers").css('position', 'fixed');
-                $("#popupCombineMembers").css('top', '50%');
-                $("#popupCombineMembers").css('left', '50%');
-                $("#popupCombineMembers").css('transform', 'translate(-50%, -50%)');
-                $("#popupCombineMembers").css('background-color', '#F0EDED');
-                $("#popupCombineMembers").css('border-radius', '9px 9px 9px 9px');
-                $("#popupCombineMembers").css('z-index', '999');
+                $("#popupCombineMembers").css('visibility', 'hidden');
 
-                //$("#popupCombineMembers").css('visibility', 'hidden');
-
-                //var offset = $("#jqxMemberInfoTabs").offset();
-                //$("#popupCombineMembers").jqxWindow({ position: { x: '30%', y: '30%' } });
-                //$('#popupCombineMembers').jqxWindow({ resizable: false });
-                //$('#popupCombineMembers').jqxWindow({ draggable: true });
-                //$('#popupCombineMembers').jqxWindow({ isModal: false });
-                //$("#popupCombineMembers").css("visibility", "visible");
-                //$('#popupCombineMembers').jqxWindow({ height: '15%', width: '30%' });
-                //$('#popupCombineMembers').jqxWindow({ minHeight: '25%', minWidth: '30%' });
-                //$('#popupCombineMembers').jqxWindow({ showCloseButton: true });
-                //$('#popupCombineMembers').jqxWindow({ animationType: 'combined' });
-                //$('#popupCombineMembers').jqxWindow({ showAnimationDuration: 300 });
-                //$('#popupCombineMembers').jqxWindow({ closeAnimationDuration: 500 });
-                //$("#popupCombineMembers").jqxWindow('open');
+                var offset = $("#jqxMemberInfoTabs").offset();
+                $("#popupCombineMembers").jqxWindow({ position: { x: '30%', y: '30%' } });
+                $('#popupCombineMembers').jqxWindow({ resizable: false });
+                $('#popupCombineMembers').jqxWindow({ draggable: true });
+                $('#popupCombineMembers').jqxWindow({ isModal: false });
+                $("#popupCombineMembers").css("visibility", "visible");
+                $('#popupCombineMembers').jqxWindow({ height: '15%', width: '30%' });
+                $('#popupCombineMembers').jqxWindow({ minHeight: '25%', minWidth: '30%' });
+                $('#popupCombineMembers').jqxWindow({ showCloseButton: true });
+                $('#popupCombineMembers').jqxWindow({ animationType: 'combined' });
+                $('#popupCombineMembers').jqxWindow({ showAnimationDuration: 300 });
+                $('#popupCombineMembers').jqxWindow({ closeAnimationDuration: 500 });
+                $("#popupCombineMembers").jqxWindow('open');
 
                 
-                //var cardrows = $('#jqxCardGrid').jqxGrid('getrows');
+                var cardrows = $('#jqxCardGrid').jqxGrid('getrows');
 
-                //if (cardrows.length > 0) {
+                if (cardrows.length > 0) {
 
-                //    for (var index = 0; index < cardrows.length; index++) {
-                //        if (cardrows[index].IsPrimary  == true) {
-                //            $("#targetMember").val(cardrows[index].FPNumber);
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    swal("This member doesn't have a card!");
-                //    return null;
-                //}
+                    for (var index = 0; index < cardrows.length; index++) {
+                        if (cardrows[index].IsPrimary  == true) {
+                            $("#targetMember").val(cardrows[index].FPNumber);
+                        }
+                    }
+                }
+                else
+                {
+                    swal("This member doesn't have a card!");
+                    return null;
+                }
                
             });
 
             $("#saveCombineMember").on("click", function (event) {
-                swal({
-                    title: 'Are you sure?',
-                    text: "Do you want to combine cards?",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, combine them!'
-                }).then(function () {
-                    var thisTargetCard = $("#targetMember").val();
-                    var thisSourceCard = $("#orginMember").val();
-                    var thisCombinedBy = $("#txtLoggedinUsername").val();
 
-                    PageMethods.combineCards(thisSourceCard, thisTargetCard, thisCombinedBy, DisplayPageMethodResults);
+                ////This code is to call the stored procedure with nested roll back
+                ////Need to turn back on drag function at top of javascript
+                //swal({
+                //    title: 'Are you sure?',
+                //    text: "Do you want to combine cards?",
+                //    type: 'warning',
+                //    showCancelButton: true,
+                //    confirmButtonColor: '#3085d6',
+                //    cancelButtonColor: '#d33',
+                //    confirmButtonText: 'Yes, combine them!'
+                //}).then(function () {
+                //    var thisTargetCard = $("#targetMember").val();
+                //    var thisSourceCard = $("#orginMember").val();
+                //    var thisCombinedBy = $("#txtLoggedinUsername").val();
+
+                //    PageMethods.combineCards(thisSourceCard, thisTargetCard, thisCombinedBy, DisplayPageMethodResults);
+                //    return null;
+                //});
+
+                //return null;
+
+                    
+                var result = confirm("Do you want to combine these cards!");
+                if (result != true) {
                     return null;
+                }
+                
+                var thisTargetCard = $("#targetMember").val();
+                var thisSourceCard = $("#orginMember").val();
+                var thisCombinedBy = $("#txtLoggedinUsername").val();
+                    
+                    
+
+                var url = $("#localApiDomain").val() + "CombineMemberCardsController/CombineMemberCards/";
+                //var url = "http://localhost:52839/api/CombineMemberCardsController/CombineMemberCards/";
+
+                $.ajax({
+                    type: "POST",
+
+                    url: url,
+
+                    data: {
+                        "TargetCard": thisTargetCard,
+                        "OriginCard": thisSourceCard,
+                        "CombinedBy": thisCombinedBy,
+                    },
+                    dataType: "json",
+                    success: function (Response) {
+                        swal(
+                            'Combined!',
+                            Response,
+                            'success'
+                        )
+                        $("#popupCombineMembers").jqxWindow('hide');
+                        thisMemberId = $("#MemberId").val();
+                        $('#jqxCardGrid').jqxGrid('clearselection');
+                        $('#jqxCardGrid').jqxGrid('clear');
+                        $("#targetMember").val('');
+                        loadCards(thisMemberId);
+                        $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
+                        $("#topPointsBalanceAccountBar").html(loadPoints(AccountId, $("#topPointsBalanceAccountBar")));
+                    },
+                    error: function (request, status, error) {
+                        swal(error);
+                    }
                 });
-
-                return null;
-
-
-                swal({
-                    title: 'Are you sure?',
-                    text: "Do you want to combine cards?",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, combine them!'
-                }).then(function () {
-                    var thisTargetCard = $("#targetMember").val();
-                    var thisSourceCard = $("#orginMember").val();
-                    var thisCombinedBy = $("#txtLoggedinUsername").val();
-                    
-                    
-
-                    //var url = $("#localApiDomain").val() + "CombineMemberCardsController/CombineMemberCards/";
-                    ////var url = "http://localhost:52839/api/CombineMemberCardsController/CombineMemberCards/";
-
-                    //$.ajax({
-                    //    type: "POST",
-
-                    //    url: url,
-
-                    //    data: {
-                    //        "TargetCard": thisTargetCard,
-                    //        "OriginCard": thisOriginCard,
-                    //        "CombinedBy": thisCombinedBy,
-                    //    },
-                    //    dataType: "json",
-                    //    success: function (Response) {
-                    //        swal(
-                    //          'Combined!',
-                    //          Response,
-                    //          'success'
-                    //        )
-                    //        $("#popupCombineMembers").jqxWindow('hide');
-                    //        thisMemberId = $("#MemberId").val();
-                    //        $('#jqxCardGrid').jqxGrid('clearselection');
-                    //        $('#jqxCardGrid').jqxGrid('clear');
-                    //        $("#targetMember").val('');
-                    //        loadCards(thisMemberId);
-                    //    },
-                    //    error: function (request, status, error) {
-                    //        swal(error);
-                    //    }
-                    //});
-                })
-
             });
 
             //submit manual Edit manualEditSubmit
@@ -1694,6 +1763,34 @@
             });
         }
 
+        function loadEmailPrefs(PageMemberID) {
+            $.ajax({
+                type: 'GET',
+                url: $("#apiDomain").val() + "members/" + PageMemberID + "/email-preferences",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "AccessToken": $("#userGuid").val(),
+                    "ApplicationKey": $("#AK").val()
+                },
+                success: function (thisData) {
+;
+                    $("#GetEmail").prop("checked", thisData.result.data.GetEmail);
+                    $("#TravelAlert").prop("checked", thisData.result.data.TravelAlertsEmailFlag);
+                    $("#EmailReceipts").prop("checked", thisData.result.data.EmailReceiptsFlag);
+                    $("#RedeemEmail").prop("checked", thisData.result.data.RedeemEmailFlag);
+                    $("#ProfileUpdateEmail").prop("checked", thisData.result.data.ProfileUpdateEmailFlag);
+                    $("#ReservationChangeEmail").prop("checked", thisData.result.data.ReservationChangeEmailFlag);
+                    $("#ReservationConfirmationEmail").prop("checked", thisData.result.data.ReservationConfirmationEmailFlag);
+                    $("#ReservationReminder").prop("checked", thisData.result.data.ReservationReminderFlag);
+                    
+                },
+                error: function (request, status, error) {
+                    swal(error + " - " + request.responseJSON);
+                }
+            });
+        }
+
         function loadCards(PageMemberID) {
 
             var parent = $("#jqxCardGrid").parent();
@@ -1702,7 +1799,9 @@
 
 
             //Loads card list
-            var url = $("#apiDomain").val() + "Members/" + PageMemberID + "/Cards";
+            //var url = $("#apiDomain").val() + "Members/" + PageMemberID + "/Cards";
+            //var url = "http://localhost:52839/api/Cards/GetCards/" + PageMemberID;
+            var url = $("#localApiDomain").val() + "Cards/GetCards/" + PageMemberID;
 
             var source =
             {
@@ -1711,18 +1810,37 @@
                     { name: 'MemberId' },
                     { name: 'FPNumber' },
                     { name: 'IsPrimary' },
-                    { name: 'IsActive' }
+                    { name: 'IsActive' },
+                    { name: 'IsDeleted' },
+                    { name: 'CreateDatetime' },
+                    { name: 'UpdateDatetime' }
                 ],
 
                 id: 'CardId',
                 type: 'Get',
                 datatype: "json",
                 url: url,
-                beforeSend: function (jqXHR, settings) {
-                    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
-                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
-                },
+                //beforeSend: function (jqXHR, settings) {
+                //    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
+                //    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+                //},
                 root: "data"
+            };
+
+            var RenderTrueFalse = function (row, columnfield, value, defaulthtml, columnproperties) {
+                // format date as string due to inconsistant date coversions
+                switch (value) {
+                    case 0:
+                        return '<div style="margin-top: 10px;margin-left: 5px"></div>';
+                        break;
+                    case 1:
+                        return '<div style="margin-top: 10px;margin-left: 5px">Yes</div>';
+                        break;
+                    default:
+                        return '<div style="margin-top: 10px;margin-left: 5px"></div>';
+                        break;
+                }
+
             };
 
             // create jqxCardGrid
@@ -1762,8 +1880,11 @@
                               return "<div style='margin-top:10px;margin-left:5px;'>" + firstThree + "-" + lastFive + "</div>";
                           }
                       },
-                      { text: 'Primary', datafield: 'IsPrimary' },
-                      { text: 'Active', datafield: 'IsActive' }
+                      { text: 'Primary', datafield: 'IsPrimary', cellsrenderer: RenderTrueFalse },
+                      { text: 'Active', datafield: 'IsActive', cellsrenderer: RenderTrueFalse },
+                      { text: 'Deleted', datafield: 'IsDeleted', cellsrenderer: RenderTrueFalse },
+                      { text: 'Date Added', datafield: 'CreateDatetime', cellsrenderer: DateTimeRender },
+                      { text: 'Date updated', datafield: 'UpdateDatetime', cellsrenderer: DateTimeRender }
                 ]
             });
         }
@@ -3311,6 +3432,8 @@
                 success: function (thisData) {
                     thisRedemptionId = thisData.result.data[0].RedemptionId;
                     var toAddress = $("#EmailAddress").val();
+                    var thisUser = $("#loginLabel").html();
+                    PageMethods.logCertificate(thisUser, thisMemberId, NumberToRedeem, thisRedemptionTypeId);
                 },
                 error: function (request, status, error) {
                     swal(error + " - " + request.responseJSON);
@@ -3405,6 +3528,14 @@
             $("#jqxReservationGrid").jqxGrid('clear');
             $("#jqxCardGrid").jqxGrid('clear');
             $("#titleCombo").jqxComboBox('selectItem', 0);
+            $("#GetEmail").prop("checked", false);
+            $("#TravelAlert").prop("checked", false);
+            $("#EmailReceipts").prop("checked", false);
+            $("#RedeemEmail").prop("checked", false);
+            $("#ProfileUpdateEmail").prop("checked", false);
+            $("#ReservationChangeEmail").prop("checked", false);
+            $("#ReservationConfirmationEmail").prop("checked", false);
+            $("#ReservationReminder").prop("checked", false);
         }
 
         function findMember(PageMemberID) {
@@ -3618,7 +3749,6 @@
                     $("#MailerCompanyComboID").val(thisData.result.data.CompanyId);
 
                     glbCompanyId = thisData.result.data.CompanyId;
-                    $("#GetEmail").prop("checked", thisData.result.data.GetEmail);
                     $("#statusCombo").jqxComboBox('selectItem', thisData.result.data.PreferredStatusName);
                     
                 },
@@ -3631,7 +3761,7 @@
                     loadReservations(PageMemberID);
                     loadCards(PageMemberID);
                     loadNotes(PageMemberID);
-
+                    loadEmailPrefs(PageMemberID);
                     loadMemberActivity(PageMemberID);
                     loadAccountActivity();
                     loadReferrals(PageMemberID);
@@ -4041,15 +4171,71 @@
                                         <div class="form-group">
                                             <label for="Zip" class="col-sm-3 col-md-4 control-label">Zip:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control FART" id="Zip" placeholder="Zip Code">
+                                                <input type="text" class="form-control" id="Zip" placeholder="Zip Code">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="GetEmail" class="col-sm-3 col-md-4 control-label">Get Email:</label>
-                                            <div class="col-sm-9 col-md-8">
+                                            <label for="GetEmail" class="col-sm-4 col-md-4 control-label">Newsletters:</label>
+                                            <div class="col-sm-2 col-md-2">
                                                 <div class="checkbox">
                                                     <label>
-                                                        <input type="checkbox" class="form-control" id="GetEmail" />
+                                                        <input type="checkbox" class="form-control communicationType" id="GetEmail" disabled />
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <label for="TravelAlert" class="col-sm-4 col-md-4 control-label">Travel Alert:</label>
+                                            <div class="col-sm-2 col-md-2">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" class="form-control communicationType" id="TravelAlert" disabled />
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <label for="EmailReceipts" class="col-sm-4 col-md-4 control-label">E-Receipts:</label>
+                                            <div class="col-sm-2 col-md-2">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" class="form-control communicationType" id="EmailReceipts" disabled />
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <label for="RedeemEmail" class="col-sm-4 col-md-4 control-label">Redeem Email:</label>
+                                            <div class="col-sm-2 col-md-2">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" class="form-control communicationType" id="RedeemEmail" disabled />
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <label for="ProfileUpdateEmail" class="col-sm-4 col-md-4 control-label">Profile Update:</label>
+                                            <div class="col-sm-2 col-md-2">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" class="form-control communicationType" id="ProfileUpdateEmail" disabled />
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <label for="ReservationChangeEmail" class="col-sm-4 col-md-4 control-label">Reservation Changes:</label>
+                                            <div class="col-sm-2 col-md-2">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" class="form-control communicationType" id="ReservationChangeEmail" disabled />
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <label for="ReservationConfirmationEmail" class="col-sm-4 col-md-4 control-label">Reservation Confirm:</label>
+                                            <div class="col-sm-2 col-md-2">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" class="form-control communicationType" id="ReservationConfirmationEmail" disabled />
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <label for="ReservationReminder" class="col-sm-4 col-md-4 control-label">Reservation Remind:</label>
+                                            <div class="col-sm-2 col-md-2">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" class="form-control communicationType" id="ReservationReminder" disabled />
                                                     </label>
                                                 </div>
                                             </div>
@@ -4284,6 +4470,7 @@
                                 <div class="col-sm-3 col-md-2">
                                 <input type="button" id="transferCard" value="Transfer" class="editor" style="display:none;" />
                                 <input type="button" id="deleteCard" value="Delete" class="editor" />
+                                <input type="button" id="UnDeleteCard" value="UnDelete" class="editor" />
                                 <input type="button" id="addCard" value="Add" class="editor" />
                                 <input type="button" id="setCardPrimary" value="Set as Primary" class="editor" />
                                 <input type="button" id="combineMemberCards" value="Combine Member Cards" class="RFR" />
@@ -4387,12 +4574,11 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="top-divider">
-                            <div class="col-sm-3 col-md-4">
+                            <div class="col-sm-6">
+                                <input type="button" class="form-control" id="cancelCardSubmit" value="Cancel" />
                             </div>
-                            <div class="col-sm-6 col-md-4">
+                            <div class="col-sm-6">
                                 <input type="button" class="form-control" id="addCardSubmit" value="Add" />
-                            </div>
-                            <div class="col-sm-3 col-md-4">
                             </div>
                         </div>
                     </div>
@@ -4412,85 +4598,108 @@
                         
                         <div class="form-horizontal">
                             <div class="form-group">
-                                <label for="reservationLocationCombo" class="col-sm-3 col-md-4 control-label">Location:</label>
+                                <label for="reservationLocationCombo" class="col-sm-2 col-md-3 control-label">Location:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <div id="reservationLocationCombo"></div><input id="airportId" style="display:none;" />
                                 </div>
+                                <div class="col-sm-1 col-md-1"></div>
                             </div>
                             <div class="form-group">
-                                <label for="reservationStartDate" class="col-sm-3 col-md-4 control-label">Start Date:</label>
+                                <label for="reservationStartDate" class="col-sm-2 col-md-3 control-label">Start Date:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <div id="reservationStartDate"></div>
                                 </div>
+                                <div class="col-sm-1 col-md-1"></div>
                             </div>
                             <div class="form-group">
-                                <label for="reservationEndDate" class="col-sm-3 col-md-4 control-label">End Date:</label>
+                                <label for="reservationEndDate" class="col-sm-2 col-md-3 control-label">End Date:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <div id="reservationEndDate"></div>
                                 </div>
+                                <div class="col-sm-1 col-md-1"></div>
                             </div>
                             <div class="form-group">
-                                <label for="reservationFeeIdCombo" class="col-sm-3 col-md-4 control-label">Fee in $:</label>
-                                <div class="col-sm-9 col-md-8">
+                                <label for="reservationFeeIdCombo" class="col-sm-3 col-md-3 control-label">Fee in $:</label>
+                                <div class="col-sm-3 col-md-3">
                                     <input id="reservationFeeInput" /><input id="reservationFeeInputValue" style="display:none;" />
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="reservationFeePoints" class="col-sm-3 col-md-4 control-label">Fee in Points:</label>
-                                <div class="col-sm-9 col-md-8">
+                                <label for="reservationFeePoints" class="col-sm-2 col-md-2 control-label">Fee in Points:</label>
+                                <div class="col-sm-3 col-md-3">
                                     <input type="text" id="reservationFeePointsInput" />
                                 </div>
+                                <div class="col-sm-1 col-md-1"></div>
                             </div>
+                            <%--<div class="form-group">
+                                <label for="reservationFeePoints" class="col-sm-2 col-md-3 control-label">Fee in Points:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" id="" />
+                                </div>
+                                <div class="col-sm-1 col-md-1"></div>
+                            </div>--%>
                             <div class="form-group">
-                                <label for="reservationFeatures" class="col-sm-3 col-md-4 control-label">Features:</label>
+                                <label for="reservationFeatures" class="col-sm-2 col-md-3 control-label">Features:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <div id="reservationFeatures"></div>
                                 </div>
+                                <div class="col-sm-1 col-md-1"></div>
                             </div>
                             <div class="form-group">
-                                <label for="reservationPaymentMethodId" class="col-sm-3 col-md-4 control-label">Payment Method:</label>
+                                <label for="reservationPaymentMethodId" class="col-sm-2 col-md-3 control-label">Payment Method:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <div id="reservationPaymentMethodId"></div>
                                 </div>
+                                <div class="col-sm-1 col-md-1"></div>
                             </div>
                             <div class="form-group">
-                                <label for="reservationFeeCreditCombo" class="col-sm-3 col-md-4 control-label">Credits:</label>
+                                <label for="reservationFeeCreditCombo" class="col-sm-2 col-md-3 control-label">Credits:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <div id="reservationFeeCreditCombo"></div>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="reservationFeeDiscountIdGrid" class="col-sm-3 col-md-4 control-label">Discounts:</label>
+                                <label for="reservationFeeDiscountIdGrid" class="col-sm-2 col-md-3 control-label">Discounts:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <div id="reservationFeeDiscountIdDDB">
                                         <div id="reservationFeeDiscountIdGrid"></div>
                                     </div>
+                                    <div class="col-sm-1 col-md-1"></div>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="EstimatedReservationCost" class="col-sm-3 col-md-4 control-label">Est. Cost:</label>
+                                <label for="EstimatedReservationCost" class="col-sm-2 col-md-3 control-label">Est. Cost:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <input type="text" id="EstimatedReservationCost" placeholder="Estimated Reservation Cost" /><input type="button" id="getEstCost" value="Get Cost" />
                                 </div>
+                                <div class="col-sm-1 col-md-1"></div>
                             </div>
                             <div class="form-group">
-                                <label for="ReservationNote" class="col-sm-3 col-md-4 control-label">Notes:</label>
+                                <label for="ReservationNote" class="col-sm-2 col-md-3 control-label">Notes:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <textarea id="ReservationNote" rows="4"></textarea>
                                 </div>
+                                <div class="col-sm-1 col-md-1"></div>
                             </div>
                             <div class="form-group">
-                                <label for="reservationTermsAndConditionsFlag" class="col-sm-3 col-md-4 control-label">Terms:</label>
-                                <div class="col-sm-9 col-md-8">
+                                <label for="reservationTermsAndConditionsFlag" class="col-sm-3 col-md-3 control-label">Terms:</label>
+                                <div class="col-sm-2 col-md-2">
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" class="form-control" id="reservationTermsAndConditionsFlag" />
+                                            <input type="checkbox" class="form-control" id="reservationTermsAndConditionsFlag" checked />
                                         </label>
                                     </div>
                                 </div>
+                                <label for="SendNotificationsFlag" class="col-sm-3 col-md-3 control-label">Send Notification:</label>
+                                <div class="col-sm-3 col-md-3">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="form-control" id="SendNotificationsFlag" checked />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-1 col-md-1"></div>
                             </div>
-                            <div class="form-group">
-                                <label for="SendNotificationsFlag" class="col-sm-3 col-md-4 control-label">Send Notification:</label>
+                            <%--<div class="form-group">
+                                <label for="SendNotificationsFlag" class="col-sm-2 col-md-3 control-label">Send Notification:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <div class="checkbox">
                                         <label>
@@ -4498,8 +4707,8 @@
                                         </label>
                                     </div>
                                 </div>
-                            </div>
-                            
+                                <div class="col-sm-1 col-md-1"></div>
+                            </div>--%>
                         </div>
                     </div>
                 </div>

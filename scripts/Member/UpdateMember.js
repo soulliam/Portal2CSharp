@@ -65,8 +65,6 @@
                     "CorporateDiscountCode": "",
                     "LocationId": thisLocationId,
                     "PhoneList": [],
-                    "GetEmail": thisGetEmail,
-                    "EmailReceiptsFlag": true,
                     "CompanyId": thisCompanyId,
                     "MarketingCode": thisMarketingCode
                 }),
@@ -118,8 +116,6 @@
                         "PhoneTypeId": phoneType[0]
                     }
                     ],
-                    "GetEmail": thisGetEmail,
-                    "EmailReceiptsFlag": true,
                     "CompanyId": thisCompanyId,
                     "MarketingCode": thisMarketingCode
                 }),
@@ -174,8 +170,6 @@
                         "PhoneTypeId": phoneType[1]
                     }
                     ],
-                    "GetEmail": true,
-                    "EmailReceiptsFlag": true,
                     "CompanyId": thisCompanyId,
                     "MarketingCode": thisMarketingCode
                 }),
@@ -234,8 +228,6 @@
                         "PhoneTypeId": phoneType[2]
                     }
                     ],
-                    "GetEmail": true,
-                    "EmailReceiptsFlag": true,
                     "CompanyId": thisCompanyId,
                     "MarketingCode": thisMarketingCode
                 }),
@@ -298,8 +290,6 @@
                         "PhoneTypeId": phoneType[3]
                     }
                     ],
-                    "GetEmail": true,
-                    "EmailReceiptsFlag": true,
                     "CompanyId": thisCompanyId,
                     "MarketingCode": thisMarketingCode,
                 }),
@@ -320,6 +310,39 @@
         default:
             swal("Phone list Error");
     }
+}
+
+function saveEmailPrefs(thisMemberId, EmailReceiptsFlag, GetEmail, TravelAlertsEmailFlag, RedeemEmailFlag, ProfileUpdateEmailFlag, ReservationChangeEmailFlag, ReservationConfirmationEmailFlag, ReservationReminderFlag) {
+    var url = $("#apiDomain").val() + "members/" + thisMemberId + "/email-preferences";
+
+    $.ajax({
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "AccessToken": $("#userGuid").val(),
+            "ApplicationKey": $("#AK").val()
+        },
+        type: "PUT",
+        url: url,
+        data: JSON.stringify({
+            "EmailReceiptsFlag": EmailReceiptsFlag,
+            "GetEmail": GetEmail,
+            "TravelAlertsEmailFlag": TravelAlertsEmailFlag,
+            "RedeemEmailFlag": RedeemEmailFlag,
+            "ProfileUpdateEmailFlag": ProfileUpdateEmailFlag,
+            "ReservationChangeEmailFlag": ReservationChangeEmailFlag,
+            "ReservationConfirmationEmailFlag": ReservationConfirmationEmailFlag,
+            "ReservationReminderFlag": ReservationReminderFlag
+        }),
+        dataType: "json",
+        success: function () {
+        },
+        error: function (request, status, error) {
+            swal(error + " - " + request.responseJSON.message);
+        },
+        complete: function () {
+        }
+    });
 }
 
 
