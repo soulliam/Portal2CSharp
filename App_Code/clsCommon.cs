@@ -22,6 +22,7 @@ public class clsCommon
 
     public void SendEmail(string ToAddress, string From, string Subject, string Body, bool IsHtml, string file = "")
     {
+
         //(1) Create the MailMessage instance
         MailMessage Message = new MailMessage(From, ToAddress);
 
@@ -44,6 +45,10 @@ public class clsCommon
         smtp.Host = "192.168.0.53";
         smtp.Send(Message);
 
+        if (file != "")
+        {
+            Message.Attachments.Dispose();
+        }
     }
 
     public System.Web.UI.WebControls.Image GenerateQRCode(string code)

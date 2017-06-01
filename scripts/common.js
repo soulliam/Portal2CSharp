@@ -387,3 +387,15 @@ function verifyCard(CardNumber, Historytype, cardTest) {
     //return $("#LastCardAPIResult").val();
     return cardNumber;
 }
+
+function msieversion() {
+    var ua = window.navigator.userAgent;
+    var msie = ua.indexOf("MSIE ");
+    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) // If Internet Explorer, return true
+    {
+        return true;
+    } else { // If another browser,
+  return false;
+}
+return false;
+}

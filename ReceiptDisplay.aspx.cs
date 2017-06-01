@@ -44,8 +44,8 @@ public partial class ReceiptDisplay : System.Web.UI.Page
             }
 
 
-            //var fileDel = new FileInfo(path);
-            //fileDel.Delete();
+            var fileDel = new FileInfo(path);
+            fileDel.Delete();
 
             return "Sent!";
             

@@ -3324,7 +3324,7 @@
                 data: JSON.stringify({
                     "FPNumber": thisFPNumber,
                     "IsPrimary": thisIsPrimary,
-                    "IsActive": thisIsActive,
+                    "IsActive": true,
                     "CreateDigitalCard": thisCreateDigitalCard
                 }),
                 dataType: "json",
@@ -4548,7 +4548,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <%--<div class="form-group">
                                 <label for="addCardIsActive" class="col-sm-3 col-md-4 control-label">Is Active:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <div class="checkbox">
@@ -4557,7 +4557,7 @@
                                         </label>
                                     </div>
                                 </div>
-                            </div>
+                            </div>--%>
                             <div class="form-group">
                                 <label for="addCardCreateDigitalCard" class="col-sm-3 col-md-4 control-label">Create Digital:</label>
                                 <div class="col-sm-9 col-md-8">

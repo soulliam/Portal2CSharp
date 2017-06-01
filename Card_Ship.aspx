@@ -27,13 +27,18 @@
     <script type="text/javascript" src="jqwidgets/jqxscrollbar.js"></script>    
     <script type="text/javascript" src="jqwidgets/jqxwindow.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxcheckbox.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxgrid.edit.js"></script>
 
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
         var group = '<%= Session["groupList"] %>';
+        var locationResult = '';
 
         $(document).ready(function () {
-            loadGrid();
+            var locationString = $("#userLocation").val();
+            locationResult = locationString.split(",");
+
+            loadGrid(locationResult);
 
             //#region SetupButtons
             $("#placeShip").jqxButton({ width: '100%', height: 26 });
@@ -45,24 +50,23 @@
                 var toggled = $("#shipType").jqxToggleButton('toggled');
                 if (toggled) {
                     $("#shipType")[0].value = 'Ship: Special';
+                    $("#fromlocationCombo").jqxComboBox('selectIndex', 0);
                 }
-                else $("#shipType")[0].value = 'Ship: Regular';
+                else {
+                    $("#shipType")[0].value = 'Ship: Regular';
+                    var item = $("#fromlocationCombo").jqxComboBox('getItemByValue', "100");
+                    $("#fromlocationCombo").jqxComboBox('selectItem', item);
+                }
             });
             //#endregion
 
             GetLastCardShipped();
             GetHighestavailableCard();
-            $("#jqxdatetimeinputShip").jqxDateTimeInput({ width: '100%', height: '24px', formatString: 'MM/dd/yyyy' });
-            $("#jqxdatetimeinputSpecShip").jqxDateTimeInput({ width: '100%', height: '24px', formatString: 'MM/dd/yyyy' });
+            //$("#jqxdatetimeinputShip").jqxDateTimeInput({ width: '100%', height: '24px', formatString: 'MM/dd/yyyy' });
+            //$("#jqxdatetimeinputSpecShip").jqxDateTimeInput({ width: '100%', height: '24px', formatString: 'MM/dd/yyyy' });
             
             $("#placeShip").on("click", function (event) {
                 placeShip();
-                loadGrid();
-                GetLastCardShipped();
-                GetHighestavailableCard();
-                $("#shipAmount").val("");
-                $("#firstCard").val("");
-                $("#lastCard").val("");
             });
 
             $("#specShip").toggle();
@@ -75,9 +79,9 @@
                         var selectedRowData = $('#jqxShipping').jqxGrid('getrowdata', getselectedrowindexes[index]);
                         confirmShip(selectedRowData.CardHistoryId);
                     }
-                    loadGrid();
+                    loadGrid(locationResult);
                 } else {
-                    alert("No orders selected!");
+                    swal("No orders selected!");
                 }
                 
             });
@@ -92,8 +96,8 @@
                     { name: 'NameOfLocation' },
                     { name: 'LocationId' }
                 ],
-                //url: $("#localApiDomain").val() + "CardLocations/Locations/",
-                url: "http://localhost:52839/api/CardLocations/Locations/",
+                url: $("#localApiDomain").val() + "CardLocations/Locations/",
+                //url: "http://localhost:52839/api/CardLocations/Locations/",
             };
             var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
             $("#tolocationCombo").jqxComboBox(
@@ -121,8 +125,8 @@
                     { name: 'NameOfLocation' },
                     { name: 'LocationId' }
                 ],
-                //url: $("#localApiDomain").val() + "CardLocations/Locations/",
-                url: "http://localhost:52839/api/CardLocations/Locations/",
+                url: $("#localApiDomain").val() + "CardLocations/Locations/",
+                //url: "http://localhost:52839/api/CardLocations/Locations/",
 
             };
             var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
@@ -138,53 +142,48 @@
 
             $("#fromlocationCombo").on('bindingComplete', function (event) {
                 $("#fromlocationCombo").jqxComboBox('insertAt', 'From Location', 0);
+                var item = $("#fromlocationCombo").jqxComboBox('getItemByValue', "100");
+                $("#fromlocationCombo").jqxComboBox('selectItem', item);
             });
 
             //Check key strokes for whether card is in DB for different history types Order = 1
             $("#firstCard").keyup(function () {
                 if ($("#firstCard").val() == '') { return null; }
                 cardVal = $("#firstCard").val();
-                verifyCard(cardVal, $("#firstCard"));
+                verifyOrderedCard(cardVal, $("#firstCard"));
             });
 
             $("#lastCard").keyup(function () {
-                if (parseInt($("#lastCard").val()) < parseInt($("#firstCard").val())) {
-                    $("#lastCard").css('background-color', '#ff6666');
-                } else {
-                    $("#lastCard").css('background-color', '#ffffff');
-                }
-                if (parseInt($("#lastCard").val()) > parseInt($("#availableCard").html())) {
-                    alert("Last card to ship is greater than the last card ordered and received.")
-                    $("#lastCard").css('background-color', '#ff6666');
-                    return null;
-                }
+                if ($("#lastCard").val() == '') { return null; }
+                cardVal = $("#lastCard").val();
+                verifyOrderedCard(cardVal, $("#lastCard"));
             });
 
             $("#shipAmount").keyup(function () {
                 if ($("#shipAmount").val() == '') { return null; }
                 cardVal = parseInt($("#lastShipped").val()) + parseInt($("#shipAmount").val());
-                if (cardVal > parseInt($("#availableCard").html())) {
-                    alert("Last card shipped plus your amount is greater than the last card ordered and received.")
-                    $("#shipAmount").css('background-color', '#ff6666');
-                    return null;
-                }
-                verifyCard(cardVal, $("#shipAmount"));
+                verifyOrderedCard(cardVal, $("#shipAmount"));
+
             });
 
-            function verifyCard(CardNumber, cardTest) {
+            function verifyOrderedCard(CardNumber, cardTest) {
                 var cardNumber;
 
-                //var url = $("#localApiDomain").val() + 'CardOrders/ConfirmNumbers/' + Historytype + '_' + CardNumber;
-                var url = 'http://localhost:52839/api/CardShips/ConfirmNumbers/' + CardNumber;
+                //var url = $("#localApiDomain").val() + 'CardOrders/ConfirmNumbers/' + CardNumber;
+                var url = 'http://localhost:52839/api/CardOrders/ConfirmNumbers/' + CardNumber;
 
                 $.ajax({
                     type: 'GET',
                     url: url,
                     success: function (data) {
-                        if (data.length > 0) {
+                        //Has the card been ordered
+                        if (data.length <= 0) {
+                            //No
                             cardTest.css('background-color', '#ff6666');
                         } else {
+                            //Yes check to see if it has been shipped
                             cardTest.css('background-color', '#ffffff');
+                            verifyShipCard(cardVal, cardTest);
                         }
 
                     },
@@ -198,6 +197,83 @@
                 return cardNumber;
             }
 
+            function verifyShipCard(CardNumber, cardTest) {
+                var cardNumber;
+
+                //var url = $("#localApiDomain").val() + 'CardShips/ConfirmNumbers/' + CardNumber;
+                var url = 'http://localhost:52839/api/CardShips/ConfirmNumbers/' + CardNumber;
+
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    success: function (data) {
+                        //Has the card been shipped
+                        if (data.length > 0) {
+                            //YES
+                            //Is this a special shipment
+                            if ($("#shipType")[0].value == 'Ship: Special') {
+                                //Yes so check to see if this card is in the from location picked
+                                verifyShipLocation(cardVal, cardTest);
+                            }
+                            else {
+                                //No this card has been shipped
+                                cardTest.css('background-color', '#ffffff');
+                                swal("This card has been shipped.")
+                            }
+                        } else {
+                            //No the card has not been shipped
+                            cardTest.css('background-color', '#ffffff');
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        swal("Error: " + errorThrown);
+                        ardTest = false;
+                    }
+                });
+
+                //return $("#LastCardAPIResult").val();
+                return cardNumber;
+            }
+
+            function verifyShipLocation(CardNumber, cardTest) {
+                var cardNumber;
+
+                //var url = $("#localApiDomain").val() + 'CardShips/ConfirmShipLocation/' + CardNumber;
+                var url = 'http://localhost:52839/api/CardShips/ConfirmShipLocation/' + CardNumber;
+
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    success: function (data) {
+                        //Does the card have a location
+                        if (data.length <= 0) {
+                            //No it hasn't been shipped 
+                            cardTest.css('background-color', '#ff6666');
+                        } else {
+                            //Yes, does the location of the card match the location we are shipping from
+                            if (data[0].CardShipTo == $("#fromlocationCombo").jqxComboBox('getSelectedItem').value) {
+                                //Yes
+                                cardTest.css('background-color', '#ffffff');
+                            } else {
+                                //No the card is not at this location
+                                cardTest.css('background-color', '#ff6666');
+                                swal("This Card is not at this location!")
+                            }
+                        }
+
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        swal("Error: " + errorThrown);
+                        ardTest = false;
+                    }
+                });
+
+                //return $("#LastCardAPIResult").val();
+                return cardNumber;
+            }
+
+            
+
             $("#receiveShip").on("click", function (event) {
                 var getselectedrowindexes = $('#jqxShipping').jqxGrid('getselectedrowindexes');
                 if (getselectedrowindexes.length > 0) {
@@ -205,17 +281,45 @@
                         var selectedRowData = $('#jqxShipping').jqxGrid('getrowdata', getselectedrowindexes[index]);
 
                         if (selectedRowData.CardShipReceivedBy != null) {
-                            alert("This shipment has been received.");
+                            swal("This shipment has been received.");
                             return null;
                         }
 
                         ReceiveShip(selectedRowData.CardShipID, $("#txtLoggedinUsername").val());
                     }
-                    loadGrid();
+                    loadGrid(locationResult);
                 } else {
 
-                    alert("No orders selected!");
+                    swal("No orders selected!");
                 }
+            });
+
+            //set up the to Design combobox
+            var DesignSource =
+            {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'CardDesignDesc' },
+                    { name: 'CardDesignId' }
+                ],
+                //url: $("#localApiDomain").val() + "CardDesigns/GetCardDesigns/",
+                url: "http://localhost:52839/api/CardDesigns/GetCardDesigns/",
+            };
+            var DesignDataAdapter = new $.jqx.dataAdapter(DesignSource);
+            $("#cardDesign").jqxComboBox(
+            {
+                width: 200,
+                source: DesignDataAdapter,
+                selectedIndex: 0,
+                autoDropDownHeight: true,
+                displayMember: "CardDesignDesc",
+                valueMember: "CardDesignId"
+            });
+
+            $("#cardDesign").on('bindingComplete', function (event) {
+                $("#cardDesign").jqxComboBox('insertAt', 'Select Design', 0);
             });
 
             Security();
@@ -226,16 +330,13 @@
 
         // ============= Initialize Page ================== End
 
-        function loadGrid()
+        function loadGrid(locationResult)
         {
 
-            var parent = $("#jqxShipping").parent();
-            $("#jqxShipping").jqxGrid('destroy');
-            $("<div id='jqxShipping'></div>").appendTo(parent);
 
             // loading order histor
-            //var url = $("#localApiDomain").val() + "CardShips/GetShipments";
-            var url = "http://localhost:52839/api/CardShips/GetShipments";
+            //var url = $("#localApiDomain").val() + "CardShips/GetShipments/" + locationResult;
+            var url = "http://localhost:52839/api/CardShips/GetShipments/" + locationResult;
 
             var source =
             {
@@ -244,6 +345,7 @@
                     { name: 'CardShipFromName' },
                     { name: 'CardShipShippedBy' },
                     { name: 'CardShipDate' },
+                    { name: 'CardDesignDesc' },
                     { name: 'CardShipStartNumber' },
                     { name: 'CardShipEndNumber' },
                     { name: 'NumberOfCards' },
@@ -279,11 +381,13 @@
                 altrows: true,
                 filterable: true,
                 selectionmode: 'checkbox',
+                editable: true,
                 columns: [
                        { text: 'CardShipID', datafield: 'CardShipID', hidden: true },
                        { text: 'Ship Origin', datafield: 'CardShipFromName' },
                        { text: 'Shipped By', datafield: 'CardShipShippedBy' },
                        { text: 'Ship Date', datafield: 'CardShipDate', cellsrenderer: DateRender },
+                       { text: 'Design', datafield: 'CardDesignDesc' },
                        { text: 'Start Number', datafield: 'CardShipStartNumber', cellsrenderer: padCard },
                        { text: 'End Number', datafield: 'CardShipEndNumber', cellsrenderer: padCard },
                        { text: 'NumberOfCards', datafield: 'NumberOfCards', cellsrenderer: numberOfCards },
@@ -300,13 +404,13 @@
 
             $.ajax({
                 type: 'GET',
-                //url: $("#localApiDomain").val() + 'CardShips/GetLastShipped/',
-                url: 'http://localhost:52839/api/CardShips/GetLastShipped/',
+                url: $("#localApiDomain").val() + 'CardShips/GetLastShipped/',
+                //url: 'http://localhost:52839/api/CardShips/GetLastShipped/',
                 success: function (data) {
                     $("#lastShipped").val(data[0].maxShipped);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert("HELP Error: " + errorThrown);
+                    swal("HELP Error: " + errorThrown);
                 }
             });
 
@@ -327,7 +431,7 @@
                     $("#availableCard").html(data[0].maxShipped);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert("HELP Error: " + errorThrown);
+                    swal("HELP Error: " + errorThrown);
                 }
             });
 
@@ -344,7 +448,7 @@
                    
                 },
                 error: function (jqXHR, textStatus, errorThrown, data) {
-                    alert(textStatus); alert(errorThrown);
+                    swal(textStatus); swal(errorThrown);
                 }
             });
 
@@ -353,21 +457,27 @@
 
         function placeShip() {
             if ($("#shipAmount").css("background-color") == "rgb(255, 102, 102)" || $("#lastCard").css("background-color") == "rgb(255, 102, 102)" || $("#firstCard").css("background-color") == "rgb(255, 102, 102)") {
-                alert("One of your cards has already been shipped!");
+                swal("One of your cards has already been shipped!");
                 return null;
             };
 
             if (parseInt($("#lastCard").val()) < parseInt($("#firstCard").val())) {
-                alert("Your last card is greater than your first card!");
+                swal("Your last card is greater than your first card!");
                 return null;
             };
 
 
             if ($("#tolocationCombo").jqxComboBox('selectedIndex') == 0) {
-                alert("You must pick a location!");
+                swal("You must pick a location!");
                 return;
             }
 
+            if ($("#cardDesign").jqxComboBox('getSelectedIndex') == 0) {
+                swal("Select a Design!");
+                return;
+            }
+
+            var cardDesignId = $("#cardDesign").jqxComboBox('getSelectedItem').value
             var toLocation = $("#tolocationCombo").jqxComboBox('getSelectedItem').value;
             var fromLocation = $("#fromlocationCombo").jqxComboBox('getSelectedItem').value
             var StartingNumber = 0;
@@ -376,7 +486,7 @@
 
             if ($("#regShip").is(":visible")) {
                 if ($("#shipAmount").val() == "") {
-                    alert("You must select an amount of cards to ship!");
+                    swal("You must select an amount of cards to ship!");
                     return;
                 }
                 StartingNumber = parseInt($("#lastShipped").val()) + 1;
@@ -389,21 +499,27 @@
                 EndingNumber = parseInt($("#lastCard").val());
 
                 if (StartingNumber == 0 || EndingNumber == 0) {
-                    alert("You must set a starting card and an ending card to do a special order.");
+                    swal("You must set a starting card and an ending card to do a special order.");
                     return;
                 }
             }
 
             $.post("http://localhost:52839/api/CardShips/ShipCards",
-            //$.post($("#localApiDomain").val() + "CardDistHistorys/Post",
-                { 'CardShipFrom': fromLocation, 'CardShipTo': toLocation, 'CardShipShippedBy': $("#txtLoggedinUsername").val(), 'CardShipStartNumber': StartingNumber, 'CardShipEndNumber': EndingNumber },
+            //$.post($("#localApiDomain").val() + "CardShips/ShipCards",
+                { 'CardShipFrom': fromLocation, 'CardShipTo': toLocation, 'CardShipShippedBy': $("#txtLoggedinUsername").val(), 'CardShipStartNumber': StartingNumber, 'CardShipEndNumber': EndingNumber, 'CardDesignId': cardDesignId },
                 function (data, status) {
                     switch (status) {
                         case 'success':
-                            alert('Cards were shipped successfully');
+                            swal('Cards were shipped successfully');
+                            GetLastCardShipped();
+                            GetHighestavailableCard();
+                            $("#shipAmount").val("");
+                            $("#firstCard").val("");
+                            $("#lastCard").val("");
+                            loadGrid(locationResult);
                             break;
                         default:
-                            alert('An Error occurred: ' + status + "\n Data:" + data);
+                            swal('An Error occurred: ' + status + "\n Data:" + data);
                             break;
                     }
                 }
@@ -412,16 +528,17 @@
         }
 
         function ReceiveShip(CardShipId, ReceivedBy) {
+            //$.post($("#localApiDomain").val() + "CardShips/Update",
             $.post("http://localhost:52839/api/CardShips/Update",
                 { 'CardShipId': CardShipId, 'CardShipReceivedBy': ReceivedBy },
                 function (data, status) {
                     switch (status) {
                         case 'success':
-                            loadGrid();
-                            alert('Cards were received successfully');
+                            loadGrid(locationResult);
+                            swal('Cards were received successfully');
                             break;
                         default:
-                            alert('An Error occurred: ' + status + "\n Data:" + data);
+                            swal('An Error occurred: ' + status + "\n Data:" + data);
                             break;
                     }
                 }
@@ -436,7 +553,7 @@
                 <div class="col-sm-12 col-md-10 col-md-offset-1">
                     <div class="row search-size">
                         <div class="col-sm-12" style="text-align:center">
-                            <label style="background-color:white;padding:4px;">Highest Card Ordered and Received - </label><label id="availableCard" style="background-color:white;padding:4px;"></label>
+                            <label style="background-color:white;padding:4px;display:none;">Highest Card Ordered and Received - </label><label id="availableCard" style="background-color:white;padding:4px;display:none;"></label>
                         </div>
                     </div>
                     <div class="row search-size">
@@ -457,7 +574,7 @@
                                         <input type="text" id="shipAmount" placeholder="Amount to Ship"  />
                                     </div>
                                     <div class="col-sm-15">
-                                        <div id="jqxdatetimeinputShip"></div>
+                                        <%--<div id="jqxdatetimeinputShip"></div>--%>
                                     </div>
                                 </div>
                                 <div id="specShip" class="swapfields">
@@ -468,9 +585,10 @@
                                         <input type="number" id="lastCard" placeholder="Last Card"  />
                                     </div>
                                     <div class="col-sm-15">
-                                        <div id="jqxdatetimeinputSpecShip"></div>
+                                        <%--<div id="jqxdatetimeinputSpecShip"></div>--%>
                                     </div>
                                 </div>
+                                <div id="cardDesign"></div>
                             </div>
                         </div>
                         <div class="col-sm-3">

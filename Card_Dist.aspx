@@ -164,8 +164,8 @@
                 $.ajax({
                     async: false,
                     type: "POST",
-                    //url: $("#localApiDomain").val() + "CardDists/Distribute",
-                    url: "http://localhost:52839/api/CardDists/ConfirmNumbers",
+                    url: $("#localApiDomain").val() + "CardDists/ConfirmNumbers",
+                    //url: "http://localhost:52839/api/CardDists/ConfirmNumbers",
 
                     data: data,
                     dataType: "json",
@@ -178,7 +178,7 @@
                         }
                     },
                     error: function (request, status, error) {
-                        alert(request);
+                        swal(request);
                     },
                     complete: function () {
 
@@ -196,8 +196,8 @@
                 $.ajax({
                     async: false,
                     type: "POST",
-                    //url: $("#localApiDomain").val() + "CardDists/Distribute",
-                    url: "http://localhost:52839/api/CardDists/ConfirmNumbers",
+                    url: $("#localApiDomain").val() + "CardDists/ConfirmNumbers",
+                    //url: "http://localhost:52839/api/CardDists/ConfirmNumbers",
 
                     data: data,
                     dataType: "json",
@@ -210,7 +210,7 @@
                         }
                     },
                     error: function (request, status, error) {
-                        alert(request);
+                        swal(request);
                     },
                     complete: function () {
 
@@ -233,8 +233,8 @@
         {
 
             // loading order histor
-            //var url = $("#localApiDomain").val() + "CardDists/GetCardDist/" + thisLocationId;
-            var url = "http://localhost:52839/api/CardDists/GetCardDist/" + thisLocationId;
+            var url = $("#localApiDomain").val() + "CardDists/GetCardDist/" + thisLocationId;
+            //var url = "http://localhost:52839/api/CardDists/GetCardDist/" + thisLocationId;
 
             var source =
             {
@@ -302,12 +302,12 @@
 
         function DistributCards() {
             if ($("#lastCard").css("background-color") == "rgb(255, 102, 102)" || $("#firstCard").css("background-color") == "rgb(255, 102, 102)") {
-                alert("One of your cards has already been ordered!");
+                swal("One of your cards has already been distributed!");
                 return null;
             };
 
             if (parseInt($("#lastCard").val()) < parseInt($("#firstCard").val())) {
-                alert("Your last card is greater than your first card!");
+                swal("Your last card is greater than your first card!");
                 return null;
             };
 
@@ -337,16 +337,16 @@
             $.ajax({
                 async: false,
                 type: "POST",
-                //url: $("#localApiDomain").val() + "CardDists/Distribute",
-                url: "http://localhost:52839/api/CardDists/Distribute",
+                url: $("#localApiDomain").val() + "CardDists/Distribute",
+                //url: "http://localhost:52839/api/CardDists/Distribute",
 
                 data: data,
                 dataType: "json",
                 success: function (thisData) {
-                    alert('Cards were distributed.');
+                    swal('Cards were distributed.');
                 },
                 error: function (request, status, error) {
-                    alert(request);
+                    swal(request);
                 },
                 complete: function () {
                     var parent = $("#jqxDistribution").parent();
@@ -418,8 +418,8 @@
                     { name: 'RepName' },
                     { name: 'ID' }
                 ],
-                //url: $("#localApiDomain").val() + "MarketingReps/Get"
-                url: "http://localhost:52839/api/MarketingReps/Get"
+                url: $("#localApiDomain").val() + "MarketingReps/Get"
+                //url: "http://localhost:52839/api/MarketingReps/Get"
             };
             var RepDataAdapter = new $.jqx.dataAdapter(RepSource);
 
@@ -478,7 +478,6 @@
 
     </script>
     <input type="text" id="distributionLocation" style="display:none;" />
-    <input type="text" id="boothLocation" style="display:none;" />
     <div id="CardDistribution" class="container-fluid container-970 wrap-search-options">
         <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
             <div class="row search-size FPR_SearchLeft">
