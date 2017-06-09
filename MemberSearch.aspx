@@ -3536,6 +3536,7 @@
             $("#ReservationChangeEmail").prop("checked", false);
             $("#ReservationConfirmationEmail").prop("checked", false);
             $("#ReservationReminder").prop("checked", false);
+            $("#reservationFeeCreditCombo").jqxComboBox("clear");
         }
 
         function findMember(PageMemberID) {
@@ -4117,14 +4118,14 @@
                                         <div class="form-group">
                                             <label for="RepCode" class="col-sm-3 col-md-4 control-label">Rep Code:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control RFRJustDisable" id="MarketingCode" placeholder=""><input type="text" style="display:none" id="OldMarketingCode" />
+                                                <input type="text" class="form-control RFR" id="MarketingCode" placeholder=""><input type="text" style="display:none" id="OldMarketingCode" />
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="MailerCo" class="col-sm-3 col-md-4 control-label">Mailer Company:</label>
                                             <div class="col-sm-9 col-md-8">
                                                 <%--<div id="MailerCompanyCombo" class="NoAsstMgr"></div>--%>
-                                                <input type="text" id="MailerCompanyCombo" class="NoAsstMgr" />
+                                                <input type="text" id="MailerCompanyCombo" class="RFR MANAGER" />
                                                 <input type="text" id="MailerCompanyComboID" style="display:none;" />
                                             </div>
                                         </div>
@@ -4179,7 +4180,7 @@
                                             <div class="col-sm-2 col-md-2">
                                                 <div class="checkbox">
                                                     <label>
-                                                        <input type="checkbox" class="form-control communicationType" id="GetEmail" disabled />
+                                                        <input type="checkbox" class="form-control communicationType " id="GetEmail" />
                                                     </label>
                                                 </div>
                                             </div>
@@ -4187,7 +4188,7 @@
                                             <div class="col-sm-2 col-md-2">
                                                 <div class="checkbox">
                                                     <label>
-                                                        <input type="checkbox" class="form-control communicationType" id="TravelAlert" disabled />
+                                                        <input type="checkbox" class="form-control communicationType" id="TravelAlert"  />
                                                     </label>
                                                 </div>
                                             </div>
@@ -4195,7 +4196,7 @@
                                             <div class="col-sm-2 col-md-2">
                                                 <div class="checkbox">
                                                     <label>
-                                                        <input type="checkbox" class="form-control communicationType" id="EmailReceipts" disabled />
+                                                        <input type="checkbox" class="form-control communicationType" id="EmailReceipts"  />
                                                     </label>
                                                 </div>
                                             </div>
@@ -4203,7 +4204,7 @@
                                             <div class="col-sm-2 col-md-2">
                                                 <div class="checkbox">
                                                     <label>
-                                                        <input type="checkbox" class="form-control communicationType" id="RedeemEmail" disabled />
+                                                        <input type="checkbox" class="form-control communicationType RFR MANAGER" id="RedeemEmail"  />
                                                     </label>
                                                 </div>
                                             </div>
@@ -4211,7 +4212,7 @@
                                             <div class="col-sm-2 col-md-2">
                                                 <div class="checkbox">
                                                     <label>
-                                                        <input type="checkbox" class="form-control communicationType" id="ProfileUpdateEmail" disabled />
+                                                        <input type="checkbox" class="form-control communicationType RFR MANAGER" id="ProfileUpdateEmail"  />
                                                     </label>
                                                 </div>
                                             </div>
@@ -4219,7 +4220,7 @@
                                             <div class="col-sm-2 col-md-2">
                                                 <div class="checkbox">
                                                     <label>
-                                                        <input type="checkbox" class="form-control communicationType" id="ReservationChangeEmail" disabled />
+                                                        <input type="checkbox" class="form-control communicationType" id="ReservationChangeEmail"  />
                                                     </label>
                                                 </div>
                                             </div>
@@ -4227,7 +4228,7 @@
                                             <div class="col-sm-2 col-md-2">
                                                 <div class="checkbox">
                                                     <label>
-                                                        <input type="checkbox" class="form-control communicationType" id="ReservationConfirmationEmail" disabled />
+                                                        <input type="checkbox" class="form-control communicationType" id="ReservationConfirmationEmail"  />
                                                     </label>
                                                 </div>
                                             </div>
@@ -4235,7 +4236,7 @@
                                             <div class="col-sm-2 col-md-2">
                                                 <div class="checkbox">
                                                     <label>
-                                                        <input type="checkbox" class="form-control communicationType" id="ReservationReminder" disabled />
+                                                        <input type="checkbox" class="form-control communicationType" id="ReservationReminder"  />
                                                     </label>
                                                 </div>
                                             </div>
@@ -4263,7 +4264,7 @@
                                             <input type="button" id="DisplayQA" value="Display Q &amp; A" />
                                         </div>
                                         <div class="col-sm-6">
-                                            <input type="button" id="editMember" value="Edit" class="editor" />
+                                            <input type="button" id="editMember" value="Edit" class="editor" style="display:block;" />
                                         </div>
                                         <div class="col-sm-12">
                                             <input type="button" id="updateMemberInfo" value="Save Member Info" />
@@ -4437,7 +4438,7 @@
                                 </div>
                                 <div class="col-sm-3 col-md-2">
                                     <input type="button" id="returnRedemption" value="Return Redemption" class="editor" />
-                                    <input type="button" id="markUsedRedemption" value="Mark Used" />
+                                    <input type="button" id="markUsedRedemption" value="Mark Used" class="editor" />
                                     <input type="button" id="1DayRedemption" value="1 Day" class="editor" />
                                     <input type="button" id="3DayRedemption" value="3 Day" class="editor" />
                                     <input type="button" id="1WeekRedemption" value="1 Week" class="editor" />
@@ -4473,7 +4474,7 @@
                                 <input type="button" id="UnDeleteCard" value="UnDelete" class="editor" />
                                 <input type="button" id="addCard" value="Add" class="editor" />
                                 <input type="button" id="setCardPrimary" value="Set as Primary" class="editor" />
-                                <input type="button" id="combineMemberCards" value="Combine Member Cards" class="RFR" />
+                                <input type="button" id="combineMemberCards" value="Combine Member Cards" class="editor RFR" />
                                 </div>
                             </div>
                         </div>

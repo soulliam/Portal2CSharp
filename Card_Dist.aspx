@@ -302,7 +302,7 @@
 
         function DistributCards() {
             if ($("#lastCard").css("background-color") == "rgb(255, 102, 102)" || $("#firstCard").css("background-color") == "rgb(255, 102, 102)") {
-                swal("One of your cards has already been distributed!");
+                swal("One of your cards has not been received at this location or has already been distributed!");
                 return null;
             };
 

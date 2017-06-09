@@ -358,6 +358,8 @@ function getEstCost() {
 function getReservationFeeCredit() {
     var thisMemberId = $("#MemberId").val();
 
+    var thisURL = $("#apiDomain").val() + "reservation-credits-reservation/members/" + thisMemberId;
+
     //set up the location combobox
     var locationSource =
     {
@@ -375,8 +377,14 @@ function getReservationFeeCredit() {
     };
 
     $("#reservationFeeCreditCombo").on('bindingComplete', function (event) {
-        $("#reservationFeeCreditCombo").jqxComboBox('insertAt', '', 0);
-        $("#reservationFeeCreditCombo").jqxComboBox('selectItem', 0);
+        var item = $("#reservationFeeCreditCombo").jqxComboBox('getItem', 0);
+
+        if (item == '') {
+            return;
+        }
+
+        //$("#reservationFeeCreditCombo").jqxComboBox('insertAt', '', 0);
+        //$("#reservationFeeCreditCombo").jqxComboBox('selectItem', 0);
     });
 
     var locationDataAdapter = new $.jqx.dataAdapter(locationSource);

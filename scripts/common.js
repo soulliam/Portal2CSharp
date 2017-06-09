@@ -1,13 +1,41 @@
 ﻿//Security Setup
 function Security() {
-    
+    var editorArray = new Array();
+    var editorCount = 0;
+    var parentArray = new Array();
 
     //Set entire memu to disabled.  Grab the old href if pointer-events not supported
     $('.menuSecurity').each(function () {
-        //$('.menuSecurity').addClass('disabled');
+        $('.menuSecurity').addClass('disabled');
         var old = $(this).attr('href');
         $(this).attr('temp-hrf', old);   // store real href in data-hrf attribute
         $(this).attr('href', '#');
+    });
+
+    $('.editor').each(function () {
+        ////this will actually remove editor elements from the dom after creating them
+        //var editor = this;
+        //var parent = $(this).parent();
+
+        //$(this).detach();
+
+        //editorArray[editorCount] = editor;
+        //parentArray[editorCount] = parent;
+
+        //editorCount = editorCount + 1;
+
+        $(this).addClass('disabled');
+    });
+
+
+    $('.RFR').each(function () {
+        $(this).addClass('disabled');
+        $(this).prop("disabled", true);
+    });
+
+    $('.MANAGER').each(function () {
+        $(this).addClass('disabled');
+        $(this).prop("disabled", true);
     });
     
     // enable all Supreradmin elements set href to stored href in case pointer-events not supported
@@ -17,19 +45,77 @@ function Security() {
             var old = $(this).attr('temp-hrf');
             if (old != "") $(this).attr('href', old);
         });
+
+        $('.editor').each(function () {
+            $(this).removeClass('disabled');
+        });
+
+        $('.MANAGER').each(function () {
+            $(this).addClass('disabled');
+            $(this).prop("disabled", false);
+        });
+
+        $('.RFR').each(function () {
+            $(this).removeClass('disabled');
+            $(this).prop("disabled", false);
+        });
+
+        //// this will reattache removed elements to the Dom
+        //var arrayLength = editorArray.length;
+        //for (var i = 0; i < arrayLength; i++) {
+        //    parentArray[i].append(editorArray[i]);
+        //}
     }
 
-    if (group.indexOf("Portal_Siteadmin") > -1) {
-        $('.Portal_Siteadmin').each(function () {
-            $('.Portal_Siteadmin').removeClass('disabled');
+    if (group.indexOf("Portal_RFR") > -1) {
+        $('.Portal_RFR').each(function () {
+            $('.Portal_RFR').removeClass('disabled');
             var old = $(this).attr('temp-hrf');
             if (old != "") $(this).attr('href', old);
+        });
+
+        $('.editor').each(function () {
+            $(this).removeClass('disabled');
+        });
+
+        $('.RFR').each(function () {
+            $(this).removeClass('disabled');
+            $(this).prop("disabled", false);
+        });
+    }
+
+    if (group.indexOf("Portal_Manager") > -1) {
+        $('.Portal_Manager').each(function () {
+            $('.Portal_Manager').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
+
+        $('.editor').each(function () {
+            $(this).removeClass('disabled');
+        });
+
+        $('.MANAGER').each(function () {
+            $(this).removeClass('disabled');
+            $(this).prop("disabled", false);
         });
     }
 
     if (group.indexOf("Portal_Asstmanager") > -1) {
         $('.Portal_Asstmanager').each(function () {
             $('.Portal_Asstmanager').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
+
+        $('.editor').each(function () {
+            $(this).removeClass('disabled');
+        });
+    }
+
+    if (group.indexOf("Portal_Siteadmin") > -1) {
+        $('.Portal_Siteadmin').each(function () {
+            $('.Portal_Siteadmin').removeClass('disabled');
             var old = $(this).attr('temp-hrf');
             if (old != "") $(this).attr('href', old);
         });
@@ -51,14 +137,6 @@ function Security() {
         });
     }
 
-    if (group.indexOf("Portal_Manager") > -1) {
-        $('.Portal_Manager').each(function () {
-            $('.Portal_Manager').removeClass('disabled');
-            var old = $(this).attr('temp-hrf');
-            if (old != "") $(this).attr('href', old);
-        });
-    }
-
     if (group.indexOf("Portal_Marketing") > -1) {
         $('.Portal_Marketing').each(function () {
             $('.Portal_Marketing').removeClass('disabled');
@@ -75,17 +153,6 @@ function Security() {
         });
     }
 
-    if (group.indexOf("Portal_RFR") > -1) {
-        $('.Portal_RFR').each(function () {
-            $('.Portal_RFR').removeClass('disabled');
-            var old = $(this).attr('temp-hrf');
-            if (old != "") $(this).attr('href', old);
-
-            //enable communication type check boxes
-            $('.communicationType').prop("disabled", false);
-        });
-    }
-
     if (group.indexOf("Portal_Users") > -1) {
         $('.Portal_Users').each(function () {
             $('.Portal_Users').removeClass('disabled');
@@ -98,7 +165,7 @@ function Security() {
         $('.Portal_Vehiclesadmin').each(function () {
             $('.Portal_Vehiclesadmin').removeClass('disabled');
             var old = $(this).attr('temp-hrf');
-            if (old != "") $(this).attr('href', old);
+            if (old != "") $(this).attr('href', (old));
         });
     }
 

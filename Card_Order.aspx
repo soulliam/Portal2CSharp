@@ -92,8 +92,8 @@
                     return;
                 }
 
-                //$.post($("#localApiDomain").val() + "CardOrders/GetOrderByRange",
-                $.post("http://localhost:52839/api/CardOrders/GetOrderByRange",
+                $.post($("#localApiDomain").val() + "CardOrders/GetOrderByRange",
+                //$.post("http://localhost:52839/api/CardOrders/GetOrderByRange",
                     { 'CardOrderStartNumber': StartingNumber, 'CardOrderEndNumber': EndingNumber },
                     function (data) {
                         if (data.length > 0) {
@@ -157,8 +157,8 @@
                     { name: 'CardDesignDesc' },
                     { name: 'CardDesignId' }
                 ],
-                //url: $("#localApiDomain").val() + "CardDesigns/GetCardDesigns/",
-                url: "http://localhost:52839/api/CardDesigns/GetCardDesigns/",
+                url: $("#localApiDomain").val() + "CardDesigns/GetCardDesigns/",
+                //url: "http://localhost:52839/api/CardDesigns/GetCardDesigns/",
             };
             var DesignDataAdapter = new $.jqx.dataAdapter(DesignSource);
             $("#cardDesign").jqxComboBox(
@@ -184,8 +184,8 @@
         {
 
             // loading order histor
-            //var url = $("#localApiDomain").val() + "CardOrders/GetOrders";
-            var url = "http://localhost:52839/api/CardOrders/GetOrders";
+            var url = $("#localApiDomain").val() + "CardOrders/GetOrders";
+            //var url = "http://localhost:52839/api/CardOrders/GetOrders";
 
             var source =
             {
@@ -248,8 +248,8 @@
 
             $.ajax({
                 type: 'GET',
-                //url: $("#localApiDomain").val() + "CardOrders/GetLastCardOrdered/",
-                url: "http://localhost:52839/api/CardOrders/GetLastCardOrdered/",
+                url: $("#localApiDomain").val() + "CardOrders/GetLastCardOrdered/",
+                //url: "http://localhost:52839/api/CardOrders/GetLastCardOrdered/",
                 success: function (data) {
                     $("#lastOrdered").val(data[0].orderedMax);
                    
@@ -310,8 +310,8 @@
 
             $('#jqxLoader').jqxLoader('open');
             var thisDate = new Date();
-            //$.post($("#localApiDomain").val() + "CardOrders/Post",
-            $.post("http://localhost:52839/api/CardOrders/Post",
+            $.post($("#localApiDomain").val() + "CardOrders/Post",
+            //$.post("http://localhost:52839/api/CardOrders/Post",
                 { 'CardOrderStartNumber': StartingNumber, 'CardOrderEndNumber': EndingNumber, 'CardOrderBy': $("#txtLoggedinUsername").val(), 'CardOrderStatus': 1, 'CardDesignId': cardDesignId },
                 function (data, status) {
                     switch (status) {
@@ -357,7 +357,8 @@
         }
 
         function ReceiveOrder(CardOrderId, ReceivedBy) {
-            $.post("http://localhost:52839/api/CardOrders/Update",
+            $.post($("#localApiDomain").val() + "CardOrders/Update",
+            //$.post("http://localhost:52839/api/CardOrders/Update",
                 { 'CardOrderId': CardOrderId, 'CardOrderReceivedBy': ReceivedBy },
                 function (data, status) {
                     switch (status) {
@@ -467,7 +468,7 @@
                                             <input type="button" id="placeOrder" value="Order Cards" />
                                         </div>
                                         <div class="col-sm-4">
-                                            <input type="button" id="receiveOrder" value="Receive Cards" />
+                                            <input type="button" id="receiveOrder" value="Complete Order" />
                                         </div>
                                         <div class="col-sm-4">
                                             <input type="button" id="creeatInventoryCSV" value="Export CSV" />

@@ -33,30 +33,24 @@
         // ============= Initialize Page ==================== Begin
         var group = '<%= Session["groupList"] %>';
         var locationResult = '';
+        var cardShipId = 0;
+
+        var locationString = $("#userLocation").val();
+        locationResult = locationString.split(",");
 
         $(document).ready(function () {
-            var locationString = $("#userLocation").val();
-            locationResult = locationString.split(",");
+            
 
             loadGrid(locationResult);
 
             //#region SetupButtons
             $("#placeShip").jqxButton({ width: '100%', height: 26 });
             $("#receiveShip").jqxButton({ width: '100%', height: 26 });
+            $("#editShip").jqxButton({ width: '100%', height: 26 });
             $("#shipType").jqxToggleButton({ width: '100%', height: 26, toggled: false });
+
             $("#shipType").on('click', function () {
-                $("#regShip").toggle();
-                $("#specShip").toggle();
-                var toggled = $("#shipType").jqxToggleButton('toggled');
-                if (toggled) {
-                    $("#shipType")[0].value = 'Ship: Special';
-                    $("#fromlocationCombo").jqxComboBox('selectIndex', 0);
-                }
-                else {
-                    $("#shipType")[0].value = 'Ship: Regular';
-                    var item = $("#fromlocationCombo").jqxComboBox('getItemByValue', "100");
-                    $("#fromlocationCombo").jqxComboBox('selectItem', item);
-                }
+                toggleShipType();
             });
             //#endregion
 
@@ -67,6 +61,12 @@
             
             $("#placeShip").on("click", function (event) {
                 placeShip();
+            });
+
+            $("#editShip").on("click", function (event) {
+                editShip();
+                $("#fromlocationCombo").jqxComboBox('selectIndex', 0);
+                $("#tolocationCombo").jqxComboBox('selectIndex', 0);
             });
 
             $("#specShip").toggle();
@@ -142,7 +142,7 @@
 
             $("#fromlocationCombo").on('bindingComplete', function (event) {
                 $("#fromlocationCombo").jqxComboBox('insertAt', 'From Location', 0);
-                var item = $("#fromlocationCombo").jqxComboBox('getItemByValue', "100");
+                var item = $("#fromlocationCombo").jqxComboBox('getItemByValue', "101");
                 $("#fromlocationCombo").jqxComboBox('selectItem', item);
             });
 
@@ -169,8 +169,8 @@
             function verifyOrderedCard(CardNumber, cardTest) {
                 var cardNumber;
 
-                //var url = $("#localApiDomain").val() + 'CardOrders/ConfirmNumbers/' + CardNumber;
-                var url = 'http://localhost:52839/api/CardOrders/ConfirmNumbers/' + CardNumber;
+                var url = $("#localApiDomain").val() + 'CardOrders/ConfirmNumbers/' + CardNumber;
+                //var url = 'http://localhost:52839/api/CardOrders/ConfirmNumbers/' + CardNumber;
 
                 $.ajax({
                     type: 'GET',
@@ -200,8 +200,8 @@
             function verifyShipCard(CardNumber, cardTest) {
                 var cardNumber;
 
-                //var url = $("#localApiDomain").val() + 'CardShips/ConfirmNumbers/' + CardNumber;
-                var url = 'http://localhost:52839/api/CardShips/ConfirmNumbers/' + CardNumber;
+                var url = $("#localApiDomain").val() + 'CardShips/ConfirmNumbers/' + CardNumber;
+                //var url = 'http://localhost:52839/api/CardShips/ConfirmNumbers/' + CardNumber;
 
                 $.ajax({
                     type: 'GET',
@@ -238,8 +238,8 @@
             function verifyShipLocation(CardNumber, cardTest) {
                 var cardNumber;
 
-                //var url = $("#localApiDomain").val() + 'CardShips/ConfirmShipLocation/' + CardNumber;
-                var url = 'http://localhost:52839/api/CardShips/ConfirmShipLocation/' + CardNumber;
+                var url = $("#localApiDomain").val() + 'CardShips/ConfirmShipLocation/' + CardNumber;
+                //var url = 'http://localhost:52839/api/CardShips/ConfirmShipLocation/' + CardNumber;
 
                 $.ajax({
                     type: 'GET',
@@ -304,8 +304,8 @@
                     { name: 'CardDesignDesc' },
                     { name: 'CardDesignId' }
                 ],
-                //url: $("#localApiDomain").val() + "CardDesigns/GetCardDesigns/",
-                url: "http://localhost:52839/api/CardDesigns/GetCardDesigns/",
+                url: $("#localApiDomain").val() + "CardDesigns/GetCardDesigns/",
+                //url: "http://localhost:52839/api/CardDesigns/GetCardDesigns/",
             };
             var DesignDataAdapter = new $.jqx.dataAdapter(DesignSource);
             $("#cardDesign").jqxComboBox(
@@ -322,6 +322,27 @@
                 $("#cardDesign").jqxComboBox('insertAt', 'Select Design', 0);
             });
 
+            $("#jqxShipping").bind('rowclick', function (event) {
+                var row = event.args.rowindex;
+                var dataRecord = $("#jqxShipping").jqxGrid('getrowdata', row);
+                cardShipId = dataRecord.CardShipID;
+                var CardShipFromID = dataRecord.CardShipFrom;
+                var item = $("#fromlocationCombo").jqxComboBox('getItemByValue', CardShipFromID);
+                $("#fromlocationCombo").jqxComboBox('selectItem', item);
+                var CardShipToID = dataRecord.CardShipTo;
+                var item = $("#tolocationCombo").jqxComboBox('getItemByValue', CardShipToID);
+                $("#tolocationCombo").jqxComboBox('selectItem', item);
+                var CardDesignId = dataRecord.CardDesignId;
+                var item = $("#cardDesign").jqxComboBox('getItemByValue', CardDesignId);
+                $("#cardDesign").jqxComboBox('selectItem', item);
+                if ($("#firstCard").is(":hidden")) {
+                    toggleShipType();
+                    $('#shipType').jqxToggleButton('toggle');
+                }
+                $("#firstCard").val(dataRecord.CardShipStartNumber);
+                $("#lastCard").val(dataRecord.CardShipEndNumber);
+            });
+
             Security();
 
         });
@@ -330,19 +351,35 @@
 
         // ============= Initialize Page ================== End
 
+        function toggleShipType() {
+            $("#regShip").toggle();
+            $("#specShip").toggle();
+            var toggled = $("#shipType").jqxToggleButton('toggled');
+            if (toggled) {
+                $("#shipType")[0].value = 'Ship: Special';
+                $("#fromlocationCombo").jqxComboBox('selectIndex', 0);
+            }
+            else {
+                $("#shipType")[0].value = 'Ship: Regular';
+                var item = $("#fromlocationCombo").jqxComboBox('getItemByValue', "101");
+                $("#fromlocationCombo").jqxComboBox('selectItem', item);
+            }
+        }
+
         function loadGrid(locationResult)
         {
 
 
             // loading order histor
-            //var url = $("#localApiDomain").val() + "CardShips/GetShipments/" + locationResult;
-            var url = "http://localhost:52839/api/CardShips/GetShipments/" + locationResult;
+            var url = $("#localApiDomain").val() + "CardShips/GetShipments/" + locationResult;
+            //var url = "http://localhost:52839/api/CardShips/GetShipments/" + locationResult;
 
             var source =
             {
                 datafields: [
                     { name: 'CardShipID' },
                     { name: 'CardShipFromName' },
+                    { name: 'CardShipFrom' },
                     { name: 'CardShipShippedBy' },
                     { name: 'CardShipDate' },
                     { name: 'CardDesignDesc' },
@@ -352,6 +389,8 @@
                     { name: 'CardShipReceivedBy' },
                     { name: 'CardShipReceiveDate' },
                     { name: 'CardShipToName' },
+                    { name: 'CardShipTo' },
+                    { name: 'CardDesignId' },
                     { name: 'CardShipStatus' }
                 ],
                 id: 'ManualEditId',
@@ -385,6 +424,7 @@
                 columns: [
                        { text: 'CardShipID', datafield: 'CardShipID', hidden: true },
                        { text: 'Ship Origin', datafield: 'CardShipFromName' },
+                       { text: 'CardShipFrom', datafield: 'CardShipFrom', hidden: true },
                        { text: 'Shipped By', datafield: 'CardShipShippedBy' },
                        { text: 'Ship Date', datafield: 'CardShipDate', cellsrenderer: DateRender },
                        { text: 'Design', datafield: 'CardDesignDesc' },
@@ -394,6 +434,8 @@
                        { text: 'Received By', datafield: 'CardShipReceivedBy' },
                        { text: 'Receive Date', datafield: 'CardShipReceiveDate', cellsrenderer: DateRender },
                        { text: 'Destination', datafield: 'CardShipToName' },
+                       { text: 'CardShipTo', datafield: 'CardShipTo', hidden: true },
+                       { text: 'CardDesignId', datafield: 'CardDesignId', hidden: true },
                        { text: 'Status', datafield: 'CardShipStatus' }
                 ]
             });
@@ -504,8 +546,8 @@
                 }
             }
 
-            $.post("http://localhost:52839/api/CardShips/ShipCards",
-            //$.post($("#localApiDomain").val() + "CardShips/ShipCards",
+            $.post($("#localApiDomain").val() + "CardShips/ShipCards",
+            //$.post("http://localhost:52839/api/CardShips/ShipCards",
                 { 'CardShipFrom': fromLocation, 'CardShipTo': toLocation, 'CardShipShippedBy': $("#txtLoggedinUsername").val(), 'CardShipStartNumber': StartingNumber, 'CardShipEndNumber': EndingNumber, 'CardDesignId': cardDesignId },
                 function (data, status) {
                     switch (status) {
@@ -527,9 +569,66 @@
 
         }
 
+        function editShip() {
+
+            if ($("#fromlocationCombo").jqxComboBox('selectedIndex') == 0) {
+                swal("You must pick a 'From' location!");
+                return;
+            }
+
+            if ($("#tolocationCombo").jqxComboBox('selectedIndex') == 0) {
+                swal("You must pick a 'To' location!");
+                return;
+            }
+
+            if ($("#cardDesign").jqxComboBox('getSelectedIndex') == 0) {
+                swal("Select a Design!");
+                return;
+            }
+
+            var cardDesignId = $("#cardDesign").jqxComboBox('getSelectedItem').value
+            var toLocation = $("#tolocationCombo").jqxComboBox('getSelectedItem').value;
+            var fromLocation = $("#fromlocationCombo").jqxComboBox('getSelectedItem').value
+            var StartingNumber = 0;
+            var EndingNumber = 0;
+            var thisCardShipId = cardShipId;
+
+            if ($("#specShip").is(":visible")) {
+                StartingNumber = parseInt($("#firstCard").val());
+                EndingNumber = parseInt($("#lastCard").val());
+
+                if (StartingNumber == 0 || EndingNumber == 0) {
+                    swal("You must set a starting card and an ending card to do a special order.");
+                    return;
+                }
+            }
+
+            //$.post($("#localApiDomain").val() + "CardShips/edit",
+            $.post("http://localhost:52839/api/CardShips/edit",
+                { 'CardShipFrom': fromLocation, 'CardShipTo': toLocation, 'CardShipShippedBy': $("#txtLoggedinUsername").val(), 'CardShipStartNumber': StartingNumber, 'CardShipEndNumber': EndingNumber, 'CardDesignId': cardDesignId, 'CardShipID': thisCardShipId },
+                function (data, status) {
+                    switch (status) {
+                        case 'success':
+                            swal('Cards were shipped successfully');
+                            GetLastCardShipped();
+                            GetHighestavailableCard();
+                            $("#shipAmount").val("");
+                            $("#firstCard").val("");
+                            $("#lastCard").val("");
+                            loadGrid(locationResult);
+                            break;
+                        default:
+                            swal('An Error occurred: ' + status + "\n Data:" + data);
+                            break;
+                    }
+                }
+            );
+
+        }
+
         function ReceiveShip(CardShipId, ReceivedBy) {
-            //$.post($("#localApiDomain").val() + "CardShips/Update",
-            $.post("http://localhost:52839/api/CardShips/Update",
+            $.post($("#localApiDomain").val() + "CardShips/Update",
+            //$.post("http://localhost:52839/api/CardShips/Update",
                 { 'CardShipId': CardShipId, 'CardShipReceivedBy': ReceivedBy },
                 function (data, status) {
                     switch (status) {
@@ -557,12 +656,12 @@
                         </div>
                     </div>
                     <div class="row search-size">
-                        <div class="col-sm-2">
-                            <div id="fromlocationCombo"></div>
-                            <div id="tolocationCombo"></div>
-                        </div>
                         <div class="col-sm-7">
                             <div class="row search-size">
+                                <div>
+                                    <div id="fromlocationCombo"></div>
+                                    <div id="tolocationCombo"></div>
+                                </div>
                                 <div class="col-sm-15">
                                     <input type="button" id="shipType" value="Ship: Regular" />
                                 </div>
@@ -591,14 +690,17 @@
                                 <div id="cardDesign"></div>
                             </div>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-5">
                             <div class="row search-size">
                                 <div class="row search-size">
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-4">
                                         <input type="button" id="placeShip" value="Place Shipping" />
                                     </div>
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-4">
                                         <input type="button" id="receiveShip" value="Receive Shipping" />
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input type="button" id="editShip" value="Update Shipping" class="RFR" />
                                     </div>
                                 </div>
                             </div>
