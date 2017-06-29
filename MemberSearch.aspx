@@ -450,6 +450,7 @@
                 userName = userName.replace("PCA\\", "");
 
                 var url = $("#localApiDomain").val() + "OldPortalGuids/getUserId/" + userName;
+                //var url = "http://localhost:52839/api/OldPortalGuids/getUserId/" + userName;
 
                 $.ajax({
                     type: "GET",
@@ -763,6 +764,7 @@
                 var thisStreetAddress = $("#StreetAddress").val();
                 var thisStreetAddress2 = $("#StreetAddress2").val();
                 var thisCityName = $("#CityName").val();
+                var thisMarketingMailerCode = $("#MarketingMailerCode").val();
 
                 if ($("#stateCombo").jqxComboBox('getSelectedIndex') == -1) {
                     var thisStateId = 0;
@@ -828,7 +830,7 @@
                 saveEmailPrefs(thisMemberId, thisEmailReceipts, thisGetEmail, thisTravelAlert, thisRedeemEmail, thisProfileUpdateEmail, thisReservationChangeEmail, thisReservationConfirmationEmail, thisReservationReminder)
 
                 saveUpdateMemberInfo(phoneType, phoneNumber, thisMemberId, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2,
-                                     thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, isRFR);
+                                     thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, thisMarketingMailerCode, isRFR);
 
                 var thisLoggedinUsername = $("#txtLoggedinUsername").val();
 
@@ -3589,6 +3591,7 @@
             
             clearMemberInfo();
             
+            var thisURL = $("#apiDomain").val() + "members/" + PageMemberID;
 
             //load member Phone lit
             var MemberSource =
@@ -4261,7 +4264,7 @@
                                             <input type="button" id="SendLoginInstructions" value="Send Login Instructions" style="display:none;" />
                                         </div>
                                         <div class="col-sm-6">
-                                            <input type="button" id="DisplayQA" value="Display Q &amp; A" />
+                                            <input type="button" id="DisplayQA" value="Display Q &amp; A" class="editor" />
                                         </div>
                                         <div class="col-sm-6">
                                             <input type="button" id="editMember" value="Edit" class="editor" style="display:block;" />
@@ -4325,7 +4328,7 @@
                                                 <div class="form-group">
                                                     <label class="col-sm-3 col-md-4 control-label"></label>
                                                     <div class="col-sm-9 col-md-8">
-                                                        <input type ="button" value="Submit Receipt" id="submitReceipt1" />
+                                                        <input type ="button" value="Submit Receipt" id="submitReceipt1" class="editor" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -4373,7 +4376,7 @@
                                                 <div class="form-group">
                                                     <label class="col-sm-3 col-md-4 control-label"></label>
                                                     <div class="col-sm-9 col-md-8">
-                                                        <input type ="button" value="Submit Receipt" id="submitReceipt2" />
+                                                        <input type ="button" value="Submit Receipt" id="submitReceipt2" class="editor" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -4401,13 +4404,13 @@
                                                 <div class="form-group">
                                                     <label class="col-sm-3 col-md-4 control-label"></label>
                                                     <div class="col-sm-9 col-md-8">
-                                                        <input type="button" value="Submit Manual Edit" id="manualEditSubmit" />
+                                                        <input type="button" value="Submit Manual Edit" id="manualEditSubmit" class="editor" />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-sm-3 col-md-4 control-label"></label>
                                                     <div class="col-sm-9 col-md-8">
-                                                        <input type="button" value="View Pending Manual Edits" id="manualEditPending" />
+                                                        <input type="button" value="View Pending Manual Edits" id="manualEditPending" class="editor" />
                                                     </div>
                                                 </div>
                                             </div>

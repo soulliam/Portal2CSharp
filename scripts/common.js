@@ -27,7 +27,6 @@ function Security() {
         $(this).addClass('disabled');
     });
 
-
     $('.RFR').each(function () {
         $(this).addClass('disabled');
         $(this).prop("disabled", true);
@@ -110,6 +109,22 @@ function Security() {
 
         $('.editor').each(function () {
             $(this).removeClass('disabled');
+        });
+    }
+
+    if (group.indexOf("Portal_CarCount") > -1) {
+        $('.Portal_CarCount').each(function () {
+            $('.Portal_CarCount').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
+    }
+
+    if (group.indexOf("Portal_Legal") > -1) {
+        $('.Portal_Legal').each(function () {
+            $('.Portal_Legal').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
         });
     }
 

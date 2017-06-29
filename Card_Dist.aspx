@@ -34,6 +34,9 @@
         {
             background-color: aquamarine;
         }
+        .jqx-grid-cell-selected {
+            background-color:lightgrey;
+        }
     </style>
 
     <script type="text/javascript">
@@ -43,6 +46,8 @@
         $(document).ready(function () {
             var locationString = $("#userLocation").val();
             var locationResult = locationString.split(",");
+
+            loadReps();
 
             if (locationResult.length > 1) {
                 var thisLocationString = "";
@@ -67,18 +72,39 @@
             }
             else {
                 $("#distributionLocation").val(locationResult[0]);
+                loadGrid($("#distributionLocation").val());
+                //loadGrid(9);
             }
             
-
-            //#region SetupButtons
+            //button setup
             $("#btnSaveDistribution").jqxButton({ width: '100%', height: 26 });
-            //#endregion
 
             $("#btnSaveDistribution").on("click", function (event) {
                 DistributCards();
 
                 loadGrid($("#LocationCombo").jqxComboBox('getSelectedItem').value);
             });
+
+            if (group.indexOf("Portal_RFR") > -1 || group.indexOf("Portal_Manager") > -1) {
+                $("#btnUpdateDistribution").jqxButton({ width: '100%', height: 26 });
+                $("#btnUpdateDistribution").on("click", function (event) {
+                    var getselectedrowindexes = $('#jqxDistribution').jqxGrid('getselectedrowindexes');
+                    if (getselectedrowindexes.length > 0) {
+                        // returns the selected row's data.
+                        var selectedRowData = $('#jqxDistribution').jqxGrid('getrowdata', getselectedrowindexes[0]);
+                    } else {
+                        swal("Please select a distribution.");
+                        return;
+                    }
+
+                    UpdateDistributCards(selectedRowData.CardDistID);
+
+                    loadGrid($("#LocationCombo").jqxComboBox('getSelectedItem').value);
+                });
+            } else {
+                $("#btnUpdateDistribution").hide();
+            }
+
 
             // set up source combo
             var source = [
@@ -87,7 +113,7 @@
                     //"Bus",
                     "Rep"];
 
-            $("#jqxDistPoint").jqxComboBox({ source: source, selectedIndex: 0, width: '100%', height: '24' });
+            $("#jqxDistPoint").jqxComboBox({ source: source, selectedIndex: 0, width: '100%', height: '24', autoDropDownHeight: true });
 
             $('#jqxDistPoint').on('select', function (event) {
                 var args = event.args;
@@ -103,8 +129,12 @@
                             }
                         }
                         if (item.label == "Rep") {
-                            loadReps();
-                            $("#jqxRep").toggle();
+                            if ($("#jqxRep").is(':visible')) {
+
+                            } else {
+                                $("#jqxRep").toggle();
+                            }
+                            
                             if ($("#jqxBus").is(":visible")) {
                                 $("#jqxBus").val('');
                                 $("#jqxBus").toggle();
@@ -150,7 +180,8 @@
                         return null;
                     }
                     if (item) {
-                        loadGrid($("#LocationCombo").jqxComboBox('getSelectedItem').value);
+                        $("#distributionLocation").val($("#LocationCombo").jqxComboBox('getSelectedItem').value);
+                        loadGrid($("#distributionLocation").val());
                     }
                 }
             });
@@ -218,6 +249,10 @@
 
                 });
             });
+
+            if (group.indexOf("Portal_RFR") > -1 || group.indexOf("Portal_Manager") > -1) {
+                $("#distDate").jqxDateTimeInput({ width: 220, height: 25, formatString: 'd' });
+            }
             
             Security();
 
@@ -284,7 +319,7 @@
                 sortable: true,
                 altrows: true,
                 filterable: true,
-                selectionmode: 'checkbox',
+                selectionmode: 'singlerow',
                 columns: [
                        { text: 'CardDistID', datafield: 'CardDistID', hidden: true },
                        { text: 'Marketing Rep', datafield: 'CardDistRepName' },
@@ -294,8 +329,40 @@
                        { text: 'Ending Card', datafield: 'CardDistEndNumber', cellsrenderer: padCard },
                        { text: 'NumberOfCards', datafield: 'NumberOfCards', cellsrenderer: numberOfCards },
                        { text: 'Distributed By', datafield: 'CardDistBy' },
-                       { text: 'Distributed Date', datafield: 'CardDistDate', cellsrenderer: DateTimeRender }
+                       { text: 'Distributed Date', datafield: 'CardDistDate', cellsrenderer: DateRender }
                 ]
+            });
+
+            $("#jqxDistribution").on("rowclick", function (event) {
+                if (group.indexOf("Portal_RFR") > -1 || group.indexOf("Portal_Manager") > -1) {
+                    var row = event.args.rowindex;
+                    var datarow = $("#jqxDistribution").jqxGrid('getrowdata', row);
+                    $('#distDate').jqxDateTimeInput('setDate', DateFormat(datarow.CardDistDate));
+                    $("#firstCard").val(datarow.CardDistStartNumber);
+                    $("#lastCard").val(datarow.CardDistEndNumber);
+                    if (datarow.CardDistBooth == 1) {
+                        var item = $("#jqxDistPoint").jqxComboBox('getItemByValue', 'Booth');
+                        $("#jqxDistPoint").jqxComboBox('selectItem', item);
+                    } else {
+
+                        // get all items.
+                        var items = $("#jqxRep").jqxComboBox('getItems');
+
+                        // find the index by searching for an item with specific value.
+                        var indexToSelect = -1;
+                        $.each(items, function (index) {
+                            if (this.label == datarow.CardDistRepName) {
+                                indexToSelect = index;
+                                //return false;
+                            }
+                        });
+
+                        var distItem = $("#jqxDistPoint").jqxComboBox('getItemByValue', 'Rep');
+                        $("#jqxDistPoint").jqxComboBox('selectItem', distItem);
+                        var repItem = $("#jqxRep").jqxComboBox('getItem', indexToSelect);
+                        $("#jqxRep").jqxComboBox('selectItem', repItem);
+                    }
+                }
             });
         }
 
@@ -327,12 +394,13 @@
             }
             var thisLocationId = $("#LocationCombo").jqxComboBox('getSelectedItem').value;
             
+            var myDate = $('#distDate').jqxDateTimeInput('getDate');
 
-            var myDate = new Date();
+            //var myDate = new Date();
 
             myDate = DateTimeFormat(myDate);
 
-            var data = { 'CardDistLocationID': thisLocationId, 'CardDistRepLineID': Rep, 'CardDistBooth': Booth, 'CardDistBusName': Bus, 'CardDistStartNumber': StartingNumber, 'CardDistEndNumber': EndingNumber, 'CardDistBy': $("#txtLoggedinUsername").val() };
+            var data = { 'CardDistLocationID': thisLocationId, 'CardDistRepLineID': Rep, 'CardDistBooth': Booth, 'CardDistBusName': Bus, 'CardDistStartNumber': StartingNumber, 'CardDistEndNumber': EndingNumber, 'CardDistBy': $("#txtLoggedinUsername").val(), 'CardDistDate': myDate };
 
             $.ajax({
                 async: false,
@@ -362,6 +430,72 @@
             $("#jqxBus").jqxComboBox('selectIndex', 0);
             $("#jqxRep").jqxComboBox('selectIndex', 0);
             
+
+        }
+
+        function UpdateDistributCards(CardDistID) {
+            if ($("#lastCard").css("background-color") == "rgb(255, 102, 102)" || $("#firstCard").css("background-color") == "rgb(255, 102, 102)") {
+                swal("One of your cards has not been received at this location or has already been distributed!");
+                return null;
+            };
+
+            if (parseInt($("#lastCard").val()) < parseInt($("#firstCard").val())) {
+                swal("Your last card is greater than your first card!");
+                return null;
+            };
+
+
+            var StartingNumber = $("#firstCard").val();
+            var EndingNumber = $("#lastCard").val();
+
+            if ($("#jqxRep").is(":visible")) {
+                var Rep = $("#jqxRep").jqxComboBox('getSelectedItem').value;
+                var Booth = 0;
+                var Bus = '';
+            }
+            else {
+                var Rep = 0;
+                var Booth = 1;
+                var Bus = '';
+            }
+            var thisLocationId = $("#LocationCombo").jqxComboBox('getSelectedItem').value;
+
+            var myDate = $('#distDate').jqxDateTimeInput('getDate');
+
+            //var myDate = new Date();
+
+            myDate = DateTimeFormat(myDate);
+
+            var data = { 'CardDistID': CardDistID, 'CardDistLocationID': thisLocationId, 'CardDistRepLineID': Rep, 'CardDistBooth': Booth, 'CardDistBusName': Bus, 'CardDistStartNumber': StartingNumber, 'CardDistEndNumber': EndingNumber, 'CardDistBy': $("#txtLoggedinUsername").val(), 'CardDistDate': myDate };
+
+            $.ajax({
+                async: false,
+                type: "POST",
+                url: $("#localApiDomain").val() + "CardDists/UpdateDistribute",
+                //url: "http://localhost:52839/api/CardDists/UpdateDistribute",
+
+                data: data,
+                dataType: "json",
+                success: function (thisData) {
+                    swal('Cards were Updated.');
+                },
+                error: function (request, status, error) {
+                    swal(request);
+                },
+                complete: function () {
+                    var parent = $("#jqxDistribution").parent();
+                    $("#jqxDistribution").jqxGrid('destroy');
+                    $("<div id='jqxDistribution'></div>").appendTo(parent);
+
+                    loadGrid($("#LocationCombo").jqxComboBox('getSelectedItem').value);
+                }
+
+            });
+
+
+            $("#jqxBus").jqxComboBox('selectIndex', 0);
+            $("#jqxRep").jqxComboBox('selectIndex', 0);
+
 
         }
 
@@ -486,7 +620,7 @@
                         <div class="col-sm-9">
                             <div class="row search-size">
                                 <div class="col-sm-4">
-                                    <%--<div id="LocationCombo"></div>--%>
+                                    <div id="distDate"></div>
                                 </div>
                                 <div class="col-sm-2">
                                     <input type="text" id="firstCard" placeholder="First Card" />
@@ -509,6 +643,9 @@
                                     <div class="row search-size">
                                         <div class="col-sm-12">
                                             <input type="button" id="btnSaveDistribution" value="Save Distribution" />
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <input type="button" id="btnUpdateDistribution" value="Update Distribution" />
                                         </div>
                                     </div>
                                 </div>

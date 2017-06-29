@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Portal2.master" AutoEventWireup="true" CodeFile="CardInventoryHistory.aspx.cs" Inherits="CardInventoryHistory" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Portal2.master" AutoEventWireup="true" CodeFile="Card_History.aspx.cs" Inherits="CardInventoryHistory" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
     <link rel="stylesheet" href="jqwidgets/styles/jqx.base.css" type="text/css" />
@@ -55,21 +55,21 @@
 
 
             // loading order histor
-            var url = $("#localApiDomain").val() + "CardDistHistorys/FindCardHistory/" + carId;
+            var url = $("#localApiDomain").val() + "CardHistorys/GetHistory/" + carId;
+            //var url = "http://localhost:52839/api/CardHistorys/GetHistory/" + carId;
 
             var source =
             {
                 datafields: [
-                    { name: 'CardHistoryId' },
+                    { name: 'Action' },
                     { name: 'ActivityDate' },
-                    { name: 'StartingNumber' },
-                    { name: 'EndingNumber' },
-                    { name: 'DistributionPoint' },
-                    { name: 'BusOrRepId' },
-                    { name: 'CardDistributionActivityDescription' },
-                    { name: 'RecordedBy' },
-                    { name: 'ActivityId' },
-                    { name: 'NameOfLocation' },
+                    { name: 'InitialUser' },
+                    { name: 'StartingCard' },
+                    { name: 'EndingCard' },
+                    { name: 'ReceivedDate' },
+                    { name: 'ReceiveUser' },
+                    { name: 'Status' },
+                    { name: 'Location' }
                 ],
                 id: 'ManualEditId',
                 type: 'Get',
@@ -80,29 +80,27 @@
             // creage jqxgrid
             $("#jqxHistory").jqxGrid(
             {
-                pageable: true,
-                pagermode: 'simple',
+                //pageable: true,
+                //pagermode: 'simple',
                 //pagermode: 'advanced',
                 pagesize: 12,
                 width: '100%',
                 height: 500,
                 source: source,
-                selectionmode: 'checkbox',
                 rowsheight: 35,
                 sortable: true,
                 altrows: true,
                 filterable: true,
                 columns: [
-                       { text: 'CardHistoryId', datafield: 'CardHistoryId', hidden: true },
+                       { text: 'Action', datafield: 'Action', width: '10%' },
                        { text: 'Activity Date', datafield: 'ActivityDate', cellsrenderer: DateRender, width: '15%' },
-                       { text: 'Starting Card', datafield: 'StartingNumber', width: '10%' },
-                       { text: 'Ending Card', datafield: 'EndingNumber', width: '10%' },
-                       { text: 'Distribution Point', datafield: 'DistributionPoint', width: '10%' },
-                       { text: 'Distribute To', datafield: 'BusOrRepId', width: '10%' },
-                       { text: 'Activity', datafield: 'CardDistributionActivityDescription', width: '15%' },
-                       { text: 'User', datafield: 'RecordedBy', width: '15%' },
-                       { text: 'Location', datafield: 'NameOfLocation', width: '15%' },
-                       { text: 'ActivityId', datafield: 'ActivityId', hidden: true }
+                       { text: 'Initial User', datafield: 'InitialUser', width: '10%' },
+                       { text: 'Starting Card', datafield: 'StartingCard', width: '10%' },
+                       { text: 'Ending Card', datafield: 'EndingCard', width: '10%' },
+                       { text: 'Received Date', datafield: 'ReceivedDate', cellsrenderer: DateRender, width: '15%' },
+                       { text: 'Receive User', datafield: 'ReceiveUser', width: '10%' },
+                       { text: 'Status', datafield: 'Status', width: '10%' },
+                       { text: 'Location', datafield: 'Location', width: '10%' }
                 ]
             });
         }

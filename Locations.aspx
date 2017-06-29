@@ -521,9 +521,11 @@
                 var newOptionalExtrasName = $("#FeatureOptionalExtrasName").val();
                 var newOptionalExtrasDescription = $("#FeatureOptionalExtrasDescription").val();
                 var LocationHasFeatureId = $("#LocationHasFeatureId").val();
+                var newIsDisplayed = $("#IsDisplayed").is(":checked");
 
+                var featurePostUrl = $("#apiDomain").val() + "locations/" + selectedLocationId + "/features/" + newFeatureId;
 
-                var featurePostUrl = $("#apiDomain").val() + "locations/" + selectedLocationId + "/features/" + LocationHasFeatureId;
+                var test = featurePostUrl;
 
                 $.ajax({
                     headers: {
@@ -541,7 +543,8 @@
                         "IsDisplayed": newIsDisplayed,
                         "SortOrder": newSortOrder,
                         "OptionalExtrasName": newOptionalExtrasName,
-                        "OptionalExtrasDescription": newOptionalExtrasDescription
+                        "OptionalExtrasDescription": newOptionalExtrasDescription,
+                        "IsDisplayedOptionalExtra": newIsDisplayed
                     }),
                     dataType: "json",
                     success: function (response) {
@@ -1200,14 +1203,14 @@
 
         function SaveCharges () {
             //gets the data from the feature form to save as new feature for site
-
+            var newFeatureId = $("#featureCombo").jqxComboBox('getSelectedItem').value;
             var newChargeAmount = $("#FeatureChargeAmount").val();
             var newChargeNote = $("#FeatureChargeNote").val();
             var newFeatureEffectiveDatetime = $("#FeatureEffectiveDatetime").val();
             var LocationHasFeatureId = $("#LocationHasFeatureId").val();
 
 
-            var featurePostUrl = $("#apiDomain").val() + "locations/" + selectedLocationId + "/features/" + LocationHasFeatureId + "/charges";
+            var featurePostUrl = $("#apiDomain").val() + "locations/" + selectedLocationId + "/features/" + newFeatureId + "/charges";
 
             //alert(featurePostUrl);
             //alert("ChargeAmount: " + newChargeAmount + "ChargeNote: " + newChargeNote + "EffectiveDatetime: " + newFeatureEffectiveDatetime)

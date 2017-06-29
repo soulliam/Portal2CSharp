@@ -159,6 +159,7 @@
             }
             else {
                 $("#boothLocation").val(locationResult[0]);
+                loadGrid($("#boothLocation").val());
             }
 
             $("#LocationCombo").on('select', function (event) {

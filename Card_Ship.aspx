@@ -29,6 +29,12 @@
     <script type="text/javascript" src="jqwidgets/jqxcheckbox.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxgrid.edit.js"></script>
 
+    <style>
+        .yellowCell {
+            background-color: yellow;
+        }
+    </style>
+
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
         var group = '<%= Session["groupList"] %>';
@@ -37,9 +43,12 @@
 
         var locationString = $("#userLocation").val();
         locationResult = locationString.split(",");
+        //add home office and warehouse
+        if (group.indexOf("Portal_RFR") > -1 || group.indexOf("Portal_Superadmin") > -1) {
+            locationResult = locationResult + ',100,101'
+        }
 
         $(document).ready(function () {
-            
 
             loadGrid(locationResult);
 
@@ -60,7 +69,12 @@
             //$("#jqxdatetimeinputSpecShip").jqxDateTimeInput({ width: '100%', height: '24px', formatString: 'MM/dd/yyyy' });
             
             $("#placeShip").on("click", function (event) {
-                placeShip();
+                if ($('#reShip').is(":checked")) {
+                    reShip();
+                } else {
+                    placeShip();
+                }
+                
             });
 
             $("#editShip").on("click", function (event) {
@@ -391,6 +405,7 @@
                     { name: 'CardShipToName' },
                     { name: 'CardShipTo' },
                     { name: 'CardDesignId' },
+                    { name: 'IsActive' },
                     { name: 'CardShipStatus' }
                 ],
                 id: 'ManualEditId',
@@ -409,6 +424,13 @@
                 return '<div style="margin-top: 10px;margin-left: 5px">' + newValue + '</div>';
             }
 
+            var cellclassname = function (row, column, value, data) {
+                var val = $('#jqxShipping').jqxGrid('getcellvalue', row, "IsActive");
+                if (val == 0) {
+                    return "yellowCell";
+                }
+            }
+
             // creage jqxgrid
             $("#jqxShipping").jqxGrid(
             {
@@ -423,20 +445,21 @@
                 editable: true,
                 columns: [
                        { text: 'CardShipID', datafield: 'CardShipID', hidden: true },
-                       { text: 'Ship Origin', datafield: 'CardShipFromName' },
+                       { text: 'Ship Origin', datafield: 'CardShipFromName', cellclassname: cellclassname },
                        { text: 'CardShipFrom', datafield: 'CardShipFrom', hidden: true },
-                       { text: 'Shipped By', datafield: 'CardShipShippedBy' },
-                       { text: 'Ship Date', datafield: 'CardShipDate', cellsrenderer: DateRender },
-                       { text: 'Design', datafield: 'CardDesignDesc' },
-                       { text: 'Start Number', datafield: 'CardShipStartNumber', cellsrenderer: padCard },
-                       { text: 'End Number', datafield: 'CardShipEndNumber', cellsrenderer: padCard },
-                       { text: 'NumberOfCards', datafield: 'NumberOfCards', cellsrenderer: numberOfCards },
-                       { text: 'Received By', datafield: 'CardShipReceivedBy' },
-                       { text: 'Receive Date', datafield: 'CardShipReceiveDate', cellsrenderer: DateRender },
-                       { text: 'Destination', datafield: 'CardShipToName' },
+                       { text: 'Shipped By', datafield: 'CardShipShippedBy', cellclassname: cellclassname },
+                       { text: 'Ship Date', datafield: 'CardShipDate', cellsrenderer: DateRender, cellclassname: cellclassname },
+                       { text: 'Design', datafield: 'CardDesignDesc', cellclassname: cellclassname },
+                       { text: 'Start Number', datafield: 'CardShipStartNumber', cellsrenderer: padCard, cellclassname: cellclassname },
+                       { text: 'End Number', datafield: 'CardShipEndNumber', cellsrenderer: padCard, cellclassname: cellclassname },
+                       { text: 'NumberOfCards', datafield: 'NumberOfCards', cellsrenderer: numberOfCards, cellclassname: cellclassname },
+                       { text: 'Received By', datafield: 'CardShipReceivedBy', cellclassname: cellclassname },
+                       { text: 'Receive Date', datafield: 'CardShipReceiveDate', cellsrenderer: DateRender, cellclassname: cellclassname },
+                       { text: 'Destination', datafield: 'CardShipToName', cellclassname: cellclassname },
                        { text: 'CardShipTo', datafield: 'CardShipTo', hidden: true },
                        { text: 'CardDesignId', datafield: 'CardDesignId', hidden: true },
-                       { text: 'Status', datafield: 'CardShipStatus' }
+                       { text: 'IsActive', datafield: 'IsActive', hidden: true },
+                       { text: 'Status', datafield: 'CardShipStatus', cellclassname: cellclassname }
                 ]
             });
         }
@@ -603,9 +626,66 @@
                 }
             }
 
-            //$.post($("#localApiDomain").val() + "CardShips/edit",
-            $.post("http://localhost:52839/api/CardShips/edit",
+            $.post($("#localApiDomain").val() + "CardShips/edit",
+            //$.post("http://localhost:52839/api/CardShips/edit",
                 { 'CardShipFrom': fromLocation, 'CardShipTo': toLocation, 'CardShipShippedBy': $("#txtLoggedinUsername").val(), 'CardShipStartNumber': StartingNumber, 'CardShipEndNumber': EndingNumber, 'CardDesignId': cardDesignId, 'CardShipID': thisCardShipId },
+                function (data, status) {
+                    switch (status) {
+                        case 'success':
+                            swal('Cards were shipped successfully');
+                            GetLastCardShipped();
+                            GetHighestavailableCard();
+                            $("#shipAmount").val("");
+                            $("#firstCard").val("");
+                            $("#lastCard").val("");
+                            loadGrid(locationResult);
+                            break;
+                        default:
+                            swal('An Error occurred: ' + status + "\n Data:" + data);
+                            break;
+                    }
+                }
+            );
+
+        }
+
+        function reShip() {
+
+            if ($("#fromlocationCombo").jqxComboBox('selectedIndex') == 0) {
+                swal("You must pick a 'From' location!");
+                return;
+            }
+
+            if ($("#tolocationCombo").jqxComboBox('selectedIndex') == 0) {
+                swal("You must pick a 'To' location!");
+                return;
+            }
+
+            if ($("#cardDesign").jqxComboBox('getSelectedIndex') == 0) {
+                swal("Select a Design!");
+                return;
+            }
+
+            var cardDesignId = $("#cardDesign").jqxComboBox('getSelectedItem').value
+            var toLocation = $("#tolocationCombo").jqxComboBox('getSelectedItem').value;
+            var fromLocation = $("#fromlocationCombo").jqxComboBox('getSelectedItem').value
+            var StartingNumber = 0;
+            var EndingNumber = 0;
+            var thisCardShipId = cardShipId;
+
+            if ($("#specShip").is(":visible")) {
+                StartingNumber = parseInt($("#firstCard").val());
+                EndingNumber = parseInt($("#lastCard").val());
+
+                if (StartingNumber == 0 || EndingNumber == 0) {
+                    swal("You must set a starting card and an ending card to do a special order.");
+                    return;
+                }
+            }
+
+            $.post($("#localApiDomain").val() + "CardShips/reShip",
+            //$.post("http://localhost:52839/api/CardShips/reShip",
+                { 'CardShipFrom': fromLocation, 'CardShipTo': toLocation, 'CardShipShippedBy': $("#txtLoggedinUsername").val(), 'CardShipStartNumber': StartingNumber, 'CardShipEndNumber': EndingNumber, 'CardDesignId': cardDesignId, 'CardShipID': thisCardShipId, 'IsActive': 0 },
                 function (data, status) {
                     switch (status) {
                         case 'success':
@@ -704,6 +784,9 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                                <input type="checkbox" id="reShip" style="width:15px;float:left" /><div style="float:left;margin-top:8px;margin-left:10px;color:white">Re-Ship</div>
+                           
                         </div>
                     </div>
                 </div>
