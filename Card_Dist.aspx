@@ -82,7 +82,7 @@
             $("#btnSaveDistribution").on("click", function (event) {
                 DistributCards();
 
-                loadGrid($("#LocationCombo").jqxComboBox('getSelectedItem').value);
+                loadGrid($("#distributionLocation").val());
             });
 
             if (group.indexOf("Portal_RFR") > -1 || group.indexOf("Portal_Manager") > -1) {
@@ -99,7 +99,7 @@
 
                     UpdateDistributCards(selectedRowData.CardDistID);
 
-                    loadGrid($("#LocationCombo").jqxComboBox('getSelectedItem').value);
+                    loadGrid($("#distributionLocation").val());
                 });
             } else {
                 $("#btnUpdateDistribution").hide();
@@ -189,7 +189,7 @@
             //Check key strokes for whether card is in DB for different history types Order = 1
             $("#firstCard").keyup(function () {
                 var cardVal = $("#firstCard").val();
-                var thisLocationId = $("#LocationCombo").jqxComboBox('getSelectedItem').value;
+                var thisLocationId = $("#distributionLocation").val();
                 var data = { 'CardDistLocationID': thisLocationId, 'CardDistStartNumber': cardVal };
 
                 $.ajax({
@@ -221,7 +221,7 @@
 
             $("#lastCard").keyup(function () {
                 var cardVal = $("#lastCard").val();
-                var thisLocationId = $("#LocationCombo").jqxComboBox('getSelectedItem').value;
+                var thisLocationId = $("#distributionLocation").val();
                 var data = { 'CardDistLocationID': thisLocationId, 'CardDistEndNumber': cardVal };
 
                 $.ajax({
@@ -392,7 +392,7 @@
                 var Booth = 1;
                 var Bus = '';
             }
-            var thisLocationId = $("#LocationCombo").jqxComboBox('getSelectedItem').value;
+            var thisLocationId = $("#distributionLocation").val();
             
             var myDate = $('#distDate').jqxDateTimeInput('getDate');
 
@@ -421,7 +421,7 @@
                     $("#jqxDistribution").jqxGrid('destroy');
                     $("<div id='jqxDistribution'></div>").appendTo(parent);
 
-                    loadGrid($("#LocationCombo").jqxComboBox('getSelectedItem').value);
+                    loadGrid($("#distributionLocation").val());
                 }
 
             });
@@ -458,7 +458,7 @@
                 var Booth = 1;
                 var Bus = '';
             }
-            var thisLocationId = $("#LocationCombo").jqxComboBox('getSelectedItem').value;
+            var thisLocationId = $("#distributionLocation").val();
 
             var myDate = $('#distDate').jqxDateTimeInput('getDate');
 
@@ -487,7 +487,7 @@
                     $("#jqxDistribution").jqxGrid('destroy');
                     $("<div id='jqxDistribution'></div>").appendTo(parent);
 
-                    loadGrid($("#LocationCombo").jqxComboBox('getSelectedItem').value);
+                    loadGrid($("#distributionLocation").val());
                 }
 
             });

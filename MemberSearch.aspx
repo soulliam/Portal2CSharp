@@ -4477,7 +4477,7 @@
                                 <input type="button" id="UnDeleteCard" value="UnDelete" class="editor" />
                                 <input type="button" id="addCard" value="Add" class="editor" />
                                 <input type="button" id="setCardPrimary" value="Set as Primary" class="editor" />
-                                <input type="button" id="combineMemberCards" value="Combine Member Cards" class="editor RFR" />
+                                <input type="button" id="combineMemberCards" value="Combine Member Cards" class="RFR" />
                                 </div>
                             </div>
                         </div>
