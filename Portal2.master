@@ -33,11 +33,11 @@
         <form runat="server">
             <div class="hidden">
                 <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
-                <asp:TextBox runat="server" ID="userGuid" style="visibility:hidden">9D5F325AD6D045FE8B295765D3E6925C</asp:TextBox>
+                <asp:TextBox runat="server" ID="userGuid" style="visibility:hidden">B095C9EC92E24C1C82549711377C91C5</asp:TextBox>
                 <asp:TextBox runat="server" ID="tempUserGuid" style="visibility:hidden"></asp:TextBox>
                 <asp:TextBox runat="server" ID="AK" style="visibility:hidden">301C01F6-450E-4D97-B522-CD69EF25B574</asp:TextBox>
                 <asp:TextBox runat="server" ID="apiDomain" style="visibility:hidden">https://apistage.thefastpark.com/api/v1/</asp:TextBox>
-                <asp:TextBox runat="server" ID="localApiDomain" style="visibility:hidden">http://maxdev:8181/api/</asp:TextBox>
+                <asp:TextBox runat="server" ID="localApiDomain" style="visibility:hidden">http://192.168.0.9:8181/api/</asp:TextBox>
                 <asp:TextBox runat="server" ID="userLocation" style="visibility:hidden">14</asp:TextBox>
             </div>
 
@@ -66,7 +66,7 @@
                         <li class="menuSecurity disabled Portal_CarCount">
                             <a href="CarCount.aspx">Car Count</a>
                         </li>
-                        <li runat="server" id="Manager" class="dropdown menuSecurity disabled">
+                        <%--<li runat="server" id="Manager" class="dropdown menuSecurity disabled">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" >Cards/Coupons<span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="#" class="menuSecurity disabled">CouponTracking</a></li>
@@ -78,7 +78,7 @@
                                 <li><a href="#" class="menuSecurity disabled">Maintain Coupon Types</a></li> 
                                 <li><a href="#" class="menuSecurity disabled">Maintain User Tiers</a></li> 
                             </ul>
-                        </li> 
+                        </li> --%>
                         <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager Portal_Marketing Portal_Auditadmin">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Portal_RFR Tools<span class="caret"></span></a>
                             <ul class="dropdown-menu">
@@ -116,11 +116,13 @@
                                 <li><a href="VehicleAddStock.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Add Stock</a></li> 
                             </ul>
                         </li> 
-                        <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_Insurance Portal_Legal">
+                        <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_Insurance Portal_Legal Portal_Couponadmin Portal_Manager Portal_Asstmanager">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">PCA Apps<span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="Insurance.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Insurance</a></li>
                                 <li><a href="Legal.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Legal">Legal</a></li>
+                                <li><a href="Coupons.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Manager Portal_Asstmanager Portal_Couponadmin">Coupons</a></li>
+                                <li><a href="http://uniforms.airportfastpark.com/" target="_blank" class="menuSecurity disabled Portal_Superadmin Portal_Manager">Uniforms</a></li>
                             </ul>
                         </li>
                         <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">

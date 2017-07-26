@@ -248,8 +248,8 @@
 
             $.ajax({
                 type: 'GET',
-                url: $("#localApiDomain").val() + "CardOrders/GetLastCardOrdered/",
-                //url: "http://localhost:52839/api/CardOrders/GetLastCardOrdered/",
+                //url: $("#localApiDomain").val() + "CardOrders/GetLastCardOrdered/",
+                url: "http://localhost:52839/api/CardOrders/GetLastCardOrdered/",
                 success: function (data) {
                     $("#lastOrdered").val(data[0].orderedMax);
                    
@@ -310,8 +310,8 @@
 
             $('#jqxLoader').jqxLoader('open');
             var thisDate = new Date();
-            $.post($("#localApiDomain").val() + "CardOrders/Post",
-            //$.post("http://localhost:52839/api/CardOrders/Post",
+            //$.post($("#localApiDomain").val() + "CardOrders/Post",
+            $.post("http://localhost:52839/api/CardOrders/Post",
                 { 'CardOrderStartNumber': StartingNumber, 'CardOrderEndNumber': EndingNumber, 'CardOrderBy': $("#txtLoggedinUsername").val(), 'CardOrderStatus': 1, 'CardDesignId': cardDesignId },
                 function (data, status) {
                     switch (status) {

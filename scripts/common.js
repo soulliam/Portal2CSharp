@@ -191,6 +191,14 @@ function Security() {
             if (old != "") $(this).attr('href', old);
         });
     }
+
+    if (group.indexOf("Portal_Couponadmin") > -1) {
+        $('.Portal_Couponadmin').each(function () {
+            $('.Portal_Couponadmin').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
+    }
 }
 
 //render dates for grid
@@ -198,6 +206,9 @@ var DateRender = function (row, columnfield, value, defaulthtml, columnpropertie
     // format date as string due to inconsistant date coversions
     switch (true) {
         case (value == '0001-01-01T00:00:00'):
+            return '<div style="margin-top: 10px;margin-left: 5px">&nbsp;</div>';
+            break;
+        case (value == '1900-01-01T00:00:00'):
             return '<div style="margin-top: 10px;margin-left: 5px">&nbsp;</div>';
             break;
         case (String(value).indexOf("GMT") > -1):

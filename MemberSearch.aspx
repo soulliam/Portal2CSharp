@@ -53,6 +53,12 @@
 
         $(document).ready(function () {
 
+            //Hide search bar if you are not in one of these groups Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager Portal_Marketing Portal_Auditadmin
+
+            if (group.indexOf("Portal_Superadmin") < 0 && group.indexOf("Portal_RFR") < 0 && group.indexOf("Portal_Manager") < 0 && group.indexOf("Portal_Asstmanager") < 0 && group.indexOf("Portal_Marketing") < 0 && group.indexOf("Portal_Auditadmin") < 0 && group.indexOf("Portal_Marketmanager") < 0) {
+                $("#FPR_SearchBox").hide();
+            }
+
             ////Drag function
             //$(function () {
             //    $('body').on('mousedown', '#popupCombineMembers', function () {
@@ -279,10 +285,11 @@
             //#region ButtonClicks
 
             $("#cancelReservationForm").on("click", function (event) {
+                
                 $('#reservationFeeDiscountIdGrid').jqxGrid('clearselection');
 
                 $("#reservationFeeDiscountIdDDB").jqxDropDownButton('setContent', "Please Select");
-
+                
                 $("#reservationStartDate").jqxDateTimeInput('today');
                 $("#reservationEndDate").jqxDateTimeInput('today');
                 $("#reservationFeeInput").val('');
@@ -1480,6 +1487,8 @@
                     //    //$("#MailerCompanyCombo").jqxComboBox({ disabled: false });
                     //    $("#MailerCompanyCombo").attr("disabled", false);
                     //}
+
+
                     Security();
                 }
             });
@@ -1632,7 +1641,7 @@
             loadStatus();
 
 
-            
+            //Security code is in scripts/common.js
             Security();
 
 
@@ -1741,7 +1750,7 @@
                                 //creates Member Name tab
                                 $('#jqxMemberTabs').jqxTabs('addLast', FirstName + ' ' + LastName + '<input type="hidden" id="' + counter + '" value="' + MemberId + '">', '');
 
-                                //clears the variables to the if statement won't catch it again
+                                //clears the variables so the if statement won't catch it again
                                 FirstName = "";
                                 LastName = "";
                                 MemberId = "";
@@ -1898,7 +1907,7 @@
             $("#jqxDisplayQAGrid").jqxGrid('destroy');
             $("<div id='jqxDisplayQAGrid'></div>").appendTo(parent);
 
-            //Loads card list
+            
             var PageMemberID = $("#MemberId").val();
 
             var url = $("#apiDomain").val() + "members/" + PageMemberID + "/security-questions";
@@ -1926,7 +1935,7 @@
                 root: "data"
             };
 
-            // create jqxCardGrid
+           
             $("#jqxDisplayQAGrid").jqxGrid(
             {
                 width: '100%',
@@ -1950,7 +1959,7 @@
             $("#jqxMemberActivityGrid").jqxGrid('destroy');
             $("<div id='jqxMemberActivityGrid'></div>").appendTo(parent);
 
-            //Loads card list
+            
             var url = $("#apiDomain").val() + "accounts/" + AccountId + "/activity?StartDate=1/1/1900&EndDate=1/1/9999&Limit=";
 
             var source =

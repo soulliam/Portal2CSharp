@@ -6,6 +6,28 @@
         url = $("#apiDomain").val() + "members/" + thisMemberId;
     }
 
+    var thisTEST = JSON.stringify({
+        "UserName": thisUserName,
+        "FirstName": thisFirstName,
+        "LastName": thisLastName,
+        "Suffix": "",
+        "EmailAddress": thisEmailAddress,
+        "StreetAddress": thisStreetAddress,
+        "StreetAddress2": thisStreetAddress2,
+        "CityName": thisCityName,
+        "StateId": thisStateId,
+        "Zip": thisZip,
+        "Password": "",
+        "VerifyPassword": "",
+        "Company": thisCompany,
+        "TitleId": thisTitleId,
+        "CorporateDiscountCode": "",
+        "LocationId": thisLocationId,
+        "PhoneList": [],
+        "CompanyId": thisCompanyId,
+        "MarketingCode": thisMarketingCode,
+        "CorporateDiscountCode": thisMarketingMailerCode
+    });
 
     //data = JSON.stringify({
     //    "UserName": thisUserName,
