@@ -43,7 +43,7 @@
                 <div>
                     <a href="MemberSearch.aspx" style="float:right;">Return to Portal</a>
                     <rsweb:ReportViewer ID="ReportViewer1" runat="server" Height="632px" Width="100%" AsyncRendering="False" Font-Names="Verdana" Font-Size="8pt" ProcessingMode="Remote" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt">
-                        <ServerReport ReportPath="/NewManager/General/ManagerAudit" ReportServerUrl="http://192.168.0.90:80/ReportServer" />
+                        <ServerReport ReportPath="/NewManager/General/ManagerAudit" ReportServerUrl="http://pca-sql1:80/ReportServer" />
                     </rsweb:ReportViewer>
                 </div> 
             </div>        

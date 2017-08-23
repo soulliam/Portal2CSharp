@@ -30,6 +30,12 @@
     <script type="text/javascript" src="jqwidgets/jqxtabs.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxcheckbox.js"></script>
 
+    <style>
+        .displayBlock{
+            display: none;
+        }
+    </style>
+
     <script type="text/javascript">
 
         var thisNewCity = false; //determines whether a new City is being made so the feature grid doesn't get set 
@@ -38,21 +44,41 @@
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
             
-
             $('#jqxTabs').jqxTabs({ width: '100%', height: 600, position: 'top' });
 
             loadReservationRestrictions();
             loadrestrictionLocationCombo();
-            loadfeeLocationCombo();
+
+            var locationString = $("#userLocation").val();
+            var locationResult = locationString.split(",");
+
+            var thisLocationString = "";
+            for (i = 0; i < locationResult.length; i++) {
+                if (i == locationResult.length - 1) {
+                    thisLocationString += locationResult[i];
+                }
+                else {
+                    thisLocationString += locationResult[i] + ",";
+                }
+            }
+
+            loadfeeLocationCombo(thisLocationString);
             loadStatus();
 
             $("#EffectiveDatetime").jqxDateTimeInput({ width: '300px', height: '25px' });
             $('#EffectiveDatetime').jqxDateTimeInput({ formatString: "MM/dd/yyyy" });
+            $('#EffectiveDatetime ').val(new Date());
             $("#ExpiresDatetime").jqxDateTimeInput({ width: '300px', height: '25px' });
             $('#ExpiresDatetime').jqxDateTimeInput({ formatString: "MM/dd/yyyy" });
+            $('#ExpiresDatetime ').val(new Date());
 
             $("#addRestriction").jqxButton();
             $("#addFee").jqxButton();
+            $("#blockReservation").jqxButton();
+            $("#feeSave").jqxButton();
+            $("#feeCancel").jqxButton();
+            $("#popupRestrictionCancel").jqxButton();
+            $("#restrictionSave").jqxButton();
 
             $("#popupRestrictionCancel").on("click", function (event) {
                 $("#popupRestriction").jqxWindow('close');
@@ -60,16 +86,16 @@
 
             $("#feeCancel").on("click", function (event) {
 
-                $("#ReservationFeeId").val("");
-                $('#EffectiveDatetime ').val("1/1/1900");
-                $('#ExpiresDatetime ').val("1/1/1900");
-                $("#feeIsDefault").prop("checked", false);
-                $("#FeeDollars").val("");
-                $("#FeePoints").val("");
-                $("#CancellationGracePeriodHours").val("");
-                $("#CancellationFeeDollars").val("");
-                $("#NoShowFeeDollars").val("");
-                $("#MaxReservationCount").val("");
+                //$("#ReservationFeeId").val("");
+                //$('#EffectiveDatetime ').val(new Date());
+                //$('#ExpiresDatetime ').val(new Date());
+                //$("#feeIsDefault").prop("checked", false);
+                //$("#FeeDollars").val("");
+                //$("#FeePoints").val("");
+                //$("#CancellationGracePeriodHours").val("");
+                //$("#CancellationFeeDollars").val("");
+                //$("#NoShowFeeDollars").val("");
+                //$("#MaxReservationCount").val("");
 
                 $("#feeSave").css('visibility', 'visible');
 
@@ -77,16 +103,16 @@
             });
 
             $('#popupFee').on('close', function (event) {
-                $("#ReservationFeeId").val("");
-                $('#EffectiveDatetime ').val("1/1/1900");
-                $('#ExpiresDatetime ').val("1/1/1900");
-                $("#feeIsDefault").prop("checked", false);
-                $("#FeeDollars").val("");
-                $("#FeePoints").val("");
-                $("#CancellationGracePeriodHours").val("");
-                $("#CancellationFeeDollars").val("");
-                $("#NoShowFeeDollars").val("");
-                $("#MaxReservationCount").val("");
+                //$("#ReservationFeeId").val("");
+                //$('#EffectiveDatetime ').val("1/1/1900");
+                //$('#ExpiresDatetime ').val("1/1/1900");
+                //$("#feeIsDefault").prop("checked", false);
+                //$("#FeeDollars").val("");
+                //$("#FeePoints").val("");
+                //$("#CancellationGracePeriodHours").val("");
+                //$("#CancellationFeeDollars").val("");
+                //$("#NoShowFeeDollars").val("");
+                //$("#MaxReservationCount").val("");
 
                 $("#feeSave").css('visibility', 'visible');
             });
@@ -111,9 +137,11 @@
                 $("#popupRestriction").jqxWindow('open');
             });
 
-            $("#addFee").on("click", function (event) {
+            $("#addFee, #blockReservation").on("click", function (event) {
                 $("#popupFee").css('display', 'block');
                 $("#popupFee").css('visibility', 'hidden');
+
+                $("#feeSave").css('display', 'block');
 
                 var offset = $("#jqxMemberInfoTabs").offset();
                 $("#popupFee").jqxWindow({ position: { x: '25%', y: '10%' } });
@@ -200,7 +228,6 @@
                             loadReservationRestrictions();
                         }
                     })
-
                     $("#popupRestriction").jqxWindow('hide');
                 }
             });
@@ -265,8 +292,6 @@
                 })
 
                 $("#popupRestriction").jqxWindow('hide');
-
-              
             });
 
             //Delete restriction button click event
@@ -304,6 +329,8 @@
             });
 
             Security();
+
+            LocalSecurity();
 
         })//end document ready ***************************
 
@@ -396,9 +423,6 @@
                       { text: 'Maximum Status', datafield: 'MaximumPreferredStatusRank', cellsrenderer: statusCellsrenderer, width: '30%' }
                 ]
             });
-
-            
-
         }
 
         //Loads city grid
@@ -467,7 +491,7 @@
                               $('#popupFee').jqxWindow({ showAnimationDuration: 300 });
                               $('#popupFee').jqxWindow({ closeAnimationDuration: 500 });
 
-                              $("#feeSave").css('visibility', 'hidden');
+                              $("#feeSave").css('display', 'none');
 
                               // get the clicked row's data and initialize the input fields.
                               var dataRecord = $("#reservationFeesGrid").jqxGrid('getrowdata', editrow);
@@ -522,7 +546,6 @@
                     { name: 'LocationId' }
                 ],
                 url: $("#localApiDomain").val() + "Locations/Locations/",
-
             };
             var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
             $("#restrictionLocationCombo").jqxComboBox(
@@ -540,7 +563,8 @@
             });
         }
 
-        function loadfeeLocationCombo() {
+        function loadfeeLocationCombo(thisLocationString) {
+
             //set up the location combobox
             var locationSource =
             {
@@ -551,20 +575,21 @@
                     { name: 'NameOfLocation' },
                     { name: 'LocationId' }
                 ],
-                url: $("#localApiDomain").val() + "Locations/Locations/",
+                url: $("#localApiDomain").val() + "Locations/LocationByLocationIds/" + thisLocationString,
 
             };
             var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
             $("#feeLocationCombo").jqxComboBox(
             {
-                theme: 'shinyblack',
                 width: '100%',
-                height: 24,
+                height: 25,
+                itemHeight: 50,
                 source: locationDataAdapter,
                 selectedIndex: 0,
                 displayMember: "NameOfLocation",
                 valueMember: "LocationId"
             });
+
             $("#feeLocationCombo").on('select', function (event) {
                 if (event.args) {
                     var item = event.args.item;
@@ -573,8 +598,6 @@
                     }
                 }
             });
-
-
         }
 
         function loadStatus() {
@@ -592,7 +615,6 @@
                     jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
                 },
                 url: $("#apiDomain").val() + "status-levels",
-
             };
             var statusDataAdapter = new $.jqx.dataAdapter(statusSource);
             $("#statusCombo").jqxComboBox(
@@ -610,12 +632,33 @@
             });
         }
 
-       
+        function LocalSecurity() {
+            $('.reservationSecurity').each(function () {
+                $('.reservationSecurity').addClass('disabled');
+            });
+
+            $('.managerSecurity').each(function () {
+                $('.managerSecurity').addClass('disabled');
+            }); 
+
+            $('.blockReservationHidden').each(function () {
+                $('.blockReservationHidden').addClass('displayBlock');
+            });
+
+            if (group.indexOf("Portal_RFR") > -1 || group.indexOf("Portal_Manager") > -1) {
+                $('.managerSecurity').removeClass('disabled');
+            }
+
+            if (group.indexOf("Portal_Auditadmin") > -1 || group.indexOf("Portal_Superadmin") > -1) {
+                $('.reservationSecurity').removeClass('disabled');
+                $('.managerSecurity').removeClass('disabled');
+                $('.blockReservationHidden').removeClass('displayBlock');
+            }
+        }
 
     </script>
- 
     
-    <div id="Cities" class="container-fluid container-970 wrap-search-options">
+    <div id="ReservationMaintenance" class="container-fluid container-970 wrap-search-options">
         <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
             <div class="row search-size FPR_SearchLeft">
                 <div class="col-sm-12 col-md-10 col-md-offset-1">
@@ -646,8 +689,8 @@
             <div class="col-sm-12">
                 <div id='jqxTabs'>
                     <ul>
-                        <li style="margin-left: 30px;">Reservation Fees</li>
-                        <li>Reservation Restrictions</li>
+                        <li style="margin-left: 30px;">Reservation Management</li>
+                        <li>Reservation Status</li>
                     </ul>
                     <div id="tabReservationFees" class="tab-body">
                         <div class="row">
@@ -656,7 +699,10 @@
                             </div>
                             <div class="col-sm-3 col-md-2">
                                 <div id="feeLocationCombo"></div>
-                                <input type="button" id="addFee" value="Add" class="editor" />
+                                <input type="button" id="addFee" value="Admin" class="reservationSecurity" />
+                            </div>
+                            <div class="col-sm-3 col-md-2">
+                                <input type="button" id="blockReservation" value="Block Reservations" class="managerSecurity" />
                             </div>
                         </div>
                     </div>
@@ -666,7 +712,7 @@
                                 <div id="reservationRestrictionGrid"></div>
                             </div>
                             <div class="col-sm-3 col-md-2">
-                                <input type="button" id="addRestriction" value="Add" class="editor" />
+                                <input type="button" id="addRestriction" value="Admin" class="reservationSecurity" />
                             </div>
                         </div>
                     </div>
@@ -674,7 +720,6 @@
             </div>
         </div>
     </div><!-- /.container-fluid -->
-
 
     <%-- html for popup Restriction Edit box --%>
     <div id="popupRestriction" style="display:none">
@@ -732,7 +777,6 @@
     </div>
     <%-- html for popup edit box END --%>
 
-
     <%-- html for popup Restriction Edit box --%>
     <div id="popupFee" style="display:none">
         <div>Reservation Fee</div>
@@ -755,49 +799,49 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="IsDefualt" class="col-sm-3 col-md-4 control-label">Default:</label>
+                                <label for="IsDefualt" class="col-sm-3 col-md-4 control-label blockReservationHidden">Default:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" class="form-control" id="feeIsDefault" />
+                                            <input type="checkbox" class="form-control  blockReservationHidden" id="feeIsDefault" />
                                         </label>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="FeeDollars" class="col-sm-3 col-md-4 control-label">Fee $:</label>
+                                <label for="FeeDollars" class="col-sm-3 col-md-4 control-label blockReservationHidden" >Fee $:</label>
                                 <div class="col-sm-9 col-md-8">
-                                    <input type="text" id="FeeDollars" />
+                                    <input type="text" id="FeeDollars" class="blockReservationHidden" value="4.95" />
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="FeePoints" class="col-sm-3 col-md-4 control-label">Fee Points:</label>
+                                <label for="FeePoints" class="col-sm-3 col-md-4 control-label blockReservationHidden">Fee Points:</label>
                                 <div class="col-sm-9 col-md-8">
-                                    <input type="text" id="FeePoints" />
+                                    <input type="text" id="FeePoints" class="blockReservationHidden" value="4" />
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="CancellationGracePeriodHours" class="col-sm-3 col-md-4 control-label">Grace Period:</label>
+                                <label for="CancellationGracePeriodHours" class="col-sm-3 col-md-4 control-label blockReservationHidden">Grace Period:</label>
                                 <div class="col-sm-9 col-md-8">
-                                    <input type="text" id="CancellationGracePeriodHours" />
+                                    <input type="text" id="CancellationGracePeriodHours" class="blockReservationHidden" value="0" />
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="CancellationFeeDollars" class="col-sm-3 col-md-4 control-label">Cancellation Fee:</label>
+                                <label for="CancellationFeeDollars" class="col-sm-3 col-md-4 control-label blockReservationHidden">Cancellation Fee:</label>
                                 <div class="col-sm-9 col-md-8">
-                                    <input type="text" id="CancellationFeeDollars" />
+                                    <input type="text" id="CancellationFeeDollars" class="blockReservationHidden" value="0.00" />
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="NoShowFeeDollars" class="col-sm-3 col-md-4 control-label">No Show Fee:</label>
+                                <label for="NoShowFeeDollars" class="col-sm-3 col-md-4 control-label blockReservationHidden">No Show Fee:</label>
                                 <div class="col-sm-9 col-md-8">
-                                    <input type="text" id="NoShowFeeDollars" />
+                                    <input type="text" id="NoShowFeeDollars" class="blockReservationHidden" value="0.00" />
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="MaxReservationCount" class="col-sm-3 col-md-4 control-label">Max Reservations:</label>
                                 <div class="col-sm-9 col-md-8">
-                                    <input type="text" id="MaxReservationCount" />
+                                    <input type="text" id="MaxReservationCount" value="1" />
                                 </div>
                             </div>
                         </div>
@@ -808,7 +852,7 @@
                     <div class="col-sm-12">
                         <div class="top-divider">
                             <div class="col-sm-2 col-md-4">
-                                <input type="button" id="feeSave" value="Save" />
+                                <input type="button" id="feeSave" value="Save" class="editor" />
                             </div>
                             <div class="col-sm-4 col-md-4">
                                 
@@ -823,7 +867,6 @@
         </div>
     </div>
     <%-- html for popup edit box END --%>
-
 </asp:Content>
 
 

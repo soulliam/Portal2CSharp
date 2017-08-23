@@ -12,9 +12,9 @@
 
        $(document).ready(function () {
 
-            if (group.indexOf("Portal_RFR") <= 0) {
-                $(location).attr('href', "http://www.thefastpark.com");
-            }
+           if (group.indexOf("Portal_Mechanic") <= 0 && group.indexOf("Portal_Superadmin") <= 0 && group.indexOf("Portal_Manager") <= 0) {
+               $(location).attr('href', "http://www.thefastpark.com");
+           }
 
             $("#jqxLoader").jqxLoader({ width: 100, height: 60, imagePosition: 'top' });
             

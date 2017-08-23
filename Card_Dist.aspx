@@ -586,8 +586,8 @@
             $("#LocationCombo").jqxComboBox(
             {
                 width: '100%',
-                height: 25,
-                itemHeight: 50,
+                height: 24,
+                //itemHeight: 50,
                 source: locationDataAdapter,
                 selectedIndex: 0,
                 displayMember: "NameOfLocation",

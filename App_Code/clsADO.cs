@@ -12,7 +12,7 @@ namespace class_ADO
 {
     public class clsADO
     {
-
+        
         public string getMaxConnectionString()
         {
             var result = "";
@@ -206,6 +206,45 @@ namespace class_ADO
             return thisReturn;
         }
 
+        public struct sql2DObject
+        {
+            public object one;
+            public object two;
+        }
 
+
+        public List<sql2DObject> return2DListLocal(string strSQL)
+        {
+            clsADO thisADO = new clsADO();
+
+            sql2DObject myObject;
+
+            List<sql2DObject> thisList = new List<sql2DObject>();
+
+            string conn = "";
+
+            conn = thisADO.getPark09ConnectionString();
+
+            using (SqlConnection con = new SqlConnection(conn))
+            {
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    cmd.CommandText = strSQL;
+                    cmd.Connection = con;
+                    con.Open();
+                    using (SqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        while (sdr.Read())
+                        {
+                            myObject.one = sdr[0];
+                            myObject.two = sdr[1];
+                            thisList.Add(myObject);
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            return thisList;
+        }
     }
 }

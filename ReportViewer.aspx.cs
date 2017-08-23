@@ -118,8 +118,8 @@ public partial class ReportViewer : System.Web.UI.Page
             ServerReport serverReport = ReportViewer1.ServerReport;
             // Set the report server URL and report path
             serverReport.ReportServerUrl =
-            new Uri("http://192.168.0.90:80/ReportServer");
-            //new Uri("http://pca-sql1:80/ReportServer");
+            //new Uri("http://192.168.0.90:80/ReportServer");
+            new Uri("http://pca-sql1:80/ReportServer");
 
             string reportLocation = Convert.ToString(TreeView1.SelectedValue).Replace(".rdl", "");
 

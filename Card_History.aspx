@@ -28,6 +28,12 @@
     <script type="text/javascript" src="jqwidgets/jqxwindow.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxcheckbox.js"></script>
 
+    <style>
+        .yellowCell {
+            background-color: yellow;
+        }
+    </style>
+
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
         var group = '<%= Session["groupList"] %>';
@@ -69,13 +75,21 @@
                     { name: 'ReceivedDate' },
                     { name: 'ReceiveUser' },
                     { name: 'Status' },
-                    { name: 'Location' }
+                    { name: 'Location' },
+                    { name: 'IsActive' }
                 ],
                 id: 'ManualEditId',
                 type: 'Get',
                 datatype: "json",
                 url: url,
             };
+
+            var cellclassname = function (row, column, value, data) {
+                var val = $('#jqxHistory').jqxGrid('getcellvalue', row, "IsActive");
+                if (val == 0) {
+                    return "yellowCell";
+                }
+            }
 
             // creage jqxgrid
             $("#jqxHistory").jqxGrid(
@@ -92,15 +106,16 @@
                 altrows: true,
                 filterable: true,
                 columns: [
-                       { text: 'Action', datafield: 'Action', width: '10%' },
-                       { text: 'Activity Date', datafield: 'ActivityDate', cellsrenderer: DateRender, width: '15%' },
-                       { text: 'Initial User', datafield: 'InitialUser', width: '10%' },
-                       { text: 'Starting Card', datafield: 'StartingCard', width: '10%' },
-                       { text: 'Ending Card', datafield: 'EndingCard', width: '10%' },
-                       { text: 'Received Date', datafield: 'ReceivedDate', cellsrenderer: DateRender, width: '15%' },
-                       { text: 'Receive User', datafield: 'ReceiveUser', width: '10%' },
-                       { text: 'Status', datafield: 'Status', width: '10%' },
-                       { text: 'Location', datafield: 'Location', width: '10%' }
+                       { text: 'Action', datafield: 'Action', width: '10%', cellclassname: cellclassname },
+                       { text: 'Activity Date', datafield: 'ActivityDate', cellsrenderer: DateRender, width: '15%', cellclassname: cellclassname },
+                       { text: 'Initial User', datafield: 'InitialUser', width: '10%', cellclassname: cellclassname },
+                       { text: 'Starting Card', datafield: 'StartingCard', width: '10%', cellclassname: cellclassname },
+                       { text: 'Ending Card', datafield: 'EndingCard', width: '10%', cellclassname: cellclassname },
+                       { text: 'Received Date', datafield: 'ReceivedDate', cellsrenderer: DateRender, width: '15%', cellclassname: cellclassname },
+                       { text: 'Receive User', datafield: 'ReceiveUser', width: '10%', cellclassname: cellclassname },
+                       { text: 'Status', datafield: 'Status', width: '10%', cellclassname: cellclassname },
+                       { text: 'Location', datafield: 'Location', width: '10%', cellclassname: cellclassname },
+                       { text: 'IsActive', datafield: 'IsActive', width: '10%', hidden: true }
                 ]
             });
         }

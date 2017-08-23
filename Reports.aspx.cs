@@ -73,25 +73,6 @@ public partial class Reports : System.Web.UI.Page
 
     }
 
-    //protected void ddlReports_SelectedIndexChanged(object sender, EventArgs e)
-    //{
-    //    ReportViewer1.Visible = true;
-
-    //    ReportViewer1.ServerReport.ReportServerCredentials = new CustomReportCredentials("sqladmin", "DykwIa?Itmwg2bdyhwtl!", "pca");
-
-    //    ReportViewer1.ProcessingMode = ProcessingMode.Remote;
-
-    //    ServerReport serverReport = ReportViewer1.ServerReport;
-    //    // Set the report server URL and report path
-    //    serverReport.ReportServerUrl =
-    //    new Uri("http://192.168.0.90:80/ReportServer");
-
-    //    string reportLocation = Convert.ToString(ddlReports.SelectedValue).Replace(".rdl", "");
-
-    //    //serverReport.ReportPath = "/NewManager/General/ManagerAudit";
-    //    serverReport.ReportPath = reportLocation;
-    //}
-
     private void PopulateTreeView(DataTable dtParent, int parentId, TreeNode treeNode, string whereClause)
     {
         foreach (DataRow row in dtParent.Rows)
@@ -150,13 +131,13 @@ public partial class Reports : System.Web.UI.Page
         ReportViewer1.Visible = true;
 
         ReportViewer1.ServerReport.ReportServerCredentials = new CustomReportCredentials("sqladmin", "DykwIa?Itmwg2bdyhwtl!", "pca");
+        
 
         ReportViewer1.ProcessingMode = ProcessingMode.Remote;
 
         ServerReport serverReport = ReportViewer1.ServerReport;
         // Set the report server URL and report path
-        serverReport.ReportServerUrl =
-        new Uri("http://192.168.0.90:80/ReportServer");
+        serverReport.ReportServerUrl = new Uri("http://pca-sql1:80/ReportServer");
 
         string reportLocation = Convert.ToString(TreeView1.SelectedValue).Replace(".rdl", "");
 

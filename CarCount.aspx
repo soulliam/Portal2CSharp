@@ -18,7 +18,7 @@
 
             $("#jqxLoader").jqxLoader({ width: 100, height: 60, imagePosition: 'top' });
             
-            $("#thisFrame").height(565);
+            $("#thisFrame").height(640);
             Security();
             $('#jqxLoader').jqxLoader('open');
             
