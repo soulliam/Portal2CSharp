@@ -12,7 +12,7 @@
 
        $(document).ready(function () {
 
-           if (group.indexOf("Portal_Mechanic") <= 0 && group.indexOf("Portal_Superadmin") <= 0 && group.indexOf("Portal_Manager") <= 0) {
+           if (group.indexOf("Portal_Mechanic") <= 0 && group.indexOf("Portal_Superadmin") <= 0 && group.indexOf("Portal_Manager") <= 0 && group.indexOf("Portal_Vehiclesadmin") <= 0 && group.indexOf("Portal_Asstmanager") <= 0) {
                $(location).attr('href', "http://www.thefastpark.com");
            }
 

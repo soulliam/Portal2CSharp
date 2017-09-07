@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using class_ADO;
 using System.Data.SqlClient;
+using System.Web;
 
 public partial class CreateUser : System.Web.UI.Page
 {
@@ -15,35 +16,32 @@ public partial class CreateUser : System.Web.UI.Page
         {
             GetLocations();
         }
+
+        AddRoles();
     }
 
     protected void Button1_Click(object sender, EventArgs e)
     {
+        //Create new Guid
         Guid g;
-        // Create and display the value of two GUIDs.
+        
         g = Guid.NewGuid();
         Console.WriteLine(g);
 
-        string username = userName.Text;
-
+        //Pass username, guid, email and password to Create user stored procedure on aspnetdb 
         string strSQL = null;
-        strSQL = "Insert into aspnetdb.dbo.aspnet_Users (ApplicationId, UserId, UserName, LoweredUserName, MobileAlias, IsAnonymous, LastActivityDate) " +
-                 "Values ('47019AC9-8D6F-460E-BB2D-6EF86AD222C0', '" + g + "', '" + username + "', '" + username.ToLower() + "', NULL, 0, getdate())";
+        strSQL = "EXECUTE aspnetdb.dbo.CreateUser '" + userName.Text + "', '" + txtPassword.Text + "', '" + email.Text + "', '" + g + "'";
 
         clsADO insertUser = new clsADO();
         insertUser.updateOrInsert(strSQL, false);
 
-        strSQL = "Insert into aspnetdb.dbo.aspnet_Membership (ApplicationId, UserId, Password, PasswordFormat, PasswordSalt, MobilePin, Email, LoweredEmail, IsApproved, IsLockedOut, CreateDate, LastLoginDate, LastPasswordChangedDate, LastLockoutDate, FailedPasswordAttemptCount, FailedPasswordAttemptWindowStart, FailedPasswordAnswerAttemptCount, FailedPasswordAnswerAttemptWindowStart) " +
-                 "Values ('47019AC9-8D6F-460E-BB2D-6EF86AD222C0', '" + g + "', 'HOLD', 1, 'HOLD', NULL, '" + email.Text + "', '" + email.Text.ToLower() + "', 1, 0, getDate(), getDate(), getDate(), getDate(), 0, getDate(), 0, getDate())";
-
-        insertUser.updateOrInsert(strSQL, false);
-
         Int16 I;
 
+        //Add User Login Locations using GUID and selected locations 
         for (I = 0; I <= ListBox1.Items.Count - 1; I++)
         {
             strSQL = "Insert into dbIntranet.dbo.UserLoginLocations (UserId, Location, LocationId, IsPrimary) " +
-                 "Values ('" + g + "', '000', " + DropDownList1.Items[I].Value + ", NULL)";
+                 "Values ('" + g + "', '000', " + ListBox1.Items[I].Value + ", NULL)";
 
             insertUser.updateOrInsert(strSQL, false);
         }
@@ -60,7 +58,9 @@ public partial class CreateUser : System.Web.UI.Page
         clsADO thisADO = new clsADO();
         List<clsADO.sql2DObject> thisList;
         thisList = thisADO.return2DListLocal(strSQL);
-        
+
+        DropDownList1.Items.Add("Pick a Location");
+
         for (I = 0; I <= thisList.Count - 1; I++)
         {
             ListItem test = new ListItem { Text = thisList[I].two.ToString(), Value = thisList[I].one.ToString() };
@@ -70,7 +70,100 @@ public partial class CreateUser : System.Web.UI.Page
 
     protected void DropDownList1_SelectedIndexChanged(object sender, EventArgs e)
     {
+        //add login location to list and select first one so validator knows something is in list
         ListItem test = new ListItem { Text = DropDownList1.SelectedItem.ToString(), Value = DropDownList1.SelectedItem.Value };
         ListBox1.Items.Add(test);
+        ListBox1.SelectedIndex = 0;
+    }
+
+
+    protected void Reset_Click(object sender, EventArgs e)
+    {
+        var textBoxList = (Page.Master.FindControl("MainContent") as ContentPlaceHolder).Controls.OfType<TextBox>();
+
+        foreach (TextBox tb in textBoxList)
+        {
+            tb.Text = "";
+        }
+
+
+        foreach (TableRow row in Table1.Rows)
+        {
+            foreach (TableCell cell in row.Cells)
+            {
+                foreach (CheckBox cb in cell.Controls.OfType<CheckBox>())
+                {
+                    cb.Checked = false;
+                }
+            }
+        }
+
+        ListBox1.Items.Clear();
+        DropDownList1.SelectedIndex = 0;
+    }
+
+    protected void AddRoles()
+    {
+        string strSQL = null;
+        strSQL = "Select RoleName, RoleId from aspnetdb.dbo.aspnet_roles";
+
+        clsADO thisADO = new clsADO();
+        List<clsADO.sql2DObject> thisList;
+        thisList = thisADO.return2DListLocal(strSQL);
+
+        int I;
+        int Y;
+        int rowCount = 5;
+
+        int Max = thisList.Count;
+
+        for (Y = 0; Y <= 100; Y++)
+        {
+            TableRow row = new TableRow();
+
+            if (rowCount < Max)
+            {
+                for (I = rowCount - 5; I <= rowCount - 1; I++)
+                {
+                    CheckBox chk = new CheckBox();
+                    TableCell cell1 = new TableCell();
+                    Label lbl = new Label();
+
+                    chk.ID = thisList[I].two.ToString();
+                    chk.AutoPostBack = true;
+                    //chk.Text = thisList[I].one.ToString();
+                    lbl.Text = thisList[I].one.ToString();
+                    chk.Width = 50;
+                    cell1.Controls.Add(lbl);
+                    cell1.Controls.Add(chk);
+                    cell1.CssClass = "centerText";
+                    row.Cells.Add(cell1);
+
+                }
+            }
+            else if (rowCount > Max)
+            {
+                for (I = rowCount - 5; I <= Max - 1; I++)
+                {
+                    CheckBox chk = new CheckBox();
+                    TableCell cell1 = new TableCell();
+                    Label lbl = new Label();
+
+                    chk.ID = thisList[I].two.ToString();
+                    chk.AutoPostBack = true;
+                    //chk.Text = thisList[I].one.ToString();
+                    lbl.Text = thisList[I].one.ToString();
+                    chk.Width = 50;
+                    cell1.Controls.Add(lbl);
+                    cell1.Controls.Add(chk);
+                    cell1.CssClass = "centerText";
+                    row.Cells.Add(cell1);
+                }
+            }
+            
+            rowCount = rowCount + 5;
+
+            Table1.Rows.Add(row);
+        }
     }
 }

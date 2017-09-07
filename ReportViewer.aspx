@@ -26,8 +26,9 @@
 
             Security();
         });
-    </script>
 
+    </script>
+    
     <div id="mainSplitter">
         <div style="overflow-x: auto;overflow-y: auto;">
             <asp:TreeView ID="TreeView1" runat="server" OnSelectedNodeChanged="TreeView1_SelectedNodeChanged" ShowLines="True"></asp:TreeView>

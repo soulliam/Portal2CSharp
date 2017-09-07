@@ -125,7 +125,7 @@ public partial class ReportViewer : System.Web.UI.Page
 
             if (reportLocation.Contains("Marketing")) {
                 string ID = getRepID(Convert.ToString(Session["UserName"]));
-                TextBox1.Text = ID;
+                
                 //string ID = "86";
                 string userId = getOldPortalGuid(Convert.ToString(Session["UserName"]));
 
@@ -141,11 +141,13 @@ public partial class ReportViewer : System.Web.UI.Page
             {
                 ReportParameter[] parameters = new ReportParameter[1];
                 string userId = getOldPortalGuid(Convert.ToString(Session["UserName"]));
+                
                 //not sure we need the userloginId param.
                 parameters[0] = new ReportParameter("UserLoginId", userId);
                 serverReport.ReportPath = reportLocation;
                 serverReport.SetParameters(parameters);
             }
+            
         }
     }
 

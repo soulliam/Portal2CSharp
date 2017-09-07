@@ -27,6 +27,7 @@
     <script type="text/javascript" src="jqwidgets/jqxscrollbar.js"></script>    
     <script type="text/javascript" src="jqwidgets/jqxwindow.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxcheckbox.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxgrid.edit.js"></script>
 
     <style>
         /*form coloring received shipment rows*/
@@ -280,6 +281,7 @@
                     { name: 'CardDistBooth' },
                     { name: 'CardDistStartNumber' },
                     { name: 'CardDistEndNumber' },
+                    { name: 'NumberOfCards', type: 'number' },
                     { name: 'CardDistBy' },
                     { name: 'CardDistDate' }
                 ],
@@ -290,11 +292,6 @@
 
             var padCard = function (row, columnfield, value, defaulthtml, columnproperties) {
                 var newValue = padNumber(value, 8, '0');
-                return '<div style="margin-top: 10px;margin-left: 5px">' + newValue + '</div>';
-            }
-
-            var numberOfCards = function (row, columnfield, value, defaulthtml, columnproperties, rowdata) {
-                var newValue = rowdata.CardDistEndNumber - rowdata.CardDistStartNumber + 1;
                 return '<div style="margin-top: 10px;margin-left: 5px">' + newValue + '</div>';
             }
 
@@ -320,6 +317,10 @@
                 altrows: true,
                 filterable: true,
                 selectionmode: 'singlerow',
+                showstatusbar: true,
+                showaggregates: true,
+                statusbarheight: 50,
+                enablebrowserselection: true,
                 columns: [
                        { text: 'CardDistID', datafield: 'CardDistID', hidden: true },
                        { text: 'Marketing Rep', datafield: 'CardDistRepName' },
@@ -327,9 +328,10 @@
                        { text: 'Booth', datafield: 'CardDistBooth', cellsrenderer: booth },
                        { text: 'Starting Card', datafield: 'CardDistStartNumber', cellsrenderer: padCard },
                        { text: 'Ending Card', datafield: 'CardDistEndNumber', cellsrenderer: padCard },
-                       { text: 'NumberOfCards', datafield: 'NumberOfCards', cellsrenderer: numberOfCards },
+                       { text: 'NumberOfCards', datafield: 'NumberOfCards', aggregates: ['sum']  },
                        { text: 'Distributed By', datafield: 'CardDistBy' },
                        { text: 'Distributed Date', datafield: 'CardDistDate', cellsrenderer: DateRender }
+
                 ]
             });
 

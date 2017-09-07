@@ -21,7 +21,7 @@ public partial class Booth_BoothSearch : System.Web.UI.Page
         {
             clsLogging logEmailRequest = new clsLogging();
 
-            logEmailRequest.logChange(thisUserName, thisMemberId, thisOld, thisNew, "MemberInformation", "Cashier Booth Email Change", logEmailRequest.getBatch());
+            logEmailRequest.logChange(thisUserName, thisMemberId, thisOld, thisNew, "MemberInformation", "Cashier Booth Email Change Request", logEmailRequest.getBatch());
             return "Request Made";
         }
         catch (Exception ex)

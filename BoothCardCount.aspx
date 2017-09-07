@@ -169,6 +169,7 @@
                         $("#boothLocation").val(item.value);
                         $("#popupLocation").jqxWindow('hide');
                         loadGrid(item.value);
+                        LoadCardLevel();
                     }
 
                 }
@@ -323,12 +324,36 @@
            
         }
 
+        function LoadCardLevel() {
+            var thisLocation = $("#boothLocation").val();
+
+            var url = $("#localApiDomain").val() + "BoothCardCounts/GetBoothLevel/" + thisLocation;
+            //var url = "http://localhost:52839/api/BoothCardCounts/GetBoothLevel/" + thisLocation;
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                dataType: "json",
+                success: function (data) {
+                    $("#boothLevel").val(data[0].Level);
+                },
+                error: function (request, status, error) {
+                    swal(status);
+                }
+            });
+
+        }
+
     </script>
     <input type="text" id="boothLocation" style="display:none;" />
     <div id="BoothCardCount" class="container-fluid container-970 wrap-search-options">
         <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
             <div class="row search-size FPR_SearchLeft">
-                <div class="col-sm-12 col-md-10 col-md-offset-1">
+                <div class="col-sm-2">
+                    <label style="color:white;">Card Level</label>
+                    <input type="text" id="boothLevel" value="New Count" />
+                </div>
+                <div class="col-sm-10 col-md-10 col-md-offset-1">
                     <div class="row search-size">
                         <div class="col-sm-3 col-sm-offset-9">
                             <div class="row search-size">

@@ -2323,6 +2323,8 @@
                               $('#jqxLoader').jqxLoader('open');
                               editrow = row;
 
+                              $('#jqxMemberInfoTabs').jqxTabs('select', 0);
+
                               var dataRecord = $("#jqxSearchGrid").jqxGrid('getrowdata', editrow);
                               
                               findMember(dataRecord.MemberId);
