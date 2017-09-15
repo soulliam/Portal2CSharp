@@ -223,7 +223,7 @@ namespace class_ADO
 
             string conn = "";
 
-            conn = thisADO.getPark09ConnectionString();
+            conn = thisADO.getLocalConnectionString();
 
             using (SqlConnection con = new SqlConnection(conn))
             {

@@ -280,6 +280,11 @@
                 }
             });
 
+            $("#MarketingMailerCode").on('change', function (event) {
+                $("#MailerCompanyComboID").val("");
+                $("#MailerCompanyCombo").val("");
+            });
+
             //#endregion
 
             //#region ButtonClicks
