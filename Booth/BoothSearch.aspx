@@ -1029,7 +1029,7 @@
                 type: "Get",
                 root: "data",
                 datafields: [
-                    { name: 'CardId' },
+                    { name: 'IsPrimary' },
                     { name: 'FPNumber' }
                 ],
                 beforeSend: function (jqXHR, settings) {
@@ -1047,7 +1047,12 @@
                 source: cardDataAdapter,
                 selectedIndex: 0,
                 displayMember: "FPNumber",
-                valueMember: "CardId"
+                valueMember: "IsPrimary"
+            });
+
+            $("#cardCombo").on('bindingComplete', function (event) {
+                var item = $("#cardCombo").jqxDropDownList('getItemByValue', "true");
+                $("#cardCombo").jqxDropDownList('selectItem', item);
             });
 
         }

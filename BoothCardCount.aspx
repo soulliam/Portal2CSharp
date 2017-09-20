@@ -27,6 +27,7 @@
     <script type="text/javascript" src="jqwidgets/jqxmenu.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxscrollbar.js"></script>    
     <script type="text/javascript" src="jqwidgets/jqxwindow.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxcheckbox.js"></script>
 
     <script type="text/javascript">
         // ============= Initialize Page ==================== Begin
@@ -37,6 +38,8 @@
             
             var locationString = $("#userLocation").val();
             var locationResult = locationString.split(",");
+
+            $("#jqxCheckBox").jqxCheckBox({ width: 120, height: 25 });
 
             if (locationResult.length > 1) {
                 var thisLocationString = "";
@@ -79,10 +82,16 @@
             // saving new or changed city
             $("#Save").click(function () {
                 var myDate = new Date();
+                var adjustment = 0;
+
+                if ($('#jqxCheckBox').jqxCheckBox('checked'))
+                {
+                    adjustment = 1;
+                }
 
                 myDate = $("#date").val();
 
-                var data = { 'Shift1': $("#Shift1").val(), 'Shift2': $("#Shift2").val(), 'Shift3': $("#Shift3").val(), 'Total': $("#Total").val(), 'BoothCardCountDate': myDate, 'LocationId': $("#boothLocation").val() };
+                var data = { 'Shift1': $("#Shift1").val(), 'Shift2': $("#Shift2").val(), 'Shift3': $("#Shift3").val(), 'Total': $("#Total").val(), 'BoothCardCountDate': myDate, 'LocationId': $("#boothLocation").val(), 'Adjustment': adjustment };
 
                 $.ajax({
                     type: "POST",
@@ -92,11 +101,11 @@
                     data: data,
                     dataType: "json",
                     success: function (Response) {
-                        alert("Saved!");
+                        swal("Saved!");
                         success = true;
                     },
                     error: function (request, status, error) {
-                        alert(error + " - " + request.responseText);
+                        swal(error + " - " + request.responseText);
                     },
                     complete: function () {
                         loadGrid($("#boothLocation").val());
@@ -127,6 +136,22 @@
 
                 $(".countPost").val('');
                 
+            });
+
+            $("#Total").focus(function () {
+                if ($("#Shift1").val() != '' || $("#Shift2").val() != '' || $("#Shift3").val() != '')
+                {
+                    $("#popupWindow").jqxWindow('close');
+                    swal({
+                        title: "Changing Total",
+                        text: "If you want to manually enter the total, you cannot enter shift amounts.  Please clear them.",
+                        buttons: true
+                    }).then(function (data) {
+                        $("#popupWindow").jqxWindow('open');
+                        $("#Total").blur();
+                    });
+                    
+                }
             });
 
 
@@ -171,11 +196,14 @@
                         loadGrid(item.value);
                         LoadCardLevel();
                     }
-
                 }
             });
 
             Security();
+
+            if (group.indexOf("Portal_Superadmin") > -1 || group.indexOf("Portal_Auditadmin") > -1) {
+                $("#hideAdjustment").css('display', 'block');
+            }
 
         });
         // ============= Initialize Page ================== End
@@ -196,6 +224,7 @@
                     { name: 'Shift3' },
                     { name: 'Total' },
                     { name: 'BoothCardCountDate' },
+                    { name: 'Adjustment' },
                     { name: 'NameOfLocation' }
                 ],
 
@@ -204,51 +233,19 @@
                 datatype: "json",
                 url: url,
                 pagesize: 12,
-                root: "data",
-                //updaterow: function (rowid, rowdata, commit) {
-                //    //check to see if manager
-                //    //disable if not portal admin/RFR/Mgr/AsstMgr/Audit
-                //    if (group.indexOf("Portal_RFR") <= -1 && group.indexOf("Portal_Superadmin") <= -1 && group.indexOf("Portal_Admin") <= -1 && group.indexOf("Portal_Manager") <= -1 && group.indexOf("Portal_Manager") <= -1 && group.indexOf("Portal_Asstmanager") <= -1 && group.indexOf("Portal_Auditadmin") <= -1) {
-                //        return null;
-                //    }
+                root: "data"
+            };
 
-                //    // synchronize with the server - send update command
-                //    var thisEntryDate = rowdata.EntryDate;
-                //    var thisSubmittedDate = JsonDateTimeFormat(rowdata.SubmittedDate);
-
-                //    var date = new Date(thisEntryDate);
-                //    mnth = date.getMonth() + 1;
-                //    day = date.getDate();
-                //    thisEntryDate = mnth + '/' + day + '/' + date.getFullYear();
-
-                //    var data = {
-                //        'PendingReceiptId': rowdata.PendingReceiptId,
-                //        'memberName': rowdata.memberName,
-                //        'ReceiptNumber': rowdata.ReceiptNumber,
-                //        'EntryDate': thisEntryDate,
-                //        'SubmittedDate': thisSubmittedDate,
-                //        'UpdateExternalUserData': rowdata.UpdateExternalUserData
-                //    };
-                //    $.ajax({
-                //        type: "POST",
-                //        dataType: 'json',
-                //        //url: "http://localhost:52839/api/PendingReceipts/UpdatePendingReceipt/",
-                //        url: $("#localApiDomain").val() + "PendingReceipts/UpdatePendingReceipt/",
-                //        data: data,
-                //        success: function (data, status, xhr) {
-                //            // update command is executed.
-                //            alert("Updated!");
-                //        },
-                //        error: function (jqXHR, textStatus, errorThrown) {
-                //            // update failed.
-                //            alert(errorThrown);
-                //        },
-                //        complete: function () {
-                //            var thisLocationID = $("#pendingReceiptLocation").val();
-                //            loadGrid(thisLocationID);
-                //        }
-                //    });
-                //}
+            var Adjustment = function (row, columnfield, value, defaulthtml, columnproperties) {
+                // format date as string due to inconsistant date coversions
+                switch (true) {
+                    case (value == 0):
+                        return '<div style="margin-top: 10px;margin-left: 5px">&nbsp;</div>';
+                        break;
+                    case (value == 1):
+                        return '<div style="margin-top: 10px;margin-left: 5px">True</div>';
+                        break;
+                }
             };
 
             // creage jqxgrid
@@ -264,14 +261,13 @@
                 //editable: true,
                 filterable: true,
                 columns: [
-                      
-                      //loads rest of columns for city
                       { text: 'BoothCardCountId', datafield: 'BoothCardCountId', hidden: true },
                       { text: 'Shift1', datafield: 'Shift1' },
                       { text: 'Shift2', datafield: 'Shift2' },
                       { text: 'Shift3', datafield: 'Shift3' },
                       { text: 'Total', datafield: 'Total' },
                       { text: 'BoothCardCountDate', datafield: 'BoothCardCountDate', cellsrenderer: DateRender },
+                      { text: 'Adjustment', datafield: 'Adjustment', cellsrenderer: Adjustment },
                       { text: 'NameOfLocation', datafield: 'NameOfLocation' }
                 ]
             });
@@ -284,7 +280,7 @@
             $("#popupWindow").jqxWindow({ position: { x: '25%', y: '30%' } });
             $('#popupWindow').jqxWindow({ resizable: false });
             $('#popupWindow').jqxWindow({ draggable: true });
-            $('#popupWindow').jqxWindow({ isModal: true });
+            //$('#popupWindow').jqxWindow({ isModal: true });
             $("#popupWindow").css("visibility", "visible");
             $('#popupWindow').jqxWindow({ height: '300px', width: '50%' });
             $('#popupWindow').jqxWindow({ minHeight: '300px', minWidth: '50%' });
@@ -307,7 +303,7 @@
                     { name: 'NameOfLocation' },
                     { name: 'LocationId' }
                 ],
-                url: $("#localApiDomain").val() + "Locations/LocationByLocationIds/" + thisLocationString,
+                url: $("#localApiDomain").val() + "Locations/LocationByLocationIds/" + thisLocationString
 
             };
             var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
@@ -321,7 +317,7 @@
                 displayMember: "NameOfLocation",
                 valueMember: "LocationId"
             });
-           
+
         }
 
         function LoadCardLevel() {
@@ -428,7 +424,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="top-divider">
-                            <div class="col-sm-2 col-md-3">
+                            <div class="col-sm-1 col-md-3">
                             </div>
                             <div class="col-sm-4 col-md-3">
                                 <input type="button" id="Save" value="Save" />
@@ -436,7 +432,8 @@
                             <div class="col-sm-4 col-md-3">
                                 <input type="button" id="Cancel" value="Cancel" />
                             </div>
-                            <div class="col-sm-2 col-md-3">
+                            <div class="col-sm-3 col-md-3">
+                                <div id="hideAdjustment" style="display:none"><div id='jqxCheckBox' style='margin-left: 10px; float: left;'>Ajustment</div></div>
                             </div>
                         </div>
                     </div>

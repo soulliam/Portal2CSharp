@@ -1137,52 +1137,68 @@
                 //    return null;
                 //});
 
-                //return null;
+                $("#popupCombineMembers").jqxWindow('close');
 
-                    
-                var result = confirm("Do you want to combine these cards!");
-                if (result != true) {
-                    return null;
-                }
-                
                 var thisTargetCard = $("#targetMember").val();
                 var thisSourceCard = $("#orginMember").val();
                 var thisCombinedBy = $("#txtLoggedinUsername").val();
-                    
-                    
 
-                var url = $("#localApiDomain").val() + "CombineMemberCardsController/CombineMemberCards/";
-                //var url = "http://localhost:52839/api/CombineMemberCardsController/CombineMemberCards/";
+                var TargetMember = getMemberNameByCard(thisTargetCard);
+                var SourceMember = getMemberNameByCard(thisSourceCard);
 
-                $.ajax({
-                    type: "POST",
+                //var result = confirm("Do you want to combine these Member's Cards? " + TargetMember + " " + thisTargetCard + " and " + SourceMember + " " + thisSourceCard + "!");
+                //if (result != true) {
+                //    return null;
+                //}
 
-                    url: url,
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to combine these Member's Cards? " + TargetMember + " " + thisTargetCard + " and " + SourceMember + " " + thisSourceCard + "!",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, combine them!'
+                }).then(function () {
 
-                    data: {
-                        "TargetCard": thisTargetCard,
-                        "OriginCard": thisSourceCard,
-                        "CombinedBy": thisCombinedBy,
-                    },
-                    dataType: "json",
-                    success: function (Response) {
-                        swal(
-                            'Combined!',
-                            Response,
-                            'success'
-                        )
-                        $("#popupCombineMembers").jqxWindow('hide');
-                        thisMemberId = $("#MemberId").val();
-                        $('#jqxCardGrid').jqxGrid('clearselection');
-                        $('#jqxCardGrid').jqxGrid('clear');
-                        $("#targetMember").val('');
-                        loadCards(thisMemberId);
-                        $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
-                        $("#topPointsBalanceAccountBar").html(loadPoints(AccountId, $("#topPointsBalanceAccountBar")));
-                    },
-                    error: function (request, status, error) {
-                        swal(error);
-                    }
+                    var url = $("#localApiDomain").val() + "CombineMemberCardsController/CombineMemberCards/";
+                    //var url = "http://localhost:52839/api/CombineMemberCardsController/CombineMemberCards/";
+
+                    $.ajax({
+                        type: "POST",
+
+                        url: url,
+
+                        data: {
+                            "TargetCard": thisTargetCard,
+                            "OriginCard": thisSourceCard,
+                            "CombinedBy": thisCombinedBy,
+                        },
+                        dataType: "json",
+                        success: function (Response) {
+                            swal(
+                                'Combined!',
+                                Response,
+                                'success'
+                            )
+                            $("#popupCombineMembers").jqxWindow('hide');
+                            thisMemberId = $("#MemberId").val();
+                            $('#jqxCardGrid').jqxGrid('clearselection');
+                            $('#jqxCardGrid').jqxGrid('clear');
+                            $("#targetMember").val('');
+                            loadCards(thisMemberId);
+                            $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
+                            $("#topPointsBalanceAccountBar").html(loadPoints(AccountId, $("#topPointsBalanceAccountBar")));
+                        },
+                        error: function (request, status, error) {
+                            swal(error);
+                        }
+                    });
+
+                }, function (dismiss) {
+                    // dismiss can be 'cancel', 'overlay',
+                    // 'close', and 'timer'
+                    $("#popupCombineMembers").jqxWindow('open');
                 });
             });
 
@@ -3879,6 +3895,30 @@
             //        thisReturn = thisReturn + "&LocationId=" + $('#LocationCombo').jqxComboBox('getSelectedItem').value;
             //    }
             //}
+
+            return thisReturn;
+        }
+
+        function getMemberNameByCard(CardNumber) {
+            var thisReturn = '';
+
+            $.ajax({
+                async: false,
+                type: 'GET',
+                url: "http://localhost:52839/api/members/GetMemberNameByCard/" + CardNumber,
+                //url:  $("#localApiDomain").val() + "members/GetMemberNameByCard/" + CardNumber,
+                success: function (thisData) {
+                    if (thisData.length == 0) {
+                        thisReturn = 'No Member For Card ';
+                    } else {
+                        thisReturn = thisData[0].FirstName + ' ' + thisData[0].LastName;
+                    }   
+                },
+                error: function (request, status, error) {
+                    swal(error + " - " + request.responseJSON);
+                    thisReturn = 'Error';
+                }
+            });
 
             return thisReturn;
         }
