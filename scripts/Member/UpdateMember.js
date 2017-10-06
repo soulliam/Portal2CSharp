@@ -94,8 +94,8 @@
                 dataType: "json",
                 success: function () {
                     $('#jqxLoader').jqxLoader('close');
+                    findMember(thisMemberId);
                     swal("Saved!");
-                    
                 },
                 error: function (request, status, error) {
                     $('#jqxLoader').jqxLoader('close');
@@ -116,6 +116,7 @@
                 },
                 type: "PUT",
                 url: url,
+                async: true,
                 data: JSON.stringify({
                     "UserName": thisUserName,
                     "FirstName": thisFirstName,
@@ -146,6 +147,7 @@
                 dataType: "json",
                 success: function () {
                     $('#jqxLoader').jqxLoader('close');
+                    findMember(thisMemberId);
                     swal("Saved!");
                 },
                 error: function (request, status, error) {
@@ -201,6 +203,7 @@
                 dataType: "json",
                 success: function () {
                     $('#jqxLoader').jqxLoader('close');
+                    findMember(thisMemberId);
                     swal("Saved!");
                 },
                 error: function (request, status, error) {
@@ -260,6 +263,7 @@
                 dataType: "json",
                 success: function () {
                     $('#jqxLoader').jqxLoader('close');
+                    findMember(thisMemberId);
                     swal("Saved!");
                 },
                 error: function (request, status, error) {
@@ -323,6 +327,7 @@
                 dataType: "json",
                 success: function () {
                     $('#jqxLoader').jqxLoader('close');
+                    findMember(thisMemberId);
                     swal("Saved!");
                 },
                 error: function (request, status, error) {

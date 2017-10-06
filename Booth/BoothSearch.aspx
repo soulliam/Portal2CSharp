@@ -434,8 +434,6 @@
         //#region Functions
 
 
-
-
         function loadRate() {
             $("#memberRate").jqxComboBox('clearSelection');
             $("#memberRate").jqxComboBox('clear');
@@ -443,67 +441,105 @@
             $("#memberRate").jqxComboBox('destroy');
             $("<div id='memberRate'></div>").appendTo(parent);
 
+            var thisCompanyId = $("#CompanyId").html();
 
-            //set rate combobox
             var rateSource =
             {
                 async: true,
-                width: '100%',
-                height: 35,
                 datatype: "json",
                 type: "Get",
                 root: "data",
                 datafields: [
                     { name: 'LocationId' },
-                    { name: 'NameOfLocation' }
+                    { name: 'RateDisplay' }
                 ],
-                url: $("#localApiDomain").val() + "Locations/Locations/",
-
+                url: $("#localApiDomain").val() + "RateLists/GetRates/" + thisCompanyId,
+                //url: "http://localhost:52839/api/RateLists/GetRates/" + thisCompanyId,
             };
-            var rateDataAdapter = new $.jqx.dataAdapter(rateSource);
-            $('#memberRate').jqxComboBox({
-                selectedIndex: 0, source: rateDataAdapter, displayMember: "NameOfLocation", valueMember: "LocationId", height: 24, width: '100%',
-                renderer: function (index, label, value) {
-                    var rateObj = { rate: "0" };
-                    rateObj = { rateCode: "0" };
-                    rateObj = { locationList: "" };
 
-                    getRate(rateObj, value);
-
-                    var homeLocations = String(rateObj.locationList).split("_");
-
-                    if (homeLocations.indexOf(String(value)) > -1) {
-                        var table = '<div style="color:black">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + ' **</div>';
-                    } else {
-                        var table = '<div style="color:black">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + '</div>';
-                    }
-
-                    return table;
-                },
-                renderSelectedItem: function (index, item) {
-                    var rateObj = { rate: "0" };
-                    rateObj = { rateCode: "0" };
-                    rateObj = { locationList: "" };
-
-                    getRate(rateObj, item.value);
-
-                    var homeLocations = String(rateObj.locationList).split("_");
-
-                    if (homeLocations.indexOf(String(item.value)) > -1) {
-                        var table = item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + ' **';
-                    } else {
-                        var table = item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate
-                    }
-
-                    return table;
-                }
+            var rateSourceAdapter = new $.jqx.dataAdapter(rateSource);
+            $("#memberRate").jqxComboBox(
+            {
+                height: 24,
+                width: '100%',
+                source: rateSourceAdapter,
+                displayMember: "RateDisplay",
+                valueMember: "LocationId"
             });
 
             $("#memberRate").on('bindingComplete', function (event) {
                 $("#memberRate").jqxComboBox('selectItem', $("#boothLocation").val());
             });
-            
         }
+
+        //function loadRate() {
+        //    $("#memberRate").jqxComboBox('clearSelection');
+        //    $("#memberRate").jqxComboBox('clear');
+        //    var parent = $("#memberRate").parent();
+        //    $("#memberRate").jqxComboBox('destroy');
+        //    $("<div id='memberRate'></div>").appendTo(parent);
+
+
+        //    //set rate combobox
+        //    var rateSource =
+        //    {
+        //        async: true,
+        //        width: '100%',
+        //        height: 35,
+        //        datatype: "json",
+        //        type: "Get",
+        //        root: "data",
+        //        datafields: [
+        //            { name: 'LocationId' },
+        //            { name: 'NameOfLocation' }
+        //        ],
+        //        url: $("#localApiDomain").val() + "Locations/Locations/",
+
+        //    };
+        //    var rateDataAdapter = new $.jqx.dataAdapter(rateSource);
+        //    $('#memberRate').jqxComboBox({
+        //        selectedIndex: 0, source: rateDataAdapter, displayMember: "NameOfLocation", valueMember: "LocationId", height: 24, width: '100%',
+        //        renderer: function (index, label, value) {
+        //            var rateObj = { rate: "0" };
+        //            rateObj = { rateCode: "0" };
+        //            rateObj = { locationList: "" };
+
+        //            getRate(rateObj, value);
+
+        //            var homeLocations = String(rateObj.locationList).split("_");
+
+        //            if (homeLocations.indexOf(String(value)) > -1) {
+        //                var table = '<div style="color:black">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + ' **</div>';
+        //            } else {
+        //                var table = '<div style="color:black">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + '</div>';
+        //            }
+
+        //            return table;
+        //        },
+        //        renderSelectedItem: function (index, item) {
+        //            var rateObj = { rate: "0" };
+        //            rateObj = { rateCode: "0" };
+        //            rateObj = { locationList: "" };
+
+        //            getRate(rateObj, item.value);
+
+        //            var homeLocations = String(rateObj.locationList).split("_");
+
+        //            if (homeLocations.indexOf(String(item.value)) > -1) {
+        //                var table = item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + ' **';
+        //            } else {
+        //                var table = item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate
+        //            }
+
+        //            return table;
+        //        }
+        //    });
+
+        //    $("#memberRate").on('bindingComplete', function (event) {
+        //        $("#memberRate").jqxComboBox('selectItem', $("#boothLocation").val());
+        //    });
+            
+        //}
 
         function getRate(obj, thisLocationId) {
             //var thisCompanyId = $("#MailerCompanyCombo").jqxComboBox('getSelectedItem').value;

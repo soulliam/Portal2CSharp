@@ -213,7 +213,7 @@ namespace class_ADO
         }
 
 
-        public List<sql2DObject> return2DListLocal(string strSQL)
+        public List<sql2DObject> return2DListLocal(string strSQL, Boolean Max = false)
         {
             clsADO thisADO = new clsADO();
 
@@ -223,7 +223,14 @@ namespace class_ADO
 
             string conn = "";
 
-            conn = thisADO.getLocalConnectionString();
+            if (Max == true)
+            {
+                conn = getMaxConnectionString();
+            }
+            else
+            {
+                conn = getLocalConnectionString();
+            }
 
             using (SqlConnection con = new SqlConnection(conn))
             {
@@ -237,7 +244,14 @@ namespace class_ADO
                         while (sdr.Read())
                         {
                             myObject.one = sdr[0];
-                            myObject.two = sdr[1];
+                            if (sdr.FieldCount > 1)
+                            {
+                                myObject.two = sdr[1];
+                            }
+                            else
+                            {
+                                myObject.two = "";
+                            }
                             thisList.Add(myObject);
                         }
                     }

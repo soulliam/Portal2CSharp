@@ -16,6 +16,22 @@ public partial class CreateUser : System.Web.UI.Page
         if (!IsPostBack)
         {
             GetLocations();
+            GetUsedRepIds();
+            GetUsedRepMailerIds();
+            GetVehicleLocations();
+        }
+
+        var ctrlName = Request.Params[Page.postEventSourceID];
+        var args = Request.Params[Page.postEventArgumentID];
+
+        if (args == "deleteLocation")
+        {
+            lbLoginLocations.Items.Remove(lbLoginLocations.Items[lbLoginLocations.SelectedIndex]);
+        }
+
+        if (args == "deleteVehicleLocation")
+        {
+            lbVehicleLocations.Items.Remove(lbVehicleLocations.Items[lbVehicleLocations.SelectedIndex]);
         }
 
         //Create session variable with members groups
@@ -69,22 +85,32 @@ public partial class CreateUser : System.Web.UI.Page
         Int16 I;
 
         //Add User Login Locations using GUID and selected locations 
-        for (I = 0; I <= ListBox1.Items.Count - 1; I++)
+        for (I = 0; I <= lbLoginLocations.Items.Count - 1; I++)
         {
             if (I == 0)
             {
-                strSQL = "Insert into dbIntranet.dbo.UserLoginHomeLocation (UserId, LocationId) " +
-                 "Values ('" + g + "', " + ListBox1.Items[I].Value + ")";
+                strSQL = "Insert into dbIntranet.dbo.UserLoginHomeLocation (UserLoginId, LocationId) " +
+                 "Values ('" + g + "', " + lbLoginLocations.Items[I].Value + ")";
 
                 insertUser.updateOrInsert(strSQL, false);
             }
 
             strSQL = "Insert into dbIntranet.dbo.UserLoginLocations (UserId, Location, LocationId, IsPrimary) " +
-                 "Values ('" + g + "', '000', " + ListBox1.Items[I].Value + ", NULL)";
+                 "Values ('" + g + "', '000', " + lbLoginLocations.Items[I].Value + ", NULL)";
 
             insertUser.updateOrInsert(strSQL, false);
         }
 
+        //Add User Login Vehicle Locations using GUID and selected locations 
+        for (I = 0; I <= lbVehicleLocations.Items.Count - 1; I++)
+        {
+            strSQL = "Insert into Vehicles.dbo.UserVehicleLocations (UserId, LocationId) " +
+                 "Values ('" + g + "', " + lbVehicleLocations.Items[I].Value + ")";
+
+            insertUser.updateOrInsert(strSQL, false);
+        }
+
+        //Add to managers reports
         if (AuditReport.Checked == true)
         {
             strSQL = "Insert into dbIntranet.dbo.UserLoginAuditInclusion (UserId) " +
@@ -111,6 +137,81 @@ public partial class CreateUser : System.Web.UI.Page
             }
         }
 
+        //Create the Rep record if needed
+        if (createRepRecord.Checked == true)
+        {
+            var thisFirstName = txtFirstName.Text;
+            var thisLastName = txtLastName.Text;
+            var thisHireDate = txtHireDate.Text;
+            var thisTerritoryAbreviation = txtTerritory.Text;
+            var thisRepId = txtRepId.Text;
+            var thisMarketingCode1st4 = txtMarketingCode1st4.Text;
+            var thisStreetAddress = txtStreetAddress.Text;
+            var thisCity = txtCity.Text;
+            var thisState = txtState.Text;
+            var thisZip = txtZip.Text;
+            var thisPhone = txtPhone.Text;
+            var thisTitle = txtTitle.Text;
+            var thisMailerId = txtMailerId.Text;
+            var thisLastAssigned = txtPhotoURL.Text;
+            var thisIsManager = 0;
+            if (IsManager.Checked == true)
+            {
+                thisIsManager = 1;
+            }
+            var thisIsPrimary = 0;
+            if (IsPrimary.Checked == true)
+            {
+                thisIsPrimary = 1;
+            }
+            var thisRegion = getNewRegion();
+
+
+            strSQL = "INSERT INTO MarketingReps " +
+                    "([LastName],[FirstName],[Location],[EmailAddress],[HireDate],[RehireDate],[TerminationDate1]" +
+                    ",[TerminationDate2],[BIUserID],[RepID],[TerritoryAbbreviation],[UserId],[Manager],[RepMailerId]" +
+                    ",[DefaultLocationId],[StreetAddress],[City],[State],[Zip],[RepPhone],[Title]" +
+                    ",[RecordType],[Rep],[Region],[CarDayMonthlyGoal],[CarDayYearlyGoal],[SignupMonthlyGoal]" +
+                    ",[SignupYearlyGoal],[RepPhotoURL],[LocationId],[IsPrimary],[Admin],[CreateDatetime]" +
+                    ",[CreateUserId],[UpdateDatetime],[UpdateUserId],[IsDeleted],[CreateExternalUserData],[UpdateExternalUserData]) " +
+                    "VALUES " +
+                    "('" + thisLastName + "', '" + thisFirstName + "', '000', '" + email.Text + "', '" + thisHireDate + "', NULL, NULL, " +
+                    "NULL, NULL, '" + thisRepId + "', '" + thisTerritoryAbreviation + "', '" + g + "', " + thisIsManager + ", '" + thisMailerId + "', " +
+                    lbLoginLocations.Items[0].Value + ", '" + thisStreetAddress + "', '" + thisCity + "', '" + thisState + "', '" + thisZip + "', '" + thisPhone + "', '" + thisTitle + "', " +
+                    "NULL, 1, '" + thisRegion + "', NULL, NULL, NULL, " +
+                    "NULL, '" + thisLastAssigned + "', " + lbLoginLocations.Items[0].Value + ", " + thisIsPrimary + ", 0, '" + DateTime.Now + "', " +
+                    "1, NULL, NULL, 0, NULL, NULL)";
+
+            insertUser.updateOrInsert(strSQL, true);
+
+
+            //Insert the Marketing Codes into the Marketing Code table, there are 4
+            strSQL = "Insert into MarketingCode (MarketingCode, StartDate, Active, RepID, BIUserID, Notes, ShortNotes, CreateDateTime, CreateUserId, UpdateDateTime, UpdateUserId, IsDeleted, CreateExternalUserData, UpdateExternalUserData) " +
+                                        "Values ('" + thisMarketingCode1st4 + "207', '" + thisHireDate + "', 1, '" + thisRepId + "', NULL, '" + thisLastName + "' + ' ' + '" + thisFirstName + "', '" + thisLastName + "' + ' ' + '" + thisFirstName + "', '" + DateTime.Now + "', 1, NULL, NULL, 0, NULL, NULL)";
+            insertUser.updateOrInsert(strSQL, true);
+
+            strSQL = "Insert into MarketingCode (MarketingCode, StartDate, Active, RepID, BIUserID, Notes, ShortNotes, CreateDateTime, CreateUserId, UpdateDateTime, UpdateUserId, IsDeleted, CreateExternalUserData, UpdateExternalUserData) " +
+                                        "Values ('" + thisMarketingCode1st4 + "M00', '" + thisHireDate + "', 1, '" + thisRepId + "', NULL, '" + thisLastName + "' + ' ' + '" + thisFirstName + "', '" + thisLastName + "' + ' ' + '" + thisFirstName + "', '" + DateTime.Now + "', 1, NULL, NULL, 0, NULL, NULL)";
+            insertUser.updateOrInsert(strSQL, true);
+
+            strSQL = "Insert into MarketingCode (MarketingCode, StartDate, Active, RepID, BIUserID, Notes, ShortNotes, CreateDateTime, CreateUserId, UpdateDateTime, UpdateUserId, IsDeleted, CreateExternalUserData, UpdateExternalUserData) " +
+                                        "Values ('" + thisMarketingCode1st4 + "A00', '" + thisHireDate + "', 1, '" + thisRepId + "', NULL, '" + thisLastName + "' + ' ' + '" + thisFirstName + "', '" + thisLastName + "' + ' ' + '" + thisFirstName + "', '" + DateTime.Now + "', 1, NULL, NULL, 0, NULL, NULL)";
+            insertUser.updateOrInsert(strSQL, true);
+
+            strSQL = "Insert into MarketingCode (MarketingCode, StartDate, Active, RepID, BIUserID, Notes, ShortNotes, CreateDateTime, CreateUserId, UpdateDateTime, UpdateUserId, IsDeleted, CreateExternalUserData, UpdateExternalUserData) " + 
+                                        "Values ('" + thisMarketingCode1st4 + "D00', '" + thisHireDate + "', 1, '" + thisRepId + "', NULL, '" + thisLastName + "' + ' ' + '" + thisFirstName + "', '" + thisLastName + "' + ' ' + '" + thisFirstName + "', '" + DateTime.Now + "', 1, NULL, NULL, 0, NULL, NULL)";
+            insertUser.updateOrInsert(strSQL, true);
+
+            //Add viewable locations 
+            for (I = 0; I <= lbLoginLocations.Items.Count - 1; I++)
+            {
+                strSQL = "Insert into MarketingRepViewableLocations (ID, Location, RepLocationTerritory, LocationId, CreateDatetime, CreateUserId, UpdateDatetime, UpdateUserId, IsDeleted, CreateExternalUserData, UpdateExternalUserData) " +
+                     "Values ('" + thisRepId + "', '000', NULL, " + lbLoginLocations.Items[I].Value + ", '" + DateTime.Now + "', 1, NULL, NULL, 0, NULL, NULL)";
+
+                insertUser.updateOrInsert(strSQL, true);
+            }
+        }
+
     }
 
     protected void GetLocations()
@@ -126,23 +227,103 @@ public partial class CreateUser : System.Web.UI.Page
         thisList = thisADO.return2DListLocal(strSQL);
 
         //add first selection
-        DropDownList1.Items.Add("Pick a Location");
+        ddlLoginLocations.Items.Add("Pick a Location");
 
         //add locations to the dropdown list
         for (I = 0; I <= thisList.Count - 1; I++)
         {
             ListItem test = new ListItem { Text = thisList[I].two.ToString(), Value = thisList[I].one.ToString() };
-            DropDownList1.Items.Add(test);
+            ddlLoginLocations.Items.Add(test);
         }
     }
 
-    protected void DropDownList1_SelectedIndexChanged(object sender, EventArgs e)
+    protected void GetVehicleLocations()
+    {
+        Int16 I;
+
+        //Get all locations
+        string strSQL = null;
+        strSQL = "Select LocationId, NameOfLocation from Vehicles.dbo.Location order by NameOfLocation";
+
+        clsADO thisADO = new clsADO();
+        List<clsADO.sql2DObject> thisList;
+        thisList = thisADO.return2DListLocal(strSQL);
+
+        //add first selection
+        ddlVehicleLocations.Items.Add("Pick a Location");
+
+        //add locations to the dropdown list
+        for (I = 0; I <= thisList.Count - 1; I++)
+        {
+            ListItem test = new ListItem { Text = thisList[I].two.ToString(), Value = thisList[I].one.ToString() };
+            ddlVehicleLocations.Items.Add(test);
+        }
+    }
+
+    protected void GetUsedRepIds()
+    {
+        Int16 I;
+
+        //Get all locations
+        string strSQL = null;
+        strSQL = "Select RepID from MarketingReps order by RepId desc";
+
+        clsADO thisADO = new clsADO();
+        List<clsADO.sql2DObject> thisList;
+        thisList = thisADO.return2DListLocal(strSQL, true);
+
+        //add first selection
+        UsedRepId.Items.Add("Used RepIds");
+
+        //add locations to the dropdown list
+        for (I = 0; I <= thisList.Count - 1; I++)
+        {
+            ListItem test = new ListItem { Text = thisList[I].one.ToString(), Value = thisList[I].two.ToString() };
+            UsedRepId.Items.Add(test);
+        }
+    }
+
+    protected void GetUsedRepMailerIds()
+    {
+        Int16 I;
+
+        //Get all locations
+        string strSQL = null;
+        strSQL = "select RepMailerId from MarketingReps group by RepMailerId order by RepMailerId";
+
+        clsADO thisADO = new clsADO();
+        List<clsADO.sql2DObject> thisList;
+        thisList = thisADO.return2DListLocal(strSQL, true);
+
+        //add first selection
+        ddlRepMailerId.Items.Add("Used RepMailerIds");
+
+        //add locations to the dropdown list
+        for (I = 0; I <= thisList.Count - 1; I++)
+        {
+            ListItem test = new ListItem { Text = thisList[I].one.ToString(), Value = thisList[I].two.ToString() };
+            ddlRepMailerId.Items.Add(test);
+        }
+    }
+
+    protected void ddlLoginLocations_SelectedIndexChanged(object sender, EventArgs e)
     {
         //add login location to list and select first one so validator knows something is in list
-        ListItem test = new ListItem { Text = DropDownList1.SelectedItem.ToString(), Value = DropDownList1.SelectedItem.Value };
-        ListBox1.Items.Add(test);
-        ListBox1.SelectedIndex = 0;
+        ListItem test = new ListItem { Text = ddlLoginLocations.SelectedItem.ToString(), Value = ddlLoginLocations.SelectedItem.Value };
+        lbLoginLocations.Items.Add(test);
+        lbLoginLocations.SelectedIndex = 0;
     }
+
+    protected void ddlVehicleLocations_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        //add login location to list and select first one so validator knows something is in list
+        ListItem test = new ListItem { Text = ddlVehicleLocations.SelectedItem.ToString(), Value = ddlVehicleLocations.SelectedItem.Value };
+        lbVehicleLocations.Items.Add(test);
+        lbVehicleLocations.SelectedIndex = 0;
+    }
+
+    
+
 
 
     protected void Reset_Click(object sender, EventArgs e)
@@ -169,8 +350,12 @@ public partial class CreateUser : System.Web.UI.Page
         }
 
         //Clear the location list box and set the drow down selection to "pick a location" which is index 0
-        ListBox1.Items.Clear();
-        DropDownList1.SelectedIndex = 0;
+        lbLoginLocations.Items.Clear();
+        ddlLoginLocations.SelectedIndex = 0;
+
+        //Clear the vehicle location list box and set the drow down selection to "pick a location" which is index 0
+        lbVehicleLocations.Items.Clear();
+        ddlVehicleLocations.SelectedIndex = 0;
     }
 
     protected void AddRoles()
@@ -264,7 +449,6 @@ public partial class CreateUser : System.Web.UI.Page
 
     public string getNewRegion()
     {
-        
         string NewRegion = "";
         string RegionCharacter = "";
         Boolean IsManager = false;

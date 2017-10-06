@@ -185,6 +185,7 @@
             else {
                 $("#boothLocation").val(locationResult[0]);
                 loadGrid($("#boothLocation").val());
+                LoadCardLevel();
             }
 
             $("#LocationCombo").on('select', function (event) {

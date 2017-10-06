@@ -767,7 +767,23 @@
 
             //Save Member Info
             $("#updateMemberInfo").on("click", function (event) {
-                $('#jqxLoader').jqxLoader('open');
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to update this member!",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, update!'
+                }).then(function () {
+                    $('#jqxLoader').jqxLoader('open');
+                    updateMemberInfo();
+                }, function (dismiss) {
+
+                });
+            });
+
+            function updateMemberInfo () {
                 var thisUserName = $("#UserName").val();
                 var thisFirstName = $("#FirstName").val();
                 var thisLastName = $("#LastName").val();
@@ -803,7 +819,7 @@
                 }
 
                 if ($("#MailerCompanyComboID").val() == "" || $("#MailerCompanyCombo").val() == "") {
-                    var thisCompanyId = 0;
+                    var thisCompanyId = "";
                 } else {
                     var thisCompanyId = $("#MailerCompanyComboID").val();
                 }
@@ -853,7 +869,7 @@
 
                 $("#editMember").trigger("click");
                 
-            });
+            };
 
             //show add card popup
             $("#addCard").on("click", function (event) {
@@ -2965,10 +2981,10 @@
             $("#rateCombo").jqxComboBox('clear');
             var parent = $("#rateCombo").parent();
             $("#rateCombo").jqxComboBox('destroy');
-            $("<div id='rateCombo'></div>").appendTo(parent);
 
-            
-            //set rate combobox
+            var thisCompanyId = glbCompanyId;
+
+            $("<div id='rateCombo'></div>").appendTo(parent);
             var rateSource =
             {
                 async: true,
@@ -2977,82 +2993,121 @@
                 root: "data",
                 datafields: [
                     { name: 'LocationId' },
-                    { name: 'NameOfLocation' }
+                    { name: 'RateDisplay' }
                 ],
-                url: $("#localApiDomain").val() + "Locations/Locations/",
-
+                url: $("#localApiDomain").val() + "RateLists/GetRates/" + thisCompanyId,
+                //url: "http://localhost:52839/api/RateLists/GetRates/" + thisCompanyId,
             };
-            var rateDataAdapter = new $.jqx.dataAdapter(rateSource);
-            $('#rateCombo').jqxComboBox({
-                selectedIndex: 0, source: rateDataAdapter, displayMember: "NameOfLocation", valueMember: "LocationId", height: 24, width: '100%',
-                renderer: function (index, label, value) {
-                    var rateObj = { rate: "0" };
-                    rateObj = { rateCode: "0" };
-                    rateObj = { locationList: "" };
 
-                    getRate(rateObj, value);
-
-                    var homeLocations = String(rateObj.locationList).split("_");
-                    
-                    if (homeLocations.indexOf(String(value)) > -1) {
-                        var table = '<div style="color:black">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + ' **</div>';
-                    } else {
-                        var table = '<div style="color:black">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + '</div>';
-                    }
-    
-                    return table;
-                },
-                renderSelectedItem: function (index, item) {
-                    var rateObj = { rate: "0" };
-                    rateObj = { rateCode: "0" };
-                    rateObj = { locationList: "" };
-
-                    getRate(rateObj, item.value);
-
-                    var homeLocations = String(rateObj.locationList).split("_");
-
-                    if (homeLocations.indexOf(String(item.value)) > -1) {
-                        var table =  item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + ' **';
-                    } else {
-                        var table = item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate
-                    }
-
-                    return table;
-                }
+            var rateSourceAdapter = new $.jqx.dataAdapter(rateSource);
+            $("#rateCombo").jqxComboBox(
+            {
+                height: 24, 
+                width: '100%',
+                source: rateSourceAdapter,
+                displayMember: "RateDisplay",
+                valueMember: "LocationId"
             });
 
             $("#rateCombo").on('bindingComplete', function (event) {
                 $("#rateCombo").jqxComboBox('selectItem', glbHomeLocationId);
+                $('#jqxLoader').jqxLoader('close');
             });
+        }
+
+        ////////////function loadRate() {
+        ////////////    $("#rateCombo").jqxComboBox('clearSelection');
+        ////////////    $("#rateCombo").jqxComboBox('clear');
+        ////////////    var parent = $("#rateCombo").parent();
+        ////////////    $("#rateCombo").jqxComboBox('destroy');
+        ////////////    $("<div id='rateCombo'></div>").appendTo(parent);
 
             
-            $('#jqxLoader').jqxLoader('close');
-        }
+        ////////////    //set rate combobox
+        ////////////    var rateSource =
+        ////////////    {
+        ////////////        async: true,
+        ////////////        datatype: "json",
+        ////////////        type: "Get",
+        ////////////        root: "data",
+        ////////////        datafields: [
+        ////////////            { name: 'LocationId' },
+        ////////////            { name: 'NameOfLocation' }
+        ////////////        ],
+        ////////////        url: $("#localApiDomain").val() + "Locations/Locations/",
 
-        function getRate(obj, thisLocationId) {
-            //var thisCompanyId = $("#MailerCompanyCombo").jqxComboBox('getSelectedItem').value;
-            var thisCompanyId = glbCompanyId;
+        ////////////    };
+        ////////////    var rateDataAdapter = new $.jqx.dataAdapter(rateSource);
+        ////////////    $('#rateCombo').jqxComboBox({
+        ////////////        selectedIndex: 0, source: rateDataAdapter, displayMember: "NameOfLocation", valueMember: "LocationId", height: 24, width: '100%',
+        ////////////        renderer: function (index, label, value) {
+        ////////////            var rateObj = { rate: "0" };
+        ////////////            rateObj = { rateCode: "0" };
+        ////////////            rateObj = { locationList: "" };
 
-            $.ajax({
-                async: false,
-                type: "POST",
-                url: $("#localApiDomain").val() + "Rates/GetRateByLocationAndCompanyId/",
-                //url: "http://localhost:52839/api/Rates/GetRateByLocationAndCompanyId/",
+        ////////////            getRate(rateObj, value);
 
-                data: { "CompanyId": thisCompanyId, "LocationId": thisLocationId },
-                dataType: "json",
-                success: function (thisData) {
-                    var results = String(thisData).split(",")
-                    obj.rate = results[0];
-                    obj.rateCode = results[1];
-                    obj.locationList = results[2];
-                },
-                error: function (request, status, error) {
-                    swal(error);
-                }
-            });
+        ////////////            var homeLocations = String(rateObj.locationList).split("_");
+                    
+        ////////////            if (homeLocations.indexOf(String(value)) > -1) {
+        ////////////                var table = '<div style="color:black">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + ' **</div>';
+        ////////////            } else {
+        ////////////                var table = '<div style="color:black">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + '</div>';
+        ////////////            }
+    
+        ////////////            return table;
+        ////////////        },
+        ////////////        renderSelectedItem: function (index, item) {
+        ////////////            var rateObj = { rate: "0" };
+        ////////////            rateObj = { rateCode: "0" };
+        ////////////            rateObj = { locationList: "" };
 
-        }
+        ////////////            getRate(rateObj, item.value);
+
+        ////////////            var homeLocations = String(rateObj.locationList).split("_");
+
+        ////////////            if (homeLocations.indexOf(String(item.value)) > -1) {
+        ////////////                var table =  item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + ' **';
+        ////////////            } else {
+        ////////////                var table = item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate
+        ////////////            }
+
+        ////////////            return table;
+        ////////////        }
+        ////////////    });
+
+        ////////////    $("#rateCombo").on('bindingComplete', function (event) {
+        ////////////        $("#rateCombo").jqxComboBox('selectItem', glbHomeLocationId);
+        ////////////    });
+
+            
+        ////////////    $('#jqxLoader').jqxLoader('close');
+        ////////////}
+
+        ////////////function getRate(obj, thisLocationId) {
+        ////////////    //var thisCompanyId = $("#MailerCompanyCombo").jqxComboBox('getSelectedItem').value;
+        ////////////    var thisCompanyId = glbCompanyId;
+
+        ////////////    $.ajax({
+        ////////////        async: false,
+        ////////////        type: "POST",
+        ////////////        url: $("#localApiDomain").val() + "Rates/GetRateByLocationAndCompanyId/",
+        ////////////        //url: "http://localhost:52839/api/Rates/GetRateByLocationAndCompanyId/",
+
+        ////////////        data: { "CompanyId": thisCompanyId, "LocationId": thisLocationId },
+        ////////////        dataType: "json",
+        ////////////        success: function (thisData) {
+        ////////////            var results = String(thisData).split(",")
+        ////////////            obj.rate = results[0];
+        ////////////            obj.rateCode = results[1];
+        ////////////            obj.locationList = results[2];
+        ////////////        },
+        ////////////        error: function (request, status, error) {
+        ////////////            swal(error);
+        ////////////        }
+        ////////////    });
+
+        ////////////}
 
         function loadmanualEditTypesCombo() {
             //set manualedit type combobox
@@ -3785,6 +3840,7 @@
                     $("#MailerCompanyComboID").val(thisData.result.data.CompanyId);
 
                     glbCompanyId = thisData.result.data.CompanyId;
+                    //alert(thisData.result.data.CompanyId);
                     $("#statusCombo").jqxComboBox('selectItem', thisData.result.data.PreferredStatusName);
                     
                 },
@@ -3905,8 +3961,8 @@
             $.ajax({
                 async: false,
                 type: 'GET',
-                url: "http://localhost:52839/api/members/GetMemberNameByCard/" + CardNumber,
-                //url:  $("#localApiDomain").val() + "members/GetMemberNameByCard/" + CardNumber,
+                //url: "http://localhost:52839/api/members/GetMemberNameByCard/" + CardNumber,
+                url:  $("#localApiDomain").val() + "members/GetMemberNameByCard/" + CardNumber,
                 success: function (thisData) {
                     if (thisData.length == 0) {
                         thisReturn = 'No Member For Card ';
