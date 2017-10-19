@@ -33,7 +33,7 @@
         <form runat="server">
             <div class="hidden">
                 <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
-                <asp:TextBox runat="server" ID="userGuid" style="visibility:hidden">CFA89E67D91347D19799CE533155ECF8</asp:TextBox>
+                <asp:TextBox runat="server" ID="userGuid" style="visibility:hidden">6746C19780EA4DF9958DDF1C782A4100</asp:TextBox>
                 <asp:TextBox runat="server" ID="tempUserGuid" style="visibility:hidden"></asp:TextBox>
                 <asp:TextBox runat="server" ID="AK" style="visibility:hidden">301C01F6-450E-4D97-B522-CD69EF25B574</asp:TextBox>
                 <asp:TextBox runat="server" ID="apiDomain" style="visibility:hidden">https://apistage.thefastpark.com/api/v1/</asp:TextBox>
@@ -92,7 +92,7 @@
                                 <li><a href="PendingReceipts.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Manager Portal_Asstmanager">Pending Receipts</a></li>
                                 <li><a href="MemberCompanyUpdate.aspx"  class="menuSecurity disabled Portal_Superadmin Portal_RFR">Update Members Company</a></li> 
                                 <li><a href="ReservationList.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">List Reservations For Today</a></li>   
-                                <li><a href="ReservationMaintenance.aspx" id="ReservationMaintenanceLink" class="menuSecurity disabled Portal_Superadmin Portal_Auditadmin">Reservation Maintenance</a></li>
+                                <li><a href="ReservationMaintenance.aspx" id="ReservationMaintenanceLink" class="menuSecurity disabled Portal_Superadmin Portal_Auditadmin Portal_RFR Portal_Manager">Reservation Maintenance</a></li>
                                 <li><a href="CombineCompanies.aspx" id="CombineCompaniesLink" class="menuSecurity disabled Portal_Superadmin">Combine Companies</a></li>
                             </ul>
                         </li>

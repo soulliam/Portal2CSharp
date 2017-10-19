@@ -232,8 +232,119 @@
                 }
             });
 
+            //////// saving new or changed Restriction
+            //////$("#feeSave").on("click", function (event) {
+            //////    var newLocationId = $("#feeLocationCombo").jqxComboBox('getSelectedItem').value;
+            //////    var newEffectiveDatetime = $("#EffectiveDatetime").val();
+            //////    var newExpiresDatetime = $("#ExpiresDatetime").val();
+            //////    var newIsDefault = $("#feeIsDefault").is(':checked');
+            //////    var newFeeDollars = $("#FeeDollars").val();
+            //////    var newFeePoints = $("#FeePoints").val();
+            //////    var newCancellationGracePeriodHours = $("#CancellationGracePeriodHours").val();
+            //////    var newCancellationFeeDollars = $("#CancellationFeeDollars").val();
+            //////    var newNoShowFeeDollars = $("#NoShowFeeDollars").val();
+            //////    var newMaxReservationCount = $("#MaxReservationCount").val();
+
+            //////    var test = JSON.stringify({
+            //////        "LocationId": newLocationId,
+            //////        "EffectiveDatetime": newEffectiveDatetime,
+            //////        "ExpiresDatetime": newExpiresDatetime,
+            //////        "IsDefault": newIsDefault,
+            //////        "FeeDollars": newFeeDollars,
+            //////        "FeePoints": newFeePoints,
+            //////        "CancellationGracePeriodHours": newCancellationGracePeriodHours,
+            //////        "CancellationFeeDollars": newCancellationFeeDollars,
+            //////        "NoShowFeeDollars": newNoShowFeeDollars,
+            //////        "MaxReservationCount": newMaxReservationCount,
+            //////    });
+
+            //////    $.ajax({
+            //////        headers: {
+            //////            "Accept": "application/json",
+            //////            "Content-Type": "application/json",
+            //////            "AccessToken": $("#userGuid").val(),
+            //////            "ApplicationKey": $("#AK").val()
+            //////        },
+            //////        type: "POST",
+            //////        url: $("#apiDomain").val() + "reservation-fees",
+            //////        data: JSON.stringify({
+            //////            "LocationId": newLocationId,
+            //////            "EffectiveDatetime": newEffectiveDatetime,
+            //////            "ExpiresDatetime": newExpiresDatetime,
+            //////            "IsDefault": newIsDefault,
+            //////            "FeeDollars": newFeeDollars,
+            //////            "FeePoints": newFeePoints,
+            //////            "CancellationGracePeriodHours": newCancellationGracePeriodHours,
+            //////            "CancellationFeeDollars": newCancellationFeeDollars,
+            //////            "NoShowFeeDollars": newNoShowFeeDollars,
+            //////            "MaxReservationCount": newMaxReservationCount,
+            //////        }),
+            //////        dataType: "json",
+            //////        success: function (response) {
+            //////            alert("Saved!");
+            //////        },
+            //////        error: function (request, status, error) {
+            //////            alert(error + " - " + request.responseJSON.message);
+            //////        },
+            //////        complete: function () {
+            //////            loadReservationFees(newLocationId);
+            //////        }
+            //////    })
+
+            //////    $("#popupRestriction").jqxWindow('hide');
+            //////});
+
             // saving new or changed Restriction
             $("#feeSave").on("click", function (event) {
+                
+
+                var newLocationId = $("#feeLocationCombo").jqxComboBox('getSelectedItem').value;
+                var newEffectiveDatetime = $("#EffectiveDatetime").val();
+                var newExpiresDatetime = $("#ExpiresDatetime").val();
+                var newMaxReservationCount = $("#MaxReservationCount").val();
+
+                var thisUrl = $("#apiDomain").val() + "reservation-fees/IsValidMaxReservationCount?locationId=" + newLocationId + "&MaxReservationCount=" + newMaxReservationCount + "&startDatetime=" + newEffectiveDatetime + "&endDatetime=" + newExpiresDatetime;
+
+                $.ajax({
+                    headers: {
+                        "Content-Type": "application/json",
+                        "AccessToken": $("#userGuid").val(),
+                        "ApplicationKey": $("#AK").val()
+                    },
+                    type: "GET",
+                    url: thisUrl,
+                    dataType: "json",
+                    success: function (request) {
+                        $("#popupFee").jqxWindow('hide');
+                        if (request.message = "Success") {
+                            SaveFee(false);
+                        }
+                    },
+                    error: function (request, status, error) {
+                        $("#popupFee").jqxWindow('hide');
+                        if (request.responseJSON.message = "Records Found") {
+                            swal({
+                                title: 'Are you sure?',
+                                text: "This will make one of the dates in your range negative?",
+                                type: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Yes, set the limit!'
+                            }).then(function () {
+                                SaveFee(true);
+                            });
+                        } else {
+                            alert(request.responseJSON.message);
+                        }
+                    }
+                })
+
+               
+            });
+
+
+            function SaveFee(negative) {
                 var newLocationId = $("#feeLocationCombo").jqxComboBox('getSelectedItem').value;
                 var newEffectiveDatetime = $("#EffectiveDatetime").val();
                 var newExpiresDatetime = $("#ExpiresDatetime").val();
@@ -258,6 +369,14 @@
                     "MaxReservationCount": newMaxReservationCount,
                 });
 
+                var thisUrl = "";
+
+                if (negative == false) {
+                    thisUrl = $("#apiDomain").val() + "reservation-fees";
+                } else {
+                    thisUrl = $("#apiDomain").val() + "reservation-fees?UpdateReservationMaxCountToNegative=true";
+                }
+
                 $.ajax({
                     headers: {
                         "Accept": "application/json",
@@ -266,7 +385,7 @@
                         "ApplicationKey": $("#AK").val()
                     },
                     type: "POST",
-                    url: $("#apiDomain").val() + "reservation-fees",
+                    url: thisUrl,
                     data: JSON.stringify({
                         "LocationId": newLocationId,
                         "EffectiveDatetime": newEffectiveDatetime,
@@ -281,7 +400,7 @@
                     }),
                     dataType: "json",
                     success: function (response) {
-                        alert("Saved!");
+                        swal("Saved!");
                     },
                     error: function (request, status, error) {
                         alert(error + " - " + request.responseJSON.message);
@@ -292,7 +411,7 @@
                 })
 
                 $("#popupRestriction").jqxWindow('hide');
-            });
+            };
 
             //Delete restriction button click event
             $("#restrictionDelete").on("click", function (event) {
@@ -823,7 +942,7 @@
                             <div class="form-group">
                                 <label for="CancellationGracePeriodHours" class="col-sm-3 col-md-4 control-label blockReservationHidden">Grace Period:</label>
                                 <div class="col-sm-9 col-md-8">
-                                    <input type="text" id="CancellationGracePeriodHours" class="blockReservationHidden" value="0" />
+                                    <input type="text" id="CancellationGracePeriodHours" class="blockReservationHidden" value="1" />
                                 </div>
                             </div>
                             <div class="form-group">

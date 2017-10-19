@@ -1,5 +1,4 @@
-﻿using QRCoder;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -7,6 +6,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Web;
+using QRCoder;
 
 /// <summary>
 /// Summary description for clsCommon
@@ -55,10 +55,13 @@ public class clsCommon
     {
 
         QRCodeGenerator qrGenerator = new QRCodeGenerator();
-        QRCodeGenerator.QRCode qrCode = qrGenerator.CreateQrCode(code, QRCodeGenerator.ECCLevel.Q);
+        QRCodeData qrCodeData = qrGenerator.CreateQrCode(code, QRCodeGenerator.ECCLevel.Q);
+        QRCode qrCode = new QRCode(qrCodeData);
+
         System.Web.UI.WebControls.Image imgBarCode = new System.Web.UI.WebControls.Image();
-        imgBarCode.Height = 125;
-        imgBarCode.Width = 125;
+        imgBarCode.Height = 120;
+        imgBarCode.Width = 120;
+
         using (Bitmap bitMap = qrCode.GetGraphic(20))
         {
             using (MemoryStream ms = new MemoryStream())

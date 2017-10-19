@@ -13,22 +13,22 @@
     <script type="text/javascript">
         $(document).ready(function () {
             // prepare chart data as an array   
-            //var url = $("#localApiDomain").val() + "Members/SearchByCompanyLocation/";
-            var url = "http://localhost:52839/api/ReservationReports/GetReservationReport/" + 18;
+            //var url = $("#localApiDomain").val() + "ReservationReports/GetReservationReport/" + 18;
+            var url = "http://localhost:52839/api/ReservationReports/GetReservationReport/" + 1 +"_10-23-2017";
 
             var source =
             {
                 datatype: "json",
                 datafields: [
                     { name: 'StartDate' },
-                    { name: 'CountNumber' },
                     { name: 'startsCount' },
                     { name: 'endsCount' }
                 ],
-                url: url
+                url: url,
+
             };
 
-            var date = new Date('1/1/2017');
+            var date = new Date('10/23/2017');
             var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
             var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 

@@ -34,12 +34,14 @@ public partial class RedemptionDisplay : System.Web.UI.Page
 
     private void GenerateQRCode(string cert)
     {
-        string code = cert;
         QRCodeGenerator qrGenerator = new QRCodeGenerator();
-        QRCodeGenerator.QRCode qrCode = qrGenerator.CreateQrCode(code, QRCodeGenerator.ECCLevel.Q);
+        QRCodeData qrCodeData = qrGenerator.CreateQrCode(cert, QRCodeGenerator.ECCLevel.Q);
+        QRCode qrCode = new QRCode(qrCodeData);
+
         System.Web.UI.WebControls.Image imgBarCode = new System.Web.UI.WebControls.Image();
         imgBarCode.Height = 135;
         imgBarCode.Width = 135;
+
         using (Bitmap bitMap = qrCode.GetGraphic(20))
         {
             using (MemoryStream ms = new MemoryStream())
