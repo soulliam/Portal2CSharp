@@ -43,6 +43,16 @@
 
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
+
+            $("#feeIsDefault").change(function () {
+                if (this.checked) {
+                    $("#ExpiresDatetime").hide();
+                    $("#ExpiresDatetimeLabel").hide();
+                } else {
+                    $("#ExpiresDatetime").show();
+                    $("#ExpiresDatetimeLabel").show();
+                }
+            });
             
             $('#jqxTabs').jqxTabs({ width: '100%', height: 600, position: 'top' });
 
@@ -230,6 +240,8 @@
                     })
                     $("#popupRestriction").jqxWindow('hide');
                 }
+
+                
             });
 
             //////// saving new or changed Restriction
@@ -345,10 +357,16 @@
 
 
             function SaveFee(negative) {
+                var newIsDefault = $("#feeIsDefault").is(':checked');
                 var newLocationId = $("#feeLocationCombo").jqxComboBox('getSelectedItem').value;
                 var newEffectiveDatetime = $("#EffectiveDatetime").val();
-                var newExpiresDatetime = $("#ExpiresDatetime").val();
-                var newIsDefault = $("#feeIsDefault").is(':checked');
+
+                if (newIsDefault == true) {
+                    var newExpiresDatetime = "";
+                } else {
+                    var newExpiresDatetime = $("#ExpiresDatetime").val();
+                }
+                
                 var newFeeDollars = $("#FeeDollars").val();
                 var newFeePoints = $("#FeePoints").val();
                 var newCancellationGracePeriodHours = $("#CancellationGracePeriodHours").val();
@@ -624,6 +642,7 @@
                                   var expiresDate = new Date(dataRecord.ExpiresDatetime);
                                   $('#ExpiresDatetime ').val(DateFormat(expiresDate));
                               }
+
                               $("#feeIsDefault").prop("checked", dataRecord.IsDefault);
                               $("#FeeDollars").val(dataRecord.FeeDollars);
                               $("#FeePoints").val(dataRecord.FeePoints);
@@ -912,7 +931,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="ExpiresDatetime" class="col-sm-3 col-md-4 control-label">Expires:</label>
+                                <label id="ExpiresDatetimeLabel" for="ExpiresDatetime" class="col-sm-3 col-md-4 control-label">Expires:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <div id="ExpiresDatetime"></div>
                                 </div>

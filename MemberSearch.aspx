@@ -4,13 +4,12 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit"  %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-   
-
+    
     <link rel="stylesheet" href="/jqwidgets/styles/jqx.base.css" type="text/css" />
-
 
     <script type="text/javascript" src="scripts/Member/UpdateMember.js"></script>
     <script type="text/javascript" src="scripts/Member/MemberReservation.js"></script>
+
     <script type="text/javascript" src="jqwidgets/jqxcore.js"></script>
     <script type="text/javascript" src="jqwidgets/globalization/globalize.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxbuttons.js"></script>
@@ -2301,7 +2300,17 @@
                
             }
 
-            var data = { "FPNumber": thisFPNumber, "FirstName": $("#SearchFirstName").val(), "LastName": $("#SearchLastName").val(), "EmailAddress": $("#SearchEmail").val(), "HomePhone": $("#SearchPhoneNumber").val(), "Company": $("#SearchCompany").val(), "MailerCompany": $("#MailerCompanySearchCombo").jqxInput('val').value, "MarketingCode": $("#SearchMailerCode").val(), "UserName": $("#SearchUserName").val() };
+            var data = {
+                "FPNumber": thisFPNumber,
+                "FirstName": $("#SearchFirstName").val(),
+                "LastName": $("#SearchLastName").val(),
+                "EmailAddress": $("#SearchEmail").val(),
+                "HomePhone": $("#SearchPhoneNumber").val(),
+                "Company": $("#SearchCompany").val(),
+                "MailerCompany": $("#MailerCompanySearchCombo").jqxInput('val').value,
+                "MarketingCode": $("#SearchMailerCode").val(),
+                "UserName": $("#SearchUserName").val()
+            };
 
             var source =
             {

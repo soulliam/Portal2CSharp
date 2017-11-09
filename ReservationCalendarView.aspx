@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Portal2.master" AutoEventWireup="true" CodeFile="ReservationCalendarReport.aspx.cs" Inherits="ReservationCalendarReport" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Portal2.master" AutoEventWireup="true" CodeFile="ReservationCalendarView.aspx.cs" Inherits="ReservationCalendarReport" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
     <style>
@@ -255,7 +255,6 @@
             }
 	    
 	    
-
             while (FirstDay <= LastDay) {
                 var thisEntry = 0;
                 var thisExit = 0;
@@ -277,25 +276,10 @@
                 var url = $("#localApiDomain").val() + "ReservationReports/GetReservationReport/" + thisLocation + '_' + thisDate;
 
 
-                $.ajax({
-                    async:false,
-                    type: "GET",
-                    url: url,
-                    dataType: "json",
-                    success: function (data) {
-                        thisEntry = data.startsCount;
-                        thisExit = data.endsCount;
-                        thisAvailable = data.available;
-                        thisReserved = data.reserved;
-                        $("#" + thisEntryLabel).html(thisEntry);
-                        $("#" + thisExitLabel).html(thisExit);
-                        $("#" + thisAvailableLabel).html(thisAvailable);
-                        $("#" + thisReservedLabel).html(thisReserved);
-                        $('#jqxLoader').jqxLoader('close');
-                    },
-                    error: function (request, status, error) {
-                        alert(error);
-                    }
+                getDay(url, thisEntry, thisExit, thisAvailable, thisReserved, thisEntryLabel, thisExitLabel, thisAvailableLabel, thisReservedLabel).done(function (data) {
+                    console.log(); //filled!
+                }).fail(function(error){
+                    alert("error " + error);
                 });
 
                 if (FirstDay.getDate() != LastDay.getDate()){
@@ -308,6 +292,29 @@
             
         }
 
+        function getDay(url, thisEntry, thisExit, thisAvailable, thisReserved, thisEntryLabel, thisExitLabel, thisAvailableLabel, thisReservedLabel) {
+            return $.ajax({
+                async: true,
+                type: "GET",
+                url: url,
+                dataType: "json",
+                success: function (data) {
+                    thisEntry = data.startsCount;
+                    thisExit = data.endsCount;
+                    thisAvailable = data.available;
+                    thisReserved = data.reserved;
+                    $("#" + thisEntryLabel).html(thisEntry);
+                    $("#" + thisExitLabel).html(thisExit);
+                    $("#" + thisAvailableLabel).html(thisAvailable);
+                    $("#" + thisReservedLabel).html(thisReserved);
+                    $('#jqxLoader').jqxLoader('close');
+                },
+                error: function (request, status, error) {
+                    alert(error);
+                }
+            });
+        }
+
         Security();
     </script>
 
@@ -316,7 +323,7 @@
         <table style="background-color: rgba(0, 0, 0, 0);">
             <tr>
                 <td style="padding-left:20px;padding-top:5px;padding-bottom:5px;">
-                    <label style="color: white;font-size: 20px;text-transform: uppercase;letter-spacing: 3px;" id="month">Month</label>
+                    <label style="color: white;font-size: 20px;letter-spacing: 3px;" id="month">Month</label>
                 </td>
                 <td style="padding-right:20px;padding-top:5px;padding-bottom:5px;">
                     <div id="LocationCombo" style="float:right;margin-top:2px;"></div>

@@ -39,7 +39,7 @@
             </div>
 
             <!-- NAVBAR -->
-            <nav class="navbar navbar-default navbar-fixed-top">
+            <nav id="nav" class="navbar navbar-default navbar-fixed-top">
               <div class="container-fluid container-970">
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
@@ -60,7 +60,10 @@
                         <li class="active">
                             <a href="MemberSearch.aspx">Home</a>
                         </li>
-                        <li runat="server" id="Manager" class="dropdown menuSecurity disabled">
+                        <li class="menuSecurity disabled Portal_CarCount">
+                            <a href="CarCount.aspx">Car Count</a>
+                        </li>
+                        <%--<li runat="server" id="Manager" class="dropdown menuSecurity disabled">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" >Cards/Coupons<span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="#" class="menuSecurity disabled">CouponTracking</a></li>
@@ -72,7 +75,7 @@
                                 <li><a href="#" class="menuSecurity disabled">Maintain Coupon Types</a></li> 
                                 <li><a href="#" class="menuSecurity disabled">Maintain User Tiers</a></li> 
                             </ul>
-                        </li> 
+                        </li> --%>
                         <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager Portal_Marketing Portal_Auditadmin">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Portal_RFR Tools<span class="caret"></span></a>
                             <ul class="dropdown-menu">
@@ -86,17 +89,18 @@
                                 <li><a href="PendingReceipts.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Manager Portal_Asstmanager">Pending Receipts</a></li>
                                 <li><a href="MemberCompanyUpdate.aspx"  class="menuSecurity disabled Portal_Superadmin Portal_RFR">Update Members Company</a></li> 
                                 <li><a href="ReservationList.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">List Reservations For Today</a></li>   
-                                <li><a href="ReservationMaintenance.aspx" id="ReservationMaintenanceLink" class="menuSecurity disabled Portal_Superadmin Portal_Auditadmin">Reservation Maintenance</a></li>
+                                <li><a href="ReservationMaintenance.aspx" id="ReservationMaintenanceLink" class="menuSecurity disabled Portal_Superadmin Portal_Auditadmin Portal_RFR Portal_Manager">Reservation Maintenance</a></li>
+                                <li><a href="ReservationCalendarView.aspx" id="ReservationCalendarView" class="menuSecurity disabled Portal_Superadmin Portal_Auditadmin Portal_RFR Portal_Manager Portal_Asstmanager">Reservation Calendar</a></li>
                                 <li><a href="CombineCompanies.aspx" id="CombineCompaniesLink" class="menuSecurity disabled Portal_Superadmin">Combine Companies</a></li>
                             </ul>
                         </li>
-                        <li class="dropdown  menuSecurity disabled Portal_Superadmin Portal_Siteadmin">
-                            <a class="dropdown-toggle Portal_RFR" data-toggle="dropdown" href="#">CMS<span class="caret"></span></a>
+                        <li class="dropdown  menuSecurity disabled Portal_Superadmin Portal_Siteadmin Portal_Auditadmin">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">CMS<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="Locations.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Siteadmin">Locations</a></li>
-                                <li><a href="Cities.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Siteadmin">Cities</a></li>
-                                <li><a href="Airports.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Siteadmin">Airports</a></li>
-                                <li><a href="LocationFeatures.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Siteadmin">Location Features</a></li>
+                                <li><a href="Locations.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Siteadmin Portal_Auditadmin">Locations</a></li>
+                                <li><a href="Cities.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Siteadmin Portal_Auditadmin">Cities</a></li>
+                                <li><a href="Airports.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Siteadmin Portal_Auditadmin">Airports</a></li>
+                                <li><a href="LocationFeatures.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Siteadmin Portal_Auditadmin">Location Features</a></li>
                             </ul>
                         </li> 
                         <li class="">
@@ -105,26 +109,27 @@
                         <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Vehicles<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="http://192.168.0.185/portal/Restricted/VehicleSearch.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Vehicle Search</a></li>
-                                <li><a href="http://192.168.0.185/portal/Restricted/VehicleDaily.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Daily Tracking</a></li>
-                                <li><a href="http://192.168.0.185/portal/Restricted/VehicleAddStock.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Add Stock</a></li> 
+                                <li><a href="VehicleSearch.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Vehicle Search</a></li>
+                                <li><a href="VehicleDaily.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Daily Tracking</a></li>
+                                <li><a href="VehicleAddStock.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Add Stock</a></li> 
                             </ul>
                         </li> 
-                        <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_Insurance">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Insurance<span class="caret"></span></a>
+                        <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_Insurance Portal_Legal Portal_Couponadmin Portal_Manager Portal_Asstmanager">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">PCA Apps<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="http://192.168.0.185/portal/Restricted/ClaimsEntry.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Insurance</a></li>
+                                <li><a href="Insurance.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Insurance</a></li>
+                                <li><a href="Legal.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Legal">Legal</a></li>
+                                <li><a href="Coupons.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Manager Portal_Asstmanager Portal_Couponadmin">Coupons</a></li>
+                                <li><a href="Uniforms.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Manager">Uniforms</a></li>
                             </ul>
                         </li>
                         <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Card Distribution<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="CardInventoryOrder.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR">Card Order</a></li>
-                                <li><a href="CardInventoryOrderReceiving.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR" >Order Received</a></li>
-                                <li><a href="CardInventoryShipping.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR">Card Shipping</a></li>
-                                <li><a href="CardInventoryShipmentReceiving.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">Card Receiving</a></li> 
-                                <li><a href="CardInventoryDistribution.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">Card Distribution</a></li> 
-                                <li><a href="CardInventoryHistory.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">Card History</a></li>
+                                <li><a href="Card_Order.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR">Card Ordering</a></li>
+                                <li><a href="Card_Ship.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager" >Card Shipping</a></li>
+                                <li><a href="Card_Dist.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">Card Distribution</a></li>
+                                <li><a href="Card_History.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">Card History</a></li>
                                 <li><a href="BoothCardCount.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Manager Portal_Asstmanager">Booth Distribution</a></li>
                             </ul>
                         </li>

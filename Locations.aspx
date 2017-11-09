@@ -158,7 +158,7 @@
             //Save main location
             $("#Save").click(function () {
                 // If LocationId is nothing then we are adding a new Location and we need a post
-                if ($("#LocationId").val() == "") {
+                if ($("#LocationId").val() == "0") {
                     var newNameOfLocation = $("#NameOfLocation").val();
                     var newDisplayName = $("#DisplayName").val();
                     var newShortLocationName = $("#ShortLocationName").val();
@@ -175,6 +175,7 @@
                     var newAlert = $("#Alert").val();
                     var newDailyRate = $("#DailyRate").val();
                     var newSlug = $("#Slug").val();
+                    var newQualifications = $("#Qualifications").val();
                     var newManager = $("#siteManager").val();
                     var newManagerEmail = $("#ManagerEmail").val();
                     var newLatitude = $("#Latitude").val();
@@ -190,13 +191,13 @@
                     var newBrandId = $("#brandCombo").jqxComboBox('getSelectedItem').value;
                     var newLocationStateId = $("#stateCombo").jqxComboBox('getSelectedItem').value;
                     var newDistanceFromAirport = $("#DistanceFromAirport").val();
-                    var newAirportId = $("#airportCombo").jqxComboBox('getSelectedItem').value;;
+                    var newAirportId = $("#airportCombo").jqxComboBox('getSelectedItem').value;
                     var newRateQualifications = $("#RateQualifications").val();
                     var newRateText = $("#RateText").val();
                     var newMemberRateText = $("#MemberRateText").val();
                     var newLocationHighlights = $("#LocationHighlights").val();
                     var newLocationContactEmail = $("#LocationContactEmail").val();
-                    var newSkiDataIMP = $("#SkiDataIMP").val();
+                    var newIMP = $("#SkiDataIMP").val();
                     var newSiteURL = $("#SiteURL").val();
                     var newCityId = $("#cityCombo").jqxComboBox('getSelectedItem').value;
 
@@ -209,47 +210,47 @@
                             "AccessToken": $("#userGuid").val(),
                             "ApplicationKey": $("#AK").val()
                         },
-                        url: PostUrl,
+                        url: postUrl,
                         type: 'POST',
                         data: JSON.stringify({
                             "NameOfLocation": newNameOfLocation,
                             "DisplayName": newDisplayName,
-                            "ShortLocationName": "sample string 3",
-                            "FacilityNumber": "sample string 4",
-                            "SkiDataVersion": 1,
-                            "SkiDataLocation": true,
-                            "LocationAddress": "sample string 5",
-                            "LocationCity": "sample string 6",
-                            "BrandId": 7,
-                            "AirportId": 8,
-                            "Capacity": 9,
-                            "CityId": 10,
-                            "LocationStateId": 11,
-                            "LocationZipCode": "samp",
-                            "LocationPhoneNumber": "sample string 13",
-                            "LocationFaxNumber": "string 14",
-                            "Description": "sample string 15",
-                            "Alert": "sample string 16",
-                            "DailyRate": "sample string 17",
-                            "Slug": "sample string 18",
-                            "RateQualifications": "sample string 19",
-                            "Manager": "prashant.nidagunid@costrategix.com",
-                            "ManagerEmail": "prashant.nidagunid@costrategix.com",
-                            "LocationContactEmail": "prashant.nidagunid@costrategix.com",
-                            "LocationHighlights": "sample string 23",
-                            "RateText": "sample string 24",
-                            "DistanceFromAirport": "sample string 25",
-                            "Latitude": "sample string 26",
-                            "Longitude": "sample string 27",
-                            "SpecialFlagsText": "sample string 28",
-                            "SpecialFlagsInformation": "sample string 29",
-                            "GoogleLink": "sample string 30",
-                            "IsActiveFlag": true,
-                            "ManagerImageUrl": "sample string 32",
-                            "MemberRateText": "sample string 33",
-                            "ImageUrl": newSkiDataIMP,
-                            "Imp": "sample 35",
-                            "SiteURL": "sample string 36"
+                            "ShortLocationName": newShortLocationName,
+                            "FacilityNumber": newFacilityNumber,
+                            "SkiDataVersion": newSkiDataVersion,
+                            "SkiDataLocation": newSkiDataLocation,
+                            "LocationAddress": newLocationAddress,
+                            "LocationCity": newLocationCity,
+                            "BrandId": newBrandId,
+                            "AirportId": newAirportId,
+                            "Capacity": newCapacity,
+                            "CityId": newCityId,
+                            "LocationStateId": newLocationStateId,
+                            "LocationZipCode": newLocationZipCode,
+                            "LocationPhoneNumber": newLocationPhoneNumber,
+                            "LocationFaxNumber": newLocationFaxNumber,
+                            "Description": newDescription,
+                            "Alert": newAlert,
+                            "DailyRate": newDailyRate,
+                            "Slug": newSlug,
+                            "RateQualifications": newRateQualifications,
+                            "Manager": newManager,
+                            "ManagerEmail": newManagerEmail,
+                            "LocationContactEmail": newLocationContactEmail,
+                            "LocationHighlights": newLocationHighlights,
+                            "RateText": newRateText,
+                            "DistanceFromAirport": newDistanceFromAirport,
+                            "Latitude": newLatitude,
+                            "Longitude": newLongitude,
+                            "SpecialFlagsText": newSpecialFlagsText,
+                            "SpecialFlagsInformation": newSpecialFlagsInformation,
+                            "GoogleLink": newGoogleLink,
+                            "IsActiveFlag": newIsActiveFlag,
+                            "ManagerImageUrl": newManagerImageUrl,
+                            "MemberRateText": newMemberRateText,
+                            "ImageUrl": newImageUrl,
+                            "Imp": newIMP,
+                            "SiteURL": newSiteURL
                         }),
                         success: function (response) {
                             alert("Saved!");
@@ -258,7 +259,7 @@
                             loadLocationGrid();
                         },
                         error: function (request, status, error) {
-                            alert(error + " - " + request);
+                            alert(error + " - " + request.responseJSON.message);
                         }
                     });
                     
@@ -267,7 +268,7 @@
 
                 } else {
                     //if edit row is greater than zero then a row has been selected and we are updating a location
-                    if (editrow >= 0) {
+                    if ($("#LocationId").val() != "0") {
 
                         var newNameOfLocation = $("#NameOfLocation").val();
                         var newDisplayName = $("#DisplayName").val();
@@ -411,7 +412,7 @@
                                 loadLocationGrid();
                             },
                             error: function (request, status, error) {
-                                alert(error + " - " + request.html);
+                                alert(error + " - " + request.responseJSON.message);
                             }
                         });
 
@@ -1329,7 +1330,7 @@
                                 <div class="col-sm-8 col-sm-offset-4">
                                     <div class="row search-size">
                                         <div class="col-sm-12">
-                                            <a href="javascript:newLocation();" id="btnNew" class="editor">New City</a>
+                                            <a href="javascript:newLocation();" id="btnNew" class="editor">New Location</a>
                                         </div>
                                     </div>
                                 </div>

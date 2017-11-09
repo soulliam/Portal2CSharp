@@ -93,6 +93,7 @@
                                 <li><a href="MemberCompanyUpdate.aspx"  class="menuSecurity disabled Portal_Superadmin Portal_RFR">Update Members Company</a></li> 
                                 <li><a href="ReservationList.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">List Reservations For Today</a></li>   
                                 <li><a href="ReservationMaintenance.aspx" id="ReservationMaintenanceLink" class="menuSecurity disabled Portal_Superadmin Portal_Auditadmin Portal_RFR Portal_Manager">Reservation Maintenance</a></li>
+                                <li><a href="ReservationCalendarView.aspx" id="ReservationCalendarView" class="menuSecurity disabled Portal_Superadmin Portal_Auditadmin Portal_RFR Portal_Manager Portal_Asstmanager">Reservation Calendar</a></li>
                                 <li><a href="CombineCompanies.aspx" id="CombineCompaniesLink" class="menuSecurity disabled Portal_Superadmin">Combine Companies</a></li>
                             </ul>
                         </li>
