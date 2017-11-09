@@ -30,7 +30,7 @@
     <script type="text/javascript" src="jqwidgets/jqxdata.export.js"></script> 
     <script type="text/javascript" src="jqwidgets/jqxgrid.export.js"></script> 
     <script type="text/javascript" src="jqwidgets/jqxcheckbox.js"></script>
-    <script type="text/javascript" src="jqwidgets/jqxtabs.js"></script>
+    <script type="text/javascript" src="../../jqwidgets/jqxtabs.js"></script>
 
     <script type="text/javascript">
         var group = '<%= Session["groupList"] %>';
@@ -270,6 +270,11 @@
             // creage jqxgrid
             $("#jqxgrid").jqxGrid(
             {
+		showstatusbar: true,
+                renderstatusbar: function (statusbar) {
+                    var rowCount = $("#jqxgrid").jqxGrid('getrows').length;
+                    statusbar.append('<div style="margin: 5px;">Reservation Entries: ' + rowCount + '</div>');
+                },
                 width: '100%',
                 height: 550,
                 source: source,
@@ -280,7 +285,6 @@
                 rowdetails: true,
                 initrowdetails: initrowdetails,
                 selectionmode: 'checkbox',
-                enablebrowserselection: true,
                 rowdetailstemplate: { rowdetails: "<div id='grid' style='margin: 10px;'></div>", rowdetailsheight: 220, rowdetailshidden: true },
                 //ready: function () {
                 //    $("#jqxgrid").jqxGrid('showrowdetails', 1);
@@ -341,6 +345,11 @@
             // creage jqxgrid
             $("#jqxgridOUT").jqxGrid(
             {
+		showstatusbar: true,
+                renderstatusbar: function (statusbar) {
+                    var rowCount = $("#jqxgridOUT").jqxGrid('getrows').length;
+                    statusbar.append('<div style="margin: 5px;">Reservation Exits: ' + rowCount + '</div>');
+                },
                 width: '100%',
                 height: 550,
                 source: source,
