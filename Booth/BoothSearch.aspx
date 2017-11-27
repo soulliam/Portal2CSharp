@@ -569,6 +569,7 @@
         function getParametersAndSearch() {
             var thisReturn = "";
 
+            var memberObject = { firstname: "", lastname: "", fpnumber: "", emailaddress: "" };
 
             $("#popupMember").jqxWindow('hide');
             $("#popupNewEmail").jqxWindow('hide');
@@ -586,9 +587,11 @@
                 }
 
                 thisReturn = thisReturn + "&LastName=" + $("#txtSearchLastName").val();
+                memberObject.lastname = $("#txtSearchLastName").val();
 
                 if ($("#txtSearchEmailFNameFPNumber").val() != "") {
                     thisReturn = thisReturn + "&FirstName=" + $("#txtSearchEmailFNameFPNumber").val();
+                    memberObject.firstname = $("#txtSearchEmailFNameFPNumber").val();
                 }
 
             }
@@ -596,6 +599,7 @@
             if ($("#btnSearchFPNumber").css('backgroundColor') == "rgb(169, 169, 169)") {
                 if ($("#txtSearchEmailFNameFPNumber").val() != "") {
                     thisReturn = "&FPNumber=" + $("#txtSearchEmailFNameFPNumber").val();
+                    memberObject.fpnumber = $("#txtSearchEmailFNameFPNumber").val();
                 }
                 else {
                     alert("You must enter a value to search for an FPNumber!")
@@ -606,6 +610,7 @@
             if ($("#btnSearchEmail").css('backgroundColor') == "rgb(169, 169, 169)") {
                 if ($("#txtSearchEmailFNameFPNumber").val() != "") {
                     thisReturn = "&EmailAddress=" + $("#txtSearchEmailFNameFPNumber").val();
+                    memberObject.emailaddress = $("#txtSearchEmailFNameFPNumber").val();
                 }
                 else {
                     alert("You must enter a value to search for an email!")
@@ -617,7 +622,7 @@
 
             PageMethods.logSearch(thisUser, 0, $("#txtSearchEmailFNameFPNumber").val(), $("#txtSearchLastName").val(), DisplayPageMethodResults);
 
-            loadSearchResults(thisReturn);
+            loadSearchResults(thisReturn, memberObject);
         }
 
         // send error if logging login fails
@@ -822,7 +827,39 @@
             });
         }
 
-        function loadSearchResults(thisParameters) {
+        function loadSearchResults(thisParameters, memberObject) {
+
+            //var parent = $("#jqxSearchGrid").parent();
+            //$("#jqxSearchGrid").jqxGrid('destroy');
+            //$("<div id='jqxSearchGrid'></div>").appendTo(parent);
+
+            ////Loads SearchList from parameters
+
+            //var url = $("#apiDomain").val() + "members/search?" + thisParameters;
+            //var thisAccessToken = $("#userGuid").val();
+            //var thisApplicatoinKey = $("#AK").val();
+
+            //var source =
+            //{
+            //    datafields: [
+            //        { name: 'MemberId' },
+            //        { name: 'FirstName' },
+            //        { name: 'LastName' },
+            //        { name: 'FPNumber' },
+            //        { name: 'StreetAddress' },
+            //        { name: 'City' },
+            //        { name: 'EmailAddress' }
+            //    ],
+            //    id: 'MemberId',
+            //    type: 'Get',
+            //    datatype: "json",
+            //    url: url,
+            //    beforeSend: function (jqXHR, settings) {
+            //        jqXHR.setRequestHeader('AccessToken', thisAccessToken);
+            //        jqXHR.setRequestHeader('ApplicationKey', thisApplicatoinKey);
+            //    },
+            //    root: "data"
+            //};
 
             var parent = $("#jqxSearchGrid").parent();
             $("#jqxSearchGrid").jqxGrid('destroy');
@@ -830,9 +867,16 @@
 
             //Loads SearchList from parameters
 
-            var url = $("#apiDomain").val() + "members/search?" + thisParameters;
-            var thisAccessToken = $("#userGuid").val();
-            var thisApplicatoinKey = $("#AK").val();
+            //var url = $("#apiDomain").val() + "members/search?" + thisParameters;
+            var url = $("#localApiDomain").val() + "members/search";
+            //var url = "http://localhost:52839/api/members/search";
+
+            var data = {
+                "FPNumber": memberObject.fpnumber,
+                "FirstName": memberObject.firstname,
+                "LastName": memberObject.lastname,
+                "EmailAddress": memberObject.emailaddress
+            };
 
             var source =
             {
@@ -846,15 +890,13 @@
                     { name: 'EmailAddress' }
                 ],
                 id: 'MemberId',
-                type: 'Get',
+                type: 'POST',
                 datatype: "json",
-                url: url,
-                beforeSend: function (jqXHR, settings) {
-                    jqXHR.setRequestHeader('AccessToken', thisAccessToken);
-                    jqXHR.setRequestHeader('ApplicationKey', thisApplicatoinKey);
-                },
-                root: "data"
+                data: data,
+                url: url
             };
+
+
             // create Searchlist Grid
             $("#jqxSearchGrid").jqxGrid(
             {

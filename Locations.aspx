@@ -158,7 +158,7 @@
             //Save main location
             $("#Save").click(function () {
                 // If LocationId is nothing then we are adding a new Location and we need a post
-                if ($("#LocationId").val() == "0") {
+                if ($("#thisLocationId").val() == "0") {
                     var newNameOfLocation = $("#NameOfLocation").val();
                     var newDisplayName = $("#DisplayName").val();
                     var newShortLocationName = $("#ShortLocationName").val();
@@ -268,7 +268,7 @@
 
                 } else {
                     //if edit row is greater than zero then a row has been selected and we are updating a location
-                    if ($("#LocationId").val() != "0") {
+                    if ($("#thisLocationId").val() != "0") {
 
                         var newNameOfLocation = $("#NameOfLocation").val();
                         var newDisplayName = $("#DisplayName").val();
@@ -514,7 +514,7 @@
                 var newFeatureId = $("#featureCombo").jqxComboBox('getSelectedItem').value;
                 var newFeatureAvailableDatetime = $("#FeatureAvailableDatetime").val();
                 var newMaxAvailable = $("#MaxAvailable").val();
-                var newIsDisplayed = $("#IsDisplayed").is(':checked');
+                var newEditFeatureIsDisplayed = $("#editFeatureIsDisplayed").is(':checked');
                 var newSortOrder = $("#FeatureSortOrder").val();
                 var newChargeAmount = $("#FeatureChargeAmount").val();
                 var newChargeNote = $("#FeatureChargeNote").val();
@@ -522,7 +522,7 @@
                 var newOptionalExtrasName = $("#FeatureOptionalExtrasName").val();
                 var newOptionalExtrasDescription = $("#FeatureOptionalExtrasDescription").val();
                 var LocationHasFeatureId = $("#LocationHasFeatureId").val();
-                var newIsDisplayed = $("#IsDisplayed").is(":checked");
+                var newEditFeatureIsDisplayedOptionalExtra = $("#editFeatureIsDisplayedOptionalExtra").is(":checked");
 
                 var featurePostUrl = $("#apiDomain").val() + "locations/" + selectedLocationId + "/features/" + newFeatureId;
 
@@ -541,11 +541,11 @@
                         "FeatureId": newFeatureId,
                         "FeatureAvailableDatetime": newFeatureAvailableDatetime,
                         "MaxAvailable": newMaxAvailable,
-                        "IsDisplayed": newIsDisplayed,
+                        "IsDisplayed": newEditFeatureIsDisplayed,
                         "SortOrder": newSortOrder,
                         "OptionalExtrasName": newOptionalExtrasName,
                         "OptionalExtrasDescription": newOptionalExtrasDescription,
-                        "IsDisplayedOptionalExtra": newIsDisplayed
+                        "IsDisplayedOptionalExtra": newEditFeatureIsDisplayedOptionalExtra
                     }),
                     dataType: "json",
                     success: function (response) {
@@ -1043,7 +1043,7 @@
                     { name: 'OptionalExtrasName', },
                     { name: 'OptionalExtrasDescription', },
                     { name: 'MaxAvailable', },
-                    { name: 'IsDisplayed', }
+                    { name: 'IsDisplayedOptionalExtra', }
                 ],
 
                 id: 'FeatureId',
@@ -1089,7 +1089,8 @@
                                     $("#FeatureOptionalExtrasDescription").val(dataRecord.OptionalExtrasDescription);
                                     $("#MaxAvailable").val(dataRecord.MaxAvailable);
                                     $("#FeatureAvailableDatetime").val(dataRecord.FeatureAvailableDatetime);
-                                    $("#IsDisplayed").prop("checked", dataRecord.IsDisplayed);
+                                    $("#editFeatureIsDisplayed").prop("checked", dataRecord.IsDisplayed);
+                                    $("#editFeatureIsDisplayedOptionalExtra").prop("checked", dataRecord.IsDisplayedOptionalExtra);
                                 }
                             },
                             //  uncomment below to show the what you want
@@ -1722,11 +1723,11 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="IsDisplayed" class="col-sm-3 col-md-4 control-label">Display:</label>
+                                    <label for="editFeatureIsDisplayed" class="col-sm-3 col-md-4 control-label">Display:</label>
                                     <div class="col-sm-9 col-md-8">
                                         <div class="checkbox">
                                             <label>
-                                                <input type="checkbox" class="form-control" id="IsDisplayed" />
+                                                <input type="checkbox" class="form-control" id="editFeatureIsDisplayed" />
                                             </label>
                                         </div>
                                     </div>
@@ -1757,7 +1758,16 @@
                                             <input type="Button" class="form-control editor" id="saveCharge" value="Save Charge Info" />
                                         </div>
                                     </div>
-                                    
+                                    <div class="form-group">
+                                    <label for="editFeatureIsDisplayedOptionalExtra" class="col-sm-3 col-md-4 control-label">Display Optional Extra:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" class="form-control" id="editFeatureIsDisplayedOptionalExtra" />
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                                 </div>
                             </div>
                         </div>

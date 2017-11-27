@@ -22,9 +22,26 @@ public class clsCommon
 
     public void SendEmail(string ToAddress, string From, string Subject, string Body, bool IsHtml, string file = "")
     {
-
         //(1) Create the MailMessage instance
-        MailMessage Message = new MailMessage(From, ToAddress);
+
+        string[] Addresses = ToAddress.Split(',');
+
+        MailMessage Message = new MailMessage(From, Addresses[0]);
+
+        bool firstAddress = true;
+
+        foreach (string thisAddress in Addresses)
+        {
+            if (firstAddress == true)
+            {
+                firstAddress = false;
+            }
+            else
+            {
+                Message.CC.Add(thisAddress);
+            }
+        }
+
 
         //(2) Assign the MailMessage's properties
         Message.Subject = Subject;

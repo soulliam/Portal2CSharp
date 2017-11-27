@@ -10,6 +10,7 @@ using class_ADO;
 public partial class Dashboard : System.Web.UI.Page
 {
 
+
     protected void Page_Load(object sender, EventArgs e)
     {
         thisUser.Text = Page.User.Identity.Name;
@@ -17,6 +18,7 @@ public partial class Dashboard : System.Web.UI.Page
         GetWeather();
         GetDelays();
     }
+
 
     protected void GetWeather()
     {

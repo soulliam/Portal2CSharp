@@ -75,11 +75,14 @@
 
             var offset = $("#mainDiv").offset();
 
-            var WeatherInterval = setInterval(function () { GetNextWeather(); }, 7000);
+            //var WeatherInterval = setInterval(function () { GetNextWeather(); }, 7000);
 
             var AlertInterval = setInterval(function () { GetLocationAlerts(); }, 7000);
 
-            var DelayInterval = setInterval(function () { GetNextDelay(); }, 7000);
+            //var DelayInterval = setInterval(function () { GetNextDelay(); }, 7000);
+
+            var rateInterval = setInterval(function () { GetRateDescriptionAmounts(); }, 7000);
+
 
             $("#pause").click(function () {
 
@@ -88,11 +91,13 @@
                     clearInterval(WeatherInterval);
                     clearInterval(AlertInterval);
                     clearInterval(DelayInterval);
+                    clearInterval(rateInterval);
                 }else{
                     $("#pause").val("Pause");
                     WeatherInterval = setInterval(function () { GetNextWeather(); }, 7000);
                     AlertInterval = setInterval(function () { GetLocationAlerts(); }, 7000);
                     DelayInterval = setInterval(function () { GetNextDelay(); }, 7000);
+                    rateInterval = setInterval(function () { GetRateDescriptionAmounts(); }, 7000);
                 }
                 
             });
@@ -111,6 +116,7 @@
                 saveWindows("#twitter", 3);
                 saveWindows("#weather", 4);
                 saveWindows("#delay", 5);
+                saveWindows("#rates", 6);
             });
 
             $("#drag").click(function () {
@@ -198,6 +204,17 @@
                             });
                             placed = true;
                         }
+                        if (thisData[i].DashboardItem == "rate") {
+                            $('#rates').jqxWindow({
+                                position: { x: thisData[i].OffsetX, y: thisData[i].OffsetY },
+                                draggable: true,
+                                resizable: true,
+                                showCollapseButton: true, maxHeight: 900, maxWidth: 700, minHeight: 200, minWidth: 200, height: thisData[i].ItemHeight, width: thisData[i].ItemWidth,
+                                initContent: function () {
+                                }
+                            });
+                            placed = true;
+                        }
                     }
 
                     if (placed == false) {
@@ -251,6 +268,15 @@
 
             $('#delay').jqxWindow({
                 position: { x: offset.left + 1150, y: offset.top + 50 },
+                draggable: true,
+                resizable: true,
+                showCollapseButton: true, maxHeight: 900, maxWidth: 700, minHeight: 200, minWidth: 200, height: 275, width: 550,
+                initContent: function () {
+                }
+            });
+
+            $('#rates').jqxWindow({
+                position: { x: offset.left + 1350, y: offset.top + 50 },
                 draggable: true,
                 resizable: true,
                 showCollapseButton: true, maxHeight: 900, maxWidth: 700, minHeight: 200, minWidth: 200, height: 275, width: 550,
@@ -355,6 +381,43 @@
             });
 
             nextAlertPosistion = nextAlertPosistion + 1;
+        }
+
+        function GetRateDescriptionAmounts() {
+            $("#thisRate").html('');
+
+            var LocationName = "";
+            var RateAmount = "";
+            var Designation = "";
+
+            var url = $("#localApiDomain").val() + "Rates/GetRateDescriptionAmounts/" + nextAlertArray[nextAlertPosistion - 1];
+            //var url = "http://localhost:52839/api/Rates/GetRateDescriptionAmounts/" + nextAlertArray[nextAlertPosistion - 1];
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                dataType: "json",
+                success: function (data) {
+                   
+                    var table = $("<table style='width:100%;font-size:medium;' />").addClass('CSSTableGenerator');
+                    var row = $("<tr/><td colspan=2 style='font-weight:bold;'>" + data[0].ShortLocationName + "</td></tr>");
+                    table.append(row);
+                    row = $("<tr/><td colspan=2>&nbsp;</td></tr>");
+                    table.append(row);
+
+                    for ( var i = 0, l = data.length; i < l; i++ ) {
+                        row = $("<tr/><td>" + data[i].Designation + "</td><td>$" + parseFloat(Math.round(data[i].RateAmount * 100) / 100).toFixed(2) + "</td></tr>");
+                        table.append(row);
+                        table.append(row);
+                    };
+                    $("#thisRate").append(table);
+
+                },
+                error: function (request, status, error) {
+                    swal(error);
+                }
+            });
+
         }
 
         function moveBack() {
@@ -565,6 +628,16 @@
                     <div id="thisWeather"></div>
                     <ul runat="server" id="WeatherList" style="display:none;">
                     </ul>
+                </div>
+            </div>
+            <div id="rates" class="thisWindow">
+                <div id="ratesHeader">
+                    <span>
+                        Location Rates
+                    </span>
+                </div>
+                <div id="ratesContent">
+                    <div id="thisRate"></div>
                 </div>
             </div>
         </div>

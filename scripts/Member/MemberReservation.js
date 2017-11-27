@@ -154,9 +154,11 @@ function loadReservationFeatures(thisLocationId) {
         ],
         beforeSend: function (jqXHR, settings) {
             jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+            jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
         },
-        url: $("#apiDomain").val() + "locations/location-has-feature/" + thisLocationId,
-
+        //url: $("#apiDomain").val() + "locations/location-has-feature/" + thisLocationId,
+        //https://api.thefastpark.com/api/v1/locations/2/features
+        url: $("#apiDomain").val() + "locations/" + thisLocationId + "/features/",
     };
 
     var featureDataAdapter = new $.jqx.dataAdapter(featureSource);

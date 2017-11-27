@@ -44,6 +44,8 @@
         // ============= Initialize Page ==================== Begin
         $(document).ready(function () {
 
+            
+
             $("#feeIsDefault").change(function () {
                 if (this.checked) {
                     $("#ExpiresDatetime").hide();
@@ -311,8 +313,8 @@
                 
 
                 var newLocationId = $("#feeLocationCombo").jqxComboBox('getSelectedItem').value;
-                var newEffectiveDatetime = $("#EffectiveDatetime").val();
-                var newExpiresDatetime = $("#ExpiresDatetime").val();
+                var newEffectiveDatetime = $("#EffectiveDatetime").val() + ' 00:00:00';
+                var newExpiresDatetime = $("#ExpiresDatetime").val() + ' 23:59:59';
                 var newMaxReservationCount = $("#MaxReservationCount").val();
 
                 var thisUrl = $("#apiDomain").val() + "reservation-fees/IsValidMaxReservationCount?locationId=" + newLocationId + "&MaxReservationCount=" + newMaxReservationCount + "&startDatetime=" + newEffectiveDatetime + "&endDatetime=" + newExpiresDatetime;
@@ -359,12 +361,13 @@
             function SaveFee(negative) {
                 var newIsDefault = $("#feeIsDefault").is(':checked');
                 var newLocationId = $("#feeLocationCombo").jqxComboBox('getSelectedItem').value;
-                var newEffectiveDatetime = $("#EffectiveDatetime").val();
+                var newEffectiveDatetime = $("#EffectiveDatetime").val() + ' 00:00:00';
+
 
                 if (newIsDefault == true) {
                     var newExpiresDatetime = "";
                 } else {
-                    var newExpiresDatetime = $("#ExpiresDatetime").val();
+                    var newExpiresDatetime = $("#ExpiresDatetime").val() + ' 23:59:59';
                 }
                 
                 var newFeeDollars = $("#FeeDollars").val();
@@ -418,6 +421,11 @@
                     }),
                     dataType: "json",
                     success: function (response) {
+
+                        var thisLocationId = $("#feeLocationCombo").jqxComboBox('getSelectedItem').value;
+                        var thisBody = "The max reservation count for " + $("#feeLocationCombo").jqxComboBox('getSelectedItem').label + " has been set to " + $("#MaxReservationCount").val() + " for the following date range: " + $("#EffectiveDatetime").val() + " - " + $("#ExpiresDatetime").val() + " by " + $("#loginLabel").html() + ".<br /><br />";
+
+                        PageMethods.SendEmail("resmaint@thefastpark.com", "PCA_Reporting@thefastpark.com", "Max Reservation Change", thisBody, thisLocationId, true);
                         swal("Saved!");
                     },
                     error: function (request, status, error) {
