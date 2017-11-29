@@ -12,6 +12,8 @@ function Security() {
         $(this).attr('href', '#');
     });
 
+
+
     $('.editor').each(function () {
         ////this will actually remove editor elements from the dom after creating them
         //var editor = this;
@@ -58,6 +60,10 @@ function Security() {
             $(this).removeClass('disabled');
             $(this).prop("disabled", false);
         });
+
+        $("#nameDropHREF").attr("data-toggle", "dropdown");
+        $("#nameDropHREF").addClass("dropdown-toggle");
+        $("#nameDropCaret").css("display", "block");
 
         //// this will reattache removed elements to the Dom
         //var arrayLength = editorArray.length;

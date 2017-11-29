@@ -26,7 +26,7 @@
 
     <div id="jqxLoader"></div>
     <div style="width:100%;height:100%;text-align:center;margin: 0 auto">
-        <iframe id="thisFrame" src="http://192.168.0.56:8282/Restricted/Uniforms2.aspx" style="width:1020px;background:transparent;border:none;height:660px;" ></iframe>
+        <iframe id="thisFrame" src="https://parkingcompanystore.mybrightsites.com/permissions_denied" style="width:1020px;background:transparent;border:none;height:660px;" ></iframe>
     </div>
 </asp:Content>
 
