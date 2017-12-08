@@ -19,6 +19,7 @@ public partial class CreateUser : System.Web.UI.Page
             GetUsedRepIds();
             GetUsedRepMailerIds();
             GetVehicleLocations();
+
         }
 
         var ctrlName = Request.Params[Page.postEventSourceID];
@@ -433,6 +434,7 @@ public partial class CreateUser : System.Web.UI.Page
             //add new row to table
             Table1.Rows.Add(row);
         }
+        CheckBoxChk();
     }
 
     public ArrayList Groups()
@@ -519,5 +521,24 @@ public partial class CreateUser : System.Web.UI.Page
         }
        
         return "";
+    }
+
+    private void CheckBoxChk()
+    {
+        string allTextBoxValues = "";
+        foreach (Control c in Page.Controls)
+        {
+            foreach (Control childc in c.Controls)
+            {
+                if (childc is CheckBox)
+                {
+                    ((CheckBox)childc).Checked = true;
+                }
+            }
+        }
+        if (allTextBoxValues != "")
+        {
+
+        }
     }
 }
