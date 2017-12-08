@@ -31,6 +31,7 @@
 
 
     <script type="text/javascript">
+        //Mike
         // ============= Initialize Page ==================== Begin
         var group = '<%= Session["groupList"] %>';
 
