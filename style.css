@@ -110,8 +110,7 @@ body,
 }
 .button, input, select, textarea {
     max-width: 100%;
-    width: 100%;
-}
+    }
 
 
 /* TABLE */

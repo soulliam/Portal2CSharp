@@ -142,7 +142,8 @@
                         <li>
                             <a id="nameDropHREF" href="#"><asp:Label runat="server" ID="loginLabel" Text="test"></asp:Label><span id="nameDropCaret" style="display:none;" class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="CreateUser.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR">Create User</a></li>
+                                <li><a href="CreateUser.aspx" class="menuSecurity disabled Portal_Superadmin">Create User</a></li>
+                                <li><a href="RateAmounts.aspx" class="menuSecurity disabled Portal_Superadmin">Rate Amounts</a></li>
                             </ul>
                         </li>
                     </ul>

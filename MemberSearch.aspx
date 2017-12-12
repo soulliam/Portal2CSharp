@@ -2570,6 +2570,8 @@
                     { name: 'RedemptionTypeName' },
                     { name: 'RedeemDate' },
                     { name: 'IsReturned' },
+                    { name: 'ReturnRequest' },
+                    { name: 'ReturnProcessed' },
                     { name: 'BeenUsed' },
                     { name: 'DateUsed' },
                     { name: 'RedemptionSourceName' }
@@ -2608,6 +2610,8 @@
                       { text: 'Redemption Type', datafield: 'RedemptionTypeName' },
                       { text: 'Redeem Date', datafield: 'RedeemDate', cellsrenderer: DateRender },
                       { text: 'Returned', datafield: 'IsReturned', cellsrenderer: redemptionRenderer },
+                      { text: 'Return Request', datafield: 'ReturnRequest', cellsrenderer: DateRender },
+                      { text: 'Return Processed', datafield: 'ReturnProcessed', cellsrenderer: DateRender },
                       { text: 'BeenUsed', datafield: 'BeenUsed', cellsrenderer: redemptionRenderer },
                       { text: 'DateUsed', datafield: 'DateUsed', cellsrenderer: redemptionRenderer },
                       { text: 'Source', datafield: 'RedemptionSourceName' }
