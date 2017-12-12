@@ -11,9 +11,19 @@ using System.Security.Principal;
 
 public partial class CreateUser : System.Web.UI.Page
 {
+    Boolean userEdit = false;
+
     protected void Page_Load(object sender, EventArgs e)
     {
-        Button2.Visible = false;
+        
+        if (Button2.Visible == true)
+        {
+            Button1.Visible = false;
+            Button2.Visible = true;
+        }else
+        {
+            Button2.Visible = false;
+        }
 
         if (!IsPostBack)
         {
@@ -553,6 +563,7 @@ public partial class CreateUser : System.Web.UI.Page
         loadUsersRoles(GUID);
         Button1.Visible = false;
         Button2.Visible = true;
+        userEdit = true;
     }
 
     private string getUserGUID(string userName)
@@ -754,7 +765,7 @@ public partial class CreateUser : System.Web.UI.Page
             if (Location == null)
             {
                 strSQL = "Insert into dbIntranet.dbo.UserLoginLocations (UserId, Location, LocationId, IsPrimary) " +
-                     "Values ('" + txtGUID.Text + "', '0' + '" + lbLoginLocations.Items[I].Value + ", " + lbLoginLocations.Items[I].Value + "', NULL)";
+                     "Values ('" + txtGUID.Text + "', right('00000' + cast(" + lbLoginLocations.Items[I].Value + " as nvarchar(10))  , 3), " + lbLoginLocations.Items[I].Value + ", NULL)";
 
                 insert.updateOrInsert(strSQL, false);
             }
@@ -766,6 +777,8 @@ public partial class CreateUser : System.Web.UI.Page
         strSQL = "Select LocationId from dbIntranet.dbo.UserLoginLocations where UserId = '" + txtGUID.Text + "'";
 
         string conn = select.getLocalConnectionString();
+        string currentLocation = "";
+        string newLocation = "";
 
         using (SqlConnection con = new SqlConnection(conn))
         {
@@ -778,18 +791,27 @@ public partial class CreateUser : System.Web.UI.Page
                 {
                     if (sdr.HasRows != false)
                     {
-                        for (I = 0; I <= lbLoginLocations.Items.Count - 1; I++)
+                        while (sdr.Read())
                         {
-                            if (sdr[0].ToString() == lbLoginLocations.Items[I].Value.ToString())
+                            for (I = 0; I <= lbLoginLocations.Items.Count - 1; I++)
                             {
-                                deleteLocation = false;
-                            }
-                        }
+                                currentLocation = sdr[0].ToString();
+                                newLocation = lbLoginLocations.Items[I].Value.ToString();
 
-                        if (deleteLocation == true)
-                        {
-                            strSQL2 = "Delete from dbIntranet.dbo.UserLoginLocations where UserId = '" + txtGUID.Text + "' and LocationId = " + lbLoginLocations.Items[I].Value;
-                            deleteLocation = false;
+                                if (sdr[0].ToString() == lbLoginLocations.Items[I].Value.ToString())
+                                {
+                                    deleteLocation = false;
+                                }
+                                
+                            }
+
+                            if (deleteLocation == true)
+                            {
+                                strSQL2 = "Delete from dbIntranet.dbo.UserLoginLocations where UserId = '" + txtGUID.Text + "' and LocationId = " + currentLocation;
+
+                                update.updateOrInsert(strSQL2, false);
+                            }
+                            deleteLocation = true;
                         }
                     }
                 }
@@ -906,5 +928,10 @@ public partial class CreateUser : System.Web.UI.Page
         //        insert.updateOrInsert(strSQL, true);
         //    }
         //}
+
+        Button1.Visible = true;
+        Button2.Visible = false;
+
+        Response.Redirect(HttpContext.Current.Request.Url.ToString(), true);
     }
 }
