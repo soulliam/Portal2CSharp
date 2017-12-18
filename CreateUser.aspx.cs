@@ -108,8 +108,10 @@ public partial class CreateUser : System.Web.UI.Page
             //    insertUser.updateOrInsert(strSQL, false);
             //}
 
+            //strSQL = "Insert into dbIntranet.dbo.UserLoginLocations (UserId, Location, LocationId, IsPrimary) " +
+            //     "Values ('" + g + "', '000', " + lbLoginLocations.Items[I].Value + ", NULL)";
             strSQL = "Insert into dbIntranet.dbo.UserLoginLocations (UserId, Location, LocationId, IsPrimary) " +
-                 "Values ('" + g + "', '000', " + lbLoginLocations.Items[I].Value + ", NULL)";
+                     "Values ('" + g + "', right('00000' + cast(" + lbLoginLocations.Items[I].Value + " as nvarchar(10))  , 3), " + lbLoginLocations.Items[I].Value + ", NULL)";
 
             insertUser.updateOrInsert(strSQL, false);
         }
@@ -369,6 +371,9 @@ public partial class CreateUser : System.Web.UI.Page
         //Clear the vehicle location list box and set the drow down selection to "pick a location" which is index 0
         lbVehicleLocations.Items.Clear();
         ddlVehicleLocations.SelectedIndex = 0;
+
+        Button1.Visible = true;
+        Button2.Visible = false;
     }
 
     protected void AddRoles()
@@ -556,11 +561,14 @@ public partial class CreateUser : System.Web.UI.Page
 
     protected void findUser_Click(object sender, EventArgs e)
     {
+        //Reset_Click(new object(), new EventArgs());
+
         string GUID = getUserGUID(userName.Text);
         txtGUID.Text = GUID;
         loadLoginLocations(GUID);
         loadVehicleLocations(GUID);
         loadUsersRoles(GUID);
+        loadAuditInclustion(GUID);
         Button1.Visible = false;
         Button2.Visible = true;
         userEdit = true;
@@ -574,7 +582,7 @@ public partial class CreateUser : System.Web.UI.Page
 
         strSQL = "Select au.UserId, m.Email " +
                  "from aspnetdb.dbo.aspnet_Users au " +
-                 "Inner Join aspnetdb.dbo.aspnet_Membership m on au.UserId = m.UserId where UserName = '" + userName + "'";
+                 "Left Outer Join aspnetdb.dbo.aspnet_Membership m on au.UserId = m.UserId where UserName = '" + userName + "'";
 
         string conn = thisADO.getLocalConnectionString();
 
@@ -600,10 +608,30 @@ public partial class CreateUser : System.Web.UI.Page
         return Guid;
     }
 
+    private void loadAuditInclustion(string userId)
+    {
+        string strSQL = "";
+        clsADO thisADO = new clsADO();
+        object audit = null;
+
+        strSQL = "select * from dbIntranet.dbo.UserLoginAuditInclusion where userId = '" + userId + "'";
+        //strSQL = "select * from dbIntranet.dbo.UserLoginAuditInclusion where userId = 'ca1b0b96-30d3-45ab-815d-3527f72b6443'";
+
+        audit = thisADO.returnSingleValue(strSQL, false);
+
+        if (audit != null)
+        {
+            AuditReport.Checked = true;
+        }
+    }
+
     private void loadLoginLocations(string userId)
     {
         string strSQL = "";
         clsADO thisADO = new clsADO();
+
+        lbLoginLocations.Items.Clear();
+        ddlLoginLocations.SelectedIndex = 0;
 
         strSQL = "select l.ShortLocationName, ull.LocationId " +
                  "from dbIntranet.dbo.UserLoginLocations ull " +
@@ -633,13 +661,20 @@ public partial class CreateUser : System.Web.UI.Page
                 }
             }
         }
-        lbLoginLocations.SelectedIndex = 0;
+        if (lbLoginLocations.Items.Count > 0)
+        {
+            lbLoginLocations.SelectedIndex = 0;
+        }
+        
     }
 
     private void loadVehicleLocations(string userId)
     {
         string strSQL = "";
         clsADO thisADO = new clsADO();
+
+        lbVehicleLocations.Items.Clear();
+        ddlVehicleLocations.SelectedIndex = 0;
 
         strSQL = "select l.NameOfLocation, uvl.LocationId " +
                  "from Vehicles.dbo.UserVehicleLocations uvl " +
@@ -669,7 +704,11 @@ public partial class CreateUser : System.Web.UI.Page
                 }
             }
         }
-        lbVehicleLocations.SelectedIndex = 0;
+        if (lbVehicleLocations.Items.Count > 0)
+        {
+            lbVehicleLocations.SelectedIndex = 0;
+        }
+        
     }
 
     private void loadIncludeInMangerReport(string userId)
@@ -705,6 +744,18 @@ public partial class CreateUser : System.Web.UI.Page
     {
         string strSQL = "";
         clsADO thisADO = new clsADO();
+
+        //iterate through tablw with role checkboxes and uncheck.
+        foreach (TableRow row in Table1.Rows)
+        {
+            foreach (TableCell cell in row.Cells)
+            {
+                foreach (CheckBox cb in cell.Controls.OfType<CheckBox>())
+                {
+                    cb.Checked = false;
+                }
+            }
+        }
 
         strSQL = "select RoleId from aspnetdb.dbo.aspnet_UsersInRoles where UserId = '" + userId + "'";
 
@@ -753,7 +804,9 @@ public partial class CreateUser : System.Web.UI.Page
         clsADO update = new clsADO();
         clsADO select = new clsADO();
         object Location = "";
-        
+
+        //************************************************************************************************************************************************************************
+
         //Add User Login Locations that are not already there
         for (I = 0; I <= lbLoginLocations.Items.Count - 1; I++)
         {
@@ -818,116 +871,175 @@ public partial class CreateUser : System.Web.UI.Page
             }
         }
 
-        ////Add User Login Vehicle Locations using GUID and selected locations 
-        //for (I = 0; I <= lbVehicleLocations.Items.Count - 1; I++)
-        //{
-        //    strSQL = "Insert into Vehicles.dbo.UserVehicleLocations (UserId, LocationId) " +
-        //         "Values ('" + g + "', " + lbVehicleLocations.Items[I].Value + ")";
+        //************************************************************************************************************************************************************************
 
-        //    insert.updateOrInsert(strSQL, false);
-        //}
+        //Add User Login Locations that are not already there for Vehicles
+        for (I = 0; I <= lbVehicleLocations.Items.Count - 1; I++)
+        {
 
-        ////Add to managers reports
-        //if (AuditReport.Checked == true)
-        //{
-        //    strSQL = "Insert into dbIntranet.dbo.UserLoginAuditInclusion (UserId) " +
-        //        "Values ('" + g + "')";
+            strSQL = "Select LocationId from Vehicles.dbo.UserVehicleLocations where UserId = '" + txtGUID.Text + "' and LocationId = " + lbVehicleLocations.Items[I].Value;
 
-        //    insert.updateOrInsert(strSQL, false);
-        //}
+            Location = select.returnSingleValue(strSQL, false);
+
+            if (Location == null)
+            {
+                strSQL = "Insert into Vehicles.dbo.UserVehicleLocations (UserId, LocationId) " +
+                         "Values ('" + txtGUID.Text + "', " + lbVehicleLocations.Items[I].Value + ")";
+
+                insert.updateOrInsert(strSQL, false);
+            }
+        }
+        
+
+        //Delete User login Locations that are in DB but not in list
+        deleteLocation = true;
+
+        strSQL = "Select LocationId from Vehicles.dbo.UserVehicleLocations where UserId = '" + txtGUID.Text + "'";
+
+        conn = select.getLocalConnectionString();
+        currentLocation = "";
+        newLocation = "";
+
+        using (SqlConnection con = new SqlConnection(conn))
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cmd.CommandText = strSQL;
+                cmd.Connection = con;
+                con.Open();
+                using (SqlDataReader sdr = cmd.ExecuteReader())
+                {
+                    if (sdr.HasRows != false)
+                    {
+                        while (sdr.Read())
+                        {
+                            for (I = 0; I <= lbVehicleLocations.Items.Count - 1; I++)
+                            {
+                                currentLocation = sdr[0].ToString();
+                                newLocation = lbVehicleLocations.Items[I].Value.ToString();
+
+                                if (sdr[0].ToString() == lbVehicleLocations.Items[I].Value.ToString())
+                                {
+                                    deleteLocation = false;
+                                }
+
+                            }
+
+                            if (deleteLocation == true)
+                            {
+                                strSQL2 = "Delete from Vehicles.dbo.UserVehicleLocations where UserId = '" + txtGUID.Text + "' and LocationId = " + currentLocation;
+
+                                update.updateOrInsert(strSQL2, false);
+                            }
+                            deleteLocation = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        //************************************************************************************************************************************************************************
+
+        //Add or delete from to managers report
+        if (AuditReport.Checked == true)
+        {
+            strSQL = "Insert into dbIntranet.dbo.UserLoginAuditInclusion (UserId) " +
+                "Values ('" + txtGUID.Text + "')";
+
+            insert.updateOrInsert(strSQL, false);
+        }
+        else
+        {
+            strSQL = "Delete from dbIntranet.dbo.UserLoginAuditInclusion where UserId = '" + txtGUID.Text + "'";
+
+            insert.updateOrInsert(strSQL, false);
+        }
+
+        //**********************************************************************************************************************************************************************************************
+
+        object thisRole = null;
+
+        //iterate through roles table and get checkboxes.  The checkboxes IDs are the roles ID.  Insert the roles for the user
+        foreach (TableRow row in Table1.Rows)
+        {
+            foreach (TableCell cell in row.Cells)
+            {
+                foreach (CheckBox cb in cell.Controls.OfType<CheckBox>())
+                {
+                    if (cb.Checked == true)
+                    {
+                        strSQL = "Select RoleId from aspnetdb.dbo.aspnet_UsersInRoles where UserId = '" + txtGUID.Text + "' and RoleId = '" + cb.ID + "'";
+
+                        thisRole = select.returnSingleValue(strSQL, false);
+
+                        if (thisRole == null)
+                        {
+                            strSQL = "Insert into aspnetdb.dbo.aspnet_UsersInRoles (UserId, RoleId) " +
+                                     "Values ('" + txtGUID.Text + "', '" + cb.ID + "')";
+
+                            insert.updateOrInsert(strSQL, false);
+                        }
+                    }
+                }
+            }
+        }
 
 
-        ////iterate through roles table and get checkboxes.  The checkboxes IDs are the roles ID.  Insert the roles for the user
-        //foreach (TableRow row in Table1.Rows)
-        //{
-        //    foreach (TableCell cell in row.Cells)
-        //    {
-        //        foreach (CheckBox cb in cell.Controls.OfType<CheckBox>())
-        //        {
-        //            if (cb.Checked == true)
-        //            {
-        //                strSQL = "Insert into aspnetdb.dbo.aspnet_UsersInRoles (UserId, RoleId) " +
-        //                                                               "Values ('" + g + "', '" + cb.ID + "')";
-        //                insert.updateOrInsert(strSQL, false);
-        //            }
-        //        }
-        //    }
-        //}
+        //Delete Role that are in DB but not in list
+        Boolean deleteRole = true;
+        string currentRole = "";
+        string newRole = "";
 
-        ////Create the Rep record if needed
-        //if (createRepRecord.Checked == true)
-        //{
-        //    var thisFirstName = txtFirstName.Text;
-        //    var thisLastName = txtLastName.Text;
-        //    var thisHireDate = txtHireDate.Text;
-        //    var thisTerritoryAbreviation = txtTerritory.Text;
-        //    var thisRepId = txtRepId.Text;
-        //    var thisMarketingCode1st4 = txtMarketingCode1st4.Text;
-        //    var thisStreetAddress = txtStreetAddress.Text;
-        //    var thisCity = txtCity.Text;
-        //    var thisState = txtState.Text;
-        //    var thisZip = txtZip.Text;
-        //    var thisPhone = txtPhone.Text;
-        //    var thisTitle = txtTitle.Text;
-        //    var thisMailerId = txtMailerId.Text;
-        //    var thisLastAssigned = txtPhotoURL.Text;
-        //    var thisIsManager = 0;
-        //    if (IsManager.Checked == true)
-        //    {
-        //        thisIsManager = 1;
-        //    }
-        //    var thisIsPrimary = 0;
-        //    if (IsPrimary.Checked == true)
-        //    {
-        //        thisIsPrimary = 1;
-        //    }
-        //    var thisRegion = getNewRegion();
+        strSQL = "Select RoleId from aspnetdb.dbo.aspnet_UsersInRoles where UserId = '" + txtGUID.Text + "'";
 
+        conn = select.getLocalConnectionString();
+        currentLocation = "";
+        newLocation = "";
 
-        //    strSQL = "INSERT INTO MarketingReps " +
-        //            "([LastName],[FirstName],[Location],[EmailAddress],[HireDate],[RehireDate],[TerminationDate1]" +
-        //            ",[TerminationDate2],[BIUserID],[RepID],[TerritoryAbbreviation],[UserId],[Manager],[RepMailerId]" +
-        //            ",[DefaultLocationId],[StreetAddress],[City],[State],[Zip],[RepPhone],[Title]" +
-        //            ",[RecordType],[Rep],[Region],[CarDayMonthlyGoal],[CarDayYearlyGoal],[SignupMonthlyGoal]" +
-        //            ",[SignupYearlyGoal],[RepPhotoURL],[LocationId],[IsPrimary],[Admin],[CreateDatetime]" +
-        //            ",[CreateUserId],[UpdateDatetime],[UpdateUserId],[IsDeleted],[CreateExternalUserData],[UpdateExternalUserData]) " +
-        //            "VALUES " +
-        //            "('" + thisLastName + "', '" + thisFirstName + "', '000', '" + email.Text + "', '" + thisHireDate + "', NULL, NULL, " +
-        //            "NULL, NULL, '" + thisRepId + "', '" + thisTerritoryAbreviation + "', '" + g + "', " + thisIsManager + ", '" + thisMailerId + "', " +
-        //            lbLoginLocations.Items[0].Value + ", '" + thisStreetAddress + "', '" + thisCity + "', '" + thisState + "', '" + thisZip + "', '" + thisPhone + "', '" + thisTitle + "', " +
-        //            "NULL, 1, '" + thisRegion + "', NULL, NULL, NULL, " +
-        //            "NULL, '" + thisLastAssigned + "', " + lbLoginLocations.Items[0].Value + ", " + thisIsPrimary + ", 0, '" + DateTime.Now + "', " +
-        //            "1, NULL, NULL, 0, NULL, NULL)";
+        using (SqlConnection con = new SqlConnection(conn))
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cmd.CommandText = strSQL;
+                cmd.Connection = con;
+                con.Open();
+                using (SqlDataReader sdr = cmd.ExecuteReader())
+                {
+                    if (sdr.HasRows != false)
+                    {
+                        while (sdr.Read())
+                        {
+                            foreach (TableRow row in Table1.Rows)
+                            {
+                                foreach (TableCell cell in row.Cells)
+                                {
+                                    foreach (CheckBox cb in cell.Controls.OfType<CheckBox>())
+                                    {
+                                        if (cb.Checked == true)
+                                        {
+                                            currentRole = sdr[0].ToString();
+                                            newRole = cb.ID;
 
-        //    insert.updateOrInsert(strSQL, true);
+                                            if (currentRole == newRole)
+                                            {
+                                                deleteRole = false;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (deleteRole == true)
+                            {
+                                strSQL2 = "Delete from aspnetdb.dbo.aspnet_UsersInRoles where UserId = '" + txtGUID.Text + "' and roleId = '" + currentRole + "'";
 
-
-        //    //Insert the Marketing Codes into the Marketing Code table, there are 4
-        //    strSQL = "Insert into MarketingCode (MarketingCode, StartDate, Active, RepID, BIUserID, Notes, ShortNotes, CreateDateTime, CreateUserId, UpdateDateTime, UpdateUserId, IsDeleted, CreateExternalUserData, UpdateExternalUserData) " +
-        //                                "Values ('" + thisMarketingCode1st4 + "207', '" + thisHireDate + "', 1, '" + thisRepId + "', NULL, '" + thisLastName + "' + ' ' + '" + thisFirstName + "', '" + thisLastName + "' + ' ' + '" + thisFirstName + "', '" + DateTime.Now + "', 1, NULL, NULL, 0, NULL, NULL)";
-        //    insert.updateOrInsert(strSQL, true);
-
-        //    strSQL = "Insert into MarketingCode (MarketingCode, StartDate, Active, RepID, BIUserID, Notes, ShortNotes, CreateDateTime, CreateUserId, UpdateDateTime, UpdateUserId, IsDeleted, CreateExternalUserData, UpdateExternalUserData) " +
-        //                                "Values ('" + thisMarketingCode1st4 + "M00', '" + thisHireDate + "', 1, '" + thisRepId + "', NULL, '" + thisLastName + "' + ' ' + '" + thisFirstName + "', '" + thisLastName + "' + ' ' + '" + thisFirstName + "', '" + DateTime.Now + "', 1, NULL, NULL, 0, NULL, NULL)";
-        //    insert.updateOrInsert(strSQL, true);
-
-        //    strSQL = "Insert into MarketingCode (MarketingCode, StartDate, Active, RepID, BIUserID, Notes, ShortNotes, CreateDateTime, CreateUserId, UpdateDateTime, UpdateUserId, IsDeleted, CreateExternalUserData, UpdateExternalUserData) " +
-        //                                "Values ('" + thisMarketingCode1st4 + "A00', '" + thisHireDate + "', 1, '" + thisRepId + "', NULL, '" + thisLastName + "' + ' ' + '" + thisFirstName + "', '" + thisLastName + "' + ' ' + '" + thisFirstName + "', '" + DateTime.Now + "', 1, NULL, NULL, 0, NULL, NULL)";
-        //    insert.updateOrInsert(strSQL, true);
-
-        //    strSQL = "Insert into MarketingCode (MarketingCode, StartDate, Active, RepID, BIUserID, Notes, ShortNotes, CreateDateTime, CreateUserId, UpdateDateTime, UpdateUserId, IsDeleted, CreateExternalUserData, UpdateExternalUserData) " +
-        //                                "Values ('" + thisMarketingCode1st4 + "D00', '" + thisHireDate + "', 1, '" + thisRepId + "', NULL, '" + thisLastName + "' + ' ' + '" + thisFirstName + "', '" + thisLastName + "' + ' ' + '" + thisFirstName + "', '" + DateTime.Now + "', 1, NULL, NULL, 0, NULL, NULL)";
-        //    insert.updateOrInsert(strSQL, true);
-
-        //    //Add viewable locations 
-        //    for (I = 0; I <= lbLoginLocations.Items.Count - 1; I++)
-        //    {
-        //        strSQL = "Insert into MarketingRepViewableLocations (ID, Location, RepLocationTerritory, LocationId, CreateDatetime, CreateUserId, UpdateDatetime, UpdateUserId, IsDeleted, CreateExternalUserData, UpdateExternalUserData) " +
-        //             "Values ('" + thisRepId + "', '000', NULL, " + lbLoginLocations.Items[I].Value + ", '" + DateTime.Now + "', 1, NULL, NULL, 0, NULL, NULL)";
-
-        //        insert.updateOrInsert(strSQL, true);
-        //    }
-        //}
+                                update.updateOrInsert(strSQL2, false);
+                            }
+                            deleteRole = true;
+                        }
+                    }
+                }
+            }
+        }
 
         Button1.Visible = true;
         Button2.Visible = false;

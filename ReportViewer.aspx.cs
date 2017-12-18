@@ -137,6 +137,33 @@ public partial class ReportViewer : System.Web.UI.Page
                 serverReport.ReportPath = reportLocation;
                 serverReport.SetParameters(parameters);
             }
+            else if (reportLocation.Contains("PCA"))
+            {
+                string group = Session["groupList"].ToString();
+                string ID = "";
+
+                string[] thisLocation;
+                var thisGroups = group.Split(',');
+                foreach (string locGroup in thisGroups)
+                {
+                    if (locGroup.IndexOf("\\PP_LOC_") > -1)
+                    {
+                        thisLocation = locGroup.Split('_');
+                        ID = thisLocation[3];
+                    }
+                }
+
+                //string ID = "86";
+                string userId = getOldPortalGuid(Convert.ToString(Session["UserName"]));
+
+                ReportParameter[] parameters = new ReportParameter[2];
+
+                //not sure we need the userloginId param.
+                parameters[0] = new ReportParameter("UserLoginId", userId);
+                parameters[1] = new ReportParameter("City", ID);
+                serverReport.ReportPath = reportLocation;
+                serverReport.SetParameters(parameters);
+            }
             else
             {
                 ReportParameter[] parameters = new ReportParameter[1];

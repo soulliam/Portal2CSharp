@@ -130,8 +130,8 @@
                     <div class="col-sm-2">
                         
                     </div>
-                    <div class="col-sm-10">>
-                        <asp:ListBox ID="lbLoginLocations" runat="server" SelectionMode="Single" onkeyup="deleteLocation()"></asp:ListBox>
+                    <div class="col-sm-10">
+                        <asp:ListBox ID="lbLoginLocations" runat="server" SelectionMode="Single" onkeyup="deleteLocation()" Height="100px"></asp:ListBox>
                         <asp:RequiredFieldValidator ID="LocationFieldValidator" runat="server" ControlToValidate="lbLoginLocations" ErrorMessage="This Field can not be blank." Font-Size="15px" ForeColor="Red" BackColor="White" Display="Dynamic"></asp:RequiredFieldValidator>
                     </div>
                 </div>
@@ -149,7 +149,7 @@
                         
                     </div>
                     <div class="col-sm-10">
-                        <asp:ListBox ID="lbVehicleLocations" runat="server" SelectionMode="Single" onkeyup="deleteVehicleLocation()"></asp:ListBox>
+                        <asp:ListBox ID="lbVehicleLocations" runat="server" SelectionMode="Single" onkeyup="deleteVehicleLocation()" Height="100px"></asp:ListBox>
                     </div>
                 </div>
                 <div class="row">
@@ -375,7 +375,7 @@
                 </div>
                 <div class="row" style="margin-top:5px;">
                     <div class="col-sm-6">
-                        <asp:Button ID="Button1" runat="server" Text="Create" OnClick="Button1_Click" style="width:100px;" /><asp:Button ID="Button2" runat="server" Text="Edit" CausesValidation="false" OnClick="Button2_Click" style="width:100px;" />
+                        <asp:Button ID="Button1" runat="server" Text="Create" OnClick="Button1_Click" style="width:100px;" /><asp:Button ID="Button2" runat="server" Text="Edit" CausesValidation="false" OnClick="Button2_Click" style="width:100px;" Visible="False" />
                     </div>
                     <div class="col-sm-6">
                         <asp:Button ID="Reset" CausesValidation="false" runat="server" Text="Clear" OnClick="Reset_Click" style="width:100px;float:right" />

@@ -391,7 +391,7 @@
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Yes, create it!'
                 }).then(function () {
-                    CreateRedemption(1, 3, 1);
+                    CreateRedemption(1, 2, 1);
                     swal(
                       'Created!',
                       'Your redemption has been created.',
@@ -414,7 +414,7 @@
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Yes, create it!'
                 }).then(function () {
-                    CreateRedemption(2, 3, 1);
+                    CreateRedemption(2, 2, 1);
                     swal(
                       'Created!',
                       'Your redemption has been created.',
@@ -438,7 +438,7 @@
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Yes, create it!'
                 }).then(function () {
-                    CreateRedemption(3, 3, 1);
+                    CreateRedemption(3, 2, 1);
                     swal(
                       'Created!',
                       'Your redemption has been created.',
@@ -672,7 +672,7 @@
                                 loadMemberActivity(thisMemberId);
                             },
                             error: function (request, status, error) {
-                                swal(error + " - " + request.responseJSON);
+                                swal(error + " - " + request.responseJSON.message);
                             },
                             complete: function () {
                                 
@@ -740,7 +740,7 @@
                             success: function () {
                             },
                             error: function (request, status, error) {
-                                swal(error + " - " + request.responseJSON);
+                                swal(error + " - " + request.responseJSON.message);
                             },
                             complete: function () {
                                 swal(
@@ -953,7 +953,7 @@
                                     loadCards(thisMemberId);
                                 },
                                 error: function (request, status, error) {
-                                    swal(error);
+                                    swal(request.responseJSON.message);
                                 }
                             });
                         }
@@ -1387,7 +1387,7 @@
                         swal("Forgot Password Instructions Sent!");
                     },
                     error: function (request, status, error) {
-                        swal(error + " - " + request.responseJSON);
+                        swal(error + " - " + request.responseJSON.message);
                     }
                 });
             });
@@ -1804,7 +1804,7 @@
                   
                 },
                 error: function (request, status, error) {
-                    swal(error + " - " + request.responseJSON);
+                    swal(error + " - " + request.responseJSON.message);
                 }
 
             });
@@ -1833,7 +1833,7 @@
                     
                 },
                 error: function (request, status, error) {
-                    swal(error + " - " + request.responseJSON);
+                    swal(error + " - " + request.responseJSON.message);
                 }
             });
         }
@@ -2162,7 +2162,7 @@
                             document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?thisCertificateID=' + thisCertificateID + '&thisRedemptionType=' + thisRedemptionType + '&thisMemberName=' + thisMemberName + '&thisFPNumber=' + thisFPNumber + '&thisQRCode=' + thisQRCode + '&EmailAddress=' + toAddress;
                         },
                         error: function (request, status, error) {
-                            swal(error + " - " + request.responseJSON);
+                            swal(error + " - " + request.responseJSON.message);
                         }
                     });
                     return null;
@@ -2204,7 +2204,7 @@
                             //var thisCertificateID = thisData.result.data.CertificateID;
                         },
                         error: function (request, status, error) {
-                            swal(error + " - " + request.responseJSON);
+                            swal(error + " - " + request.responseJSON.message);
                         }
                     });
                     return null;
@@ -3434,7 +3434,7 @@
                     swal("Card Added!");
                 },
                 error: function (request, status, error) {
-                    swal(error + " - " + request.responseJSON);
+                    swal(error + " - " + request.responseJSON.message);
                 },
                 complete: function () {
                     thisMemberId = $("#MemberId").val();
@@ -3537,8 +3537,8 @@
                     var thisUser = $("#loginLabel").html();
                     PageMethods.logCertificate(thisUser, thisMemberId, NumberToRedeem, thisRedemptionTypeId);
                 },
-                error: function (request, status, error) {
-                    swal(error + " - " + request.responseJSON);
+                error: function (thisData, request, status) {
+                    swal(thisData.responseJSON.message);
                 },
                 complete: function () {
                     $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance"))); 
@@ -3608,7 +3608,7 @@
                     document.getElementById('redemptionIframe').src = './RedemptionDisplay.aspx?thisCertificateID=' + thisCertificateID + '&thisRedemptionType=' + thisRedemptionType + '&thisMemberName=' + thisMemberName + '&thisFPNumber=' + thisFPNumber + '&thisQRCode=' + thisQRCode + '&EmailAddress=' + toAddress;
                 },
                 error: function (request, status, error) {
-                    swal(error + " - " + request.responseJSON);
+                    swal(error + " - " + request.responseJSON.message);
                 }
             });
         }
@@ -3676,7 +3676,7 @@
                     }
                 },
                 error: function (request, status, error) {
-                    swal(error + " - " + request.responseJSON);
+                    swal(error + " - " + request.responseJSON.message);
                 }
             });
         }
@@ -3858,7 +3858,7 @@
                     
                 },
                 error: function (request, status, error) {
-                    swal(error + " - " + request.responseJSON);
+                    swal(error + " - " + request.responseJSON.message);
                 },
                 complete: function () {
 
@@ -3984,7 +3984,7 @@
                     }   
                 },
                 error: function (request, status, error) {
-                    swal(error + " - " + request.responseJSON);
+                    swal(error + " - " + request.responseJSON.message);
                     thisReturn = 'Error';
                 }
             });

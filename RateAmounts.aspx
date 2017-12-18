@@ -96,8 +96,8 @@
             $("#RateAmountsGrid").jqxComboBox('destroy');
             $("<div id='RateAmountsGrid'></div>").appendTo(parent);
 
-            //var url = $("#localApiDomain").val() + "RateAmountObjects/GetRateAmounts/" + locationResult;
-            var url = "http://localhost:52839/api/RateAmountObjects/GetRateAmounts/" + locationResult;
+            var url = $("#localApiDomain").val() + "RateAmountObjects/GetRateAmounts/" + locationResult;
+            //var url = "http://localhost:52839/api/RateAmountObjects/GetRateAmounts/" + locationResult;
 
             var source =
             {
@@ -231,8 +231,8 @@
             $.ajax({
                 async: false,
                 type: "POST",
-                //url: $("#localApiDomain").val() + "RateAmountObjects/PostRateAmounts/",
-                url: "http://localhost:52839/api/RateAmountObjects/PostRateAmounts/",
+                url: $("#localApiDomain").val() + "RateAmountObjects/PostRateAmounts/",
+                //url: "http://localhost:52839/api/RateAmountObjects/PostRateAmounts/",
 
                 data: postData,
                 dataType: "json",
