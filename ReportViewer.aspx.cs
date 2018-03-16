@@ -123,7 +123,7 @@ public partial class ReportViewer : System.Web.UI.Page
 
             string reportLocation = Convert.ToString(TreeView1.SelectedValue).Replace(".rdl", "");
 
-            if (reportLocation.Contains("Marketing")) {
+            if (reportLocation.Contains("Marketing") && !TreeView1.SelectedValue.Contains("Usage YTD_ByCompany")) {
                 string ID = getRepID(Convert.ToString(Session["UserName"]));
                 
                 //string ID = "86";
@@ -150,6 +150,43 @@ public partial class ReportViewer : System.Web.UI.Page
                     {
                         thisLocation = locGroup.Split('_');
                         ID = thisLocation[3];
+                    }
+                }
+
+                //string ID = "86";
+                string userId = getOldPortalGuid(Convert.ToString(Session["UserName"]));
+
+                ReportParameter[] parameters = new ReportParameter[2];
+
+                //not sure we need the userloginId param.
+                parameters[0] = new ReportParameter("UserLoginId", userId);
+                parameters[1] = new ReportParameter("City", ID);
+                serverReport.ReportPath = reportLocation;
+                serverReport.SetParameters(parameters);
+            }
+            else if (reportLocation.Contains("Vehicles") && Session["groupList"].ToString().IndexOf("Portal_Mechanic") > -1)
+            {
+                string group = Session["groupList"].ToString();
+                string ID = "";
+                string locationList = "";
+                Boolean first = true;
+
+                string[] thisLocation;
+                var thisGroups = group.Split(',');
+                foreach (string locGroup in thisGroups)
+                {
+                    if (locGroup.IndexOf("\\Vehicles_Loc_") > -1)
+                    {
+                        thisLocation = locGroup.Split('_');
+                        ID = thisLocation[3];
+                        if (first == true)
+                        {
+                            locationList = ID;
+                        }
+                        else
+                        {
+                            locationList = locationList + ',' + ID;
+                        }
                     }
                 }
 

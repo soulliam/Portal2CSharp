@@ -58,13 +58,21 @@
                 
                 var rowindexes = $('#jqxgrid').jqxGrid('getselectedrowindexes');
 
+
                 if (rowindexes.length > 0) {
+                    var thisUser = $("#txtLoggedinUsername").val();
+
                     for (var index = 0; index < rowindexes.length; index++) {
                         var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', rowindexes[index]);
+
+                        var url = $("#localApiDomain").val() + "Reservations/CompleteReservation/" + dataRecord.ReservationId + "_" + thisUser;
+                        //var url = "http://localhost:52839/api/Reservations/CompleteReservation/" + dataRecord.ReservationId + "_" + thisUser;
+
+                        var url = url.replace('PCA\\', '');
+
                         $.ajax({
                             async: false,
-                            url: $("#localApiDomain").val() + "Reservations/CompleteReservation/" + dataRecord.ReservationId,
-                            //url: "http://localhost:52839/api/Reservations/CompleteReservation/" + dataRecord.ReservationId,
+                            url: url,
                             type: 'Get',
                             success: function (response) {
                                 
@@ -81,12 +89,12 @@
                     }
                     loadGrid($("#locationCombo").jqxComboBox('getSelectedItem').value);
                     
-                    var thisUser = $("#txtLoggedinUsername").val();
+                    
                     var thisLocationID = $("#locationCombo").jqxComboBox('getSelectedItem').value;
                     var d = new Date();
                     var thisDate = DateFormat(d);
 
-                    PageMethods.LogSetComplete(thisUser, thisLocationID, thisDate, 'There were ' + count + ' set as complete', DisplayPageMethodResults);
+                    PageMethods.LogSetComplete(thisUser, thisLocationID, thisDate, 'There were ' + count + ' set as complete');
                     swal("Complete");
                 }
             });
@@ -227,7 +235,8 @@
                     { name: 'FPNumber', },
                     { name: 'IsGuest', type: 'boolean' },
                     { name: 'Options', type: 'boolean' },
-                    { name: 'ReservationStatusName' }
+                    { name: 'ReservationStatusName' },
+                    { name: 'UpdateExternalUserData' }
                 ],
                 id: 'ReservationId',
                 type: 'Get',
@@ -299,7 +308,8 @@
                       { text: 'FPNumber', datafield: 'FPNumber' },
                       { text: 'IsGuest', datafield: 'IsGuest', columntype: 'checkbox' },
                       { text: 'Options', datafield: 'Options', columntype: 'checkbox' },
-                      { text: 'Status', datafield: 'ReservationStatusName' }
+                      { text: 'Status', datafield: 'ReservationStatusName' },
+                      { text: 'Updated By', datafield: 'UpdateExternalUserData' }
                 ]
             });
         }

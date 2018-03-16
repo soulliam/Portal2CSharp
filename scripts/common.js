@@ -52,7 +52,7 @@ function Security() {
         });
 
         $('.MANAGER').each(function () {
-            $(this).addClass('disabled');
+            $(this).removeClass('disabled');
             $(this).prop("disabled", false);
         });
 
@@ -243,6 +243,41 @@ var DateRender = function (row, columnfield, value, defaulthtml, columnpropertie
 
 };
 
+//render dates for grid
+var DateRenderGMT = function (row, columnfield, value, defaulthtml, columnproperties) {
+    // format date as string due to inconsistant date coversions
+    switch (true) {
+        case (value == '0001-01-01T00:00:00'):
+            return '<div style="margin-top: 10px;margin-left: 5px">&nbsp;</div>';
+            break;
+        case (value == '1900-01-01T00:00:00'):
+            return '<div style="margin-top: 10px;margin-left: 5px">&nbsp;</div>';
+            break;
+        case (String(value).indexOf("GMT") > -1):
+            var date = new Date(value);
+            mnth = date.getMonth() + 1;
+            day = date.getDate();
+            var thisDate = mnth + '/' + day + '/' + date.getFullYear();
+            var newDate = '<div style="margin-top: 10px;margin-left: 5px">' + thisDate + '</div>';
+            break;
+        default:
+            var TempDate = new Date(value);
+
+            TempDate.setHours(TempDate.getHours() - 5);
+
+            if (TempDate != "") {
+                
+                var newDate = '<div style="margin-top: 10px;margin-left: 5px">' + TempDate.toLocaleDateString() + '</div>';
+
+                return newDate;
+            } else {
+                return "";
+            }
+            break;
+    }
+
+};
+
 var DateTimeRender = function (row, columnfield, value, defaulthtml, columnproperties) {
     // format date as string due to inconsistant date coversions
     switch (value) {
@@ -274,6 +309,13 @@ function padNumber(i, l, s) {
         o = s + o;
     }
     return o;
+}
+
+//Difference between dates in Days
+function thisDateDiff (date1, date2) {
+    dt1 = new Date(date1);
+    dt2 = new Date(date2);
+    return Math.floor((Date.UTC(dt2.getFullYear(), dt2.getMonth(), dt2.getDate()) - Date.UTC(dt1.getFullYear(), dt1.getMonth(), dt1.getDate()) ) /(1000 * 60 * 60 * 24));
 }
 
 //formats date to 10/16/2016 type

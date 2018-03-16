@@ -71,7 +71,8 @@
                     { name: 'LastName' },
                     { name: 'rate_code' },
                     { name: 'created_at' },
-                    { name: 'updated_at' }, 
+                    { name: 'updated_at' },
+                    { name: 'deleted_at' }
                 ],
                 id: 'flyer_id',
                 type: 'GET',
@@ -125,14 +126,15 @@
                 rowdetailstemplate: { rowdetails: "<div id='grid' style='margin: 10px;'></div>", rowdetailsheight: 275, rowdetailshidden: true },
                 columns: [
                       { text: 'flyer_id', datafield: 'flyer_id', hidden: true },
-                      { text: 'Mailer Code', datafield: 'promo_code', width: '12%' },
-                      { text: 'Company Name', datafield: 'CompanyName', width: '16%' },
-                      { text: 'Location', datafield: 'ShortLocationName', width: '12%' },
-                      { text: 'Rate', datafield: 'rate_code', width: '12%' },
-                      { text: 'Create Date', datafield: 'created_at', cellsrenderer: DateTimeRender, width: '12%' },
-                      { text: 'Update Date', datafield: 'updated_at', cellsrenderer: DateTimeRender, width: '12%' },
-                      { text: 'First Name', datafield: 'FirstName', width: '12%' },
-                      { text: 'Last Name', datafield: 'LastName', width: '12%' },
+                      { text: 'Mailer Code', datafield: 'promo_code', width: '11%' },
+                      { text: 'Company Name', datafield: 'CompanyName', width: '12%' },
+                      { text: 'Location', datafield: 'ShortLocationName', width: '11%' },
+                      { text: 'Rate', datafield: 'rate_code', width: '11%' },
+                      { text: 'Create Date', datafield: 'created_at', cellsrenderer: DateTimeRender, width: '11%' },
+                      { text: 'Update Date', datafield: 'updated_at', cellsrenderer: DateTimeRender, width: '11%' },
+                      { text: 'Deleted Date', datafield: 'deleted_at', cellsrenderer: DateTimeRender, width: '11%' },
+                      { text: 'First Name', datafield: 'FirstName', width: '11%' },
+                      { text: 'Last Name', datafield: 'LastName', width: '11%' },
                 ]
             });
 

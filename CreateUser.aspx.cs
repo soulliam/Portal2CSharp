@@ -155,6 +155,7 @@ public partial class CreateUser : System.Web.UI.Page
         //Create the Rep record if needed
         if (createRepRecord.Checked == true)
         {
+            var thisRepTableID = 0;
             var thisFirstName = txtFirstName.Text;
             var thisLastName = txtLastName.Text;
             var thisHireDate = txtHireDate.Text;
@@ -195,9 +196,10 @@ public partial class CreateUser : System.Web.UI.Page
                     lbLoginLocations.Items[0].Value + ", '" + thisStreetAddress + "', '" + thisCity + "', '" + thisState + "', '" + thisZip + "', '" + thisPhone + "', '" + thisTitle + "', " +
                     "NULL, 1, '" + thisRegion + "', NULL, NULL, NULL, " +
                     "NULL, '" + thisLastAssigned + "', " + lbLoginLocations.Items[0].Value + ", " + thisIsPrimary + ", 0, '" + DateTime.Now + "', " +
-                    "1, NULL, NULL, 0, NULL, NULL)";
+                    "1, NULL, NULL, 0, NULL, NULL);" +
+                    "SELECT @@IDENTITY AS 'Identity';";
 
-            insertUser.updateOrInsert(strSQL, true);
+            thisRepTableID = Convert.ToInt32(insertUser.returnSingleValue(strSQL, true));
 
 
             //Insert the Marketing Codes into the Marketing Code table, there are 4
@@ -221,7 +223,7 @@ public partial class CreateUser : System.Web.UI.Page
             for (I = 0; I <= lbLoginLocations.Items.Count - 1; I++)
             {
                 strSQL = "Insert into MarketingRepViewableLocations (ID, Location, RepLocationTerritory, LocationId, CreateDatetime, CreateUserId, UpdateDatetime, UpdateUserId, IsDeleted, CreateExternalUserData, UpdateExternalUserData) " +
-                     "Values ('" + thisRepId + "', '000', NULL, " + lbLoginLocations.Items[I].Value + ", '" + DateTime.Now + "', 1, NULL, NULL, 0, NULL, NULL)";
+                     "Values ('" + thisRepTableID + "', '000', '" + thisTerritoryAbreviation + "', " + lbLoginLocations.Items[I].Value + ", '" + DateTime.Now + "', 1, NULL, NULL, 0, NULL, NULL)";
 
                 insertUser.updateOrInsert(strSQL, true);
             }

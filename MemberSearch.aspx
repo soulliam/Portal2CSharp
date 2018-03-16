@@ -24,7 +24,7 @@
     <script type="text/javascript" src="jqwidgets/jqxgrid.filter.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxgrid.grouping.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxgrid.pager.js"></script>
-    <script type="text/javascript" src="jqwidgets/jqxgrid.selection.js"></script> c
+    <script type="text/javascript" src="jqwidgets/jqxgrid.selection.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxgrid.sort.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxlistbox.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxmenu.js"></script>
@@ -173,6 +173,7 @@
 
                 $("#addNote").jqxButton({ width: 120 });
 
+                $("#MemberThankYou").jqxButton();
                 $("#SendNewPassword").jqxButton();
                 $("#SendLoginInstructions").jqxButton();
                 $("#editMember").jqxButton();
@@ -1392,6 +1393,21 @@
                 });
             });
 
+            $("#MemberThankYou").on("click", function (event) {
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to send a thank you?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes!'
+                }).then(function () {
+                    VerifyMemberThankYou(false);
+                    return null;
+                });
+                
+            });
 
             //defines search grid double click to load member info
             $("#jqxSearchGrid").bind('rowdoubleclick', function (event) {
@@ -1524,6 +1540,7 @@
                     //    $("#MailerCompanyCombo").attr("disabled", false);
                     //}
 
+                    
 
                     Security();
                 }
@@ -2040,6 +2057,7 @@
                 filterable: true,
                 columnsresize: true,
                 selectionmode: 'multiplecells',
+                enablebrowserselection: true,
                 ready: function (records) {
                     var rows = $("#jqxMemberActivityGrid").jqxGrid('getrows');
 
@@ -2455,7 +2473,7 @@
                 $('#popupNote').jqxWindow({ height: '195px', width: '50%' });
                 $('#popupNote').jqxWindow({ minHeight: '195px', minWidth: '50%' });
                 $('#popupNote').jqxWindow({ maxHeight: '500px', maxWidth: '50%' });
-                $('#popupNote').jqxWindow({ showCloseButton: true });
+                $('#popupNote').jqxWindow({ showCloseButton: false });
                 $('#popupNote').jqxWindow({ animationType: 'combined' });
                 $('#popupNote').jqxWindow({ showAnimationDuration: 300 });
                 $('#popupNote').jqxWindow({ closeAnimationDuration: 500 });
@@ -2608,7 +2626,7 @@
                       { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
                       { text: 'CertificateId', datafield: 'CertificateId' },
                       { text: 'Redemption Type', datafield: 'RedemptionTypeName' },
-                      { text: 'Redeem Date', datafield: 'RedeemDate', cellsrenderer: DateRender },
+                      { text: 'Redeem Date', datafield: 'RedeemDate', cellsrenderer: DateRenderGMT },
                       { text: 'Returned', datafield: 'IsReturned', cellsrenderer: redemptionRenderer },
                       { text: 'Return Request', datafield: 'ReturnRequest', cellsrenderer: DateRender },
                       { text: 'Return Processed', datafield: 'ReturnProcessed', cellsrenderer: DateRender },
@@ -3372,6 +3390,59 @@
 
         //#region SaveFunctions
 
+        function SendThankYou(MemberId) {
+            var thisGuid = $("#loginLabel").html();
+
+            $.ajax({
+                async: false,
+                type: "POST",
+                url: $("#localApiDomain").val() + "MemberThankYous/PostMemberThankYou/",
+                //url: "http://localhost:52839/api/MemberThankYous/PostMemberThankYou/",
+
+                data: { "MemberThankYouUserId": thisGuid, "MemberThankYouMemberId": MemberId },
+                dataType: "json",
+                success: function () {
+                    swal("You may send a thank you to this member!");
+                },
+                error: function (request, status, error) {
+                    swal(error);
+                }
+            });
+        }
+
+        function VerifyMemberThankYou(button) {
+            var thisMemberId = $("#MemberId").val();
+            $("#MemberThankYou").val("Member Thank You");
+
+            var url = $("#localApiDomain").val() + "MemberThankYous/GetMemberThankYou/" + thisMemberId;
+            //var url = "http://localhost:52839/api/MemberThankYous/GetMemberThankYou/" + thisMemberId;
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                dataType: "json",
+                success: function (data) {
+                    if (data.length > 0) {
+                        if (button == true) {
+                            $("#MemberThankYou").val("Member Thank You Sent on " + DateFormat(data[0].MemberThankYouDate));
+                        } else {
+                            swal("On " + DateFormat(data[0].MemberThankYouDate) + " a thank you was sent by " + data[0].MemberThankYouUserId);
+                            $("#MemberThankYou").val("Member Thank You Sent on " + DateFormat(data[0].MemberThankYouDate));
+                        }
+                        
+                    } else {
+                        if (button == false) {
+                            SendThankYou(thisMemberId);
+                        }
+                    }
+
+                },
+                error: function (request, status, error) {
+                    swal("There was an issue getting the thank you information.");
+                }
+            });
+        }
+
         function SaveMarketingCode() {
 
             if ($("#MarketingCode").val() == $("#OldMarketingCode").val()) {
@@ -3513,12 +3584,19 @@
             var thisQrCodeString = "";
             var thisRedemptionId = "";
             var toAddress = $("#EmailAddress").val();
+            var url = "";
+
+            if (group.indexOf("Portal_Superadmin") > -1 || group.indexOf("Portal_RFR") > -1) {
+                url = $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions?IsAdmin=true";
+            } else {
+                url = $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions";
+            }
 
             $('#jqxLoader').jqxLoader('open');
 
             $.ajax({
                 type: 'POST',
-                url: $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions",
+                url: url,
                 dataType: "json",
                 data: JSON.stringify([{
                     "RedemptionTypeId": thisRedemptionTypeId,
@@ -3691,7 +3769,10 @@
             
             clearMemberInfo();
             
+
+
             var thisURL = $("#apiDomain").val() + "members/" + PageMemberID;
+
 
             //load member Phone lit
             var MemberSource =
@@ -3855,6 +3936,8 @@
                     glbCompanyId = thisData.result.data.CompanyId;
                     //alert(thisData.result.data.CompanyId);
                     $("#statusCombo").jqxComboBox('selectItem', thisData.result.data.PreferredStatusName);
+
+                    VerifyMemberThankYou(true);
                     
                 },
                 error: function (request, status, error) {
@@ -4187,7 +4270,7 @@
                                             <label for="EmailAddress" class="col-sm-3 col-md-4 control-label">Email:</label>
                                             <div class="col-sm-9 col-md-8">
                                                 <input type="text" class="form-control" id="EmailAddress" placeholder="">
-                                                <div><input type="button" id="deleteEmail" value="Delete Email" class="editor" /></div>
+                                                <div><input type="button" id="deleteEmail" value="Delete Email" class="RFR" /></div>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -4384,6 +4467,9 @@
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <input type="button" id="SendNewPassword" value="Send New Password" />
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <input type="button" id="MemberThankYou" value="Member Thank You"  class="RFR MANAGER" />
                                         </div>
                                         <div class="col-sm-12">
                                             <input type="button" id="SendLoginInstructions" value="Send Login Instructions" style="display:none;" />

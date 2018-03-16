@@ -80,6 +80,8 @@
             //#region ButtonSetup
 
             $("#btnSearch").jqxButton({ width: 100, height: 60 });
+            $("#btnInstructions").jqxButton({ width: 100, height: 60 });
+            $("#cancelInstructions").jqxButton({ width: 100, height: 50 });
             $("#btnSearchClear").jqxButton({ width: 100, height: 60 });
             $("#btnSearchEmail").jqxButton({ width: 240, height: 60 });
             $("#btnSearchFPNumber").jqxButton({ width: 240, height: 60 });
@@ -99,6 +101,7 @@
             $("#newEmailSubmit").jqxButton({ width: 100, height: 60 });
             $("#showRedemptionList").jqxButton({ width: 175, height: 60 });
             $("#closeRedemptionList").jqxButton({ width: 100, height: 60 });
+            $("#cancelExistingRedemption").jqxButton({ width: 100, height: 50 });
 
             //#endregion
 
@@ -126,7 +129,17 @@
                 loadRedemptionList();
             });
 
+            $("#btnInstructions").on("click", function (event) {
+                showInstructions();
+            });
 
+            $("#cancelInstructions").on("click", function (event) {
+                $("#popupInstructions").jqxWindow('close');
+            });
+
+            $("#cancelExistingRedemption").on("click", function (event) {
+                $("#popupExistingRedemption").jqxWindow('close');
+            });
 
             $('#closeRedemptionList').on('click', function (event) {
                 $("#memberAcctId").html("");
@@ -154,9 +167,9 @@
                 }
 
                 var today = new Date();
-                today = DateFormat(today);
+                //today = DateFormat(today);
                 var selectedDate = new Date($('#jqxReceiptCalendar').jqxCalendar('getDate'));
-                selectedDate = DateFormat(selectedDate);
+                //selectedDate = DateFormat(selectedDate);
 
                 if (selectedDate > today) {
                     alert("The receipt entry date must be in the past.");
@@ -443,6 +456,11 @@
 
             var thisCompanyId = $("#CompanyId").html();
 
+            if (thisCompanyId == "")
+            {
+                thisCompanyId = null
+            }
+
             var rateSource =
             {
                 async: true,
@@ -701,10 +719,11 @@
                     PageMethods.logCertificate(thisUser, thisMemberId, NumberToRedeem, thisRedemptionTypeId, DisplayPageMethodResults);
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $('#jqxLoader').jqxLoader('close');
                     alert("Error: " + errorThrown);
                 },
                 complete: function () {
-
+                    $('#jqxLoader').jqxLoader('close');
                 }
             });
         }
@@ -1023,7 +1042,7 @@
             $('#popupExistingRedemption').jqxWindow({ draggable: true });
             $('#popupExistingRedemption').jqxWindow({ isModal: true });
             $("#popupExistingRedemption").css("visibility", "visible");
-            $('#popupExistingRedemption').jqxWindow({ height: '290px', width: '290px' });
+            $('#popupExistingRedemption').jqxWindow({ height: '350px', width: '290px' });
             $('#popupExistingRedemption').jqxWindow({ showCloseButton: true });
             $('#popupExistingRedemption').jqxWindow({ animationType: 'combined' });
             $('#popupExistingRedemption').jqxWindow({ showAnimationDuration: 300 });
@@ -1055,6 +1074,23 @@
                     alert("Error: " + errorThrown);
                 }
             });
+        }
+
+        function showInstructions(thisRedemptionId) {
+
+            $("#popupInstructions").css('display', 'block');
+            $("#popupInstructions").css('visibility', 'hidden');
+
+            $("#popupInstructions").jqxWindow({ position: { x: '3%', y: '3%' } });
+            $('#popupInstructions').jqxWindow({ isModal: true });
+            $("#popupInstructions").css("visibility", "visible");
+            $('#popupInstructions').jqxWindow({ height: '650px', width: '1180px' });
+            $('#popupInstructions').jqxWindow({ maxHeight: '650px', maxWidth: '1180px' });
+            $('#popupInstructions').jqxWindow({ showCloseButton: true });
+            $('#popupInstructions').jqxWindow({ animationType: 'combined' });
+            $('#popupInstructions').jqxWindow({ showAnimationDuration: 300 });
+            $('#popupInstructions').jqxWindow({ closeAnimationDuration: 500 });
+            $("#popupInstructions").jqxWindow('open');
         }
 
         function loadMember(PageMemberID) {
@@ -1161,10 +1197,16 @@
             <div class="col-sm-2">
                 <input type="button" id="btnSearchClear" value="Clear" />
             </div>
-            <div class="col-sm-9">
-                <input type="Number" id="txtSearchEmailFNameFPNumber" style="font-size:x-large;margin-top:10px;" placeholder="FPNumber" />
+            <div class="col-sm-7">
+                <input type="Number" id="txtSearchEmailFNameFPNumber" style="font-size:x-large;margin-top:10px;width: 45%;" placeholder="FPNumber" />
             
-                <input type="text" id="txtSearchLastName" style="font-size:x-large;margin-top:10px;" placeholder="Last Name"  />
+                <input type="text" id="txtSearchLastName" style="font-size:x-large;margin-top:10px;width: 45%;" placeholder="Last Name"  />
+            </div>
+            <div class="col-sm-1">
+                <input type="button" id="btnInstructions" value="Info" style="margin-right:10px;float;" />
+            </div>
+            <div class="col-sm-1">
+                <div>&nbsp;</div>
             </div>
             <div class="col-sm-1">
                 <input type="button" id="btnSearch" value="Search" style="margin-right:10px;float;" />
@@ -1283,7 +1325,20 @@
     <div id="popupExistingRedemption" style="display: none;">
         <div>Redemption Code</div>
         <div>
-            <iframe id="redemptionIframe" style="height:325px; width:350px; border:none;"  ></iframe>
+            <iframe id="redemptionIframe" style="height:225px; width:250px; border:none;"  ></iframe>
+            <div>
+                <input type="button" id="cancelExistingRedemption" value="Close" />
+            </div>
+        </div>
+    </div>
+
+    <div id="popupInstructions" style="display: none;">
+        <div>Instructions</div>
+        <div>
+            <iframe src="../CashierInformation.html" id="InstructionIframe" style="height:560px; width:1150px; border:none;"  ></iframe>
+            <div>
+                <input type="button" id="cancelInstructions" value="Cancel" />
+            </div>
         </div>
     </div>
 

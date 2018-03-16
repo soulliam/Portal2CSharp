@@ -125,14 +125,14 @@
                 height: 500,
                 source: source,
                 rowsheight: 35,
-                sortable: true,
-                altrows: true,
-                filterable: true,
+                //sortable: true,
+                //altrows: true,
+                //filterable: true,
                 showeverpresentrow: true,
                 everpresentrowposition: "bottom",
                 everpresentrowactions: "add",
                 columns: [
-                       { text: 'RateAmountId', datafield: 'CardShipID', hidden: true },
+                       { text: 'RateAmountId', datafield: 'RateAmountId', hidden: true },
                        { text: 'RateCode', datafield: 'RateCode' },
                        { text: 'RateAmount', datafield: 'RateAmount' },
                        { text: 'EffectiveDatetime', datafield: 'EffectiveDatetime', cellsformat: 'd',
@@ -195,7 +195,7 @@
                            }
                        },
                        {
-                           text: 'Save', dataField: 'Save', width: 80, cellsalign: 'right',
+                           text: 'Save', dataField: 'Save', width: 160, cellsalign: 'right',
                                 createEverPresentRowWidget: function (datafield, htmlElement, popup, addCallback) {
                                     var inputTag = $("<div style='border: none;'></div>").appendTo(htmlElement);
                                     return inputTag;
@@ -214,22 +214,34 @@
                                 var dataRecord = $("#RateAmountsGrid").jqxGrid('getrowdata', editrow);
 
                                 if (dataRecord.RateAmountId > 0) {
-                                return '';
+                                    return '';
                                 }
-                                return '<input id="button' + row + '" onClick="buttonClick(' + row +')"  type="button" value="Save" style="margin-top:6px"/>';
+                                else if (dataRecord.RateAmountId == -1)
+                                {
+                                    return '<input id="button' + row + '" onClick="buttonClick(' + row + ')"  type="button" value="Saved" style="margin-top:6px;margin-right:5px;width:70px;"  disabled /><input id="deleteButton' + row + '" onClick="deleteButtonClick(' + row + ')"  type="button" value="Delete" style="margin-top:6px;width:70px;display:none;"/>';
                                 }
+                                else
+                                {
+                                    return '<input id="button' + row + '" onClick="buttonClick(' + row + ')"  type="button" value="Save" style="margin-top:6px;margin-right:5px;width:70px;"/><input id="deleteButton' + row + '" onClick="deleteButtonClick(' + row + ')"  type="button" value="Delete" style="margin-top:6px;width:70px;"/>';
+                                }
+                            }
                        }
                 ]
             });
         }
 
+        function deleteButtonClick(rowIndex) {
+            var id = $('#RateAmountsGrid').jqxGrid('getrowid', rowIndex);
+            $('#RateAmountsGrid').jqxGrid('deleterow', id);
+        }
+
         function buttonClick(rowIndex) {
             var data = $('#RateAmountsGrid').jqxGrid('getrowdata', rowIndex);
             
-            var postData = { "RateCode": data.RateCode, "EffectiveDatetime": data.EffectiveDatetime, "LocationId": $("#LocationCombo").jqxComboBox('getSelectedItem').value, "AdvertisedRate": data.AdvertisedRate, "HourlyRate": data.HourlyRate, "DailyRateThreshold": data.DailyRateThreshold, "UpdateExternalUserData": $("#loginLabel").html() };
+            var postData = { "RateCode": data.RateCode, "RateAmount": data.RateAmount, "EffectiveDatetime": data.EffectiveDatetime, "LocationId": $("#LocationCombo").jqxComboBox('getSelectedItem').value, "AdvertisedRate": data.AdvertisedRate, "HourlyRate": data.HourlyRate, "DailyRateThreshold": data.DailyRateThreshold, "UpdateExternalUserData": $("#loginLabel").html() };
 
             $.ajax({
-                async: false,
+                async: true,
                 type: "POST",
                 url: $("#localApiDomain").val() + "RateAmountObjects/PostRateAmounts/",
                 //url: "http://localhost:52839/api/RateAmountObjects/PostRateAmounts/",
@@ -237,8 +249,12 @@
                 data: postData,
                 dataType: "json",
                 success: function (thisData) {
-                    loadGrid($("#LocationCombo").jqxComboBox('getSelectedItem').value);
-                    alert("Saved");
+                    $("#button" + rowIndex).attr("disabled", "disabled");
+                    $("#button" + rowIndex).val("Saved");
+                    $("#deleteButton" + rowIndex).hide();
+                    var id = $('#RateAmountsGrid').jqxGrid('getrowid', rowIndex);
+                    $("#RateAmountsGrid").jqxGrid('setcellvaluebyid', id, "RateAmountId", "-1");
+                    //loadGrid($("#LocationCombo").jqxComboBox('getSelectedItem').value);
                 },
                 error: function (request, status, error) {
                     alert(error);

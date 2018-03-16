@@ -515,6 +515,7 @@
                 var newFeatureAvailableDatetime = $("#FeatureAvailableDatetime").val();
                 var newMaxAvailable = $("#MaxAvailable").val();
                 var newEditFeatureIsDisplayed = $("#editFeatureIsDisplayed").is(':checked');
+                var neweditFeatureDisplayIcon = $("#editFeatureDisplayIcon").is(':checked');
                 var newSortOrder = $("#FeatureSortOrder").val();
                 var newChargeAmount = $("#FeatureChargeAmount").val();
                 var newChargeNote = $("#FeatureChargeNote").val();
@@ -542,6 +543,7 @@
                         "FeatureAvailableDatetime": newFeatureAvailableDatetime,
                         "MaxAvailable": newMaxAvailable,
                         "IsDisplayed": newEditFeatureIsDisplayed,
+                        "DisplayIcon": neweditFeatureDisplayIcon,
                         "SortOrder": newSortOrder,
                         "OptionalExtrasName": newOptionalExtrasName,
                         "OptionalExtrasDescription": newOptionalExtrasDescription,
@@ -555,7 +557,7 @@
                         alert(error + " - " + request.html);
                     },
                     complete: function(data) {
-                        clearFeatureForm();
+                        clearFeatureEditForm();
                         //refreshes feature grid after succesful save
                         loadFeatureGrid(selectedLocationId);
                     }
@@ -842,7 +844,9 @@
                     { name: 'LocationHasFeatureId' },
                     { name: 'SiteURL' },
                     { name: 'FirstName', map: 'MarketingRep>FirstName' },
-                    { name: 'LastName', map: 'MarketingRep>LastName' }
+                    { name: 'LastName', map: 'MarketingRep>LastName' },
+                    { name: 'LocationHighlights' }
+
                 ],
 
                 id: 'LocationId',
@@ -883,6 +887,9 @@
                           cellsrenderer: function () {
                               return "Edit";
                           }, buttonclick: function (row) {
+                              //clear Location form 
+                              clearLocationForm();
+
                               // open the popup window when the user clicks a button.
                               if (DisableEdit == false) {
                                   $("#popupLocation").css('display', 'block');
@@ -950,6 +957,7 @@
                                   $("#SiteURL").val(dataRecord.SiteURL);
                                   $("#cityCombo").jqxComboBox('selectItem', dataRecord.CityId);
                                   $("#DistanceFromAirport").val(dataRecord.DistanceFromAirport);
+                                  $("#LocationHighlights").val(dataRecord.LocationHighlights);
 
                                   //sets the current selected location
                                   selectedLocationId = dataRecord.LocationId;
@@ -1013,7 +1021,8 @@
                             {
                                 return "<div style='margin-left: 4px;margin-top:10px;'>" + value + ' ' + rowdata.LastName +"</div>";
                             }, width: '15%'
-                      }
+                      },
+                      { text: 'LocationHighlights', datafield: 'LocationHighlights', hidden: true },
                 ]
             });
         }
@@ -1043,6 +1052,7 @@
                     { name: 'OptionalExtrasName', },
                     { name: 'OptionalExtrasDescription', },
                     { name: 'MaxAvailable', },
+                    { name: 'DisplayIcon', },
                     { name: 'IsDisplayedOptionalExtra', }
                 ],
 
@@ -1076,6 +1086,9 @@
                             text: '', pinned: true, datafield: 'Edit', width: 50, columntype: 'button', cellsrenderer: function () {
                                 return "Edit";
                             }, buttonclick: function (row) {
+                                //clear edit form
+                                clearFeatureEditForm();
+                                
                                 // Populate the edit boxes
                                 editrow = row;
                                     var dataRecord = $("#jqxFeatureGrid").jqxGrid('getrowdata', editrow);
@@ -1090,6 +1103,7 @@
                                     $("#MaxAvailable").val(dataRecord.MaxAvailable);
                                     $("#FeatureAvailableDatetime").val(dataRecord.FeatureAvailableDatetime);
                                     $("#editFeatureIsDisplayed").prop("checked", dataRecord.IsDisplayed);
+                                    $("#editFeatureDisplayIcon").prop("checked", dataRecord.DisplayIcon);
                                     $("#editFeatureIsDisplayedOptionalExtra").prop("checked", dataRecord.IsDisplayedOptionalExtra);
                                 }
                             },
@@ -1105,6 +1119,7 @@
                             { text: 'FeatureOptionalExtrasDescription', datafield: 'OptionalExtrasDescription', hidden: true, editable: false },
                             { text: 'MaxAvailable', datafield: 'MaxAvailable', hidden: true, editable: false },
                             { text: 'FeatureAvailableDatetime', datafield: 'FeatureAvailableDatetime', hidden: true, editable: false },
+                            { text: 'DisplayIcon', datafield: 'DisplayIcon', hidden: true, editable: false },
                             { text: 'IsDisplayed', datafield: 'IsDisplayed', hidden: true, editable: false }
                       
                       
@@ -1315,6 +1330,68 @@
             $("#MaxAvailable").val('');
             $("#FeatureAvailableDatetime").val('');
             $("#IsDisplayed").prop('checked', false);
+
+            
+        }
+
+        function clearFeatureEditForm() {
+            $("#LocationHasFeatureId").val('');
+            $("#featureCombo").jqxComboBox('selectItem', 0);
+            $("#FeatureSortOrder").val('');
+            $("#FeatureChargeAmount").val('');
+            $("#FeatureChargeNote").val('');
+            $("#FeatureEffectiveDatetime").val('');
+            $("#FeatureOptionalExtrasName").val('');
+            $("#FeatureOptionalExtrasDescription").val('');
+            $("#MaxAvailable").val('');
+            $("#FeatureAvailableDatetime").val('');
+            $("#editFeatureIsDisplayed").prop('checked', false);
+            $("#editFeatureDisplayIcon").prop('checked', false);
+            $("#editFeatureIsDisplayedOptionalExtra").prop('checked', false);
+        }
+
+        function clearLocationForm() {
+            $("#NameOfLocation").val('');
+            $("#DisplayName").val('');
+            $("#ShortLocationName").val('');
+            $("#FacilityNumber").val('');
+            $("#SkiDataVersion").val('');
+            $("#SkiDataLocation").val('');
+            $("#LocationAddress").val('');
+            $("#LocationCity").val('');
+            $("#LocationZipCode").val('');
+            $("#LocationPhoneNumber").val('');
+            $("#LocationFaxNumber").val('');
+            $("#Capacity").val('');
+            $("#Description").val('');
+            $("#Alert").val('');
+            $("#DailyRate").val('');
+            $("#Slug").val('');
+            $("#Qualifications").val('');
+            $("#siteManager").val('');
+            $("#ManagerEmail").val('');
+            $("#Latitude").val('');
+            $("#Longitude").val('');
+            $("#GoogleLink").val('');
+            $("#IsActive").val('');
+            $("#SpecialFlagsText").val('');
+            $("#SpecialFlagsInformation").val('');
+            $("#ManagerImageUrl").val('');
+            $("#ImageUrl").val('');
+            $("#EstimatedCharges").val('');
+            $("#EstimatedSavings").val('');
+            $("#brandCombo").jqxComboBox('selectIndex', 0);
+            $("#stateCombo").jqxComboBox('selectIndex', 0);
+            $("#DistanceFromAirport").val('');
+            $("#airportCombo").jqxComboBox('selectIndex', 0);
+            $("#RateQualifications").val('');
+            $("#RateText").val('');
+            $("#MemberRateText").val('');
+            $("#LocationHighlights").val('');
+            $("#LocationContactEmail").val('');
+            $("#SkiDataIMP").val('');
+            $("#SiteURL").val('');
+            $("#cityCombo").jqxComboBox('selectIndex', 0);
         }
 
         //#endregion
@@ -1723,6 +1800,16 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
+                                    <label for="addFeatureDisplayIcon" class="col-sm-3 col-md-4 control-label">Display Icon:</label>
+                                    <div class="col-sm-9 col-md-8">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" class="form-control" id="editFeatureDisplayIcon" />
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <label for="editFeatureIsDisplayed" class="col-sm-3 col-md-4 control-label">Display:</label>
                                     <div class="col-sm-9 col-md-8">
                                         <div class="checkbox">
@@ -1732,6 +1819,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-horizontal">
