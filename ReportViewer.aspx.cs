@@ -178,10 +178,11 @@ public partial class ReportViewer : System.Web.UI.Page
                     if (locGroup.IndexOf("\\Vehicles_Loc_") > -1)
                     {
                         thisLocation = locGroup.Split('_');
-                        ID = thisLocation[3];
+                        ID = thisLocation[2];
                         if (first == true)
                         {
                             locationList = ID;
+                            first = false;
                         }
                         else
                         {
@@ -189,15 +190,12 @@ public partial class ReportViewer : System.Web.UI.Page
                         }
                     }
                 }
-
-                //string ID = "86";
+                
                 string userId = getOldPortalGuid(Convert.ToString(Session["UserName"]));
 
-                ReportParameter[] parameters = new ReportParameter[2];
+                ReportParameter[] parameters = new ReportParameter[1];
 
-                //not sure we need the userloginId param.
-                parameters[0] = new ReportParameter("UserLoginId", userId);
-                parameters[1] = new ReportParameter("City", ID);
+                parameters[0] = new ReportParameter("LocationList", locationList);
                 serverReport.ReportPath = reportLocation;
                 serverReport.SetParameters(parameters);
             }
