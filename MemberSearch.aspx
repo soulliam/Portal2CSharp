@@ -1923,6 +1923,7 @@
                 altrows: true,
                 filterable: true,
                 enablebrowserselection: true,
+                columnsresize: true,
                 columns: [
                       { text: 'Card Id', datafield: 'CardId', hidden: true },
                       { text: 'Member Id', datafield: 'MemberId', hidden: true },
@@ -2447,6 +2448,7 @@
                 altrows: true,
                 filterable: true,
                 enabletooltips: true,
+                columnsresize: true,
                 columns: [
                       { text: 'Date', datafield: 'Date', width: '20%', cellsrenderer: DateRender },
                       { text: 'Note', datafield: 'Note', width: '60%' },
@@ -2524,6 +2526,7 @@
                 altrows: true,
                 filterable: true,
                 enabletooltips: true,
+                columnsresize: true,
                 columns: [
                       { text: 'MemberId', datafield: 'MemberId', hidden: true },
                       { text: 'FirstName', datafield: 'FirstName', width: '10%' },
@@ -2622,6 +2625,7 @@
                 altrows: true,
                 filterable: true,
                 enablebrowserselection: true,
+                columnsresize: true,
                 columns: [
                       { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
                       { text: 'CertificateId', datafield: 'CertificateId' },
@@ -2650,7 +2654,6 @@
         }
 
         function loadReservations(PageMemberID) {
-
             var parent = $("#jqxReservationGrid").parent();
             $("#jqxReservationGrid").jqxComboBox('destroy');
             $("<div id='jqxReservationGrid'></div>").appendTo(parent);
@@ -2665,6 +2668,7 @@
                     { name: 'ReservationNumber' },
                     { name: 'NameOfLocation', map: 'LocationInformation>NameOfLocation' },
                     { name: 'BrandName', map: 'LocationInformation>BrandInformation>BrandName' },
+                    { name: 'EstimatedCost'},
                     { name: 'CreateDatetime' },
                     { name: 'StartDatetime' },
                     { name: 'EndDatetime' },
@@ -2699,16 +2703,18 @@
                 altrows: true,
                 filterable: true,
                 enablebrowserselection: true,
+                columnsresize: true,
                 columns: [
                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
-                      { text: 'Reservation Number', datafield: 'ReservationNumber', width: '10%' },
-                      { text: 'Location', datafield: 'NameOfLocation', width: '10%' },
+                      { text: 'Reservation Number', datafield: 'ReservationNumber', width: '9%' },
+                      { text: 'Location', datafield: 'NameOfLocation', width: '9%' },
                       { text: 'Brand', datafield: 'BrandName', width: '5%' },
-                      { text: 'Create Date', datafield: 'CreateDatetime', width: '13%', cellsrenderer: DateRender },
-                      { text: 'Start Date', datafield: 'StartDatetime', width: '13%', cellsrenderer: DateRender },
-                      { text: 'End Date', datafield: 'EndDatetime', width: '13%', cellsrenderer: DateRender },
+                      { text: 'Est Cost', datafield: 'EstimatedCost', width: '6%', cellsformat: 'c2' },
+                      { text: 'Create Date', datafield: 'CreateDatetime', width: '12%', cellsrenderer: DateRender },
+                      { text: 'Start Date', datafield: 'StartDatetime', width: '12%', cellsrenderer: DateTimeRender },
+                      { text: 'End Date', datafield: 'EndDatetime', width: '12%', cellsrenderer: DateTimeRender },
                       { text: 'Status', datafield: 'ReservationStatusName', width: '9%' },
-                      { text: 'Note', datafield: 'MemberNote', width: '24%' }
+                      { text: 'Note', datafield: 'MemberNote', width: '23%' }
                 ]
             });
         }
@@ -2755,6 +2761,7 @@
                 altrows: true,
                 filterable: true,
                 enablebrowserselection: true,
+                columnsresize: true,
                 columns: [
                       { text: 'Name', datafield: 'Name', width: '26%' },
                       { text: 'ReferralType', datafield: 'ReferralType', width: '10%' },
@@ -3817,6 +3824,7 @@
                     selectionmode: 'singlerow',
                     editmode: 'selectedrow',
                     editable: false,
+                    columnsresize: true,
                     columns: [
                       {
                           text: 'Type', datafield: 'PhoneTypeId', width: 70, columntype: 'combobox',

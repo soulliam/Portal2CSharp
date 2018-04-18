@@ -37,6 +37,7 @@
                 <asp:TextBox runat="server" ID="apiDomain" style="visibility:hidden">https://apistage.thefastpark.com/api/v1/</asp:TextBox>
                 <asp:TextBox runat="server" ID="localApiDomain" style="visibility:hidden">http://maxdev:8181/api/</asp:TextBox>
                 <asp:TextBox runat="server" ID="userLocation" style="visibility:hidden">14</asp:TextBox>
+                <asp:TextBox runat="server" ID="userVehicleLocation" style="visibility:hidden">14</asp:TextBox>
             </div>
 
             <!-- NAVBAR -->
@@ -86,6 +87,7 @@
                                 <li><a href="MailerCodeSearch.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">Search Mailer Code</a></li>
                                 <li><a href="RedemptionSearch.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">Search Certificates</a></li>
                                 <li><a href="ReservationSearch.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">Search Reservations</a></li>
+                                <li><a href="ReservationGuestSearch.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">Search Guest Reservations</a></li>
                                 <li><a href="TransactionSearch.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR">Transaction Search</a></li>
                                 <li><a href="PendingReceipts.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Manager Portal_Asstmanager">Pending Receipts</a></li>
                                 <li><a href="MemberCompanyUpdate.aspx"  class="menuSecurity disabled Portal_Superadmin Portal_RFR">Update Members Company</a></li> 
@@ -113,6 +115,7 @@
                                 <li><a href="VehicleSearch.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Vehicle Search</a></li>
                                 <li><a href="VehicleDaily.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Daily Tracking</a></li>
                                 <li><a href="VehicleAddStock.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Add Stock</a></li> 
+                                <li><a href="FleetStatus.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Fleet Status</a></li> 
                             </ul>
                         </li> 
                         <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_Insurance Portal_Legal Portal_Couponadmin Portal_Manager Portal_Asstmanager">

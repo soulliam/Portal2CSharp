@@ -51,6 +51,60 @@
         var change = false;
 
         $(document).ready(function () {
+            var vehicleTypeValues = [
+                { value: "1", label: "Bus" },
+                { value: "0", label: "Other" }
+            ];
+
+            var vehicleTypeSource =
+            {
+                datatype: "array",
+                datafields: [
+                    { name: 'label', type: 'string' },
+                    { name: 'value', type: 'string' }
+                ],
+                localdata: vehicleTypeValues
+            };
+
+            var vehicleTypeValuesAdapter = new $.jqx.dataAdapter(vehicleTypeSource, {
+                autoBind: true
+            });
+
+            $("#vehicleType").jqxDropDownList({ source: vehicleTypeValuesAdapter, selectedIndex: 0, width: '200', autoDropDownHeight: true });
+
+            $('#vehicleType').on('change', function (event) {
+                loadGrid();
+            });
+
+            var locationString = $("#userVehicleLocation").val();
+            var locationResult = locationString.split(",");
+
+            if (locationResult.length > 1) {
+                var thisLocationString = "";
+                for (i = 0; i < locationResult.length; i++) {
+                    if (i == locationResult.length - 1) {
+                        thisLocationString += locationResult[i];
+                    }
+                    else {
+                        thisLocationString += locationResult[i] + ",";
+                    }
+
+                }
+                LoadLocationPopup(thisLocationString);
+                var offset = $("#jqxgrid").offset();
+                $("#popupLocation").jqxWindow({ position: { x: parseInt(offset.left) + 500, y: parseInt(offset.top) - 40 } });
+                $('#popupLocation').jqxWindow({ width: "325px", height: "300px" });
+                $('#popupLocation').jqxWindow({ isModal: true, modalOpacity: 0.7 });
+                $('#popupLocation').jqxWindow({ showCloseButton: false });
+                $("#popupLocation").css("visibility", "visible");
+                $("#popupLocation").jqxWindow({ title: 'Pick a Location' });
+                $("#popupLocation").jqxWindow('open');
+            }
+            else {
+                $("#vehicleLocation").val(locationResult[0]);
+                loadGrid($("#distributionLocation").val());
+                //loadGrid(9);
+            }
 
             //#region SetupButtons
             $("#newVehicle").jqxButton({ width: '150', height: 26 });
@@ -96,22 +150,6 @@
                 //$("#popupWindow").jqxWindow('open');
             });
 
-            var thisUserId = $("#tempUserGuid").val();
-
-            LoadLocationPopup(thisUserId);
-            
-
-            $("#popupLocation").css('display', 'block');
-            $("#popupLocation").css('visibility', 'hidden');
-
-            var offset = $("#jqxgrid").offset();
-            $("#popupLocation").jqxWindow({ position: { x: parseInt(offset.left) + 500, y: parseInt(offset.top) - 40 } });
-            $('#popupLocation').jqxWindow({ width: "325px", height: "300px" });
-            $('#popupLocation').jqxWindow({ isModal: true, modalOpacity: 0.7 });
-            $('#popupLocation').jqxWindow({ showCloseButton: false });
-            $("#popupLocation").css("visibility", "visible");
-            $("#popupLocation").jqxWindow({ title: 'Pick a Location' });
-            $("#popupLocation").jqxWindow('open');
 
             $("#LocationCombo").on('select', function (event) {
                 if (event.args) {
@@ -146,30 +184,6 @@
                 $("#addVehicleCombo").jqxDropDownList('insertAt', 'Pick a Vehicle', 0);
             });
 
-            var vehicleTypeValues = [
-                { value: "1", label: "Bus" },
-                { value: "0", label: "Other" }
-            ];
-
-            var vehicleTypeSource =
-            {
-                datatype: "array",
-                datafields: [
-                    { name: 'label', type: 'string' },
-                    { name: 'value', type: 'string' }
-                ],
-                localdata: vehicleTypeValues
-            };
-
-            var vehicleTypeValuesAdapter = new $.jqx.dataAdapter(vehicleTypeSource, {
-                autoBind: true
-            });
-
-            $("#vehicleType").jqxDropDownList({ source: vehicleTypeValuesAdapter, selectedIndex: 0, width: '200', autoDropDownHeight: true });
-
-            $('#vehicleType').on('change', function (event) {
-                loadGrid();
-            });
 
             Security();
         });
@@ -240,10 +254,10 @@
             });
         }
 
-        function LoadLocationPopup(thisUserId) {
-            //var url = $("#localApiDomain").val() + "FleetStatuss/GetLocationsByUserId/" + thisUserId;
-            var url = $("#localApiDomain").val() + "FleetStatuss/GetLocationsByUserId/" + "BA1B0B96-30D3-45AB-815D-3527F72B6442";
-            //var url = "http://localhost:52839/api/FleetStatuss/GetLocationsByUserId/" + "BA1B0B96-30D3-45AB-815D-3527F72B6442";
+        function LoadLocationPopup(thisLocationString) {
+            
+            var url = $("#localApiDomain").val() + "FleetStatuss/LocationByLocationIds/" + thisLocationString;
+            //var url = "http://localhost:52839/api/FleetStatuss/LocationByLocationIds/" + thisLocationString;
 
             //set up the location combobox
             var locationSource =
@@ -278,7 +292,6 @@
             var parent = $("#jqxgrid").parent();
             $("#jqxgrid").jqxGrid('destroy');
             $("<div id='jqxgrid'></div>").appendTo(parent);
-            
 
             if ($("#vehicleType").jqxDropDownList('getSelectedItem').value == '1') {
                 var url = $("#localApiDomain").val() + "FleetStatuss/GetFleetStatusBus/" + thisLocationId;;
@@ -287,9 +300,6 @@
                 var url = $("#localApiDomain").val() + "FleetStatuss/GetFleetStatusOther/" + thisLocationId;;
                 //var url = "http://localhost:52839/api/FleetStatuss/GetFleetStatusOther/" + thisLocationId;
             }
-
-
-
 
             var source =
             {
@@ -304,7 +314,8 @@
                     { name: 'Status' },
                     { name: 'OOSDate' },
                     { name: 'EstReturn' },
-                    { name: 'Notes' }
+                    { name: 'Notes' },
+                    { name: 'Change'}
                 ],
                 type: 'Get',
                 datatype: "json",
@@ -345,9 +356,9 @@
                         break;
                     case "LastInExWash":
                         val = $('#jqxgrid').jqxGrid('getcellvalue', row, "LastInExWash");
-                        LastInExDate = new Date(val);
+                        lastInExDate = new Date(val);
                         thisToday = new Date();
-                        LastInExDateDiff = thisDateDiff(lastExDate, thisToday);
+                        LastInExDateDiff = thisDateDiff(lastInExDate, thisToday);
 
                         if (LastInExDateDiff >= 31 && LastInExDateDiff < 35) {
                             return "yellowCell";
@@ -411,7 +422,8 @@
             $("#jqxgrid").jqxGrid(
             {
                 width: '100%',
-                height: 700,
+                //height: 700,
+                autoheight: true,
                 source: source,
                 sortable: true,
                 altrows: true,
@@ -422,6 +434,7 @@
                 showaggregates: true,
                 showstatusbar: true,
                 columns: [
+                      { text: 'Change', datafield: 'Change', hidden: true, },
                       { text: 'FleetStatusID', datafield: 'FleetStatusID', hidden: true, },
                       { text: 'VehicleId', datafield: 'VehicleId', hidden: true, },
                       { text: 'VehicleNumber', datafield: 'VehicleNumber', width: '7%' },
@@ -519,7 +532,7 @@
 
                 if (String(value).indexOf('Out of Service') > -1) {
                     $("#jqxgrid").jqxGrid('setcellvalue', rowBoundIndex, "OOSDate", new Date());
-                    $("#jqxgrid").jqxGrid('setcellvalue', rowBoundIndex, "OOSDate", new Date());
+                    $("#jqxgrid").jqxGrid('setcellvalue', rowBoundIndex, "Change", "true");
                     change = true;
                 } 
 
@@ -595,7 +608,11 @@
                     thisLastInExWash = DateFormat(data["LastInExWash"]);
                 }
 
-                if (change == true) {
+                //if (change == true) {
+                //    changeBody = changeBody + data["VehicleNumber"] + " has been taken out of service. <br/>Note: " + data["Notes"] + "<br/>Out of Service date: " + thisOOSDate + "<br/>Estimated Return: " + thisEstReturn + "<br/><br/>";
+                //}
+
+                if (data["Change"] == "true") {
                     changeBody = changeBody + data["VehicleNumber"] + " has been taken out of service. <br/>Note: " + data["Notes"] + "<br/>Out of Service date: " + thisOOSDate + "<br/>Estimated Return: " + thisEstReturn + "<br/><br/>";
                 }
 
@@ -665,7 +682,7 @@
         <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
             <div class="row">
                 <div class="col-sm-4">
-                    <input type="button" id="update" value="Update Status" />
+                    <input type="button" id="update" value="Update Status" class="editor" />
                 </div>
                 <div class="col-sm-4">
                     <div id="vehicleType"></div>

@@ -53,7 +53,21 @@
             });
 
             $("#export").on("click", function (event) {
-                $("#jqxSearchGrid").jqxGrid('exportdata', 'xls', 'jqxGrid');
+                //$("#jqxSearchGrid").jqxGrid('exportdata', 'xls', 'jqxGrid');
+
+                var rows = $('#jqxSearchGrid').jqxGrid('getrows');
+                var thisLength = rows.length - 1;
+
+                for (i = 0; i <= thisLength; i++) {
+                    if (rows[i].CoverageAdded != null) {
+                        rows[i].CoverageAdded = DateFormat(rows[i].CoverageAdded);
+                    }
+                    if (rows[i].CoverageRemoved != null) {
+                        rows[i].CoverageRemoved = DateFormat(rows[i].CoverageRemoved);
+                    }
+                }
+
+                $('#jqxgrid').jqxGrid('exportdata', 'xls', 'Grid Export', true, rows, false, null, 'utf-8');
             });
 
             $("#unSelectAll").on("click", function (event) {
@@ -105,8 +119,8 @@
         });
 
         function LoadLocation() {
-            var url = $("#localApiDomain").val() + "Vehicles/GetLocations/";
-            //var url = "http://localhost:52839/api/Vehicles/GetLocations/";
+            //var url = $("#localApiDomain").val() + "Vehicles/GetLocations/";
+            var url = "http://localhost:52839/api/Vehicles/GetLocations/";
 
             //set up the location combobox
             var locationSource =
@@ -172,8 +186,8 @@
                 autoBind: true
             });
 
-            var url = $("#localApiDomain").val() + "InsuranceVehicles/GetVehiclesByLocation/" + Locations;
-            //var url = "http://localhost:52839/api/InsuranceVehicles/GetVehiclesByLocation/" + Locations;
+            //var url = $("#localApiDomain").val() + "InsuranceVehicles/GetVehiclesByLocation/" + Locations;
+            var url = "http://localhost:52839/api/InsuranceVehicles/GetVehiclesByLocation/" + Locations;
             
             var source =
             {
@@ -194,7 +208,10 @@
                     { name: 'AddDate', type: 'date' },
                     { name: 'DeleteDate', type: 'date' },
                     { name: 'Insurance', value: 'InsuranceCode', values: { source: insuranceValuesAdapter.records, value: 'value', name: 'label' } },
-                    { name: 'InsuranceCode' }
+                    { name: 'InsuranceCode' },
+                    { name: 'CoverageAdded' },
+                    { name: 'CoverageRemoved' },
+                    { name: 'State' }
                 ],
                 type: 'GET',
                 datatype: "json",
@@ -205,7 +222,7 @@
             $("#jqxSearchGrid").jqxGrid(
             {
                 width: '100%',
-                height: 700,
+                autoheight: true,
                 source: source,
                 columnsresize: true,
                 sortable: true,
@@ -214,16 +231,27 @@
                 editable: true,
                 editmode: 'click',
                 filterable: true,
+                columnsheight: 40,
                 columns: [
                       { text: 'VehicleId', datafield: 'VehicleId', hidden: true },
-                      { text: 'VehicleNumber', datafield: 'VehicleNumber', width: '6%' },
-                      { text: 'StatusDescription', datafield: 'StatusDescription', width: '8%' },
+                      {
+                          text: 'Vehicle Number', datafield: 'VehicleNumber', width: '7%',
+                          renderer: function (defaultText, alignment, height) {
+                            return '<div style="margin: 3px 0 0 3px;">Vehicle<br>Number</div>';
+                          }
+                      },
+                      {
+                          text: 'StatusDescription', datafield: 'StatusDescription', width: '7%',
+                          renderer: function (defaultText, alignment, height) {
+                              return '<div style="margin: 3px 0 0 3px;">Status<br>Description</div>';
+                          }
+                      },
                       { text: 'Year', datafield: 'Year', width: '3%' },
-                      { text: 'MakeName', datafield: 'MakeName', width: '6%' },
-                      { text: 'ModelName', datafield: 'ModelName', width: '6%' },
-                      { text: 'VINNumber', datafield: 'VINNumber', width: '14%' },
-                      { text: 'Garaged', datafield: 'Garaged', width: '10%' },
-                      { text: 'OriginalCost', datafield: 'OriginalCost', width: '5%' },
+                      { text: 'Make', datafield: 'MakeName', width: '5%' },
+                      { text: 'Model', datafield: 'ModelName', width: '5%' },
+                      { text: 'VIN Number', datafield: 'VINNumber', width: '12%' },
+                      { text: 'Garaged', datafield: 'Garaged', width: '11%' },
+                      { text: 'OriginalCost', datafield: 'OriginalCost', width: '5%', cellsformat: 'c' },
                       { text: 'Class', datafield: 'Class', width: '5%' },
                       {
                           text: 'Coverage', datafield: 'CoverageCode', displayfield: 'Coverage', width: '5%', columntype: 'dropdownlist',
@@ -231,15 +259,46 @@
                               editor.jqxDropDownList({ source: coverageAdapter, displayMember: 'VehicleCoveragename', valueMember: 'VehicleCoverageId', autoDropDownHeight: true });
                           }
                       },
-                      { text: 'DriverName', datafield: 'DriverName', width: '6%' },
-                      { text: 'AddDate', datafield: 'AddDate', width: '10%', cellsformat: 'MM/dd/yyyy' },
-                      { text: 'DeleteDate', datafield: 'DeleteDate', width: '10%', cellsformat: 'MM/dd/yyyy' },
+                      { text: 'DriverName', datafield: 'DriverName', hidden: true },
+                      { text: 'Add Date', datafield: 'AddDate', width: '9%', cellsformat: 'MM/dd/yyyy' },
+                      { text: 'Delete Date', datafield: 'DeleteDate', width: '6%', cellsformat: 'MM/dd/yyyy' },
                       {
-                          text: 'Insurance', datafield: 'InsuranceCode', displayfield: 'Insurance', width: '6%', columntype: 'dropdownlist',
+                          text: 'Insurance', datafield: 'InsuranceCode', displayfield: 'Insurance', width: '5%', columntype: 'dropdownlist',
                           createeditor: function (row, value, editor) {
                               editor.jqxDropDownList({ source: insuranceValuesAdapter, displayMember: 'label', valueMember: 'value', autoDropDownHeight: true });
                           }
-                      }
+                      },
+                      {
+                          text: 'Coverage Added', datafield: 'CoverageAdded', width: '6%', cellsrenderer: DateRender, columntype: 'datetimeinput', cellsformat: 'MM/dd/yyyy',
+                          validation: function (cell, value) {
+                              if (value == "")
+                                  return true;
+                              //var year = value.getFullYear();
+                              //if (year >= 2020) {
+                              //    return { result: false, message: "Date should be before 1/1/2020" };
+                              //}
+                              return true;
+                          },
+                          renderer: function (defaultText, alignment, height) {
+                              return '<div style="margin: 3px 0 0 3px;">Coverage<br>Added</div>';
+                          }
+                      },
+                      {
+                          text: 'Coverage Removed', datafield: 'CoverageRemoved', width: '6%', cellsrenderer: DateRender, columntype: 'datetimeinput', cellsformat: 'MM/dd/yyyy',
+                          validation: function (cell, value) {
+                              if (value == "")
+                                  return true;
+                              //var year = value.getFullYear();
+                              //if (year >= 2020) {
+                              //    return { result: false, message: "Date should be before 1/1/2020" };
+                              //}
+                              return true;
+                          },
+                          renderer: function (defaultText, alignment, height) {
+                              return '<div style="margin: 3px 0 0 3px;">Coverage<br>Removed</div>';
+                          }
+                      },
+                      { text: 'State', datafield: 'State', width: '3%' }
                 ]
             });
 
@@ -276,10 +335,23 @@
             for (var i = 0; i < updateRows.length; i++) {
                 var data = $('#jqxSearchGrid').jqxGrid('getrowdatabyid', updateRows[i]);
 
+                if (data["CoverageAdded"] == "0001-01-01T00:00:00" || data["CoverageAdded"] == null)
+                {
+                    var thisCoverageAddedDate = null;
+                } else {
+                    var thisCoverageAddedDate = DateFormat(data["CoverageAdded"]);
+                }
+
+                if (data["CoverageRemoved"] == "0001-01-01T00:00:00" || data["CoverageRemoved"] == null) {
+                    var thisCoverageRemovedDate = null;
+                } else {
+                    var thisCoverageRemovedDate = DateFormat(data["CoverageRemoved"]);
+                }
+
                 //var url = "http://localhost:52839/api/InsuranceVehicles/UpdateInsuranceVehicleStatus/";
                 var url = $("#localApiDomain").val() + "InsuranceVehicles/UpdateInsuranceVehicleStatus/";
 
-                var postData = { 'VehicleId': data["VehicleId"], 'Coverage': data["CoverageCode"], 'Insurance': data["InsuranceCode"] }
+                var postData = { 'VehicleId': data["VehicleId"], 'Coverage': data["CoverageCode"], 'Insurance': data["InsuranceCode"], 'CoverageAdded': thisCoverageAddedDate, 'CoverageRemoved': thisCoverageRemovedDate }
 
                 postInsuranceChange(url, postData).done(function (data) {
                     console.log();

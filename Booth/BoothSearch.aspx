@@ -37,6 +37,11 @@
             font-weight: bold;
         }
 
+        #popupInstructions *{
+            font-size:22px;
+            font-weight: bold;
+        }
+
         .jqx-dropdownlist-content { font-size : 22px;font-weight: bold;}
         .jqx-listitem-state-selected { font-size : 22px;font-weight: bold; }
         .jqx-listitem-state-normal {font-size : 22px;font-weight: bold; }
@@ -101,8 +106,8 @@
             $("#newEmailSubmit").jqxButton({ width: 100, height: 60 });
             $("#showRedemptionList").jqxButton({ width: 175, height: 60 });
             $("#closeRedemptionList").jqxButton({ width: 100, height: 60 });
-            $("#cancelExistingRedemption").jqxButton({ width: 100, height: 50 });
-
+            $("#cancelExistingRedemption").jqxButton({ width: 100, height: 50 }); 
+            $("#cancelNewRedemption").jqxButton({ width: 100, height: 50 });
             //#endregion
 
             //#region Button Clicks
@@ -189,10 +194,15 @@
             });
 
 
+            //Close new redemption Popup
+            $("#cancelNewRedemption").on("click", function (event) {
+                $("#popupRedemption").jqxWindow('hide');
+            }); cancelNewRedemption
+
             //close receipt popup
             $("#receiptCancel").on("click", function (event) {
                 $("#popupReceipt").jqxWindow('hide');
-            });
+            }); 
 
             //open receipt entry
             $("#btnReceipt").on("click", function (event) {
@@ -696,7 +706,7 @@
 
                     var offset = $("#jqxSearchGrid").offset();
                     $("#popupRedemption").jqxWindow({ position: { x: parseInt(offset.left) + 300, y: parseInt(offset.top) - 20 } });
-                    $('#popupRedemption').jqxWindow({ width: "320px", height: "425px" });
+                    $('#popupRedemption').jqxWindow({ width: "340px", height: "475px" });
                     $('#popupRedemption').jqxWindow({ isModal: true, modalOpacity: 0.7 });
                     $('#popupRedemption').jqxWindow({ showCloseButton: true });
                     $("#popupRedemption").css("visibility", "visible");
@@ -1084,8 +1094,8 @@
             $("#popupInstructions").jqxWindow({ position: { x: '3%', y: '3%' } });
             $('#popupInstructions').jqxWindow({ isModal: true });
             $("#popupInstructions").css("visibility", "visible");
-            $('#popupInstructions').jqxWindow({ height: '650px', width: '1180px' });
-            $('#popupInstructions').jqxWindow({ maxHeight: '650px', maxWidth: '1180px' });
+            $('#popupInstructions').jqxWindow({ height: '660px', width: '1180px' });
+            $('#popupInstructions').jqxWindow({ maxHeight: '660px', maxWidth: '1180px' });
             $('#popupInstructions').jqxWindow({ showCloseButton: true });
             $('#popupInstructions').jqxWindow({ animationType: 'combined' });
             $('#popupInstructions').jqxWindow({ showAnimationDuration: 300 });
@@ -1209,7 +1219,7 @@
                 <div>&nbsp;</div>
             </div>
             <div class="col-sm-1">
-                <input type="button" id="btnSearch" value="Search" style="margin-right:10px;float;" />
+                <input type="button" id="btnSearch" value="Search" style="margin-right:10px;" />
             </div>
         </div>
 
@@ -1299,6 +1309,9 @@
             <div>Redeem Date: <label id="redemptionRedeemDate"></label></div>
             <div>Redemption Type: <label id="redemptionRedemptionType"></label></div>
             <div>Point Value: <label id="redemptionPointValue"></label></div>
+            <div>
+                <input type="button" id="cancelNewRedemption" value="Close" style="font-size:22px;font-weight:bold" />
+            </div>
         </div>
     </div>
 
@@ -1327,7 +1340,7 @@
         <div>
             <iframe id="redemptionIframe" style="height:225px; width:250px; border:none;"  ></iframe>
             <div>
-                <input type="button" id="cancelExistingRedemption" value="Close" />
+                <input type="button" id="cancelExistingRedemption" value="Close" style="font-size:22px;font-weight:bold" />
             </div>
         </div>
     </div>
@@ -1335,9 +1348,9 @@
     <div id="popupInstructions" style="display: none;">
         <div>Instructions</div>
         <div>
-            <iframe src="../CashierInformation.html" id="InstructionIframe" style="height:560px; width:1150px; border:none;"  ></iframe>
+            <iframe src="../CashierInformation.html" id="InstructionIframe" style="height:550px; width:1150px; border:none;"  ></iframe>
             <div>
-                <input type="button" id="cancelInstructions" value="Cancel" />
+                <input type="button" id="cancelInstructions" value="Close" />
             </div>
         </div>
     </div>

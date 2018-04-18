@@ -85,6 +85,7 @@ public partial class Portal2 : System.Web.UI.MasterPage
         Session["groupList"] = groupList;
 
         getUserLocation(groupList);
+        getUserVehicleLocation(groupList);
 
         Boolean beenToDefault = false;
 
@@ -160,6 +161,34 @@ public partial class Portal2 : System.Web.UI.MasterPage
             }
         }
         userLocation.Text = locationList;
+    }
+
+    private void getUserVehicleLocation(string groupList)
+    {
+        var first = true;
+        var locationList = "";
+        string[] thisLocation;
+        var thisGroups = groupList.Split(',');
+        foreach (string locGroup in thisGroups)
+        {
+            if (locGroup.IndexOf("\\Vehicles_Loc") > -1)
+            {
+                Console.WriteLine(locGroup);
+                if (first == true)
+                {
+                    thisLocation = locGroup.Split('_');
+                    locationList = thisLocation[2];
+                    first = false;
+                }
+                else
+                {
+                    thisLocation = locGroup.Split('_');
+                    locationList = locationList + "," + thisLocation[2];
+                }
+
+            }
+        }
+        userVehicleLocation.Text = locationList;
     }
 
 }

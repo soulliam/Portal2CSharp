@@ -43,7 +43,6 @@
         "PayPalPayerId": "",
         "EstimatedReservationCost": thisEstimatedReservationCost,
         "MemberNote": thisMemberNote,
-        "MemberNote": thisMemberNote,
         "TermsAndConditionsFlag": thisTermsAndConditionsFlag,
         "SendNotificationsFlag": thisSendNotificationsFlag,
         "SaveReservationPreferencesFlag": thisSaveReservationPreferencesFlag
