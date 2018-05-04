@@ -325,12 +325,13 @@ function setReservationFee(thisDate) {
     
 }
 
-function getEstCost() {
+function getEstCost(MemberId) {
     var thisLocationId = $('#reservationLocationCombo').jqxComboBox('getSelectedItem').value;
     var thisAirport = $("#airportId").val();
     var thisStartDate = $("#reservationStartDate").val();
     var thisEndDate = $("#reservationEndDate").val();
-    var url = $("#apiDomain").val() + "airports/" + thisAirport + "/locations/rates?startDatetime=" + thisStartDate + "&endDatetime=" + thisEndDate;
+    //var url = $("#apiDomain").val() + "airports/" + thisAirport + "/locations/rates?startDatetime=" + thisStartDate + "&endDatetime=" + thisEndDate;
+    var url = $("#apiDomain").val() + "airports/" + thisAirport + "/locations/rates?MemberId=" + MemberId + "&StartDatetime=" + thisStartDate + "&EndDatetime=" + thisEndDate;
 
     $.ajax({
         type: "GET",
@@ -351,8 +352,6 @@ function getEstCost() {
             swal(request.responseJSON.message);
         }
     });
-
-
 
 }
 

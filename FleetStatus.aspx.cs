@@ -59,7 +59,7 @@ public partial class FleetStatus : System.Web.UI.Page
 
             clsCommon thisEmail = new clsCommon();
             //thisEmail.SendEmail("mgoode@thefastpark.com", "mgoode@thefastpark.com", "Fleet Status Changed", body, true);
-            thisEmail.SendEmail(Addresses, "FPTeam@thefastpark.com", "Fleet Status Changed", body, true);
+            thisEmail.SendEmail(Addresses, "pca_reporting@pca-star.com", "Fleet Status Changed", body, true);
 
 
             return "Sent!";

@@ -38,18 +38,59 @@
     <script type="text/javascript">
         var calendarChanged = false;
         var group = '<%= Session["groupList"] %>';
-        var gblCheckedItems = "";
+        var gblCheckedLocations = "";
+        var gblCheckedStatus = "";
+        var gblCheckedCoverage = "";
         var updateRows = [];
 
         $(document).ready(function () {
             $("#btnSearch").jqxButton({ width: 120, height: 30 });
             $("#export").jqxButton({ width: 120, height: 30 });
-            $("#selectAll").jqxButton({ width: 120, height: 30 });
-            $("#unSelectAll").jqxButton({ width: 120, height: 30 });
+            $("#selectAll").jqxButton({ width: 200, height: 30 });
+            $("#unSelectAll").jqxButton({ width: 200, height: 30 });
             $("#update").jqxButton({ width: 120, height: 30 });
 
             $("#btnSearch").on("click", function (event) {
-                loadSearchResults(gblCheckedItems);
+                var items = $("#LocationCombo").jqxDropDownList('getCheckedItems');
+                var checkedItems = "";
+                var first = true;
+                $.each(items, function (index) {
+                    if (first == true) {
+                        checkedItems = this.value;
+                        first = false;
+                    } else {
+                        checkedItems = checkedItems + "_" + this.value;
+                    }
+                });
+                gblCheckedLocations = checkedItems;
+
+                var items = $("#StatusCombo").jqxDropDownList('getCheckedItems');
+                var checkedItems = "";
+                var first = true;
+                $.each(items, function (index) {
+                    if (first == true) {
+                        checkedItems = this.value;
+                        first = false;
+                    } else {
+                        checkedItems = checkedItems + "_" + this.value;
+                    }
+                });
+                gblCheckedStatus = checkedItems;
+
+                var items = $("#CoverageCombo").jqxDropDownList('getCheckedItems');
+                var checkedItems = "";
+                var first = true;
+                $.each(items, function (index) {
+                    if (first == true) {
+                        checkedItems = this.value;
+                        first = false;
+                    } else {
+                        checkedItems = checkedItems + "_" + this.value;
+                    }
+                });
+                gblCheckedCoverage = checkedItems;
+
+                loadSearchResults(gblCheckedLocations + '~' + gblCheckedStatus + '~' + gblCheckedCoverage);
             });
 
             $("#export").on("click", function (event) {
@@ -67,7 +108,7 @@
                     }
                 }
 
-                $('#jqxgrid').jqxGrid('exportdata', 'xls', 'Grid Export', true, rows, false, null, 'utf-8');
+                $('#jqxSearchGrid').jqxGrid('exportdata', 'xls', 'Grid Export', true, rows, false, null, 'utf-8');
             });
 
             $("#unSelectAll").on("click", function (event) {
@@ -83,44 +124,16 @@
             });
 
             LoadLocation();
+            LoadStatus();
+            LoadCoverage();
 
-            $("#LocationCombo").bind('checkChange', function (event) {
-                if (event.args) {
-                    var item = event.args.item;
-                    if (item) {
-                        var valueelement = $("<div></div>");
-                        valueelement.html("Value: " + item.value);
-                        var labelelement = $("<div></div>");
-                        labelelement.html("Label: " + item.label);
-                        var checkedelement = $("<div></div>");
-                        checkedelement.html("Checked: " + item.checked);
-                        $("#selectionlog").children().remove();
-                        $("#selectionlog").append(labelelement);
-                        $("#selectionlog").append(valueelement);
-                        $("#selectionlog").append(checkedelement);
-                        var items = $("#LocationCombo").jqxDropDownList('getCheckedItems');
-                        var checkedItems = "";
-                        var first = true;
-                        $.each(items, function (index) {
-                            if (first == true) {
-                                checkedItems = this.value;
-                                first = false;
-                            } else {
-                                checkedItems = checkedItems + "_" + this.value;
-                            }
-                        });
-                        $("#checkedItemsLog").text(checkedItems);
-                        gblCheckedItems = checkedItems;
-                    }
-                }
-            });
 
             Security();
         });
 
         function LoadLocation() {
-            //var url = $("#localApiDomain").val() + "Vehicles/GetLocations/";
-            var url = "http://localhost:52839/api/Vehicles/GetLocations/";
+            var url = $("#localApiDomain").val() + "Vehicles/GetLocations/";
+            //var url = "http://localhost:52839/api/Vehicles/GetLocations/";
 
             //set up the location combobox
             var locationSource =
@@ -142,11 +155,70 @@
                 source: locationDataAdapter,
                 selectedIndex: 0,
                 displayMember: "NameOfLocation",
-                valueMember: "LocationId"
+                valueMember: "LocationId",
+                placeHolder: "Pick a Location"
             });
         }
 
-        function loadSearchResults(Locations) {
+        function LoadStatus() {
+            var url = $("#localApiDomain").val() + "Vehicles/GetVehiclesStatusList";
+            //var url = "http://localhost:52839/api/Vehicles/GetVehiclesStatusList";
+
+            //set up the location combobox
+            var locationSource =
+            {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'StatusDescription' },
+                    { name: 'StatusId' }
+                ],
+                url: url
+            };
+            var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
+            $("#StatusCombo").jqxDropDownList(
+            {
+                checkboxes: true,
+                itemHeight: 50,
+                source: locationDataAdapter,
+                selectedIndex: 0,
+                displayMember: "StatusDescription",
+                valueMember: "StatusId",
+                placeHolder: "Pick a Status"
+            });
+        }
+
+        function LoadCoverage() {
+            var url = $("#localApiDomain").val() + "InsuranceVehicles/GetCoverageTypes/";
+            //var url = "http://localhost:52839/api/InsuranceVehicles/GetCoverageTypes/";
+
+            //set up the location combobox
+            var locationSource =
+            {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'VehicleCoveragename' },
+                    { name: 'VehicleCoverageId' }
+                ],
+                url: url
+            };
+            var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
+            $("#CoverageCombo").jqxDropDownList(
+            {
+                checkboxes: true,
+                itemHeight: 50,
+                source: locationDataAdapter,
+                selectedIndex: 0,
+                displayMember: "VehicleCoveragename",
+                valueMember: "VehicleCoverageId",
+                placeHolder: "Pick a Coverage"
+            });
+        }
+
+        function loadSearchResults(params) {
 
             var parent = $("#jqxSearchGrid").parent();
             $("#jqxSearchGrid").jqxGrid('destroy');
@@ -186,8 +258,10 @@
                 autoBind: true
             });
 
-            //var url = $("#localApiDomain").val() + "InsuranceVehicles/GetVehiclesByLocation/" + Locations;
-            var url = "http://localhost:52839/api/InsuranceVehicles/GetVehiclesByLocation/" + Locations;
+            
+
+            var url = $("#localApiDomain").val() + "InsuranceVehicles/GetInsuranceVehicles/" + params;
+            //var url = "http://localhost:52839/api/InsuranceVehicles/GetInsuranceVehicles/" + params;
             
             var source =
             {
@@ -227,7 +301,8 @@
                 columnsresize: true,
                 sortable: true,
                 altrows: true,
-                selectionmode: 'singlecell',
+                selectionmode: 'singlerow',
+                editmode: 'selectedrow',
                 editable: true,
                 editmode: 'click',
                 filterable: true,
@@ -238,21 +313,55 @@
                           text: 'Vehicle Number', datafield: 'VehicleNumber', width: '7%',
                           renderer: function (defaultText, alignment, height) {
                             return '<div style="margin: 3px 0 0 3px;">Vehicle<br>Number</div>';
-                          }
+                          },
+  			  cellbeginedit: function (row) {
+       				return false;
+  			  } 
                       },
                       {
                           text: 'StatusDescription', datafield: 'StatusDescription', width: '7%',
                           renderer: function (defaultText, alignment, height) {
                               return '<div style="margin: 3px 0 0 3px;">Status<br>Description</div>';
-                          }
+                          },
+  			  cellbeginedit: function (row) {
+       				return false;
+  			  } 
                       },
-                      { text: 'Year', datafield: 'Year', width: '3%' },
-                      { text: 'Make', datafield: 'MakeName', width: '5%' },
-                      { text: 'Model', datafield: 'ModelName', width: '5%' },
-                      { text: 'VIN Number', datafield: 'VINNumber', width: '12%' },
-                      { text: 'Garaged', datafield: 'Garaged', width: '11%' },
-                      { text: 'OriginalCost', datafield: 'OriginalCost', width: '5%', cellsformat: 'c' },
-                      { text: 'Class', datafield: 'Class', width: '5%' },
+                      { text: 'Year', datafield: 'Year', width: '3%',
+  			cellbeginedit: function (row) {
+       				return false;
+  			} 
+		      },
+                      { text: 'Make', datafield: 'MakeName', width: '5%',
+  			cellbeginedit: function (row) {
+       				return false;
+  			} 
+		      },
+                      { text: 'Model', datafield: 'ModelName', width: '5%',
+  			cellbeginedit: function (row) {
+       				return false;
+  			} 
+		      },
+                      { text: 'VIN Number', datafield: 'VINNumber', width: '12%',
+  			cellbeginedit: function (row) {
+       				return false;
+  			} 
+		      },
+                      { text: 'Garaged', datafield: 'Garaged', width: '11%',
+  			cellbeginedit: function (row) {
+       				return false;
+  			} 
+		      },
+                      { text: 'OriginalCost', datafield: 'OriginalCost', width: '5%', cellsformat: 'c',
+  			cellbeginedit: function (row) {
+       				return false;
+  			} 
+		      },
+                      { text: 'Class', datafield: 'Class', width: '5%',
+  			cellbeginedit: function (row) {
+       				return false;
+  			} 
+		      },
                       {
                           text: 'Coverage', datafield: 'CoverageCode', displayfield: 'Coverage', width: '5%', columntype: 'dropdownlist',
                           createeditor: function (row, value, editor) {
@@ -260,8 +369,16 @@
                           }
                       },
                       { text: 'DriverName', datafield: 'DriverName', hidden: true },
-                      { text: 'Add Date', datafield: 'AddDate', width: '9%', cellsformat: 'MM/dd/yyyy' },
-                      { text: 'Delete Date', datafield: 'DeleteDate', width: '6%', cellsformat: 'MM/dd/yyyy' },
+                      { text: 'Add Date', datafield: 'AddDate', width: '9%', cellsformat: 'MM/dd/yyyy',
+  			cellbeginedit: function (row) {
+       				return false;
+  			} 
+		      },
+                      { text: 'Delete Date', datafield: 'DeleteDate', width: '6%', cellsformat: 'MM/dd/yyyy',
+  			cellbeginedit: function (row) {
+       				return false;
+  			} 
+		      },
                       {
                           text: 'Insurance', datafield: 'InsuranceCode', displayfield: 'Insurance', width: '5%', columntype: 'dropdownlist',
                           createeditor: function (row, value, editor) {
@@ -360,7 +477,7 @@
                 });
             }
 
-            loadSearchResults(gblCheckedItems);
+            loadSearchResults(gblCheckedLocations + '~' + gblCheckedStatus + '~' + gblCheckedCoverage);
         }
 
         function postInsuranceChange(url, postData) {
@@ -381,20 +498,25 @@
         }
 
     </script>
-
-    <div class="row">
-        <div class="col-sm-3">
-            <input type="button"  id="export" value="Export" /><input type="button"  id="update" value="Update" />
+    <div id="MemberSearch" class="container-fluid container-970 wrap-search-options">
+        <div id="FPR_SearchBox" class="FPR_SearchBox wrap-search-options" style="display:block;">
+            <div class="row search-size">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <input type="button"  id="export" value="Export" /><br /><input type="button"  id="update" value="Update" />
+                    </div>
+                    <div class="col-sm-3">
+                        <div id="LocationCombo"></div><div id="StatusCombo"></div><div id="CoverageCombo"></div>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="button"  id="selectAll" value="Select All Locations" /><br /><input type="button"  id="unSelectAll" value="Un-Select All Locations" />
+                    </div>  
+                    <div class="col-sm-3">
+                        <input type="button" id="btnSearch" value="Search" />
+                    </div> 
+                </div>
+            </div>
         </div>
-        <div class="col-sm-3">
-            <div id="LocationCombo"></div>
-        </div>
-        <div class="col-sm-3">
-            <input type="button"  id="selectAll" value="Select All" /><input type="button"  id="unSelectAll" value="Un-Select All" />
-        </div>  
-        <div class="col-sm-3">
-            <input type="button" id="btnSearch" value="Search" />
-        </div> 
     </div>
 
     <div class="container-fluid container-970">

@@ -323,7 +323,8 @@
             });
 
             $("#getEstCost").on("click", function (event) {
-                getEstCost();
+                var thisMemberId = $("#MemberId").val();
+                getEstCost(thisMemberId);
             });
 
             //Goto pending manualedits button
@@ -1672,7 +1673,7 @@
             $("#addPhone").jqxButton({ disabled: true });
             $("#deleteEmail").jqxButton({ disabled: true });
             //$("#MailerCompanyCombo").jqxComboBox({ disabled: true });
-            
+            $("#MailerCompanyCombo").attr("disabled", true);
             
 
             // Setup Radio Buttons for simple Receipt Entry form+++++++++++++++++++++++++++++++++++++++++++++
@@ -2659,32 +2660,46 @@
             $("<div id='jqxReservationGrid'></div>").appendTo(parent);
 
             // load reservations to list
-            var url = $("#apiDomain").val() + "members/" + PageMemberID + "/reservations";
-
+            //var url = $("#apiDomain").val() + "members/" + PageMemberID + "/reservations";
+            var url = $("#localApiDomain").val() + "Reservations/GetReservationByMemberId/" + PageMemberID;
+            //var url = "http://localhost:52839/api/Reservations/GetReservationByMemberId/" + PageMemberID;
             var source =
             {
+                //datafields: [
+                //    { name: 'ReservationId' },
+                //    { name: 'ReservationNumber' },
+                //    { name: 'NameOfLocation', map: 'LocationInformation>NameOfLocation' },
+                //    { name: 'BrandName', map: 'LocationInformation>BrandInformation>BrandName' },
+                //    { name: 'EstimatedCost'},
+                //    { name: 'CreateDatetime' },
+                //    { name: 'StartDatetime' },
+                //    { name: 'EndDatetime' },
+                //    { name: 'ReservationStatusName', map: 'ReservationStatus>ReservationStatusName' },
+                //    { name: 'MemberNote' }
+                //],
+
                 datafields: [
                     { name: 'ReservationId' },
                     { name: 'ReservationNumber' },
-                    { name: 'NameOfLocation', map: 'LocationInformation>NameOfLocation' },
-                    { name: 'BrandName', map: 'LocationInformation>BrandInformation>BrandName' },
-                    { name: 'EstimatedCost'},
+                    { name: 'ShortLocationName', },
+                    { name: 'BrandName', },
+                    { name: 'EstimatedCost' },
                     { name: 'CreateDatetime' },
                     { name: 'StartDatetime' },
                     { name: 'EndDatetime' },
-                    { name: 'ReservationStatusName', map: 'ReservationStatus>ReservationStatusName' },
+                    { name: 'ReservationStatusName' },
                     { name: 'MemberNote' }
                 ],
 
-                id: 'CertificateID',
+                //id: 'CertificateID',
                 type: 'Get',
                 datatype: "json",
-                url: url,
-                beforeSend: function (jqXHR, settings) {
-                    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
-                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
-                },
-                root: "data"
+                //beforeSend: function (jqXHR, settings) {
+                //    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
+                //    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+                //},
+                //root: "data",
+                url: url
             };
 
             // create Reservation Grid
@@ -2707,7 +2722,7 @@
                 columns: [
                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
                       { text: 'Reservation Number', datafield: 'ReservationNumber', width: '9%' },
-                      { text: 'Location', datafield: 'NameOfLocation', width: '9%' },
+                      { text: 'Location', datafield: 'ShortLocationName', width: '9%' },
                       { text: 'Brand', datafield: 'BrandName', width: '5%' },
                       { text: 'Est Cost', datafield: 'EstimatedCost', width: '6%', cellsformat: 'c2' },
                       { text: 'Create Date', datafield: 'CreateDatetime', width: '12%', cellsrenderer: DateRender },
@@ -3940,6 +3955,7 @@
                     //$("#MailerCompanyCombo").val(thisCompanyName);
                     $("#MailerCompanyCombo").attr("data-value", thisData.result.data.CompanyId);
                     $("#MailerCompanyComboID").val(thisData.result.data.CompanyId);
+                    $("#MailerCompanyCombo").attr("disabled", true);
 
                     glbCompanyId = thisData.result.data.CompanyId;
                     //alert(thisData.result.data.CompanyId);

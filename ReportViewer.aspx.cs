@@ -164,7 +164,7 @@ public partial class ReportViewer : System.Web.UI.Page
                 serverReport.ReportPath = reportLocation;
                 serverReport.SetParameters(parameters);
             }
-            else if (reportLocation.Contains("Vehicles") && Session["groupList"].ToString().IndexOf("Portal_Mechanic") > -1)
+            else if (reportLocation.Contains("FleetStatus"))
             {
                 string group = Session["groupList"].ToString();
                 string ID = "";
