@@ -107,6 +107,8 @@ public partial class ReportViewer : System.Web.UI.Page
     {
         var selectedNode = TreeView1.SelectedNode;
 
+        var groups = getPortalGroups();
+
         if (selectedNode.Parent != null)
         {
             ReportViewer1.Visible = true;
@@ -199,6 +201,41 @@ public partial class ReportViewer : System.Web.UI.Page
                 serverReport.ReportPath = reportLocation;
                 serverReport.SetParameters(parameters);
             }
+            else if (reportLocation.Contains("Vehicles") && groups.Contains("Portal_Mechanic"))
+            {
+                string group = Session["groupList"].ToString();
+                string ID = "";
+                string locationList = "";
+                Boolean first = true;
+
+                string[] thisLocation;
+                var thisGroups = group.Split(',');
+                foreach (string locGroup in thisGroups)
+                {
+                    if (locGroup.IndexOf("\\Vehicles_Loc_") > -1)
+                    {
+                        thisLocation = locGroup.Split('_');
+                        ID = thisLocation[2];
+                        if (first == true)
+                        {
+                            locationList = ID;
+                            first = false;
+                        }
+                        else
+                        {
+                            locationList = locationList + ',' + ID;
+                        }
+                    }
+                }
+
+                string userId = getOldPortalGuid(Convert.ToString(Session["UserName"]));
+
+                ReportParameter[] parameters = new ReportParameter[1];
+
+                parameters[0] = new ReportParameter("LocationList", locationList);
+                serverReport.ReportPath = reportLocation;
+                serverReport.SetParameters(parameters);
+            }
             else
             {
                 ReportParameter[] parameters = new ReportParameter[1];
@@ -206,6 +243,10 @@ public partial class ReportViewer : System.Web.UI.Page
                 
                 //not sure we need the userloginId param.
                 parameters[0] = new ReportParameter("UserLoginId", userId);
+                if (reportLocation.Contains("PMI"))
+                {
+                    TextBox1.Text = Convert.ToString(Session["UserName"]);
+                }
                 serverReport.ReportPath = reportLocation;
                 serverReport.SetParameters(parameters);
             }

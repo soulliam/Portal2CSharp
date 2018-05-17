@@ -10,11 +10,13 @@
     <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
     <script type="text/javascript" src="scripts/common.js"></script>
-    <script type="text/javascript" src="scripts/html2canvas.js"></script>
+    <script type="text/javascript" src="scripts/html2canvas.js?ver=1.2"></script>
     <script type="text/javascript" src="scripts/canvas2image.js"></script>
+    <script type="text/javascript" src="scripts/jspdf.debug.js"></script>
 
     <link rel="stylesheet" href="scripts/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="style.css" />
+
 </head>
 <body>
     <form id="form1" runat="server">

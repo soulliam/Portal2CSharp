@@ -7,6 +7,8 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Web;
 using QRCoder;
+using class_Logging;
+
 
 /// <summary>
 /// Summary description for clsCommon
@@ -89,6 +91,36 @@ public class clsCommon
             }
 
             return imgBarCode;
+        }
+    }
+
+    public void sendEmailEmbedImage(string ToAddress, string From, string Subject, string Body, bool IsHtml, string file = "")
+    {
+        MailMessage Mail = new MailMessage();
+
+        Mail.From = new MailAddress(From);
+        Mail.To.Add(ToAddress);
+        Mail.Subject = "FastPark Reservation.";
+        Mail.Body = "Attached is your FastPark reservation.  Thank you.";
+        LinkedResource LinkedImage = new LinkedResource(@file);
+        LinkedImage.ContentId = "QRCode";
+        //Added the patch for Thunderbird
+        LinkedImage.ContentType = new ContentType(MediaTypeNames.Image.Jpeg);
+
+        AlternateView htmlView = AlternateView.CreateAlternateViewFromString(
+          Body,
+          null, "text/html");
+
+        htmlView.LinkedResources.Add(LinkedImage);
+        Mail.AlternateViews.Add(htmlView);
+        SmtpClient smtp = new SmtpClient("192.168.0.53", 25);
+        try
+        {
+            smtp.Send(Mail);
+        }
+        catch (SmtpException ex)
+        {
+            
         }
     }
 

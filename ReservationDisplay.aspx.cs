@@ -14,29 +14,40 @@ public partial class ReservationDisplay : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        string thisQRCode = Request.QueryString["thisQRCode"];
-        string thisCertificateID = Request.QueryString["thisCertificateID"];
-        string thisRedemptionType = Request.QueryString["thisRedemptionType"];
-        string thisFPNumber = Request.QueryString["thisFPNumber"];
         string thisMemberName = Request.QueryString["thisMemberName"];
+        string thisEmailAddress = Request.QueryString["thisEmailAddress"];
+        string thisLocation = Request.QueryString["thisLocation"];
+        string thisBrand = Request.QueryString["thisBrand"];
+        string thisStartDate = Request.QueryString["thisStartDate"];
+        string thisEndDate = Request.QueryString["thisEndDate"];
+        string thisReservationNumber = Request.QueryString["thisReservationNumber"];
+        string thisEstCost = Request.QueryString["thisEstCost"];
 
-        RedemptionType.InnerHtml = "";
-        CertificateID.InnerHtml = "";
-        FPNumber.InnerHtml = "";
         MemberName.InnerHtml = "";
+        emailAddress.InnerHtml = "";
+        location.InnerHtml = "";
+        brand.InnerHtml = "";
+        startDate.InnerHtml = "";
+        endDate.InnerHtml = "";
+        reservationNumber.InnerHtml = "";
+        estCost.InnerHtml = "";
 
-        RedemptionType.InnerHtml = thisRedemptionType;
-        CertificateID.InnerHtml = thisCertificateID;
-        FPNumber.InnerHtml = thisFPNumber;
         MemberName.InnerHtml = thisMemberName;
+        emailAddress.InnerHtml = thisEmailAddress;
+        location.InnerHtml = thisLocation;
+        brand.InnerHtml = thisBrand;
+        startDate.InnerHtml = thisStartDate;
+        endDate.InnerHtml = thisEndDate;
+        reservationNumber.InnerHtml = thisReservationNumber;
+        estCost.InnerHtml = thisEstCost;
 
-        GenerateQRCode(thisQRCode);
+        GenerateQRCode(thisReservationNumber);
     }
 
-    private void GenerateQRCode(string cert)
+    private void GenerateQRCode(string reservationNumber)
     {
         QRCodeGenerator qrGenerator = new QRCodeGenerator();
-        QRCodeData qrCodeData = qrGenerator.CreateQrCode(cert, QRCodeGenerator.ECCLevel.Q);
+        QRCodeData qrCodeData = qrGenerator.CreateQrCode(reservationNumber, QRCodeGenerator.ECCLevel.Q);
         QRCode qrCode = new QRCode(qrCodeData);
 
         System.Web.UI.WebControls.Image imgBarCode = new System.Web.UI.WebControls.Image();
@@ -77,8 +88,8 @@ public partial class ReservationDisplay : System.Web.UI.Page
 
                     clsCommon thisEmail = new clsCommon();
 
-                    //thisEmail.SendEmail("mgoode@thefastpark.com", "RFRTeam@thefastpark.com", "FastPark Redemption", "Attached is your FastPark redemption!", true, path);
-                    thisEmail.SendEmail(ToAddress, "RFRTeam@thefastpark.com", "FastPark Redemption", "Attached is your FastPark redemption.  Thank you.", true, path);
+                    thisEmail.SendEmail("mgoode@thefastpark.com", "RFRTeam@thefastpark.com", "FastPark Reservation", "Attached is your FastPark Rservation.  Thank you.", true, path);
+                    //thisEmail.SendEmail(ToAddress, "RFRTeam@thefastpark.com", "FastPark Reservation", "Attached is your FastPark Rservation.  Thank you.", true, path);
                 }
             }
 
@@ -93,5 +104,6 @@ public partial class ReservationDisplay : System.Web.UI.Page
         {
             return ex.ToString();
         }
+        
     }
 }

@@ -2660,45 +2660,31 @@
             $("<div id='jqxReservationGrid'></div>").appendTo(parent);
 
             // load reservations to list
-            //var url = $("#apiDomain").val() + "members/" + PageMemberID + "/reservations";
-            var url = $("#localApiDomain").val() + "Reservations/GetReservationByMemberId/" + PageMemberID;
-            //var url = "http://localhost:52839/api/Reservations/GetReservationByMemberId/" + PageMemberID;
+            var url = $("#apiDomain").val() + "members/" + PageMemberID + "/reservations";
+            
             var source =
             {
-                //datafields: [
-                //    { name: 'ReservationId' },
-                //    { name: 'ReservationNumber' },
-                //    { name: 'NameOfLocation', map: 'LocationInformation>NameOfLocation' },
-                //    { name: 'BrandName', map: 'LocationInformation>BrandInformation>BrandName' },
-                //    { name: 'EstimatedCost'},
-                //    { name: 'CreateDatetime' },
-                //    { name: 'StartDatetime' },
-                //    { name: 'EndDatetime' },
-                //    { name: 'ReservationStatusName', map: 'ReservationStatus>ReservationStatusName' },
-                //    { name: 'MemberNote' }
-                //],
-
                 datafields: [
                     { name: 'ReservationId' },
                     { name: 'ReservationNumber' },
-                    { name: 'ShortLocationName', },
-                    { name: 'BrandName', },
-                    { name: 'EstimatedCost' },
+                    { name: 'NameOfLocation', map: 'LocationInformation>NameOfLocation' },
+                    { name: 'BrandName', map: 'LocationInformation>BrandInformation>BrandName' },
+                    { name: 'EstimatedCost'},
                     { name: 'CreateDatetime' },
                     { name: 'StartDatetime' },
                     { name: 'EndDatetime' },
-                    { name: 'ReservationStatusName' },
+                    { name: 'ReservationStatusName', map: 'ReservationStatus>ReservationStatusName' },
                     { name: 'MemberNote' }
                 ],
 
-                //id: 'CertificateID',
+                id: 'CertificateID',
                 type: 'Get',
                 datatype: "json",
-                //beforeSend: function (jqXHR, settings) {
-                //    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
-                //    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
-                //},
-                //root: "data",
+                beforeSend: function (jqXHR, settings) {
+                    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
+                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+                },
+                root: "data",
                 url: url
             };
 
@@ -2731,6 +2717,41 @@
                       { text: 'Status', datafield: 'ReservationStatusName', width: '9%' },
                       { text: 'Note', datafield: 'MemberNote', width: '23%' }
                 ]
+            });
+
+            $("#jqxReservationGrid").bind('rowdoubleclick', function (event) {
+                var row = event.args.rowindex;
+                var dataRecord = $("#jqxReservationGrid").jqxGrid('getrowdata', row);
+                var offset = $("#jqxMemberInfoTabs").offset();
+                var thisMemberName = $("#FirstName").val() + '%20' + $("#LastName").val();
+                var toAddress = $("#EmailAddress").val();
+                var thisLocation = dataRecord.ShortLocationName;
+                var thisBrand = dataRecord.BrandName;
+                var thisStartDate = dataRecord.StartDatetime;
+                var thisEndDate = dataRecord.EndDatetime;
+                var thisReservationNumber = dataRecord.ReservationNumber
+                var thisEstCost = dataRecord.EstimatedCost;
+                
+
+                $("#popupSendReservation").css('display', 'block');
+                $("#popupSendReservation").css('visibility', 'hidden');
+
+                $("#popupSendReservation").jqxWindow({ position: { x: '10%', y: '7%' } });
+                $('#popupSendReservation').jqxWindow({ resizable: true });
+                $('#popupSendReservation').jqxWindow({ draggable: true });
+                $('#popupSendReservation').jqxWindow({ isModal: true });
+                $("#popupSendReservation").css("visibility", "visible");
+                $('#popupSendReservation').jqxWindow({ height: '750px', width: '50%' });
+                $('#popupSendReservation').jqxWindow({ minHeight: '270px', minWidth: '10%' });
+                $('#popupSendReservation').jqxWindow({ maxHeight: '800px', maxWidth: '60%' });
+                $('#popupSendReservation').jqxWindow({ showCloseButton: true });
+                $('#popupSendReservation').jqxWindow({ animationType: 'combined' });
+                $('#popupSendReservation').jqxWindow({ showAnimationDuration: 300 });
+                $('#popupSendReservation').jqxWindow({ closeAnimationDuration: 500 });
+                $("#popupSendReservation").jqxWindow('open');
+
+                document.getElementById('ReservationIframe').src = './ReservationDisplay.aspx?thisMemberName=' + thisMemberName + '&thisEmailAddress=' + toAddress + '&thisLocation=' + thisLocation + '&thisBrand=' + thisBrand + '&thisStartDate=' + thisStartDate + '&thisEndDate=' + thisEndDate + '&thisReservationNumber=' + thisReservationNumber + '&thisEstCost=' + thisEstCost;
+
             });
         }
 
@@ -5005,7 +5026,14 @@
     <div id="popupRedemption" style="display: none;">
         <div>Redemption Details</div>
         <div style="margin-left:20px;margin-top:10px;overflow:hidden;">
-            <iframe id="redemptionIframe" style="border:none;width:450px;height:700px;" ></iframe>
+            <iframe id="redemptionIframe" style="border:none;width:850px;height:700px;" ></iframe>
+        </div>
+    </div>
+
+    <div id="popupSendReservation" style="display: none;">
+        <div>Redemption Details</div>
+        <div style="margin-left:20px;margin-top:10px;overflow:visible;">
+            <iframe id="ReservationIframe" style="border:none;width:900px;height:700px;" ></iframe>
         </div>
     </div>
 
