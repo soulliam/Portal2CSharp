@@ -1,5 +1,5 @@
 ﻿function saveUpdateMemberInfo(phoneType, phoneNumber, thisMemberId, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2,
-                                     thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, thisMarketingMailerCode, RFR) {
+                                     thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, thisMarketingMailerCode, RFR, IsActive) {
     if (RFR == true) {
         url = $("#apiDomain").val() + "members/" + thisMemberId + "?SendEmail=false";
     } else {
@@ -26,7 +26,8 @@
         "PhoneList": [],
         "CompanyId": thisCompanyId,
         "MarketingCode": thisMarketingCode,
-        "CorporateDiscountCode": thisMarketingMailerCode
+        "CorporateDiscountCode": thisMarketingMailerCode,
+        "IsActive": IsActive
     });
 
     //data = JSON.stringify({
@@ -89,7 +90,8 @@
                     "PhoneList": [],
                     "CompanyId": thisCompanyId,
                     "MarketingCode": thisMarketingCode,
-                    "CorporateDiscountCode": thisMarketingMailerCode
+                    "CorporateDiscountCode": thisMarketingMailerCode,
+                    "IsActive": IsActive
                 }),
                 dataType: "json",
                 success: function () {
@@ -142,7 +144,8 @@
                     ],
                     "CompanyId": thisCompanyId,
                     "MarketingCode": thisMarketingCode,
-                    "CorporateDiscountCode": thisMarketingMailerCode
+                    "CorporateDiscountCode": thisMarketingMailerCode,
+                    "IsActive": IsActive
                 }),
                 dataType: "json",
                 success: function () {
@@ -198,7 +201,8 @@
                     ],
                     "CompanyId": thisCompanyId,
                     "MarketingCode": thisMarketingCode,
-                    "CorporateDiscountCode": thisMarketingMailerCode
+                    "CorporateDiscountCode": thisMarketingMailerCode,
+                    "IsActive": IsActive
                 }),
                 dataType: "json",
                 success: function () {
@@ -258,7 +262,8 @@
                     ],
                     "CompanyId": thisCompanyId,
                     "MarketingCode": thisMarketingCode,
-                    "CorporateDiscountCode": thisMarketingMailerCode
+                    "CorporateDiscountCode": thisMarketingMailerCode,
+                    "IsActive": IsActive
                 }),
                 dataType: "json",
                 success: function () {
@@ -322,7 +327,8 @@
                     ],
                     "CompanyId": thisCompanyId,
                     "MarketingCode": thisMarketingCode,
-                    "CorporateDiscountCode": thisMarketingMailerCode
+                    "CorporateDiscountCode": thisMarketingMailerCode,
+                    "IsActive": IsActive
                 }),
                 dataType: "json",
                 success: function () {

@@ -182,8 +182,27 @@ public partial class CreateUser : System.Web.UI.Page
             }
             var thisRegion = getNewRegion();
 
-
-            strSQL = "INSERT INTO MarketingReps " +
+            if (thisRegion == "")
+            {
+                strSQL = "INSERT INTO MarketingReps " +
+                    "([LastName],[FirstName],[Location],[EmailAddress],[HireDate],[RehireDate],[TerminationDate1]" +
+                    ",[TerminationDate2],[BIUserID],[RepID],[TerritoryAbbreviation],[UserId],[Manager],[RepMailerId]" +
+                    ",[DefaultLocationId],[StreetAddress],[City],[State],[Zip],[RepPhone],[Title]" +
+                    ",[RecordType],[Rep],[Region],[CarDayMonthlyGoal],[CarDayYearlyGoal],[SignupMonthlyGoal]" +
+                    ",[SignupYearlyGoal],[RepPhotoURL],[LocationId],[IsPrimary],[Admin],[CreateDatetime]" +
+                    ",[CreateUserId],[UpdateDatetime],[UpdateUserId],[IsDeleted],[CreateExternalUserData],[UpdateExternalUserData]) " +
+                    "VALUES " +
+                    "('" + thisLastName + "', '" + thisFirstName + "', '000', '" + email.Text + "', '" + thisHireDate + "', NULL, NULL, " +
+                    "NULL, NULL, '" + thisRepId + "', '" + thisTerritoryAbreviation + "', '" + g + "', " + thisIsManager + ", '" + thisMailerId + "', " +
+                    lbLoginLocations.Items[0].Value + ", '" + thisStreetAddress + "', '" + thisCity + "', '" + thisState + "', '" + thisZip + "', '" + thisPhone + "', '" + thisTitle + "', " +
+                    "NULL, 1, NULL, NULL, NULL, NULL, " +
+                    "NULL, '" + thisLastAssigned + "', " + lbLoginLocations.Items[0].Value + ", " + thisIsPrimary + ", NULL, '" + DateTime.Now + "', " +
+                    "1, NULL, NULL, 0, NULL, NULL);" +
+                    "SELECT @@IDENTITY AS 'Identity';";
+            }
+            else
+            {
+                strSQL = "INSERT INTO MarketingReps " +
                     "([LastName],[FirstName],[Location],[EmailAddress],[HireDate],[RehireDate],[TerminationDate1]" +
                     ",[TerminationDate2],[BIUserID],[RepID],[TerritoryAbbreviation],[UserId],[Manager],[RepMailerId]" +
                     ",[DefaultLocationId],[StreetAddress],[City],[State],[Zip],[RepPhone],[Title]" +
@@ -195,9 +214,14 @@ public partial class CreateUser : System.Web.UI.Page
                     "NULL, NULL, '" + thisRepId + "', '" + thisTerritoryAbreviation + "', '" + g + "', " + thisIsManager + ", '" + thisMailerId + "', " +
                     lbLoginLocations.Items[0].Value + ", '" + thisStreetAddress + "', '" + thisCity + "', '" + thisState + "', '" + thisZip + "', '" + thisPhone + "', '" + thisTitle + "', " +
                     "NULL, 1, '" + thisRegion + "', NULL, NULL, NULL, " +
-                    "NULL, '" + thisLastAssigned + "', " + lbLoginLocations.Items[0].Value + ", " + thisIsPrimary + ", 0, '" + DateTime.Now + "', " +
+                    "NULL, '" + thisLastAssigned + "', " + lbLoginLocations.Items[0].Value + ", " + thisIsPrimary + ", NULL, '" + DateTime.Now + "', " +
                     "1, NULL, NULL, 0, NULL, NULL);" +
                     "SELECT @@IDENTITY AS 'Identity';";
+            }
+
+
+
+            
 
             thisRepTableID = Convert.ToInt32(insertUser.returnSingleValue(strSQL, true));
 

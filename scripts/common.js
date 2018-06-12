@@ -372,6 +372,26 @@ function JsonDateTimeFormat(dateObject) {
     return date;
 }
 
+//formats Json dates to MM/dd/yyyy HH:mm
+function JsonDateTimeFormatNotMilitary(dateObject) {
+    var thisDate = String(dateObject);
+
+    var day = thisDate.substr(8, 2);
+    var month = thisDate.substr(5, 2);
+    var year = thisDate.substr(0, 4);
+    var Hours = thisDate.substr(11, 2);
+    var Minutes = thisDate.substr(14, 2);
+
+    if (Hours > 12) {
+        Hours = Hours - 12;
+        var date = month + "/" + day + "/" + year + ' ' + Hours + ':' + Minutes + ' pm';
+    } else {
+        var date = month + "/" + day + "/" + year + ' ' + Hours + ':' + Minutes + ' am';
+    }
+
+    return date;
+}
+
 //Display PageMethod Results
 function DisplayPageMethodResults(ResultString) {
     if (ResultString != "") {
@@ -495,6 +515,9 @@ var locatioinCellsrenderer = function (row, columnfield, value, defaulthtml, col
             break;
         case 20:
             return '<div style="margin-top: 10px;margin-left: 5px">Houston Hobby</div>';
+            break;
+        case 21:
+            return '<div style="margin-top: 10px;margin-left: 5px">Chicago Midway</div>';
             break;
         default:
             return 'Error';

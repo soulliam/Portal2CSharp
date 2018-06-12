@@ -253,6 +253,9 @@
 
             if (group.indexOf("Portal_RFR") > -1 || group.indexOf("Portal_Manager") > -1) {
                 $("#distDate").jqxDateTimeInput({ width: 220, height: 25, formatString: 'd' });
+            } else {
+                $("#distDate").jqxDateTimeInput({ width: 220, height: 25, formatString: 'd' });
+                $("#distDate").hide();
             }
             
             Security();

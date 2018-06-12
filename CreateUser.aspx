@@ -92,6 +92,14 @@
                 }
             });
         }
+
+        function txtTerritoryLength() {
+            var str = $("#MainContent_txtTerritory").val();
+
+            if (str.length > 1) {
+                $("#MainContent_txtTerritory").val(str.substring(0, 1));
+            }
+        }
     </script>
         <div style="width:500px;background-color:transparent;margin-top:25px;margin-left:15px;">
             <div class="container">
@@ -217,7 +225,7 @@
                                                             <asp:Label ID="lblTerritoryAbbrev" runat="server" Text="Territory Abbreviation: "></asp:Label>
                                                         </td>
                                                         <td class="auto-style5">
-                                                            <asp:TextBox ID="txtTerritory" runat="server"></asp:TextBox>
+                                                            <asp:TextBox ID="txtTerritory" onkeyup="txtTerritoryLength()" runat="server"></asp:TextBox>
                                                         </td>
                                                         <td class="auto-style1">
                                                             &nbsp;</td>

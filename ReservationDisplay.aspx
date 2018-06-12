@@ -16,14 +16,19 @@
 
             $("#email").jqxButton({ width: 180, height: 25 });
             
-            var thisReservationNumber = getUrlParameter('thisReservationNumber');
-            var thisToAddress = getUrlParameter('EmailAddress');
+            var thisCard = getUrlParameter('thisCard');
+            var thisToAddress = getUrlParameter('thisEmailAddress');
 
 
             $("#email").on("click", function (event) {
-                $("#MemberBarHolder").hide();
+                var body = $("#redemption").html();
+                
+                
+                var resBody = body.replace(/"\.\/EmailImages\/.*Jpeg"/, "cid:MyPic");
+                resBody = resBody.replace("&", "%26");
+
                 $('#redemption').get(0).outerHTML;
-                PageMethods.sendReceipt(image, thisReservationNumber, thisToAddress, DisplayPageMethodResults);
+                PageMethods.sendReceipt(resBody, thisCard, thisToAddress, DisplayPageMethodResults);
             });
         });
 
@@ -62,8 +67,7 @@
                                                 </tbody>
                                             </table>
 
-                                        
-                                            <div class="m_4391485547386968897mobile-only" style="font-size:0;max-height:0;overflow:hidden;display:none">
+                                            <%--<div class="m_4391485547386968897mobile-only" style="font-size:0;max-height:0;overflow:hidden;display:none">
 
                                                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                                     <tbody>
@@ -74,8 +78,7 @@
                                                     </tbody>
                                                 </table>
 
-
-                                            </div>
+                                            </div>--%>
                                         
                                         </td>
                                     </tr>
@@ -173,25 +176,31 @@
 								    <tr>
                                         <td align="left" bgcolor="#ffffff" valign="middle" style="font-family:'Helvetica Neue',Helvetica,sans-serif,'Bitter';font-size:16px;line-height:24px;text-decoration:none;color:#4a4a4a;padding:5px 20px 0px 32px;border-left:1px solid #d8d8d8;border-right:1px solid #d8d8d8;text-align:left" class="m_4391485547386968897mob-hero-pad">
                                         
-                                        
                                             <p style="margin-top:5px">* Final parking fees will be calculated based on your actual check-in and check-out date/time and current rates. Parking fees are subject to applicable local taxes and airport fees.</p>
 
-                                        
                                         </td>
                                     </tr>
                                     <tr>
                                         <td align="left" bgcolor="#ffffff" valign="middle" style="font-family:'Helvetica Neue',Helvetica,sans-serif,'Roboto';font-size:13px;font-weight:500;line-height:16px;text-decoration:none;color:#4a4a4a;padding:0px;border-left:1px solid #d8d8d8;border-right:1px solid #d8d8d8;width:200px" class="m_4391485547386968897mob-mc-pad4">
-                                            
+
 											    <asp:PlaceHolder ID="MemberBarHolder" runat="server" />
-                                                <img src=cid:MyPic>
-										    
+                                                <asp:Image ID="EmailQR" src=cid:MyPic runat="server" />
+                                                
+
                                         </td>
                                     </tr>
 
                                     <tr>
                                         <td align="left" bgcolor="#ffffff" valign="middle" style="font-family:'Helvetica Neue',Helvetica,sans-serif,'Bitter';font-size:16px;line-height:24px;text-align:left;text-decoration:none;color:#4a4a4a;padding:0px 32px 0px 32px;border-left:1px solid #d8d8d8;border-right:1px solid #d8d8d8" class="m_4391485547386968897mob-hero-pad">
                                             <p>Thank you for using the Fast Park Reservation System! We look forward to seeing you very soon. </p>
-                                            <p>Warm Regards,<br><i>Misty Donough</i><br>Fast Park &amp; Relax<br><a href="https://maps.google.com/?q=5201+S.+Howell+Avenue+Milwaukee,WI+53207&amp;entry=gmail&amp;source=g">5201 S. Howell Avenue</a><br><a href="https://maps.google.com/?q=5201+S.+Howell+Avenue+Milwaukee,WI+53207&amp;entry=gmail&amp;source=g">Milwaukee,WI 53207</a><br><a href="mailto:mdonough@thefastpark.com" target="_blank">mdonough@thefastpark.com</a><br>414-481-0155</p>
+                                            <p>Warm Regards,<br>
+                                            <i><asp:Label ID="txtManager" runat="server" Text="Label"></asp:Label></i>
+                                            <br><asp:Label ID="txtManagerBrand" runat="server" Text="Label"></asp:Label>
+                                            <br><asp:Label ID="txtManagerAddress" runat="server" Text="Label"></asp:Label>
+                                            <br><asp:Label ID="txtManagerCity" runat="server" Text="Label"></asp:Label>,&nbsp;<asp:Label ID="txtManagerState" runat="server" Text="Label"></asp:Label>&nbsp;<asp:Label ID="txtManagerZip" runat="server" Text="Label"></asp:Label>
+                                            <br><asp:label ID="txtManagerEmail" runat="server" href="mailto:rfrteam@thefastpark.com" target="_blank"></asp:label>
+                                            <br><asp:Label ID="txtManagerPhone" runat="server" Text="Label"></asp:Label>
+                                            </p>
                                         </td>
                                     </tr>
                                     <tr>

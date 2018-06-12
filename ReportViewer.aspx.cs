@@ -131,6 +131,8 @@ public partial class ReportViewer : System.Web.UI.Page
                 //string ID = "86";
                 string userId = getOldPortalGuid(Convert.ToString(Session["UserName"]));
 
+                TextBox1.Text = Convert.ToString(userId);
+
                 ReportParameter[] parameters = new ReportParameter[2];
 
                 //not sure we need the userloginId param.

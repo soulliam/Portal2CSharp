@@ -319,7 +319,34 @@
             });
 
             $("#saveReservation").on("click", function (event) {
-                addReservation();
+                $("#popupReservation").jqxWindow('close');
+
+                var thisLocationId = $("#reservationLocationCombo").jqxComboBox('getSelectedItem').value;
+                var thisStartDatetime = $("#reservationStartDate").val();
+
+                url = $("#apiDomain").val() + "reservation-fees?locationId=" + thisLocationId + "&startDatetime=" + thisStartDatetime;
+
+                $.ajax({
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json",
+                        "AccessToken": $("#userGuid").val(),
+                        "ApplicationKey": $("#AK").val()
+                    },
+                    type: "GET",
+                    url: url,
+                    dataType: "json",
+                    success: function (result, data) {
+                        var thisReservationFeeId = result.result.data.ReservationFeeId;
+                        var ConnectionCheck = '<%= System.Configuration.ConfigurationManager.AppSettings["ConStrMax"].ToString() %>';
+                        addReservation(thisReservationFeeId, ConnectionCheck);
+                    },
+                    error: function (request, status, error) {
+                        swal(error);
+                        return;
+                    }
+                });
+                
             });
 
             $("#getEstCost").on("click", function (event) {
@@ -496,7 +523,7 @@
                 $('#popupReservation').jqxWindow({ draggable: true });
                 $('#popupReservation').jqxWindow({ isModal: true });
                 $("#popupReservation").css("visibility", "visible");
-                $('#popupReservation').jqxWindow({ height: '650px', width: '800px' });
+                $('#popupReservation').jqxWindow({ height: '475px', width: '800px' });
                 $('#popupReservation').jqxWindow({ minHeight: '400px', minWidth: '800px' });
                 $('#popupReservation').jqxWindow({ maxHeight: '650px', maxWidth: '800px' });
                 $('#popupReservation').jqxWindow({ showCloseButton: false });
@@ -856,10 +883,12 @@
                 var thisReservationConfirmationEmail = $("#ReservationConfirmationEmail").prop("checked");
                 var thisReservationReminder = $("#ReservationReminder").prop("checked");
 
+                var thisIsActive = $("#IsActive").prop("checked");
+
                 saveEmailPrefs(thisMemberId, thisEmailReceipts, thisGetEmail, thisTravelAlert, thisRedeemEmail, thisProfileUpdateEmail, thisReservationChangeEmail, thisReservationConfirmationEmail, thisReservationReminder)
 
                 saveUpdateMemberInfo(phoneType, phoneNumber, thisMemberId, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2,
-                                     thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, thisMarketingMailerCode, isRFR);
+                                     thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, thisMarketingMailerCode, isRFR, thisIsActive);
 
                 var thisLoggedinUsername = $("#txtLoggedinUsername").val();
 
@@ -2158,13 +2187,13 @@
                             $("#popupRedemption").css('visibility', 'hidden');
 
                             $("#popupRedemption").jqxWindow({ position: { x: '25%', y: '7%' } });
-                            $('#popupRedemption').jqxWindow({ resizable: false });
                             $('#popupRedemption').jqxWindow({ draggable: true });
                             $('#popupRedemption').jqxWindow({ isModal: true });
+                            $('#popupRedemption').jqxWindow({ resizable: false });
                             $("#popupRedemption").css("visibility", "visible");
-                            $('#popupRedemption').jqxWindow({ height: '675px', width: '35%' });
-                            $('#popupRedemption').jqxWindow({ minHeight: '270px', minWidth: '10%' });
-                            $('#popupRedemption').jqxWindow({ maxHeight: '700px', maxWidth: '50%' });
+                            $('#popupRedemption').jqxWindow({ maxHeight: 700 });
+                            $('#popupRedemption').jqxWindow({ minHeight: 700 });
+                            $('#popupRedemption').jqxWindow({ height: 700, width: 500 });
                             $('#popupRedemption').jqxWindow({ showCloseButton: true });
                             $('#popupRedemption').jqxWindow({ animationType: 'combined' });
                             $('#popupRedemption').jqxWindow({ showAnimationDuration: 300 });
@@ -2666,9 +2695,10 @@
             {
                 datafields: [
                     { name: 'ReservationId' },
+                    { name: 'LocationId', map: 'LocationInformation>LocationId' },
                     { name: 'ReservationNumber' },
                     { name: 'NameOfLocation', map: 'LocationInformation>NameOfLocation' },
-                    { name: 'BrandName', map: 'LocationInformation>BrandInformation>BrandName' },
+                    { name: 'Description', map: 'LocationInformation>BrandInformation>Description' },
                     { name: 'EstimatedCost'},
                     { name: 'CreateDatetime' },
                     { name: 'StartDatetime' },
@@ -2707,15 +2737,16 @@
                 columnsresize: true,
                 columns: [
                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
+                      { text: 'LocationId', datafield: 'LocationId', hidden: true },
                       { text: 'Reservation Number', datafield: 'ReservationNumber', width: '9%' },
-                      { text: 'Location', datafield: 'ShortLocationName', width: '9%' },
-                      { text: 'Brand', datafield: 'BrandName', width: '5%' },
+                      { text: 'Location', datafield: 'NameOfLocation', width: '9%' },
+                      { text: 'Brand', datafield: 'Description', width: '7%' },
                       { text: 'Est Cost', datafield: 'EstimatedCost', width: '6%', cellsformat: 'c2' },
                       { text: 'Create Date', datafield: 'CreateDatetime', width: '12%', cellsrenderer: DateRender },
                       { text: 'Start Date', datafield: 'StartDatetime', width: '12%', cellsrenderer: DateTimeRender },
                       { text: 'End Date', datafield: 'EndDatetime', width: '12%', cellsrenderer: DateTimeRender },
                       { text: 'Status', datafield: 'ReservationStatusName', width: '9%' },
-                      { text: 'Note', datafield: 'MemberNote', width: '23%' }
+                      { text: 'Note', datafield: 'MemberNote', width: '21%' }
                 ]
             });
 
@@ -2725,32 +2756,76 @@
                 var offset = $("#jqxMemberInfoTabs").offset();
                 var thisMemberName = $("#FirstName").val() + '%20' + $("#LastName").val();
                 var toAddress = $("#EmailAddress").val();
-                var thisLocation = dataRecord.ShortLocationName;
-                var thisBrand = dataRecord.BrandName;
-                var thisStartDate = dataRecord.StartDatetime;
-                var thisEndDate = dataRecord.EndDatetime;
-                var thisReservationNumber = dataRecord.ReservationNumber
-                var thisEstCost = dataRecord.EstimatedCost;
+                var thisLocation = dataRecord.NameOfLocation;
+                var thisBrand = dataRecord.Description;
+                var thisStartDate = JsonDateTimeFormatNotMilitary(dataRecord.StartDatetime);
+                var thisEndDate = JsonDateTimeFormatNotMilitary(dataRecord.EndDatetime);
+                var thisReservationNumber = dataRecord.ReservationNumber;
+                var thisEstCost = "$" + Number(dataRecord.EstimatedCost).toFixed(2);
+                var thisLocationId = dataRecord.LocationId;
+                var thisCard = '62711601';
+
+                var griddata = $('#jqxCardGrid').jqxGrid('getdatainformation');
+                var rows = [];
+                for (var i = 0; i < griddata.rowscount; i++) {
+                    var data = $('#jqxCardGrid').jqxGrid('getrenderedrowdata', i);
+                    if (data.IsPrimary == 1) {
+                        thisCard = thisCard + data.FPNumber;
+                        break;
+                    }
+                }
+
+
+                thisBrand = thisBrand.replace("&", "%26");
                 
+                var url = $("#apiDomain").val() + "locations/location-basics/" + thisLocationId;
 
-                $("#popupSendReservation").css('display', 'block');
-                $("#popupSendReservation").css('visibility', 'hidden');
+                $.ajax({
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json",
+                        "AccessToken": $("#userGuid").val(),
+                        "ApplicationKey": $("#AK").val()
+                    },
+                    type: "GET",
+                    async: true,
+                    url: url,
+                    dataType: "json",
+                    success: function (data) {
+                        var thisManager = data.result.data.Manager;
+                        var thisManagerEmail = data.result.data.ManagerEmail;
+                        var thisManagerPhone = data.result.data.LocationPhoneNumber;
+                        var thisLocationAddress = data.result.data.LocationAddress;
+                        var thisLocationCity = data.result.data.LocationCity;
+                        var thisLocationZipCode = data.result.data.LocationZipCode;
+                        var thisManagerState = data.result.data.State.StateAbbreviation;
 
-                $("#popupSendReservation").jqxWindow({ position: { x: '10%', y: '7%' } });
-                $('#popupSendReservation').jqxWindow({ resizable: true });
-                $('#popupSendReservation').jqxWindow({ draggable: true });
-                $('#popupSendReservation').jqxWindow({ isModal: true });
-                $("#popupSendReservation").css("visibility", "visible");
-                $('#popupSendReservation').jqxWindow({ height: '750px', width: '50%' });
-                $('#popupSendReservation').jqxWindow({ minHeight: '270px', minWidth: '10%' });
-                $('#popupSendReservation').jqxWindow({ maxHeight: '800px', maxWidth: '60%' });
-                $('#popupSendReservation').jqxWindow({ showCloseButton: true });
-                $('#popupSendReservation').jqxWindow({ animationType: 'combined' });
-                $('#popupSendReservation').jqxWindow({ showAnimationDuration: 300 });
-                $('#popupSendReservation').jqxWindow({ closeAnimationDuration: 500 });
-                $("#popupSendReservation").jqxWindow('open');
+                        $("#popupSendReservation").css('display', 'block');
+                        $("#popupSendReservation").css('visibility', 'hidden');
 
-                document.getElementById('ReservationIframe').src = './ReservationDisplay.aspx?thisMemberName=' + thisMemberName + '&thisEmailAddress=' + toAddress + '&thisLocation=' + thisLocation + '&thisBrand=' + thisBrand + '&thisStartDate=' + thisStartDate + '&thisEndDate=' + thisEndDate + '&thisReservationNumber=' + thisReservationNumber + '&thisEstCost=' + thisEstCost;
+                        $("#popupSendReservation").jqxWindow({ position: { x: '10%', y: '7%' } });
+                        $('#popupSendReservation').jqxWindow({ resizable: true });
+                        $('#popupSendReservation').jqxWindow({ draggable: true });
+                        $('#popupSendReservation').jqxWindow({ isModal: true });
+                        $("#popupSendReservation").css("visibility", "visible");
+                        $('#popupSendReservation').jqxWindow({ height: '750px', width: '50%' });
+                        $('#popupSendReservation').jqxWindow({ minHeight: '270px', minWidth: '10%' });
+                        $('#popupSendReservation').jqxWindow({ maxHeight: '800px', maxWidth: '60%' });
+                        $('#popupSendReservation').jqxWindow({ showCloseButton: true });
+                        $('#popupSendReservation').jqxWindow({ animationType: 'combined' });
+                        $('#popupSendReservation').jqxWindow({ showAnimationDuration: 300 });
+                        $('#popupSendReservation').jqxWindow({ closeAnimationDuration: 500 });
+                        $("#popupSendReservation").jqxWindow('open');
+
+                        document.getElementById('ReservationIframe').src = './ReservationDisplay.aspx?thisMemberName=' + thisMemberName + '&thisEmailAddress=' + toAddress + '&thisLocation=' + thisLocation + '&thisBrand=' + thisBrand + '&thisStartDate=' + thisStartDate + '&thisEndDate=' + thisEndDate + '&thisReservationNumber=' + thisReservationNumber + '&thisEstCost=' + thisEstCost + '&thisManager=' + thisManager + '&thisManagerEmail=' + thisManagerEmail + '&thisLocationAddress=' + thisLocationAddress + '&thisLocationCity=' + thisLocationCity + '&thisLocationZipCode=' + thisLocationZipCode + '&thisManagerState=' + thisManagerState + '&thisManagerPhone=' + thisManagerPhone + '&thisCard=' + thisCard;
+                    },
+                    error: function (request, status, error) {
+                        swal("There was an issue getting the thank you information.");
+                    }
+                });
+
+
+                
 
             });
         }
@@ -2836,6 +2911,7 @@
                 height: 24,
                 source: statusDataAdapter,
                 selectedIndex: 0,
+                autoDropDownHeight: true,
                 displayMember: "PreferredStatusName",
                 valueMember: "PreferredStatusId"
             });
@@ -3705,13 +3781,13 @@
                     $("#popupRedemption").css('visibility', 'hidden');
 
                     $("#popupRedemption").jqxWindow({ position: { x: '25%', y: '7%' } });
-                    $('#popupRedemption').jqxWindow({ resizable: false });
                     $('#popupRedemption').jqxWindow({ draggable: true });
                     $('#popupRedemption').jqxWindow({ isModal: true });
+                    $('#popupRedemption').jqxWindow({ resizable: false });
                     $("#popupRedemption").css("visibility", "visible");
-                    $('#popupRedemption').jqxWindow({ height: '675px', width: '35%' });
-                    $('#popupRedemption').jqxWindow({ minHeight: '270px', minWidth: '10%' });
-                    $('#popupRedemption').jqxWindow({ maxHeight: '700px', maxWidth: '50%' });
+                    $('#popupRedemption').jqxWindow({ maxHeight: 700 });
+                    $('#popupRedemption').jqxWindow({ minHeight: 700 });
+                    $('#popupRedemption').jqxWindow({ height: 700, width: 500 });
                     $('#popupRedemption').jqxWindow({ showCloseButton: true });
                     $('#popupRedemption').jqxWindow({ animationType: 'combined' });
                     $('#popupRedemption').jqxWindow({ showAnimationDuration: 300 });
@@ -3980,7 +4056,13 @@
 
                     glbCompanyId = thisData.result.data.CompanyId;
                     //alert(thisData.result.data.CompanyId);
-                    $("#statusCombo").jqxComboBox('selectItem', thisData.result.data.PreferredStatusName);
+
+                    if (thisData.result.data.PreferredStatus == null) {
+                        var statusId = 0;
+                    } else {
+                        var statusId = thisData.result.data.PreferredStatus.PreferredStatusId;
+                    }
+                    $("#statusCombo").jqxComboBox('selectItem', statusId);
 
                     VerifyMemberThankYou(true);
                     
@@ -4878,7 +4960,7 @@
                                 </div>
                                 <div class="col-sm-1 col-md-1"></div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="display:none;">
                                 <label for="reservationFeeIdCombo" class="col-sm-3 col-md-3 control-label">Fee in $:</label>
                                 <div class="col-sm-3 col-md-3">
                                     <input id="reservationFeeInput" /><input id="reservationFeeInputValue" style="display:none;" />
@@ -4889,13 +4971,6 @@
                                 </div>
                                 <div class="col-sm-1 col-md-1"></div>
                             </div>
-                            <%--<div class="form-group">
-                                <label for="reservationFeePoints" class="col-sm-2 col-md-3 control-label">Fee in Points:</label>
-                                <div class="col-sm-9 col-md-8">
-                                    <input type="text" id="" />
-                                </div>
-                                <div class="col-sm-1 col-md-1"></div>
-                            </div>--%>
                             <div class="form-group">
                                 <label for="reservationFeatures" class="col-sm-2 col-md-3 control-label">Features:</label>
                                 <div class="col-sm-9 col-md-8">
@@ -4903,20 +4978,20 @@
                                 </div>
                                 <div class="col-sm-1 col-md-1"></div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="display:none;">
                                 <label for="reservationPaymentMethodId" class="col-sm-2 col-md-3 control-label">Payment Method:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <div id="reservationPaymentMethodId"></div>
                                 </div>
                                 <div class="col-sm-1 col-md-1"></div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="display:none;">
                                 <label for="reservationFeeCreditCombo" class="col-sm-2 col-md-3 control-label">Credits:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <div id="reservationFeeCreditCombo"></div>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="display:none;">
                                 <label for="reservationFeeDiscountIdGrid" class="col-sm-2 col-md-3 control-label">Discounts:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <div id="reservationFeeDiscountIdDDB">
@@ -5026,7 +5101,7 @@
     <div id="popupRedemption" style="display: none;">
         <div>Redemption Details</div>
         <div style="margin-left:20px;margin-top:10px;overflow:hidden;">
-            <iframe id="redemptionIframe" style="border:none;width:850px;height:700px;" ></iframe>
+            <iframe id="redemptionIframe" style="border:none;width:450px;height:775px;" ></iframe>
         </div>
     </div>
 

@@ -91,12 +91,13 @@ function loadReservationLocationCombo() {
         type: "Get",
         root: "data",
         datafields: [
-            { name: 'NameOfLocation' },
+            { name: 'ShortLocationName' },
             { name: 'LocationId' }
         ],
         url: $("#localApiDomain").val() + "Locations/Locations/",
 
     };
+
     var locationDataAdapter = new $.jqx.dataAdapter(locationSource);
     $("#reservationLocationCombo").jqxComboBox(
     {
@@ -105,9 +106,10 @@ function loadReservationLocationCombo() {
         height: 24,
         source: locationDataAdapter,
         selectedIndex: 0,
-        displayMember: "NameOfLocation",
+        displayMember: "ShortLocationName",
         valueMember: "LocationId"
     });
+
     $("#reservationLocationCombo").on('change', function (event) {
         var thisLocationId = $("#reservationLocationCombo").jqxComboBox('getSelectedItem').value;
         loadReservationFeatures(thisLocationId)

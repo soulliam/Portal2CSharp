@@ -1,23 +1,29 @@
-﻿function addReservation() {
+﻿function addReservation(ReservationFeeId, ConnectionCheck) {
     var thisMemberId = $("#MemberId").val();;
     var thisLocationId = $("#reservationLocationCombo").jqxComboBox('getSelectedItem').value;
     var thisStartDatetime = $("#reservationStartDate").val();
     var thisEndDatetime = $("#reservationEndDate").val();;
-    var thisReservationFeeId = $("#reservationFeeInputValue").val();
-    var thisPaymentMethodId = $("#reservationPaymentMethodId").jqxComboBox('getSelectedItem').value;
+    var thisReservationFeeId = ReservationFeeId;
+    
+    if (ConnectionCheck.includes("pcafp-stg-api")) {
+        var thisPaymentMethodId = 8;  //hard coded for payment method ID 8 "member rewards" no payment method STAGE
+    } else {
+        var thisPaymentMethodId = 7;  //hard coded for payment method ID 8 "member rewards" no payment PRODUCTION
+    }
+    var thisPaymentMethodId = 8;  //hard coded for payment method ID 8 "member rewards" no payment method
     var thisFeeDollars = $("#reservationFeeInput").val();
     var thisFeePoints = $("#reservationFeePointsInput").val();
     if (typeof $("#reservationFeeCreditCombo").jqxComboBox('getSelectedItem') != "undefined" && $("#reservationFeeCreditCombo").jqxComboBox('getSelectedItem') != null && $("#reservationFeeCreditCombo").jqxComboBox('getSelectedItem') != '') {
         var thisReservationFeeCreditId = $("#reservationFeeCreditCombo").jqxComboBox('getSelectedItem').value;
     } else {
-        var thisReservationFeeCreditId = "";
+        var thisReservationFeeCreditId = 0;
     }
 
     if (typeof $("#reservationFeeDiscountIdGrid").jqxGrid('getselectedrowindex') != "undefined" && $("#reservationFeeDiscountIdGrid").jqxGrid('getselectedrowindex') != null && $("#reservationFeeDiscountIdGrid").jqxGrid('getselectedrowindex') != -1) {
         var data = $('#reservationFeeDiscountIdGrid').jqxGrid('getrowdata', $("#reservationFeeDiscountIdGrid").jqxGrid('getselectedrowindex'));
         var thisReservationFeeDiscountId = data.ReservationFeeDiscountId;
     } else {
-        var thisReservationFeeDiscountId = "";
+        var thisReservationFeeDiscountId = 0;
     }
 
     var thisCreditCardId = '';
@@ -34,29 +40,35 @@
         "EndDatetime": thisEndDatetime,
         "ReservationFeeId": thisReservationFeeId,
         "PaymentMethodId": thisPaymentMethodId,
-        "FeeDollars": thisFeeDollars,
-        "FeePoints": thisFeePoints,
+        "FeeDollars": 0,
+        "FeePoints": 0,
         "ReservationFeeCreditId": thisReservationFeeCreditId,
         "ReservationFeeDiscountId": thisReservationFeeDiscountId,
-        "CreditCardId": thisCreditCardId,
-        "PayPalPaymentId": "",
-        "PayPalPayerId": "",
+        "CreditCardId": null,
+        "PayPalPaymentId": null,
+        "PayPalPayerId": null,
+        "ReservationSource":"undefined",
         "EstimatedReservationCost": thisEstimatedReservationCost,
         "MemberNote": thisMemberNote,
         "TermsAndConditionsFlag": thisTermsAndConditionsFlag,
         "SendNotificationsFlag": thisSendNotificationsFlag,
-        "SaveReservationPreferencesFlag": thisSaveReservationPreferencesFlag
+        "SaveReservationPreferencesFlag": thisSaveReservationPreferencesFlag,
+        "CreditCard": null
     };
 
 
     data.ReservationFeatures = new Array();
     var items = $("#reservationFeatures").jqxComboBox('getCheckedItems');
     var checkedItems = "";
+
     $.each(items, function (index) {
         data.ReservationFeatures.push({
             "LocationHasFeatureId": this.value
         });
     });
+
+
+    var test = JSON.stringify(data);
 
     $.ajax({
         headers: {
@@ -69,11 +81,15 @@
         data: JSON.stringify(data),
         url: $("#apiDomain").val() + "reservations/",
         dataType: "json",
-        success: function () {
+        success: function (data) {
             swal("Reservation Created.")
         },
-        error: function (request, status, error) {
-            swal(error);
+        error: function (message) {
+            $("#popupReservation").jqxWindow('close');
+            swal(message.responseJSON.message)
+            .then((value) => {
+                $("#popupReservation").jqxWindow('open');
+            })
         },
         complete: function () {
             loadReservations(thisMemberId);
@@ -83,6 +99,8 @@
 
 
 function loadReservationLocationCombo() {
+    $("#reservationLocationCombo").jqxComboBox('clear');
+
     //set up the location combobox
     var locationSource =
     {
@@ -107,6 +125,7 @@ function loadReservationLocationCombo() {
         displayMember: "NameOfLocation",
         valueMember: "LocationId"
     });
+
     $("#reservationLocationCombo").on('change', function (event) {
         var thisLocationId = $("#reservationLocationCombo").jqxComboBox('getSelectedItem').value;
         loadReservationFeatures(thisLocationId)
@@ -141,36 +160,86 @@ function loadReservationCalendars() {
 }
 
 function loadReservationFeatures(thisLocationId) {
-    //set up the location combobox
-    var featureSource =
-    {
-        datatype: "json",
-        type: "Get",
-        root: "data",
-        datafields: [
-            { name: 'FeatureName', map: 'LocationFeature>FeatureName' },
-            { name: 'FeatureId', map: 'LocationFeature>FeatureId' }
-        ],
-        beforeSend: function (jqXHR, settings) {
-            jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
-            jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
-        },
-        //url: $("#apiDomain").val() + "locations/location-has-feature/" + thisLocationId,
-        //https://api.thefastpark.com/api/v1/locations/2/features
-        url: $("#apiDomain").val() + "locations/" + thisLocationId + "/features/",
-    };
+    $("#reservationFeatures").jqxComboBox('clear');
 
-    var featureDataAdapter = new $.jqx.dataAdapter(featureSource);
-    $("#reservationFeatures").jqxComboBox(
-    {
-        width: 400,
-        height: 25,
-        source: featureDataAdapter,
-        selectedIndex: 0,
-        checkboxes: true,
-        displayMember: "FeatureName",
-        valueMember: "FeatureId"
+    url = $("#apiDomain").val() + "locations/" + thisLocationId + "/features/";
+
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        beforeSend: function (jqXHR, settings) {
+            jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
+            jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+        },
+        success: function (thisdata) {
+
+            removeFeatureIsDisplayedOptionalExtraFalse(thisdata);
+
+            var source =
+                {
+                    localdata: thisdata,
+                    datatype: "json",
+                    root: "data",
+                    datafields: [
+                    { name: 'FeatureName', map: 'LocationFeature>FeatureName' },
+                    { name: 'LocationHasFeatureId' }
+                    ]
+                };
+            var featureDataAdapter = new $.jqx.dataAdapter(source);
+            $("#reservationFeatures").jqxComboBox(
+            {
+                width: 400,
+                height: 25,
+                source: featureDataAdapter,
+                selectedIndex: 0,
+                checkboxes: true,
+                autoDropDownHeight: true,
+                displayMember: "FeatureName",
+                valueMember: "LocationHasFeatureId"
+            });
+
+        },
+        error: function (request, status, error) {
+            $("#popupReservation").jqxWindow('close');
+            swal(request.responseJSON.message)
+            .then((value) => {
+                $("#popupReservation").jqxWindow('open');
+            })
+        }
     });
+
+
+    ////set up the ReservationFeatures combobox
+    //var featureSource =
+    //{
+    //    datatype: "json",
+    //    type: "Get",
+    //    root: "data",
+    //    datafields: [
+    //        { name: 'FeatureName', map: 'LocationFeature>FeatureName' },
+    //        { name: 'LocationHasFeatureId' }
+    //    ],
+    //    beforeSend: function (jqXHR, settings) {
+    //        jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+    //        jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
+    //    },
+    //    //url: $("#apiDomain").val() + "locations/location-has-feature/" + thisLocationId,
+    //    //https://api.thefastpark.com/api/v1/locations/2/features
+    //    url: $("#apiDomain").val() + "locations/" + thisLocationId + "/features/",
+    //};
+
+    //var featureDataAdapter = new $.jqx.dataAdapter(featureSource);
+    //$("#reservationFeatures").jqxComboBox(
+    //{
+    //    width: 400,
+    //    height: 25,
+    //    source: featureDataAdapter,
+    //    selectedIndex: 0,
+    //    checkboxes: true,
+    //    displayMember: "FeatureName",
+    //    valueMember: "LocationHasFeatureId"
+    //});
 }
 
 function loadReservationPaymentMethodId() {
@@ -349,7 +418,11 @@ function getEstCost(MemberId) {
             }
         },
         error: function (request, status, error) {
-            swal(request.responseJSON.message);
+            $("#popupReservation").jqxWindow('close');
+            swal(request.responseJSON.message)
+            .then((value) => {
+                $("#popupReservation").jqxWindow('open');
+            })
         }
     });
 
@@ -399,3 +472,12 @@ function getReservationFeeCredit() {
     });
 
 };
+
+function removeFeatureIsDisplayedOptionalExtraFalse(data) {
+    for (var i = 0; i < data.result.data.length; i++) {
+        if (data.result.data[i].IsDisplayedOptionalExtra == false) {
+            data.result.data.splice(i, 1);
+            removeFeatureIsDisplayedOptionalExtraFalse(data);
+        }
+    }
+}
