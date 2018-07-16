@@ -13,7 +13,11 @@
 
            if (group.indexOf("Portal_Mechanic") <= 0 && group.indexOf("Portal_Superadmin") <= 0 && group.indexOf("Portal_Manager") <= 0 && group.indexOf("Portal_Vehiclesadmin") <= 0 && group.indexOf("Portal_Asstmanager") <= 0) {
                 $(location).attr('href', "http://www.thefastpark.com");
-            }
+           }
+
+           //if (group.indexOf("Portal_Superadmin") > -1) {
+           //    $("#thisFrame").attr('src', "http://192.168.0.56:8282/Restricted/ManagerDashboard.aspx");
+           //}
 
             $("#jqxLoader").jqxLoader({ width: 100, height: 60, imagePosition: 'top' });
             

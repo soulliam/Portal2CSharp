@@ -224,4 +224,22 @@ public partial class MemberSearch : System.Web.UI.Page
             return Convert.ToString(ex);
         }
     }
+
+    [System.Web.Services.WebMethod]
+    public static string logRedemptionReturnstring (string thisUserName, string thisRedemptionId, string thisCertificateId, string thisMemberId)
+    {
+        try
+        {
+
+            clsLogging logSearch = new clsLogging();
+
+            logSearch.logChange(thisUserName, thisMemberId, thisRedemptionId, thisCertificateId, "", "Redemption Return", logSearch.getBatch());
+
+            return "Sucsses";
+        }
+        catch (Exception ex)
+        {
+            return Convert.ToString(ex);
+        }
+    }
 }

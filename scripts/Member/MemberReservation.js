@@ -10,7 +10,7 @@
     } else {
         var thisPaymentMethodId = 7;  //hard coded for payment method ID 8 "member rewards" no payment PRODUCTION
     }
-    var thisPaymentMethodId = 8;  //hard coded for payment method ID 8 "member rewards" no payment method
+    
     var thisFeeDollars = $("#reservationFeeInput").val();
     var thisFeePoints = $("#reservationFeePointsInput").val();
     if (typeof $("#reservationFeeCreditCombo").jqxComboBox('getSelectedItem') != "undefined" && $("#reservationFeeCreditCombo").jqxComboBox('getSelectedItem') != null && $("#reservationFeeCreditCombo").jqxComboBox('getSelectedItem') != '') {
@@ -149,14 +149,14 @@ function loadReservationLocationCombo() {
 
 // set up reservation start date
 function loadReservationCalendars() {
-    $("#reservationStartDate").jqxDateTimeInput({ formatString: 'MM-dd-yyyy HH:mm', showTimeButton: true, width: '400px', height: '25px' });
+    $("#reservationStartDate").jqxDateTimeInput({ formatString: 'MM-dd-yyyy hh:mm tt', showTimeButton: true, width: '400px', height: '25px' });
     $('#reservationStartDate').on('change', function (event) {
         var thisDate = event.args.date;
         var type = event.args.type;
 
         setReservationFee(thisDate);
     });
-    $("#reservationEndDate").jqxDateTimeInput({ formatString: 'MM-dd-yyyy HH:mm', showTimeButton: true, width: '400px', height: '25px' });
+    $("#reservationEndDate").jqxDateTimeInput({ formatString: 'MM-dd-yyyy hh:mm tt', showTimeButton: true, width: '400px', height: '25px' });
 }
 
 function loadReservationFeatures(thisLocationId) {

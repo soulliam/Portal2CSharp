@@ -300,6 +300,28 @@ var DateTimeRender = function (row, columnfield, value, defaulthtml, columnprope
 
 };
 
+var DateTimeRenderNotMilitary = function (row, columnfield, value, defaulthtml, columnproperties) {
+    // format date as string due to inconsistant date coversions
+    switch (value) {
+        case '0001-01-01T00:00:00':
+            return '<div style="margin-top: 10px;margin-left: 5px">&nbsp;</div>';
+            break;
+        default:
+            var thisDateTime = value;
+
+            if (thisDateTime != "") {
+
+                var newDate = JsonDateTimeFormatNotMilitary(thisDateTime);
+
+                return '<div style="margin-top: 10px;margin-left: 5px">' + newDate + '</div>';
+            } else {
+                return "";
+            }
+            break;
+    }
+
+};
+
 //Pad number
 function padNumber(i, l, s) {
     //leave s blank to return zeros
@@ -505,7 +527,7 @@ var locatioinCellsrenderer = function (row, columnfield, value, defaulthtml, col
             return '<div style="margin-top: 10px;margin-left: 5px">Memphis</div>';
             break;
         case 16:
-            return '<div style="margin-top: 10px;margin-left: 5px">Houston</div>';
+            return '<div style="margin-top: 10px;margin-left: 5px">Houston WC</div>';
             break;
         case 17:
             return '<div style="margin-top: 10px;margin-left: 5px">Indianapolis</div>';

@@ -186,6 +186,10 @@
 
 
             Security();
+
+            //if (group.indexOf("Portal_Vehiclesadmin") > -1) {
+            //    $('#update').removeClass('disabled');
+            //}
         });
 
         function openEmail() {

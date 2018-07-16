@@ -102,8 +102,8 @@
             //Loads SearchList from parameters
 
             //var url = $("#apiDomain").val() + "members/search?" + thisParameters;
-            var url = "http://localhost:52839/api/SearchTransactions/SearchTransactions/";
-            //var url = $("#localApiDomain").val() + "SearchTransactions/SearchTransactions/";
+            //var url = "http://localhost:52839/api/SearchTransactions/SearchTransactions/";
+            var url = $("#localApiDomain").val() + "SearchTransactions/SearchTransactions/";
 
             if (calendarChanged == false) {
                 var thisEntryDate = '';

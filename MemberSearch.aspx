@@ -648,7 +648,9 @@
                     var thisMemberId = $("#MemberId").val();
                     var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
                     var ProcessList = "";
+                    var CertificateList = "";
                     var first = true;
+                    var thisLoggedinUsername = $("#txtLoggedinUsername").val();
 
 
                     if (getselectedrowindexes.length > 0) {
@@ -663,14 +665,17 @@
 
                             if (first == true) {
                                 ProcessList = ProcessList + selectedRowData.RedemptionId;
+                                CertificateList = CertificateList + selectedRowData.CertificateId;
                                 first = false;
                             }
                             else {
                                 ProcessList = ProcessList + "," + selectedRowData.RedemptionId;
+                                CertificateList = CertificateList + "," + selectedRowData.CertificateId;
                             }
                         }
 
                         var thisRedemptionList = ProcessList.split(",");
+                        var thisCertificateList = CertificateList.split(",");
 
                     }
                     else {
@@ -680,6 +685,8 @@
                     for (var i = 0, len = thisRedemptionList.length; i < len; i++) {
 
                         var putUrl = $("#apiDomain").val() + "members/" + thisMemberId + "/redemptions/" + thisRedemptionList[i];
+                        var thisRedemptionID = thisRedemptionList[i];
+                        var thisCertificateId = thisCertificateList[i];
 
                         $.ajax({
                             headers: {
@@ -699,6 +706,7 @@
                                 $("#topPointsBalanceAccountBar").html(loadPoints(AccountId, $("#topPointsBalanceAccountBar")));
                                 loadRedemptions(thisMemberId);
                                 loadMemberActivity(thisMemberId);
+                                PageMethods.logRedemptionReturnstring(thisLoggedinUsername, thisRedemptionID, thisCertificateId, thisMemberId);
                             },
                             error: function (request, status, error) {
                                 swal(error + " - " + request.responseJSON.message);
@@ -1268,7 +1276,7 @@
                 var thisPerformedByUserId = null;
                 var thisSubmittedByUserId = null;
 
-                thisNotes = thisNotes.replace("'", "''");
+                thisNotes = thisNotes.split("'").join("''");
 
                 
                 $.ajax({
@@ -2263,63 +2271,63 @@
 
         function loadAccountActivity() {
 
-            var parent = $("#jqxAccountActivityGrid").parent();
-            $("#jqxAccountActivityGrid").jqxGrid('destroy');
-            $("<div id='jqxAccountActivityGrid'></div>").appendTo(parent);
+            //var parent = $("#jqxAccountActivityGrid").parent();
+            //$("#jqxAccountActivityGrid").jqxGrid('destroy');
+            //$("<div id='jqxAccountActivityGrid'></div>").appendTo(parent);
 
-            //Loads card list
-            var url = $("#apiDomain").val() + "accounts/" + AccountId + "/activity?StartDate=1/1/1900&EndDate=1/1/9999&Limit=";
+            ////Loads card list
+            //var url = $("#apiDomain").val() + "accounts/" + AccountId + "/activity?StartDate=1/1/1900&EndDate=1/1/9999&Limit=";
 
 
-            var source =
-            {
-                datafields: [
-                    { name: 'MemberId' },
-                    { name: 'ParkingTransactionNumber' },
-                    { name: 'ManualEditsId' },
-                    { name: 'RedemptionId' },
-                    { name: 'PointsChanged' },
-                    { name: 'Description' },
-                    { name: 'LocationId' },
-                    { name: 'Date' }
-                ],
+            //var source =
+            //{
+            //    datafields: [
+            //        { name: 'MemberId' },
+            //        { name: 'ParkingTransactionNumber' },
+            //        { name: 'ManualEditsId' },
+            //        { name: 'RedemptionId' },
+            //        { name: 'PointsChanged' },
+            //        { name: 'Description' },
+            //        { name: 'LocationId' },
+            //        { name: 'Date' }
+            //    ],
 
-                type: 'Get',
-                datatype: 'json',
-                url: url,
-                beforeSend: function (jqXHR, settings) {
-                    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
-                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
-                },
-                root: 'result>data>ActivityHistory'
-            };
+            //    type: 'Get',
+            //    datatype: 'json',
+            //    url: url,
+            //    beforeSend: function (jqXHR, settings) {
+            //        jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
+            //        jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+            //    },
+            //    root: 'result>data>ActivityHistory'
+            //};
 
-            // create Account Activity Grid
-            $("#jqxAccountActivityGrid").jqxGrid(
-            {
+            //// create Account Activity Grid
+            //$("#jqxAccountActivityGrid").jqxGrid(
+            //{
 
-                pageable: true,
-                pagermode: 'simple',
-                pagesize: 12,
-                width: '100%',
-                height: 500,
-                source: source,
-                rowsheight: 35,
-                sortable: true,
-                altrows: true,
-                filterable: true,
-                columnsresize: true,
-                columns: [
-                      { text: 'Member Id', datafield: 'MemberId', hidden: true },
-                      { text: 'ParkingTransactionNumber', datafield: 'ParkingTransactionNumber', width: '20%' },
-                      { text: 'ManualEditsId', datafield: 'ManualEditsId', hidden: true },
-                      { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
-                      { text: 'Points Changed', datafield: 'PointsChanged', width: '10%' },
-                      { text: 'Description', datafield: 'Description', width: '50%' },
-                      { text: 'Location', datafield: 'LocationId', width: '10%', cellsrenderer: locatioinCellsrenderer },
-                      { text: 'Date', datafield: 'Date', width: '10%', cellsrenderer: DateRender }
-                ]
-            });
+            //    pageable: true,
+            //    pagermode: 'simple',
+            //    pagesize: 12,
+            //    width: '100%',
+            //    height: 500,
+            //    source: source,
+            //    rowsheight: 35,
+            //    sortable: true,
+            //    altrows: true,
+            //    filterable: true,
+            //    columnsresize: true,
+            //    columns: [
+            //          { text: 'Member Id', datafield: 'MemberId', hidden: true },
+            //          { text: 'ParkingTransactionNumber', datafield: 'ParkingTransactionNumber', width: '20%' },
+            //          { text: 'ManualEditsId', datafield: 'ManualEditsId', hidden: true },
+            //          { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
+            //          { text: 'Points Changed', datafield: 'PointsChanged', width: '10%' },
+            //          { text: 'Description', datafield: 'Description', width: '50%' },
+            //          { text: 'Location', datafield: 'LocationId', width: '10%', cellsrenderer: locatioinCellsrenderer },
+            //          { text: 'Date', datafield: 'Date', width: '10%', cellsrenderer: DateRender }
+            //    ]
+            //});
         }
 
         function loadSearchResults(thisParameters) {
@@ -2340,7 +2348,7 @@
 
                 thisFPNumber = thisFPNumber.replace(/\D/g, '');
 
-                thisFPNumber = padNumber(thisFPNumber, 8, "0");
+                //thisFPNumber = padNumber(thisFPNumber, 8, "0");
             } else {
                 thisFPNumber = "";
             }
@@ -2349,12 +2357,24 @@
                
             }
 
+            
+            if ($("#SearchPhoneNumber").val() != '') {
+                var thisPhoneNumber = $("#SearchPhoneNumber").val();
+
+                thisPhoneNumber = thisPhoneNumber.replace(/\D/g, '');
+
+                //thisFPNumber = padNumber(thisFPNumber, 8, "0");
+            } else {
+                thisPhoneNumber = "";
+            }
+
+
             var data = {
                 "FPNumber": thisFPNumber,
                 "FirstName": $("#SearchFirstName").val(),
                 "LastName": $("#SearchLastName").val(),
                 "EmailAddress": $("#SearchEmail").val(),
-                "HomePhone": $("#SearchPhoneNumber").val(),
+                "HomePhone": thisPhoneNumber,
                 "Company": $("#SearchCompany").val(),
                 "MailerCompany": $("#MailerCompanySearchCombo").jqxInput('val').value,
                 "MarketingCode": $("#SearchMailerCode").val(),
@@ -2429,14 +2449,14 @@
                           }
                       },
                       { text: 'First Name', datafield: 'FirstName', width: '10%' },
-                      { text: 'Last Name', datafield: 'LastName', width: '12%' },
+                      { text: 'Last Name', datafield: 'LastName', width: '16%' },
                       { text: 'Primary Card', datafield: 'FPNumber', width: '8%' },
                       { text: 'Company', datafield: 'Company', width: '14%' },
                       { text: 'Email', datafield: 'EmailAddress', width: '18%' },
                       { text: 'Home', datafield: 'Home', width: '10%' },
                       { text: 'UserName', datafield: 'UserName', width: '10%' },
-                      { text: 'CompanyId', datafield: 'CompanyId', width: '7%' },
-                      { text: 'MemberId', datafield: 'MemberId', width: '8%'},
+                      { text: 'CompanyId', datafield: 'CompanyId', width: '12%' },
+                      { text: 'MemberId', datafield: 'MemberId', hidden: true }
                 ]
             });
 
@@ -2695,9 +2715,9 @@
             {
                 datafields: [
                     { name: 'ReservationId' },
-                    { name: 'LocationId', map: 'LocationInformation>LocationId' },
+                    //{ name: 'LocationId', map: 'LocationInformation>LocationId' },
                     { name: 'ReservationNumber' },
-                    { name: 'NameOfLocation', map: 'LocationInformation>NameOfLocation' },
+                    { name: 'LocationId', map: 'LocationInformation>LocationId' },
                     { name: 'Description', map: 'LocationInformation>BrandInformation>Description' },
                     { name: 'EstimatedCost'},
                     { name: 'CreateDatetime' },
@@ -2737,14 +2757,14 @@
                 columnsresize: true,
                 columns: [
                       { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
-                      { text: 'LocationId', datafield: 'LocationId', hidden: true },
+                      //{ text: 'LocationId', datafield: 'LocationId', hidden: true },
                       { text: 'Reservation Number', datafield: 'ReservationNumber', width: '9%' },
-                      { text: 'Location', datafield: 'NameOfLocation', width: '9%' },
+                      { text: 'Location', datafield: 'LocationId', width: '9%', cellsrenderer: locatioinCellsrenderer },
                       { text: 'Brand', datafield: 'Description', width: '7%' },
                       { text: 'Est Cost', datafield: 'EstimatedCost', width: '6%', cellsformat: 'c2' },
                       { text: 'Create Date', datafield: 'CreateDatetime', width: '12%', cellsrenderer: DateRender },
-                      { text: 'Start Date', datafield: 'StartDatetime', width: '12%', cellsrenderer: DateTimeRender },
-                      { text: 'End Date', datafield: 'EndDatetime', width: '12%', cellsrenderer: DateTimeRender },
+                      { text: 'Start Date', datafield: 'StartDatetime', width: '12%', cellsrenderer: DateTimeRenderNotMilitary },
+                      { text: 'End Date', datafield: 'EndDatetime', width: '12%', cellsrenderer: DateTimeRenderNotMilitary },
                       { text: 'Status', datafield: 'ReservationStatusName', width: '9%' },
                       { text: 'Note', datafield: 'MemberNote', width: '21%' }
                 ]
@@ -2915,6 +2935,15 @@
                 displayMember: "PreferredStatusName",
                 valueMember: "PreferredStatusId"
             });
+
+            $('#statusCombo').on('select', function (event) {
+                $("#dropdownlistContentstatusCombo").children().css({ "background-color": "white" });
+                var item = $("#statusCombo").jqxComboBox('getSelectedItem');
+                if (item.originalItem.PreferredStatusId < 4) {
+                    $("#dropdownlistContentstatusCombo").children().css({ "background-color": "red" });
+                }
+            });
+
         }
 
         function loadCompaniesCombo() {
@@ -3645,6 +3674,8 @@
             var submittedBy = $("#txtLoggedinUsername").val();
 
             note = note.replace("'", "''");
+            note = note.replace("<", "");
+            note = note.replace(">", "");
 
             var testURL = $("#localApiDomain").val() + "MemberNotes/AddNote/";
 
@@ -3836,6 +3867,7 @@
             $("#ReservationConfirmationEmail").prop("checked", false);
             $("#ReservationReminder").prop("checked", false);
             $("#reservationFeeCreditCombo").jqxComboBox("clear");
+            $("#dropdownlistContentstatusCombo").children().css({ "background-color": "white" });
         }
 
         function findMember(PageMemberID) {
@@ -4000,9 +4032,11 @@
                     //Fill out member detail tab info
 
                     $("#topMemberSince").html(DateFormat(thisData.result.data.MemberSince));
+                    $("#topLastLogin").html(DateFormat(thisData.result.data.LastLogin));
                     if (thisData.result.data.Title != null) {
                         $("#Title").val(thisData.result.data.Title.TitleName);
-                        $("#topName").html(thisData.result.data.Title.TitleName + " " + thisData.result.data.FirstName + " " + thisData.result.data.LastName)
+                        //$("#topName").html(thisData.result.data.Title.TitleName + " " + thisData.result.data.FirstName + " " + thisData.result.data.LastName);
+                        $("#topName").html(thisData.result.data.FirstName + " " + thisData.result.data.LastName);
                     }
                     else
                     {
@@ -4016,6 +4050,7 @@
                     }
 
                     $("#MemberId").val(thisData.result.data.MemberId);
+                    $("#MemberIdViewable").html(thisData.result.data.MemberId);
                     $("#FirstName").val(thisData.result.data.FirstName);
                     $("#LastName").val(thisData.result.data.LastName);
                     $("#EmailAddress").val(thisData.result.data.EmailAddress);
@@ -4058,7 +4093,7 @@
                     //alert(thisData.result.data.CompanyId);
 
                     if (thisData.result.data.PreferredStatus == null) {
-                        var statusId = 0;
+                        var statusId = 5;
                     } else {
                         var statusId = thisData.result.data.PreferredStatus.PreferredStatusId;
                     }
@@ -4301,8 +4336,9 @@
     <div class="container-fluid container-970">
         <div class="row ">
             <div class="col-sm-12">
-                <div id="MemberDetails">
-                    <div>
+                <div id="MemberDetails" style="overflow:hidden">
+                    <%--The styling here is to move the accounts tab up and hide it/remove the styling to go back to accounts view--%>
+                    <div style="position:absolute; top:-50px; visibility:hidden">
                         <div id="jqxMemberTabs">
                                 
                             <ul>
@@ -4334,6 +4370,32 @@
                             </div>
                         </div>
                     </div>
+                    <%--This is having the member top line outside of the members tabs/comment this out to go back to Accounts view--%>
+                    <div class="wrapper" id="topLineDiv" style="display: grid;grid-template-columns: auto auto auto auto auto auto; background-color: lightgray;border-radius: 15px;padding:5px;margin-bottom:5px;">
+                        <div>
+                            <Label style="font-size:12px;margin-top:5px;color:black;font-weight: 750;" id="topName"></Label>
+                        </div>
+                        <div>
+                            <label style="font-size:12px;margin-top:5px;font;float:left;font-weight: 750;" id="statusLabel">Member Status:</label>
+                            <div id="statusCombo"></div>
+                        </div>
+                        <div>
+                            <label style="font-size:12px;margin-top:5px;font-weight: 750;" id="pointsLabel">Points Balance:</label>
+                            <label style="font-size:12px;margin-top:5px;color:red" id="topPointsBalance"></label>
+                        </div>
+                        <div>
+                            <label style="font-size:12px;margin-top:5px;font-weight: 750;" id="memberSinceLabel">Member Since:</label>
+                            <label style="font-size:12px;margin-top:5px;color:black" id="topMemberSince"></label>
+                        </div>
+                        <div>
+                            <label style="font-size:12px;margin-top:5px;font-weight: 750;" id="lastLoginLabel">Last Login:</label>
+                            <label style="font-size:12px;margin-top:5px;color:black" id="topLastLogin"></label>
+                        </div>
+                        <div>
+                            <label style="font-size:12px;margin-top:5px;font-weight: 750;" id="MemberIdViewableLabel">MemberId:</label>
+                            <label style="font-size:12px;margin-top:5px;color:black" id="MemberIdViewable"></label>
+                        </div>
+                    </div>
                     <div id="jqxMemberInfoTabs" class="tab-system">
                         <ul>
                             <li>Member Info</li>
@@ -4353,20 +4415,21 @@
                         <div id="tabMemberInfo" class="tab-body tabMemberInfo">
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <div class="bottom-divider">
-                                        <div>
+                                    <div class="bottom-divider" style="display:none">
+                                        <%--this is for having the top line in the member info tab--%>
+                                        <%--<div class="wrapper" id="topLineDiv" style="display: grid;grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto;">
                                             <Label id="topName" class="strong right-buffer-15"></Label>
+                                            <label id="statusLabel" class="strong right-buffer-15">Member Status:</label>
+                                            <div id="statusCombo"></div>
                                             <label id="pointsLabel" class="strong">Points Balance:</label>
                                             <label id="topPointsBalance" class="strong font-red right-buffer-15"></label>
-                                            <label id="lastLoginLabel" class="strong">Last Login:</label>
-                                            <label id="topLastLogin" class="font-normal right-buffer-15"></label>
                                             <label id="memberSinceLabel" class="strong">Member Since:</label>
                                             <label id="topMemberSince" class="font-normal"></label>
-                                            <div style="margin-left:50px;float:right;">
-                                                <label id="statusLabel" class="strong" style="float:left">Member Status:</label>
-                                                <div id="statusCombo" style="position:relative;margin-left:120px;"></div>
-                                            </div>
-                                        </div>
+                                            <label id="lastLoginLabel" class="strong">Last Login:</label>
+                                            <label id="topLastLogin" class="font-normal right-buffer-15"></label>
+                                            <label id="MemberIdViewableLabel" class="strong">MemberId:</label>
+                                            <label id="MemberIdViewable" class="font-normal right-buffer-15"></label>
+                                        </div>--%>
                                     
                                     </div>
                                 </div>

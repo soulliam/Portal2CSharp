@@ -357,7 +357,11 @@ function loadPoints(thisAccountId, textInput) {
 }
 
 function getCompanyName(CompanyID, jqxinput) {
-    
+    if (CompanyID == null) {
+        return 0;
+    }
+
+
     var url = $("#localApiDomain").val() + "CompanyDropDowns/GetCompanyName/" + CompanyID;
     //var url = "http://localhost:52839/api/CompanyDropDowns/GetCompanyName/" + CompanyID;
 
