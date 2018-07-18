@@ -831,6 +831,15 @@ public partial class CreateUser : System.Web.UI.Page
         clsADO select = new clsADO();
         object Location = "";
 
+        if (txtPassword.Text != "")
+        {
+            string passwordStrSQL = null;
+            passwordStrSQL = "EXECUTE aspnetdb.dbo.spEncodePlainPasswords '" + txtGUID.Text + "', '" + txtPassword.Text + "'";
+
+            clsADO updatePassword = new clsADO();
+            updatePassword.updateOrInsert(passwordStrSQL, false);
+        }
+
         //************************************************************************************************************************************************************************
 
         //Add User Login Locations that are not already there

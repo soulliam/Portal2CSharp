@@ -16,7 +16,7 @@
            }
 
            //if (group.indexOf("Portal_Superadmin") > -1) {
-           //    $("#thisFrame").attr('src', "http://192.168.0.56:8282/Restricted/ManagerDashboard.aspx");
+           //    $("#thisFrame").attr('src', "http://192.168.11.235:8282/Restricted/ManagerDashboard.aspx");
            //}
 
             $("#jqxLoader").jqxLoader({ width: 100, height: 60, imagePosition: 'top' });
@@ -34,7 +34,8 @@
     </script>
     <div id="jqxLoader"></div>
     <div style="width:100%;height:100%;text-align:center;margin: 0 auto">
-        <iframe id="thisFrame" src="http://192.168.0.56:8282/Restricted/VehicleSearch.aspx" style="width:1020px;background: transparent;border:none;" ></iframe>
+        <div><p style="font-size:xx-large;color:red;">Stage</p></div>
+        <iframe id="thisFrame" src="http://192.168.11.235:8282/Restricted/VehicleSearch.aspx" style="width:1020px;background: transparent;border:none;" ></iframe>
     </div>
 </asp:Content>
 
