@@ -239,6 +239,21 @@
                 autoBind: true
             });
 
+            var stateSource =
+             {
+                 datatype: "json",
+                 datafields: [
+                     { name: 'StateId' },
+                     { name: 'PostalAbrev' }
+                 ],
+                 url: $("#localApiDomain").val() + "VehicleStates/GetStates/",
+                 //url: "http://localhost:52839/api/VehicleStates/GetStates/"
+             };
+
+            var stateAdapter = new $.jqx.dataAdapter(stateSource, {
+                autoBind: true
+            });
+
             var insuranceValues = [
                 { value: "1", label: "Active" },
                 { value: "0", label: "In-Active" }
@@ -285,7 +300,8 @@
                     { name: 'InsuranceCode' },
                     { name: 'CoverageAdded' },
                     { name: 'CoverageRemoved' },
-                    { name: 'State' }
+                    { name: 'State', value: 'StateCode', values: { source: stateAdapter.records, value: 'StateId', name: 'PostalAbrev' } },
+                    { name: 'StateCode' },
                 ],
                 type: 'GET',
                 datatype: "json",
@@ -415,7 +431,12 @@
                               return '<div style="margin: 3px 0 0 3px;">Coverage<br>Removed</div>';
                           }
                       },
-                      { text: 'State', datafield: 'State', width: '3%' }
+                      {
+                          text: 'State', datafield: 'StateCode', displayfield: 'State', width: '3%', columntype: 'dropdownlist',
+                          createeditor: function (row, value, editor) {
+                              editor.jqxDropDownList({ source: stateAdapter, displayMember: 'PostalAbrev', valueMember: 'StateId', autoDropDownHeight: true });
+                          }
+                      }
                 ]
             });
 
@@ -468,7 +489,7 @@
                 //var url = "http://localhost:52839/api/InsuranceVehicles/UpdateInsuranceVehicleStatus/";
                 var url = $("#localApiDomain").val() + "InsuranceVehicles/UpdateInsuranceVehicleStatus/";
 
-                var postData = { 'VehicleId': data["VehicleId"], 'Coverage': data["CoverageCode"], 'Insurance': data["InsuranceCode"], 'CoverageAdded': thisCoverageAddedDate, 'CoverageRemoved': thisCoverageRemovedDate }
+                var postData = { 'VehicleId': data["VehicleId"], 'Coverage': data["CoverageCode"], 'Insurance': data["InsuranceCode"], 'CoverageAdded': thisCoverageAddedDate, 'CoverageRemoved': thisCoverageRemovedDate, 'StateID': data["StateCode"] }
 
                 postInsuranceChange(url, postData).done(function (data) {
                     console.log();
@@ -476,6 +497,8 @@
                     alert("error " + error);
                 });
             }
+
+            updateRows.length = 0;
 
             loadSearchResults(gblCheckedLocations + '~' + gblCheckedStatus + '~' + gblCheckedCoverage);
         }
