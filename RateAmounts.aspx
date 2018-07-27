@@ -19,8 +19,7 @@
     <script type="text/javascript" src="jqwidgets/jqxgrid.filter.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxgrid.grouping.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxgrid.pager.js"></script>
-    <script type="text/javascript" src="jqwidgets/jqxgrid.selection.js"></script> 
-    <script type="text/javascript" src="jqwidgets/jqxgrid.sort.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxgrid.selection.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxlistbox.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxmaskedinput.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxmenu.js"></script>
@@ -125,9 +124,6 @@
                 height: 500,
                 source: source,
                 rowsheight: 35,
-                //sortable: true,
-                //altrows: true,
-                //filterable: true,
                 showeverpresentrow: true,
                 everpresentrowposition: "bottom",
                 everpresentrowactions: "add",

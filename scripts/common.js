@@ -581,7 +581,66 @@ function msieversion() {
     {
         return true;
     } else { // If another browser,
-  return false;
+        return false;
+    }
+    return false;
 }
-return false;
+
+function nullToEmpty(value) {
+    if (value == null) {
+        return ""
+    } else {
+        return value;
+    }
+}
+
+function exportGridToCsv(Results, fileName, headerString, IncludeID) {
+    var CsvString = "";
+    var firstTime = true;
+
+
+    for (var i = 0; i < Results.length; i++) {
+
+        if (IncludeID == false && i == 0) {
+            continue
+        }
+
+        delete Results[i]["uid"];
+        delete Results[i]["boundindex"];
+        delete Results[i]["uniqueid"];
+        delete Results[i]["visibleindex"];
+
+        var Result = JSON.stringify(Results[i]);
+
+        var parsed = JSON.parse(Result);
+
+        var arr = [];
+
+        for (var x in parsed) {
+            arr.push(parsed[x]);
+        }
+
+        for (var j = 0; j < arr.length; j++) {
+
+            var tester = nullToEmpty(arr[j]).toString();
+
+            if (tester == tester.match(/.*-.*-.*T.*:.*:.*\..*Z/g)) {
+                CsvString += DateFormat(JsonDateTimeFormat(tester)) + ',';
+            } else {
+                CsvString += tester + ',';
+            }
+
+
+        }
+        CsvString += "\r\n";
+    }
+
+    CsvString = headerString + CsvString;
+
+    CsvString = "data:application/csv," + encodeURIComponent(CsvString);
+    var x = document.createElement("A");
+    x.setAttribute("href", CsvString);
+    x.setAttribute("download", fileName);
+    document.body.appendChild(x);
+    x.click();
 }

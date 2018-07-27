@@ -2843,10 +2843,6 @@
                         swal("There was an issue getting the thank you information.");
                     }
                 });
-
-
-                
-
             });
         }
 
@@ -2857,28 +2853,40 @@
             $("<div id='jqxReferralGrid'></div>").appendTo(parent);
 
             // load reservations to list
-            var url = $("#apiDomain").val() + "members/" + PageMemberID + "/referrals";
+            //var url = $("#apiDomain").val() + "members/" + PageMemberID + "/referrals";
+            //var url = "http://localhost:52839/api/Referrals/GetReferrals/" + PageMemberID;
+            var url = $("#localApiDomain").val() + "Referrals/GetReferrals/" + PageMemberID;
 
             var source =
             {
+                //datafields: [
+                //    { name: 'Name' },
+                //    { name: 'ReferralType' },
+                //    { name: 'ReferralDate' },
+                //    { name: 'SignedDate' },
+                //    { name: 'ParkingDate' },
+                //    { name: 'PointsAwarded' }
+                //],
+
                 datafields: [
-                    { name: 'Name' },
-                    { name: 'ReferralType' },
+                    { name: 'MemberId' },
+                    { name: 'SentToEmail' },
+                    { name: 'ReferralTypeName' },
                     { name: 'ReferralDate' },
                     { name: 'SignedDate' },
-                    { name: 'ParkingDate' },
-                    { name: 'PointsAwarded' }
+                    { name: 'ReferralCompleteDate' },
+                    { name: 'ReferralPointsAwarded' }
                 ],
 
-                id: 'CertificateID',
+                //id: 'CertificateID',
                 type: 'Get',
                 datatype: "json",
-                url: url,
-                beforeSend: function (jqXHR, settings) {
-                    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
-                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
-                },
-                root: "data"
+                url: url
+                //beforeSend: function (jqXHR, settings) {
+                //    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
+                //    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+                //},
+                //root: "data"
             };
 
             // create Reservation Grid
@@ -2893,14 +2901,36 @@
                 filterable: true,
                 enablebrowserselection: true,
                 columnsresize: true,
+                //columns: [
+                //      { text: 'Name', datafield: 'Name', width: '26%' },
+                //      { text: 'ReferralType', datafield: 'ReferralType', width: '10%' },
+                //      { text: 'ReferralDate', datafield: 'ReferralDate', width: '16%', cellsrenderer: DateRender },
+                //      { text: 'SignedDate', datafield: 'SignedDate', width: '16%', cellsrenderer: DateRender },
+                //      { text: 'ParkingDate', datafield: 'ParkingDate', width: '16%', cellsrenderer: DateRender },
+                //      { text: 'PointsAwarded', datafield: 'PointsAwarded', width: '16%' }
+                //]
                 columns: [
-                      { text: 'Name', datafield: 'Name', width: '26%' },
-                      { text: 'ReferralType', datafield: 'ReferralType', width: '10%' },
-                      { text: 'ReferralDate', datafield: 'ReferralDate', width: '16%', cellsrenderer: DateRender },
-                      { text: 'SignedDate', datafield: 'SignedDate', width: '16%', cellsrenderer: DateRender },
-                      { text: 'ParkingDate', datafield: 'ParkingDate', width: '16%', cellsrenderer: DateRender },
-                      { text: 'PointsAwarded', datafield: 'PointsAwarded', width: '16%' }
+                      { text: 'MemberId', datafield: 'MemberId', width: '5%' },
+                      { text: 'Sent To', datafield: 'SentToEmail', width: '26%' },
+                      { text: 'Referral Type', datafield: 'ReferralTypeName', width: '5%' },
+                      { text: 'Referral Date', datafield: 'ReferralDate', width: '16%', cellsrenderer: DateRender },
+                      { text: 'Registered dDate', datafield: 'SignedDate', width: '16%', cellsrenderer: DateRender },
+                      { text: 'Parking Exit Date', datafield: 'ReferralCompleteDate', width: '16%', cellsrenderer: DateRender },
+                      { text: 'Points Awarded', datafield: 'ReferralPointsAwarded', width: '16%' }
                 ]
+            });
+
+            $("#jqxReferralGrid").bind('rowdoubleclick', function (event) {
+                
+                $('#jqxLoader').jqxLoader('open');
+                var row = event.args.rowindex;
+                var dataRecord = $("#jqxReferralGrid").jqxGrid('getrowdata', row);
+                clearMemberInfo();
+
+                $('#jqxMemberInfoTabs').jqxTabs('select', 0);
+
+                //loadMember(dataRecord.MemberId);
+                findMember(dataRecord.MemberId);
             });
         }
 
@@ -3845,18 +3875,35 @@
 
         //clear memberinfo
         function clearMemberInfo() {
+            var parent;
+
             $('.tabMemberInfo').find('input:text').val('');
             $("#topPointsBalance").html("");
             $("#topPointsBalanceAccountBar").html("");
             $("#topMemberSince").html("");
             $("#topLastLogin").html
             $("#topName").html("");
-            $("#phoneGrid").jqxGrid('clear');
-            $("#jqxAccountActivityGrid").jqxGrid('clear');
-            $("#jqxMemberActivityGrid").jqxGrid('clear'); 
-            $("#jqxRedemptionGrid").jqxGrid('clear');
-            $("#jqxReservationGrid").jqxGrid('clear');
-            $("#jqxCardGrid").jqxGrid('clear');
+            parent = $("#phoneGrid").parent();
+            $("#phoneGrid").jqxGrid('destroy');
+            $("<div id='phoneGrid'></div>").appendTo(parent);
+            parent = $("#jqxAccountActivityGrid").parent();
+            $("#jqxAccountActivityGrid").jqxGrid('destroy');
+            $("<div id='jqxAccountActivityGrid'></div>").appendTo(parent);
+            parent = $("#jqxMemberActivityGrid").parent();
+            $("#jqxMemberActivityGrid").jqxGrid('destroy');
+            $("<div id='jqxMemberActivityGrid'></div>").appendTo(parent);
+            parent = $("#jqxRedemptionGrid").parent();
+            $("#jqxRedemptionGrid").jqxGrid('destroy');
+            $("<div id='jqxRedemptionGrid'></div>").appendTo(parent);
+            parent = $("#jqxReferralGrid").parent();
+            $("#jqxReferralGrid").jqxGrid('destroy');
+            $("<div id='jqxReferralGrid'></div>").appendTo(parent);
+            parent = $("#jqxReservationGrid").parent();
+            $("#jqxReservationGrid").jqxGrid('destroy');
+            $("<div id='jqxReservationGrid'></div>").appendTo(parent);
+            parent = $("#jqxCardGrid").parent();
+            $("#jqxCardGrid").jqxGrid('destroy');
+            $("<div id='jqxCardGrid'></div>").appendTo(parent);
             $("#titleCombo").jqxComboBox('selectItem', 0);
             $("#GetEmail").prop("checked", false);
             $("#TravelAlert").prop("checked", false);

@@ -35,6 +35,7 @@
     <script type="text/javascript" src="jqwidgets/jqxdata.export.js"></script> 
     <script type="text/javascript" src="jqwidgets/jqxgrid.export.js"></script> 
 
+
     <script type="text/javascript">
         var calendarChanged = false;
         var group = '<%= Session["groupList"] %>';
@@ -100,6 +101,10 @@
                 var thisLength = rows.length - 1;
 
                 for (i = 0; i <= thisLength; i++) {
+                    delete rows[i]["CoverageCode"];
+                    delete rows[i]["InsuranceCode"];
+                    delete rows[i]["StateCode"];
+
                     if (rows[i].CoverageAdded != null) {
                         rows[i].CoverageAdded = DateFormat(rows[i].CoverageAdded);
                     }
@@ -108,7 +113,17 @@
                     }
                 }
 
-                $('#jqxSearchGrid').jqxGrid('exportdata', 'xls', 'Grid Export', true, rows, false, null, 'utf-8');
+                var headerString = "";
+                var cols = $("#jqxSearchGrid").jqxGrid("columns");
+                for (var i = 0; i < cols.records.length; i++) {
+                    headerString += cols.records[i].text + ',';
+                }
+
+                headerString += "\r\n";
+
+                exportGridToCsv(rows, 'Export_Vehicles.csv', headerString, false);
+
+                //$('#jqxSearchGrid').jqxGrid('exportdata', 'xls', 'Grid Export', true, rows, false, null, 'utf-8');
             });
 
             $("#unSelectAll").on("click", function (event) {
@@ -293,7 +308,6 @@
                     { name: 'Class' },
                     { name: 'Coverage', value: 'CoverageCode', values: { source: coverageAdapter.records, value: 'VehicleCoverageId', name: 'VehicleCoveragename' } },
                     { name: 'CoverageCode' },
-                    { name: 'DriverName' },
                     { name: 'AddDate', type: 'date' },
                     { name: 'DeleteDate', type: 'date' },
                     { name: 'Insurance', value: 'InsuranceCode', values: { source: insuranceValuesAdapter.records, value: 'value', name: 'label' } },
@@ -384,7 +398,6 @@
                               editor.jqxDropDownList({ source: coverageAdapter, displayMember: 'VehicleCoveragename', valueMember: 'VehicleCoverageId', autoDropDownHeight: true });
                           }
                       },
-                      { text: 'DriverName', datafield: 'DriverName', hidden: true },
                       { text: 'Add Date', datafield: 'AddDate', width: '9%', cellsformat: 'MM/dd/yyyy',
   			cellbeginedit: function (row) {
        				return false;
