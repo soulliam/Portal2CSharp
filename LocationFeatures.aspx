@@ -56,8 +56,10 @@
                     var newSortOrder = $("#SortOrder").val();
                     var newIconCSSClass = $("#IconCSSClass").val();
 
-                    
-                    
+                    //Google analytics gets broken if double quotes are in text.
+                    newDetail = newDetail.split("\"").join("'");
+                    newSubtext = newSubtext.split("\"").join("'");
+
                     $.ajax({
                         headers: {
                             "Accept": "application/json",
@@ -101,6 +103,10 @@
                         var newDisplayOnLandingPage = $("#DisplayOnLandingPage").val();
                         var newSortOrder = $("#SortOrder").val();
                         var newIconCSSClass = $("#IconCSSClass").val();
+
+                        //Google analytics gets broken if double quotes are in text.
+                        newDetail = newDetail.split("\"").join("'");
+                        newSubtext = newSubtext.split("\"").join("'");
 
                         var putUrl = $("#apiDomain").val() + "features/" + newFeatureId
                         

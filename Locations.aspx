@@ -175,7 +175,6 @@
                     var newAlert = $("#Alert").val();
                     var newDailyRate = $("#DailyRate").val();
                     var newSlug = $("#Slug").val();
-                    var newQualifications = $("#Qualifications").val();
                     var newManager = $("#siteManager").val();
                     var newManagerEmail = $("#ManagerEmail").val();
                     var newLatitude = $("#Latitude").val();
@@ -286,7 +285,6 @@
                         var newAlert = $("#Alert").val();
                         var newDailyRate = $("#DailyRate").val();
                         var newSlug = $("#Slug").val();
-                        var newQualifications = $("#Qualifications").val();
                         var newManager = $("#siteManager").val();
                         var newManagerEmail = $("#ManagerEmail").val();
                         var newLatitude = $("#Latitude").val();
@@ -311,6 +309,13 @@
                         var newIMP = $("#SkiDataIMP").val();
                         var newSiteURL = $("#SiteURL").val();
                         var newCityId = $("#cityCombo").jqxComboBox('getSelectedItem').value;
+
+                        //Google analytics gets broken if double quotes are in text.
+                        newDescription = newDescription.split("\"").join("'");
+                        newAlert = newAlert.split("\"").join("'");
+                        newMemberRateText = newMemberRateText.split("\"").join("'");
+                        newRateText = newRateText.split("\"").join("'");
+                        newRateQualifications = newRateQualifications.split("\"").join("'");
 
                         var putUrl = $("#apiDomain").val() + "locations/" + selectedLocationId //ID of the location to update
 
@@ -471,6 +476,10 @@
                 var newIsDisplayedOptionalExtra = $("#addFeatureIsDisplayedOptionalExtra").is(':checked');
                 var newDisplayIcon = $("#addFeatureDisplayIcon").is(':checked');
 
+                //Google analytics gets broken if double quotes are in text.
+                newOptionalExtrasDescription = newOptionalExtrasDescription.split("\"").join("'");
+
+
                 var featurePostUrl = $("#apiDomain").val() + "locations/" + selectedLocationId + "/features"
 
                 $.ajax({
@@ -524,6 +533,9 @@
                 var newOptionalExtrasDescription = $("#FeatureOptionalExtrasDescription").val();
                 var LocationHasFeatureId = $("#LocationHasFeatureId").val();
                 var newEditFeatureIsDisplayedOptionalExtra = $("#editFeatureIsDisplayedOptionalExtra").is(":checked");
+
+                //Google analytics gets broken if double quotes are in text.
+                newOptionalExtrasDescription = newOptionalExtrasDescription.split("\"").join("'");
 
                 var featurePostUrl = $("#apiDomain").val() + "locations/" + selectedLocationId + "/features/" + newFeatureId;
 
@@ -1367,7 +1379,6 @@
             $("#Alert").val('');
             $("#DailyRate").val('');
             $("#Slug").val('');
-            $("#Qualifications").val('');
             $("#siteManager").val('');
             $("#ManagerEmail").val('');
             $("#Latitude").val('');

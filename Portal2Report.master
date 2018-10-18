@@ -95,6 +95,7 @@
                                 <li><a href="ReservationMaintenance.aspx" id="ReservationMaintenanceLink" class="menuSecurity disabled Portal_Superadmin Portal_Auditadmin Portal_RFR Portal_Manager">Reservation Maintenance</a></li>
                                 <li><a href="ReservationCalendarView.aspx" id="ReservationCalendarView" class="menuSecurity disabled Portal_Superadmin Portal_Auditadmin Portal_RFR Portal_Manager Portal_Asstmanager">Reservation Calendar</a></li>
                                 <li><a href="CombineCompanies.aspx" id="CombineCompaniesLink" class="menuSecurity disabled Portal_Superadmin">Combine Companies</a></li>
+                                <li><a href="BlackoutPeriods.aspx" id="BlackoutPeriodsLink" class="menuSecurity disabled Portal_Superadmin Portal_RFR">Black Out Periods</a></li>
                             </ul>
                         </li>
                         <li class="dropdown  menuSecurity disabled Portal_Superadmin Portal_Siteadmin Portal_Auditadmin">

@@ -1986,8 +1986,8 @@
                       { text: 'Primary', datafield: 'IsPrimary', cellsrenderer: RenderTrueFalse },
                       { text: 'Active', datafield: 'IsActive', cellsrenderer: RenderTrueFalse },
                       { text: 'Deleted', datafield: 'IsDeleted', cellsrenderer: RenderTrueFalse },
-                      { text: 'Date Added', datafield: 'CreateDatetime', cellsrenderer: DateTimeRender },
-                      { text: 'Date updated', datafield: 'UpdateDatetime', cellsrenderer: DateTimeRender }
+                      { text: 'Date Added', datafield: 'CreateDatetime', cellsrenderer: DateTimeRenderGMT },
+                      { text: 'Date updated', datafield: 'UpdateDatetime', cellsrenderer: DateTimeRenderGMT }
                 ]
             });
         }
@@ -2238,8 +2238,13 @@
                         success: function (thisData) {
                             var notes = String(thisData[0].Notes);
                             var explanation = String(thisData[0].Explanation);
+                            var Name = String(thisData[0].Name);
+                            var UpdateExternalUserData = String(thisData[0].UpdateExternalUserData);
 
                             $("#ManualEditNote").html(notes);
+                            $("#MEExplanation").val(explanation);
+                            $("#MEName").val(Name);
+                            $("#MEUpdateExternalUserData").val(UpdateExternalUserData);
 
                             $("#popupViewManualEdit").css('display', 'block');
                             $("#popupViewManualEdit").css('visibility', 'hidden');
@@ -2249,7 +2254,7 @@
                             $('#popupViewManualEdit').jqxWindow({ draggable: true });
                             $('#popupViewManualEdit').jqxWindow({ isModal: true });
                             $("#popupViewManualEdit").css("visibility", "visible");
-                            $('#popupViewManualEdit').jqxWindow({ height: '300px', width: '35%' });
+                            $('#popupViewManualEdit').jqxWindow({ height: '400px', width: '35%' });
                             $('#popupViewManualEdit').jqxWindow({ minHeight: '270px', minWidth: '10%' });
                             $('#popupViewManualEdit').jqxWindow({ maxHeight: '700px', maxWidth: '50%' });
                             $('#popupViewManualEdit').jqxWindow({ showCloseButton: true });
@@ -2266,6 +2271,8 @@
                     });
                     return null;
                 }
+
+
             });
         }
 
@@ -2678,15 +2685,15 @@
                 columnsresize: true,
                 columns: [
                       { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
-                      { text: 'CertificateId', datafield: 'CertificateId' },
-                      { text: 'Redemption Type', datafield: 'RedemptionTypeName' },
-                      { text: 'Redeem Date', datafield: 'RedeemDate', cellsrenderer: DateRenderGMT },
-                      { text: 'Returned', datafield: 'IsReturned', cellsrenderer: redemptionRenderer },
-                      { text: 'Return Request', datafield: 'ReturnRequest', cellsrenderer: DateRender },
-                      { text: 'Return Processed', datafield: 'ReturnProcessed', cellsrenderer: DateRender },
-                      { text: 'BeenUsed', datafield: 'BeenUsed', cellsrenderer: redemptionRenderer },
-                      { text: 'DateUsed', datafield: 'DateUsed', cellsrenderer: redemptionRenderer },
-                      { text: 'Source', datafield: 'RedemptionSourceName' }
+                      { text: 'CertificateId', datafield: 'CertificateId', width: '12%' },
+                      { text: 'Redemption Type', datafield: 'RedemptionTypeName', width: '9%' },
+                      { text: 'Redeem Date', datafield: 'RedeemDate', cellsrenderer: DateTimeRenderGMT, width: '15%' },
+                      { text: 'Returned', datafield: 'IsReturned', cellsrenderer: redemptionRenderer, width: '6%' },
+                      { text: 'Return Request', datafield: 'ReturnRequest', cellsrenderer: DateTimeRenderGMT, width: '15%' },
+                      { text: 'Return Processed', datafield: 'ReturnProcessed', cellsrenderer: DateTimeRenderGMT, width: '15%' },
+                      { text: 'BeenUsed', datafield: 'BeenUsed', cellsrenderer: redemptionRenderer, width: '6%' },
+                      { text: 'DateUsed', datafield: 'DateUsed', cellsrenderer: DateTimeRender, width: '15%' },
+                      { text: 'Source', datafield: 'RedemptionSourceName', width: '6%' }
                 ]
             });
 
@@ -2872,7 +2879,7 @@
                     { name: 'MemberId' },
                     { name: 'SentToEmail' },
                     { name: 'ReferralTypeName' },
-                    { name: 'ReferralDate' },
+                    { name: 'RefferedDate' },
                     { name: 'SignedDate' },
                     { name: 'ReferralCompleteDate' },
                     { name: 'ReferralPointsAwarded' }
@@ -2913,8 +2920,8 @@
                       { text: 'MemberId', datafield: 'MemberId', width: '5%' },
                       { text: 'Sent To', datafield: 'SentToEmail', width: '26%' },
                       { text: 'Referral Type', datafield: 'ReferralTypeName', width: '5%' },
-                      { text: 'Referral Date', datafield: 'ReferralDate', width: '16%', cellsrenderer: DateRender },
-                      { text: 'Registered dDate', datafield: 'SignedDate', width: '16%', cellsrenderer: DateRender },
+                      { text: 'Referral Date', datafield: 'RefferedDate', width: '16%', cellsrenderer: DateRender },
+                      { text: 'Registered Date', datafield: 'SignedDate', width: '16%', cellsrenderer: DateRender },
                       { text: 'Parking Exit Date', datafield: 'ReferralCompleteDate', width: '16%', cellsrenderer: DateRender },
                       { text: 'Points Awarded', datafield: 'ReferralPointsAwarded', width: '16%' }
                 ]
@@ -2922,15 +2929,19 @@
 
             $("#jqxReferralGrid").bind('rowdoubleclick', function (event) {
                 
-                $('#jqxLoader').jqxLoader('open');
                 var row = event.args.rowindex;
                 var dataRecord = $("#jqxReferralGrid").jqxGrid('getrowdata', row);
-                clearMemberInfo();
 
-                $('#jqxMemberInfoTabs').jqxTabs('select', 0);
-
-                //loadMember(dataRecord.MemberId);
-                findMember(dataRecord.MemberId);
+                if (dataRecord.MemberId > 0) {
+                    $('#jqxLoader').jqxLoader('open');
+                    clearMemberInfo();
+                    $('#jqxMemberInfoTabs').jqxTabs('select', 0);
+                    //loadMember(dataRecord.MemberId);
+                    findMember(dataRecord.MemberId);
+                } else {
+                    swal("Referral Not Complete");
+                }
+                
             });
         }
 
@@ -3703,9 +3714,9 @@
             var note = $("#txtNote").val();
             var submittedBy = $("#txtLoggedinUsername").val();
 
-            note = note.replace("'", "''");
-            note = note.replace("<", "");
-            note = note.replace(">", "");
+            note = note.replace(/'/g, "''");
+            note = note.replace(/</g, "");
+            note = note.replace(/>/g, "");
 
             var testURL = $("#localApiDomain").val() + "MemberNotes/AddNote/";
 
@@ -5268,12 +5279,29 @@
 
     <%-- html for popup view manual edit --%>
     <div id="popupViewManualEdit" style="display:none">
-        <div>Manual Edit Notes</div>
+        <div>Manual Edit</div>
         <div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
+                        <label>Explanation</label>
+                        <input type="text" id="MEExplanation" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label<><strong>Notes</strong></label>
                         <textarea id="ManualEditNote" cols="50" rows="10"></textarea>  
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label>PCA</label>
+                        <input type="text" id="MEUpdateExternalUserData" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Member</label>
+                        <input type="text" id="MEName" />
                     </div>
                 </div>
             </div>

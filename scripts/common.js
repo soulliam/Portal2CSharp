@@ -263,11 +263,50 @@ var DateRenderGMT = function (row, columnfield, value, defaulthtml, columnproper
         default:
             var TempDate = new Date(value);
 
-            TempDate.setHours(TempDate.getHours() - 5);
+            TempDate.setHours(TempDate.getHours() - 4);
 
             if (TempDate != "") {
                 
                 var newDate = '<div style="margin-top: 10px;margin-left: 5px">' + TempDate.toLocaleDateString() + '</div>';
+
+                return newDate;
+            } else {
+                return "";
+            }
+            break;
+    }
+
+};
+
+var DateTimeRenderGMT = function (row, columnfield, value, defaulthtml, columnproperties) {
+    var valueTest = new Date(value);
+    if (valueTest.getFullYear() == '1969') {
+        return '<div style="margin-top: 10px;margin-left: 5px">&nbsp;</div>';
+    }
+    // format date as string due to inconsistant date coversions
+    switch (true) {
+        case (value == '0001-01-01T00:00:00'):
+            return '<div style="margin-top: 10px;margin-left: 5px">&nbsp;</div>';
+            break;
+        case (value == '1900-01-01T00:00:00'):
+            return '<div style="margin-top: 10px;margin-left: 5px">&nbsp;</div>';
+            break;
+        case (String(value).indexOf("GMT") > -1):
+            var date = new Date(value);
+            mnth = date.getMonth() + 1;
+            day = date.getDate();
+            var thisDate = mnth + '/' + day + '/' + date.getFullYear();
+            var newDate = '<div style="margin-top: 10px;margin-left: 5px">' + thisDate + '</div>';
+            break;
+        default:
+            var TempDate = new Date(value);
+            var offSet = DatesUTCOffSet(value);
+
+            TempDate.setHours(TempDate.getHours() - offSet);
+
+            if (TempDate != "") {
+
+                var newDate = '<div style="margin-top: 10px;margin-left: 5px">' + TempDate.toLocaleDateString() + ' ' + TempDate.toLocaleTimeString() + '</div>';
 
                 return newDate;
             } else {
@@ -331,6 +370,20 @@ function padNumber(i, l, s) {
         o = s + o;
     }
     return o;
+}
+
+//Get UTC offset today
+function TodaysUTCOffSet() {
+    var d = new Date();
+    var n = d.getTimezoneOffset() / 60;
+    return n;
+}
+
+//Get UTC offset of supplied date
+function DatesUTCOffSet(thisDate) {
+    var d = new Date(thisDate);
+    var n = d.getTimezoneOffset() / 60;
+    return n;
 }
 
 //Difference between dates in Days
@@ -412,6 +465,14 @@ function JsonDateTimeFormatNotMilitary(dateObject) {
     }
 
     return date;
+}
+
+//date to JSON format
+function DateToJsonDate(thisDate) {
+    var event = new Date(thisDate);
+    var jsonDate = event.toJSON();
+
+    return jsonDate;
 }
 
 //Display PageMethod Results
