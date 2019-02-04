@@ -207,6 +207,11 @@ function Security() {
     }
 }
 
+function isValidDate(s) {
+    var d = new Date(s);
+    return d.toString();
+}
+
 //render dates for grid
 var DateRender = function (row, columnfield, value, defaulthtml, columnproperties) {
     // format date as string due to inconsistant date coversions
@@ -316,6 +321,19 @@ var DateTimeRenderGMT = function (row, columnfield, value, defaulthtml, columnpr
     }
 
 };
+
+var activityRedemptionDateRenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+    var thisDate = new Date(value);
+    thisDate.setHours(thisDate.getHours() - DatesUTCOffSet(thisDate));
+
+    var datarow = $("#jqxMemberActivityGrid").jqxGrid('getrowdata', row);
+
+    if (datarow["Description"] == "Redeemed Points for Free Parking" || datarow["Description"] == "Converted Free Parking Back to Points") {
+        return '<div style="margin-top: 10px;margin-left: 5px">' + DateFormat(String(thisDate)) + '</div>';
+    } else {
+        return '<div style="margin-top: 10px;margin-left: 5px">' + DateFormat(String(value)) + '</div>';
+    }
+}
 
 var DateTimeRender = function (row, columnfield, value, defaulthtml, columnproperties) {
     // format date as string due to inconsistant date coversions
@@ -541,6 +559,26 @@ function getUrlParameter(name) {
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 };
 
+//Currency formatting
+//const formatter = new Intl.NumberFormat('en-US', {
+//    style: 'currency',
+//    currency: 'USD',
+//    minimumFractionDigits: 2
+//})
+
+//check Undefined Number
+var checkUndefinedNaN = function (x) {
+    if (typeof x == 'undefined') return 0;
+    if (x == '') return 0;
+    if (isNaN(x)) return 0;
+    return x;
+}
+
+//Check undefined String
+var checkUndefinedString = function (x) {
+    if (typeof x == 'undefined') return '';
+    return x;
+}
 
 // Use this to render location names if they only sent the ID
 var locatioinCellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
@@ -565,6 +603,9 @@ var locatioinCellsrenderer = function (row, columnfield, value, defaulthtml, col
             break;
         case 7:
             return '<div style="margin-top: 10px;margin-left: 5px">Cleveland PP</div>';
+            break;
+        case 8:
+            return '<div style="margin-top: 10px;margin-left: 5px">Houston Greens Rd</div>';
             break;
         case 9:
             return '<div style="margin-top: 10px;margin-left: 5px">Cincinnati</div>';
@@ -655,6 +696,14 @@ function nullToEmpty(value) {
     }
 }
 
+function nullToZero(value) {
+    if (value == null) {
+        return 0;
+    } else {
+        return value;
+    }
+}
+
 function exportGridToCsv(Results, fileName, headerString, IncludeID) {
     var CsvString = "";
     var firstTime = true;
@@ -662,10 +711,10 @@ function exportGridToCsv(Results, fileName, headerString, IncludeID) {
 
     for (var i = 0; i < Results.length; i++) {
 
-        if (IncludeID == false && i == 0) {
-            continue
+        if (IncludeID == false) {
+            delete Results[i]["VehicleId"];
         }
-
+        
         delete Results[i]["uid"];
         delete Results[i]["boundindex"];
         delete Results[i]["uniqueid"];
@@ -705,3 +754,6 @@ function exportGridToCsv(Results, fileName, headerString, IncludeID) {
     document.body.appendChild(x);
     x.click();
 }
+
+
+

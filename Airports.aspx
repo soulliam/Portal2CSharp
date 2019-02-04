@@ -59,6 +59,7 @@
                     //get info from form to add new airport
                     var newAirportAbbreviation = $("#AirportAbbreviation").val();
                     var newAirportName = $("#AirportName").val();
+                    var newAirportFullName = $("#AirportFullName").val();
                     var newLocationText = $("#LocationText").val();
                     var newCityCaption = $("#CityCaption").val();
                     var newCityText = $("#CityText").val();
@@ -78,6 +79,7 @@
                         data: JSON.stringify({
                             "AirportAbbreviation": newAirportAbbreviation,
                             "AirportName": newAirportName,
+                            "AirportFullName": newAirportFullName,
                             "LocationText": newLocationText,
                             "CityCaption": newCityCaption,
                             "CityText": newCityText,
@@ -104,6 +106,7 @@
                         var newAirportId = $("#AirportId").val();
                         var newAirportAbbreviation = $("#AirportAbbreviation").val();
                         var newAirportName = $("#AirportName").val();
+                        var newAirportFullName = $("#AirportFullName").val();
                         var newLocationText = $("#LocationText").val();
                         var newCityCaption = $("#CityCaption").val();
                         var newCityText = $("#CityText").val();
@@ -125,6 +128,7 @@
                             data: JSON.stringify({
                                 "AirportAbbreviation": newAirportAbbreviation,
                                 "AirportName": newAirportName,
+                                "AirportFullName": newAirportFullName,
                                 "LocationText": newLocationText,
                                 "CityCaption": newCityCaption,
                                 "CityText": newCityText,
@@ -151,6 +155,7 @@
                 $("#popupWindow").jqxWindow('hide');
                 $("#AirportAbbreviation").val('');
                 $("#AirportName").val('');
+                $("#AirportFullName").val('');
                 $("#LocationText").val('');
                 $("#CityText").val('');
                 $("#CityCaption").val('');
@@ -218,6 +223,7 @@
                     { name: 'CityId', map: 'City>CityId' },
                     { name: 'AirportAbbreviation' },
                     { name: 'AirportName' },
+                    { name: 'AirportFullName' },
                     { name: 'LocationText' },
                     { name: 'CityCaption' },
                     { name: 'CityText' },
@@ -265,6 +271,7 @@
                               $("#CityId").val(dataRecord.CityId);
                               $("#AirportAbbreviation").val(dataRecord.AirportAbbreviation);
                               $("#AirportName").val(dataRecord.AirportName);
+                              $("#AirportFullName").val(dataRecord.AirportFullName);
                               $("#LocationText").val(dataRecord.LocationText);
                               $("#CityText").val(dataRecord.CityText);
                               $("#ImageUrl").val(dataRecord.ImageUrl);
@@ -295,10 +302,11 @@
                       { text: 'City', datafield: 'CityName', hidden: true },
                       { text: 'Abbr', datafield: 'AirportAbbreviation', width: '3%' },
                       { text: 'Airport Name', datafield: 'AirportName', width: '7%' },
+                      { text: 'Airport Full Name', datafield: 'AirportFullName', width: '7%' },
                       { text: 'Location Text', datafield: 'LocationText', width: '11%' },
-                      { text: 'City Text', datafield: 'CityText', width: '15%' },
-                      { text: 'City Caption', datafield: 'CityCaption', width: '15%' },
-                      { text: 'Image URL', datafield: 'ImageUrl', width: '25%' },
+                      { text: 'City Text', datafield: 'CityText', width: '13%' },
+                      { text: 'City Caption', datafield: 'CityCaption', width: '13%' },
+                      { text: 'Image URL', datafield: 'ImageUrl', width: '22%' },
                       { text: 'Banner Text', datafield: 'BannerText', width: '20%' },
                       { text: 'AirportId', datafield: 'AirportId', hidden: true },
                       { text: 'CityId', datafield: 'CityId', hidden: true }
@@ -397,15 +405,21 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="LocationText" class="col-sm-3 col-md-4 control-label">Location Text:</label>
+                                <label for="AirportFullName" class="col-sm-3 col-md-4 control-label">Airport Full Name:</label>
                                 <div class="col-sm-9 col-md-8">
-                                    <input type="text" class="form-control" id="LocationText" />
+                                    <input type="text" class="form-control" id="AirportFullName" />
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-horizontal">
+                            <div class="form-group">
+                                <label for="LocationText" class="col-sm-3 col-md-4 control-label">Location Text:</label>
+                                <div class="col-sm-9 col-md-8">
+                                    <input type="text" class="form-control" id="LocationText" />
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <label for="CityCaption" class="col-sm-3 col-md-4 control-label">City Caption:</label>
                                 <div class="col-sm-9 col-md-8">

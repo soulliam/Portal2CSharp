@@ -88,8 +88,8 @@
                     else {
                         thisLocationString += locationResult[i] + ",";
                     }
-
                 }
+
                 LoadLocationPopup(thisLocationString);
                 var offset = $("#jqxgrid").offset();
                 $("#popupLocation").jqxWindow({ position: { x: parseInt(offset.left) + 500, y: parseInt(offset.top) - 40 } });

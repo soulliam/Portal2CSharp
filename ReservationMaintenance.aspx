@@ -411,7 +411,7 @@
                         return '<div style="margin-top: 10px;margin-left: 5px">Member</div>';
                         break;
                     default:
-                        return 'Error';
+                        return value;
                 }
             }
 

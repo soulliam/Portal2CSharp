@@ -163,6 +163,14 @@ public partial class FileStatus : System.Web.UI.Page
                     }
                     HOULast.Text = Convert.ToDateTime(row[0]).ToShortDateString();
                     break;
+                case 21:
+                    if (string.Equals(Convert.ToDateTime(row[0]).ToShortDateString(), DateTime.Today.AddDays(-1).ToShortDateString()) != true)
+                    {
+                        MDWLast.ForeColor = System.Drawing.Color.Red;
+                        MDWLast.Font.Bold = true;
+                    }
+                    MDWLast.Text = Convert.ToDateTime(row[0]).ToShortDateString();
+                    break;
                 default:
                     Response.Write("Something's Wrong Here");
                     break;

@@ -339,7 +339,14 @@
                     success: function (result, data) {
                         var thisReservationFeeId = result.result.data.ReservationFeeId;
                         var ConnectionCheck = '<%= System.Configuration.ConfigurationManager.AppSettings["ConStrMax"].ToString() %>';
-                        addReservation(thisReservationFeeId, ConnectionCheck);
+                        if ($("#saveReservation").val() == 'Save') {
+                            addReservation(thisReservationFeeId, ConnectionCheck);
+                        } else {
+                            var rowindex = $('#jqxReservationGrid').jqxGrid('getselectedrowindex');
+                            var selectedRowData = $('#jqxReservationGrid').jqxGrid('getrowdata', rowindex);
+                            editReservation(selectedRowData.ReservationId,thisReservationFeeId, ConnectionCheck);
+                        }
+                       
                     },
                     error: function (request, status, error) {
                         swal(error);
@@ -489,6 +496,8 @@
 
                 userName = userName.replace("PCA\\", "");
 
+                
+
                 var url = $("#localApiDomain").val() + "OldPortalGuids/getUserId/" + userName;
                 //var url = "http://localhost:52839/api/OldPortalGuids/getUserId/" + userName;
 
@@ -498,7 +507,14 @@
                     dataType: "json",
                     success: function (data) {
                         oldPortalGuid = data[0].UserId
-                        var marketingURL = 'http://enrollnow.thefastpark.com/linklogin/' + oldPortalGuid;
+                        var marketingURL = "";
+                        var hostname = $('<a>').prop('href', url).prop('hostname');
+                        if (hostname.search("portal") >= 0){
+                            marketingURL = 'http://enrollnow.thefastpark.com/linklogin/' + oldPortalGuid;
+                        }else{
+                            marketingURL = 'http://enrollstage.thefastpark.com/linklogin/' + oldPortalGuid;
+                        }
+                        
 
                         window.open(marketingURL);
                     },
@@ -512,6 +528,7 @@
 
             //Add Reservation
             $("#addReservation").on("click", function (event) {
+                $('#saveReservation').val('Save');
                 var thisLocationId = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
 
                 $("#popupReservation").css('display', 'block');
@@ -2065,7 +2082,7 @@
                     { name: 'Points'},
                     { name: 'Description' },
                     { name: 'LocationId' },
-                    { name: 'Date', type: 'date' }
+                    { name: 'Date' }
                 ],
 
                 type: 'Get',
@@ -2139,7 +2156,7 @@
                       { text: 'Description', datafield: 'Description', width: '40%' },
                       { text: 'Location', datafield: 'LocationId', width: '10%', cellsrenderer: locatioinCellsrenderer },
                       //{ text: 'Date', datafield: 'Date', width: '10%', cellsrenderer: DateRender }
-                      { text: 'Date', datafield: 'Date', width: '10%', cellsformat: 'MM/dd/yyyy' }
+                      { text: 'Date', datafield: 'Date', width: '10%', cellsrenderer: activityRedemptionDateRenderer }
                 ]
             });
 
@@ -2763,7 +2780,20 @@
                 enablebrowserselection: true,
                 columnsresize: true,
                 columns: [
-                      { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
+                      {
+                          //creates edit button for each row in city grid
+                          text: '', pinned: true, datafield: 'Edit', width: 50, columntype: 'button', cellsrenderer: function () {
+                              return "Edit";
+                          }, buttonclick: function (row) {
+                              // open the popup window when the user clicks a button.
+                              editrow = row;
+                              var selectedRowData = $('#jqxReservationGrid').jqxGrid('getrowdata', row);
+                              getReservationByID(selectedRowData.ReservationId);
+                              $('#saveReservation').val('Edit');
+                              $('#jqxReservationGrid').jqxGrid('selectrow', row);
+                          }
+                      },
+                      { text: 'ReservationId', datafield: 'ReservationId', hidden: false },
                       //{ text: 'LocationId', datafield: 'LocationId', hidden: true },
                       { text: 'Reservation Number', datafield: 'ReservationNumber', width: '9%' },
                       { text: 'Location', datafield: 'LocationId', width: '9%', cellsrenderer: locatioinCellsrenderer },
@@ -2783,7 +2813,6 @@
                 var offset = $("#jqxMemberInfoTabs").offset();
                 var thisMemberName = $("#FirstName").val() + '%20' + $("#LastName").val();
                 var toAddress = $("#EmailAddress").val();
-                var thisLocation = dataRecord.NameOfLocation;
                 var thisBrand = dataRecord.Description;
                 var thisStartDate = JsonDateTimeFormatNotMilitary(dataRecord.StartDatetime);
                 var thisEndDate = JsonDateTimeFormatNotMilitary(dataRecord.EndDatetime);
@@ -2826,6 +2855,7 @@
                         var thisLocationCity = data.result.data.LocationCity;
                         var thisLocationZipCode = data.result.data.LocationZipCode;
                         var thisManagerState = data.result.data.State.StateAbbreviation;
+                        var thisLocation = data.result.data.NameOfLocation;
 
                         $("#popupSendReservation").css('display', 'block');
                         $("#popupSendReservation").css('visibility', 'hidden');
@@ -4090,7 +4120,11 @@
                     //Fill out member detail tab info
 
                     $("#topMemberSince").html(DateFormat(thisData.result.data.MemberSince));
-                    $("#topLastLogin").html(DateFormat(thisData.result.data.LastLogin));
+                    if (thisData.result.data.LastLogin != null) {
+                        $("#topLastLogin").html(DateFormat(thisData.result.data.LastLogin));
+                    } else {
+                        $("#topLastLogin").html("No Login");
+                    }
                     if (thisData.result.data.Title != null) {
                         $("#Title").val(thisData.result.data.Title.TitleName);
                         //$("#topName").html(thisData.result.data.Title.TitleName + " " + thisData.result.data.FirstName + " " + thisData.result.data.LastName);
@@ -5227,7 +5261,7 @@
     </div>
 
     <div id="popupSendReservation" style="display: none;">
-        <div>Redemption Details</div>
+        <div>Reservation Details</div>
         <div style="margin-left:20px;margin-top:10px;overflow:visible;">
             <iframe id="ReservationIframe" style="border:none;width:900px;height:700px;" ></iframe>
         </div>

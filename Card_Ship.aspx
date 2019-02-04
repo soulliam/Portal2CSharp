@@ -77,6 +77,17 @@
                 
             });
 
+            $('#reShip').on("click", function (event) {
+                if ($('#reShip').is(":checked")) {
+                    $("#editShip").jqxButton({ disabled: true });
+                    $("#receiveShip").jqxButton({ disabled: true });
+                } else {
+                    $("#editShip").jqxButton({ disabled: false });
+                    $("#receiveShip").jqxButton({ disabled: false });
+                }
+
+            });
+
             $("#editShip").on("click", function (event) {
                 editShip();
                 $("#fromlocationCombo").jqxComboBox('selectIndex', 0);
@@ -294,7 +305,7 @@
                     for (var index = 0; index < getselectedrowindexes.length; index++) {
                         var selectedRowData = $('#jqxShipping').jqxGrid('getrowdata', getselectedrowindexes[index]);
 
-                        if (selectedRowData.CardShipReceivedBy != null) {
+                        if (selectedRowData.CardShipReceivedBy != null && selectedRowData.CardShipReceivedBy != "") {
                             swal("This shipment has been received.");
                             return null;
                         }

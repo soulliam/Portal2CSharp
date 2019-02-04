@@ -163,7 +163,8 @@ public partial class ReportViewer : System.Web.UI.Page
                 ReportParameter[] parameters = new ReportParameter[2];
 
                 //not sure we need the userloginId param.
-                parameters[0] = new ReportParameter("UserLoginId", userId);
+                parameters[0] = new ReportParameter("UserLoginId", "00000000-0000-0000-0000-000000000000");
+                //parameters[0] = new ReportParameter("UserLoginId", userId);
                 parameters[1] = new ReportParameter("City", ID);
                 serverReport.ReportPath = reportLocation;
                 serverReport.SetParameters(parameters);
@@ -237,6 +238,42 @@ public partial class ReportViewer : System.Web.UI.Page
                 parameters[0] = new ReportParameter("LocationList", locationList);
                 serverReport.ReportPath = reportLocation;
                 serverReport.SetParameters(parameters);
+            }
+            else if (reportLocation.Contains("Manager"))
+            {
+                string group = Session["groupList"].ToString();
+                string ID = "";
+                string locationList = "";
+                Boolean first = true;
+
+                string[] thisLocation;
+                var thisGroups = group.Split(',');
+                foreach (string locGroup in thisGroups)
+                {
+                    if (locGroup.IndexOf("PCA\\\\Loc_") > -1)
+                    {
+                        thisLocation = locGroup.Split('_');
+                        ID = thisLocation[2];
+                        if (first == true)
+                        {
+                            locationList = ID;
+                            first = false;
+                        }
+                        else
+                        {
+                            locationList = locationList + ',' + ID;
+                        }
+                    }
+                }
+               
+                serverReport.ReportPath = reportLocation;
+
+                if (reportLocation.Contains("/NewManager/General/InvoiceDateRangeCategory") || reportLocation.Contains("/NewManager/General/InvoiceProcessDate"))
+                {
+                    ReportParameter[] parameters = new ReportParameter[1];
+                    parameters[0] = new ReportParameter("LocationList", locationList);
+                    serverReport.SetParameters(parameters);
+                }
             }
             else
             {

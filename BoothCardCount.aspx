@@ -311,8 +311,7 @@
             $("#LocationCombo").jqxDropDownList(
             {
                 width: 300,
-                height: 50,
-                itemHeight: 50,
+                height: 24,
                 source: locationDataAdapter,
                 selectedIndex: 0,
                 displayMember: "NameOfLocation",

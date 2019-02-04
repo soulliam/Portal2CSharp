@@ -40,38 +40,43 @@
         <tr>
             <td class="formLabels" style="text-align:left;">BWI FP2 :</td>
             <td class="formlabels" style="text-align:left;"><asp:Label runat="server" ID="BWI1Last"></asp:Label></td>
+            <td class="formLabels" style="text-align:left;">CHI MDW :</td>
+            <td class="formlabels" style="text-align:left;"><asp:Label runat="server" ID="MDWLast"></asp:Label></td>
+        </tr>
+        <tr>
             <td class="formLabels" style="text-align:left;">CVG FPR :</td>
             <td class="formlabels" style="text-align:left;"><asp:Label runat="server" ID="CVG2Last"></asp:Label></td>
-        </tr>
-        <tr>
             <td class="formlabels" style="text-align:left;">CLE AFP :</td>
             <td class="formlabels" style="text-align:left;"><asp:Label runat="server" ID="CLEAFPLast"></asp:Label></td>
+        </tr>
+        <tr>
             <td class="formLabels" style="text-align:left;">CLE PP :</td>
             <td class="formlabels" style="text-align:left;"><asp:Label runat="server" ID="CLEPPLast"></asp:Label></td>
-        </tr>
-        <tr>
             <td class="formLabels" style="text-align:left;">HOU :</td>
             <td class="formlabels" style="text-align:left;"><asp:Label runat="server" ID="HOULast"></asp:Label></td>
+        </tr>
+        <tr>
             <td class="formlabels" style="text-align:left;">HWC :</td>
             <td class="formlabels" style="text-align:left;"><asp:Label runat="server" ID="HWCLast"></asp:Label></td>
-        </tr>
-        <tr>
             <td class="formLabels" style="text-align:left;">IND :</td>
             <td class="formlabels" style="text-align:left;"><asp:Label runat="server" ID="INDLast"></asp:Label></td>
+        </tr>
+        <tr>
             <td class="formlabels" style="text-align:left;">MCO :</td>
             <td class="formlabels" style="text-align:left;"><asp:Label runat="server" ID="MCOLast"></asp:Label></td>
-        </tr>
-        <tr>
             <td class="formLabels" style="text-align:left;">MEM :</td>
             <td class="formlabels" style="text-align:left;"><asp:Label runat="server" ID="MEMLast"></asp:Label></td>
-            <td class="formLabels" style="text-align:left;">MKE :</td>
-            <td class="formlabels" style="text-align:left;"><asp:Label runat="server" ID="MKELast"></asp:Label></td>
         </tr>
-        <tr>
+        <tr><td class="formLabels" style="text-align:left;">MKE :</td>
+            <td class="formlabels" style="text-align:left;"><asp:Label runat="server" ID="MKELast"></asp:Label></td>
             <td class="formlabels" style="text-align:left;">RDU :</td>
             <td class="formlabels" style="text-align:left;"><asp:Label runat="server" ID="RDULast"></asp:Label></td>
+        </tr>
+        <tr>
             <td class="formLabels" style="text-align:left;">TUC :</td>
             <td class="formlabels" style="text-align:left;"><asp:Label runat="server" ID="TUCLast"></asp:Label></td>
+            <td></td>
+            <td></td>
         </tr>
     </table>
 </asp:Content>

@@ -97,6 +97,77 @@
     });
 }
 
+function editReservation(ReservationId, ReservationFeeId, ConnectionCheck) {
+    var thisMemberId = $("#MemberId").val();;
+    var thisLocationId = $("#reservationLocationCombo").jqxComboBox('getSelectedItem').value;
+    var thisStartDatetime = $("#reservationStartDate").val();
+    var thisEndDatetime = $("#reservationEndDate").val();;
+    var thisReservationFeeId = ReservationFeeId;
+
+    if (ConnectionCheck.includes("pcafp-stg-api")) {
+        var thisPaymentMethodId = 8;  //hard coded for payment method ID 8 "member rewards" no payment method STAGE
+    } else {
+        var thisPaymentMethodId = 7;  //hard coded for payment method ID 8 "member rewards" no payment PRODUCTION
+    }
+
+    var thisEstimatedReservationCost = $("#EstimatedReservationCost").val();
+    var thisMemberNote = $("#ReservationNote").val();;
+    var thisTermsAndConditionsFlag = $("#reservationTermsAndConditionsFlag").is(":checked");
+    var thisSendNotificationsFlag = $("#SendNotificationsFlag").is(":checked");
+    var thisSaveReservationPreferencesFlag = true;
+
+    var data = {
+        "LocationId": thisLocationId,
+        "StartDatetime": thisStartDatetime,
+        "EndDatetime": thisEndDatetime,
+        "ReservationFeeId": thisReservationFeeId,
+        "EstimatedReservationCost": thisEstimatedReservationCost,
+        "MemberNote": thisMemberNote,
+        "SendNotificationsFlag": thisSendNotificationsFlag,
+        "SaveReservationPreferencesFlag": thisSaveReservationPreferencesFlag,
+    };
+
+
+    data.ReservationFeatures = new Array();
+    var items = $("#reservationFeatures").jqxComboBox('getCheckedItems');
+    var checkedItems = "";
+
+    $.each(items, function (index) {
+        data.ReservationFeatures.push({
+            "LocationHasFeatureId": this.value
+        });
+    });
+
+
+    var test = JSON.stringify(data);
+
+    $.ajax({
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "AccessToken": $("#userGuid").val(),
+            "ApplicationKey": $("#AK").val()
+        },
+        type: "PUT",
+        data: JSON.stringify(data),
+        url: $("#apiDomain").val() + "reservations/" + ReservationId,
+        dataType: "json",
+        success: function (data) {
+            swal("Reservation Updated.")
+        },
+        error: function (message) {
+            $("#popupReservation").jqxWindow('close');
+            swal(message.responseJSON.message)
+            .then((value) => {
+                $("#popupReservation").jqxWindow('open');
+            })
+        },
+        complete: function () {
+            loadReservations(thisMemberId);
+        }
+    });
+}
+
 
 function loadReservationLocationCombo() {
     $("#reservationLocationCombo").jqxComboBox('clear');
@@ -159,7 +230,7 @@ function loadReservationCalendars() {
     $("#reservationEndDate").jqxDateTimeInput({ formatString: 'MM-dd-yyyy hh:mm tt', showTimeButton: true, width: '400px', height: '25px' });
 }
 
-function loadReservationFeatures(thisLocationId) {
+function loadReservationFeatures(thisLocationId, checkThese) {
     $("#reservationFeatures").jqxComboBox('clear');
 
     url = $("#apiDomain").val() + "locations/" + thisLocationId + "/features/";
@@ -207,8 +278,19 @@ function loadReservationFeatures(thisLocationId) {
                 $("#popupReservation").jqxWindow('open');
             })
         }
+
     });
 
+    $("#reservationFeatures").on('bindingComplete', function (event) {
+        if (checkThese) {
+            $.each(checkThese, function (key, value) {
+                var items = $("#reservationFeatures").jqxComboBox('getItems');
+                var item = $("#reservationFeatures").jqxComboBox('getItemByValue', value.LocationHasFeatureId);
+                item.checked = true;
+                //$("#reservationFeatures").jqxComboBox('selectItem', item);
+            });
+        }
+    });
 
     ////set up the ReservationFeatures combobox
     //var featureSource =
@@ -480,4 +562,69 @@ function removeFeatureIsDisplayedOptionalExtraFalse(data) {
             removeFeatureIsDisplayedOptionalExtraFalse(data);
         }
     }
+}
+
+function getReservationByID(ReservationId) {
+
+    var url = $("#apiDomain").val() + "reservations/" + ReservationId;
+
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        beforeSend: function (jqXHR, settings) {
+            jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
+            jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+        },
+        success: function (data) {
+            var thisLocationId = data.result.data.LocationInformation.LocationId;
+            loadReservationFeatures(thisLocationId);
+            
+
+            $("#popupReservation").css('display', 'block');
+            $("#popupReservation").css('visibility', 'hidden');
+
+            var offset = $("#jqxMemberInfoTabs").offset();
+            $("#popupReservation").jqxWindow({ position: { x: '10%', y: '5%' } });
+            $('#popupReservation').jqxWindow({ resizable: false });
+            $('#popupReservation').jqxWindow({ draggable: true });
+            $('#popupReservation').jqxWindow({ isModal: true });
+            $("#popupReservation").css("visibility", "visible");
+            $('#popupReservation').jqxWindow({ height: '475px', width: '800px' });
+            $('#popupReservation').jqxWindow({ minHeight: '400px', minWidth: '800px' });
+            $('#popupReservation').jqxWindow({ maxHeight: '650px', maxWidth: '800px' });
+            $('#popupReservation').jqxWindow({ showCloseButton: false });
+            $('#popupReservation').jqxWindow({ animationType: 'combined' });
+            $('#popupReservation').jqxWindow({ showAnimationDuration: 300 });
+            $('#popupReservation').jqxWindow({ closeAnimationDuration: 500 });
+            $("#popupReservation").jqxWindow('open');
+
+            getReservationFeeCredit();
+            $("#reservationLocationCombo").jqxComboBox('selectItem', thisLocationId);
+            $("#reservationPaymentMethodId").jqxComboBox('selectItem', 3);
+            $("#reservationFeeCreditCombo").jqxComboBox('selectItem', 3);
+
+            $('#reservationStartDate').jqxDateTimeInput('setDate', new Date(data.result.data.StartDatetime));
+            $('#reservationEndDate').jqxDateTimeInput('setDate', new Date(data.result.data.EndDatetime));
+            $('#EstimatedReservationCost').val(data.result.data.EstimatedCost);
+            $('#ReservationNote').val(data.result.data.MemberNote);
+            $('#reservationTermsAndConditionsFlag').attr('checked', data.result.data.SaveReservationPreferencesFlag);
+            $('#SendNotificationsFlag').attr('checked', data.result.data.SendNotificationsFlag);
+
+            var checkThese = data.result.data.ReservationFeatures;
+
+            loadReservationFeatures(thisLocationId, checkThese);
+
+            
+            
+        },
+        error: function (request, status, error) {
+            $("#popupReservation").jqxWindow('close');
+            swal(request.responseJSON.message)
+            .then((value) => {
+                $("#popupReservation").jqxWindow('open');
+            })
+        }
+    });
+
 }
