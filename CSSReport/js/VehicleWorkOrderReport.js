@@ -109,7 +109,7 @@
         '<textarea id="txtComplaint" rows="4" style="width:100%"></textarea> ' +
         '</td> ' +
         '<td colspan="2"> ' +
-        '<label for="txtResolution">Complaint:</label> ' +
+        '<label for="txtResolution">Resolution:</label> ' +
         '<textarea id="txtResolution" rows="4" style="width:100%"></textarea> ' +
         '</td> ' +
         '</tr> ' +
