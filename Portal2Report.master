@@ -117,16 +117,21 @@
                                 <li><a href="VehicleDaily.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Daily Tracking</a></li>
                                 <li><a href="VehicleAddStock.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Add Stock</a></li> 
                                 <li><a href="FleetStatus.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Fleet Status</a></li>
-                                <li><a href="VehicleWorkOrder.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Vehcile Work Order</a></li> 
+                                <li><a href="VehicleWorkOrder.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Vehicle Work Order</a></li> 
                             </ul>
                         </li> 
                         <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_Insurance Portal_Legal Portal_Couponadmin Portal_Manager Portal_Asstmanager">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">PCA Apps<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="Insurance.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Insurance</a></li>
+                                <li><a href="Insurance.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Insurance</a>
+                                    <ul>
+                                        <li><a href="InsuranceVehicles.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Insurance Vehicles</a></li>
+                                    </ul>
+                                </li>
                                 <li><a href="Legal.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Legal">Legal</a></li>
                                 <li><a href="Coupons.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Manager Portal_Asstmanager Portal_Couponadmin">Coupons</a></li>
                                 <li><a href="https://parkingcompanystore.mybrightsites.com/permissions_denied" target="_blank" class="menuSecurity disabled Portal_Superadmin Portal_Manager">Uniforms</a></li>
+                                <li><a href="Invoices.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Manager Portal_Asstmanager">Invoices</a></li>
                             </ul>
                         </li>
                         <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">

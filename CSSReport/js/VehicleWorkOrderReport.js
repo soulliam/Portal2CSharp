@@ -25,8 +25,8 @@
         '$("#txtMileage").val("' + $("#txtMileage").val() + '"); ' +
         '$("#txtDate").val("' + DateFormat($('#workOrderDate').jqxDateTimeInput('getDate')) + '"); ' +
         '$("#txtVin").val("' + $("#txtVINNumber").val() + '"); ' +
-        '$("#txtComplaint").val("' + $("#complaint").val() + '"); ' +
-        '$("#txtResolution").val("' + $("#resolution").val() + '"); ' +
+        '$("#txtComplaint").val("' + $("#complaint").val().replace(/"/g, '"').replace(/"/g, '\\"') + '"); ' +
+        '$("#txtResolution").val("' + $("#resolution").val().replace(/"/g, '"').replace(/"/g, '\\"') + '"); ' +
         '$("#txtHours").val("' + $("#txtHours").val() + '"); ' +
         '}); ' +
         'function PrintWorkOrder () { ' +

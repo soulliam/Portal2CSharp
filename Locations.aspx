@@ -1,5 +1,8 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Portal2.master" AutoEventWireup="true" CodeFile="Locations.aspx.cs" Inherits="Locations" %>
 
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit"  %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <style>
         .locationInfo input[type=text]{
@@ -252,6 +255,8 @@
                             "SiteURL": newSiteURL
                         }),
                         success: function (response) {
+                            var thisLoggedinUsername = $("#txtLoggedinUsername").val();
+                            PageMethods.logLocationChange(thisLoggedinUsername, newNameOfLocation);
                             alert("Saved!");
                             $("#popupLocation").jqxWindow('hide');
                             //refresh the main grid
@@ -411,6 +416,8 @@
                             }),
                             
                             success: function (response) {
+                                var thisLoggedinUsername = $("#txtLoggedinUsername").val();
+                                PageMethods.logLocationChange(thisLoggedinUsername, newNameOfLocation);
                                 alert("Saved!");
                                 $("#popupLocation").jqxWindow('hide');
                                 //refresh the main grid

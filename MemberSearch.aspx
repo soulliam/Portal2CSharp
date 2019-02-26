@@ -213,6 +213,7 @@
                 $("#1DayRedemption").jqxButton();
                 $("#3DayRedemption").jqxButton();
                 $("#1WeekRedemption").jqxButton();
+                $("#ReturnExpiredRedemption").jqxButton();
 
                 $("#deleteEmail").jqxButton();
                 $("#addPhone").jqxButton();
@@ -639,6 +640,97 @@
                     }
 
                     
+                })
+
+            });
+
+            // Return Expired Redemptions
+            $("#ReturnExpiredRedemption").on("click", function (event) {
+                var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
+                if (getselectedrowindexes.length <= 0) {
+                    swal("You have not selected a redemption.")
+                    return null;
+                }
+
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to return this redemption?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, return it!'
+                }).then(function () {
+                    //Get the selected rows RedemptionID
+                    var thisMemberId = $("#MemberId").val();
+                    var getselectedrowindexes = $('#jqxRedemptionGrid').jqxGrid('getselectedrowindexes');
+                    var thisUser = $("#txtLoggedinUsername").val();
+                    thisUser = thisUser.replace('PCA\\', '');
+                    var ProcessList = "";
+                    var first = true;
+
+                    if (getselectedrowindexes.length > 0) {
+
+                        for (var index = 0; index < getselectedrowindexes.length; index++) {
+
+                            var selectedRowData = $('#jqxRedemptionGrid').jqxGrid('getrowdata', getselectedrowindexes[index]);
+                            if (selectedRowData.IsReturned == 1 || selectedRowData.BeenUsed == 1 || selectedRowData.IsExpired == 0) {
+                                swal('You have selected a redemption that has been used, returned or not expired.  Please check you list and try again.');
+                                return null;
+                            }
+
+                            if (first == true) {
+                                ProcessList = ProcessList + selectedRowData.CertificateId;
+                                first = false;
+                            }
+                            else {
+                                ProcessList = ProcessList + "," + selectedRowData.CertificateId;
+                            }
+                        }
+
+                        var thisRedemptionList = ProcessList.split(",");
+
+                    }
+                    else {
+                        swal("You must select a redemption to return.");
+                        return null;
+                    }
+
+                    for (var i = 0, len = thisRedemptionList.length; i < len; i++) {
+
+                        //var url = "http://localhost:52839/api/Redemptions/ReturnExpiredRedemption/" + thisRedemptionList[i] + '~' + thisUser;
+                        var url = $("#localApiDomain").val() + "Redemptions/ReturnExpiredRedemption/" + thisRedemptionList[i] + '~' + thisUser;
+
+                        $.ajax({
+                            type: "GET",
+                            url: url,
+
+                            dataType: "json",
+                            success: function (Response) {
+                                success = true;
+                            },
+                            error: function (request, status, error) {
+                                swal(error);
+                            },
+                            complete: function () {
+                                if (success == true) {
+                                    swal(
+                                      'Done!',
+                                      'Your redemption has been returned.',
+                                      'success'
+                                    )
+                                    $('#jqxRedemptionGrid').jqxGrid('clearselection');
+                                    $('#jqxRedemptionGrid').jqxGrid('clear');
+                                    $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
+                                    $("#topPointsBalanceAccountBar").html(loadPoints(AccountId, $("#topPointsBalanceAccountBar")));
+                                    loadRedemptions(thisMemberId);
+                                    loadMemberActivity(thisMemberId);
+                                }
+                            }
+                        });
+                    }
+
+
                 })
 
             });
@@ -2377,8 +2469,14 @@
                 thisFPNumber = "";
             }
 
-            if ($("#SearchFirstName").val() == "") {
-               
+            if ($("#SearchFirstName").val() != "") {
+                var thisFirstName = $("#SearchFirstName").val();
+                thisFirstName = thisFirstName.replace(/'/g, "''");
+            }
+
+            if ($("#SearchLastName").val() != "") {
+                var thisLastName = $("#SearchLastName").val();
+                thisLastName = thisLastName.replace(/'/g, "''");
             }
 
             
@@ -2395,8 +2493,8 @@
 
             var data = {
                 "FPNumber": thisFPNumber,
-                "FirstName": $("#SearchFirstName").val(),
-                "LastName": $("#SearchLastName").val(),
+                "FirstName": thisFirstName,
+                "LastName": thisLastName,
                 "EmailAddress": $("#SearchEmail").val(),
                 "HomePhone": thisPhoneNumber,
                 "Company": $("#SearchCompany").val(),
@@ -2665,6 +2763,7 @@
                     { name: 'RedemptionTypeName' },
                     { name: 'RedeemDate' },
                     { name: 'IsReturned' },
+                    { name: 'IsExpired' },
                     { name: 'ReturnRequest' },
                     { name: 'ReturnProcessed' },
                     { name: 'BeenUsed' },
@@ -2703,11 +2802,12 @@
                 columns: [
                       { text: 'RedemptionId', datafield: 'RedemptionId', hidden: true },
                       { text: 'CertificateId', datafield: 'CertificateId', width: '12%' },
-                      { text: 'Redemption Type', datafield: 'RedemptionTypeName', width: '9%' },
-                      { text: 'Redeem Date', datafield: 'RedeemDate', cellsrenderer: DateTimeRenderGMT, width: '15%' },
-                      { text: 'Returned', datafield: 'IsReturned', cellsrenderer: redemptionRenderer, width: '6%' },
-                      { text: 'Return Request', datafield: 'ReturnRequest', cellsrenderer: DateTimeRenderGMT, width: '15%' },
-                      { text: 'Return Processed', datafield: 'ReturnProcessed', cellsrenderer: DateTimeRenderGMT, width: '15%' },
+                      { text: 'Redemption Type', datafield: 'RedemptionTypeName', width: '8%' },
+                      { text: 'Redeem Date', datafield: 'RedeemDate', cellsrenderer: DateTimeRenderGMT, width: '14%' },
+                      { text: 'Returned', datafield: 'IsReturned', cellsrenderer: redemptionRenderer, width: '5%' },
+                      { text: 'Expired', datafield: 'IsExpired', cellsrenderer: redemptionRenderer, width: '5%' },
+                      { text: 'Return Request', datafield: 'ReturnRequest', cellsrenderer: DateTimeRenderGMT, width: '14%' },
+                      { text: 'Return Processed', datafield: 'ReturnProcessed', cellsrenderer: DateTimeRenderGMT, width: '14%' },
                       { text: 'BeenUsed', datafield: 'BeenUsed', cellsrenderer: redemptionRenderer, width: '6%' },
                       { text: 'DateUsed', datafield: 'DateUsed', cellsrenderer: DateTimeRender, width: '15%' },
                       { text: 'Source', datafield: 'RedemptionSourceName', width: '6%' }
@@ -2780,20 +2880,20 @@
                 enablebrowserselection: true,
                 columnsresize: true,
                 columns: [
-                      {
-                          //creates edit button for each row in city grid
-                          text: '', pinned: true, datafield: 'Edit', width: 50, columntype: 'button', cellsrenderer: function () {
-                              return "Edit";
-                          }, buttonclick: function (row) {
-                              // open the popup window when the user clicks a button.
-                              editrow = row;
-                              var selectedRowData = $('#jqxReservationGrid').jqxGrid('getrowdata', row);
-                              getReservationByID(selectedRowData.ReservationId);
-                              $('#saveReservation').val('Edit');
-                              $('#jqxReservationGrid').jqxGrid('selectrow', row);
-                          }
-                      },
-                      { text: 'ReservationId', datafield: 'ReservationId', hidden: false },
+                      //{
+                      //    //creates edit button for each row in city grid
+                      //    text: '', pinned: true, datafield: 'Edit', width: 50, columntype: 'button', cellsrenderer: function () {
+                      //        return "Edit";
+                      //    }, buttonclick: function (row) {
+                      //        // open the popup window when the user clicks a button.
+                      //        editrow = row;
+                      //        var selectedRowData = $('#jqxReservationGrid').jqxGrid('getrowdata', row);
+                      //        getReservationByID(selectedRowData.ReservationId);
+                      //        $('#saveReservation').val('Edit');
+                      //        $('#jqxReservationGrid').jqxGrid('selectrow', row);
+                      //    }
+                      //},
+                      { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
                       //{ text: 'LocationId', datafield: 'LocationId', hidden: true },
                       { text: 'Reservation Number', datafield: 'ReservationNumber', width: '9%' },
                       { text: 'Location', datafield: 'LocationId', width: '9%', cellsrenderer: locatioinCellsrenderer },
@@ -4938,6 +5038,7 @@
                                     <input type="button" id="1DayRedemption" value="1 Day" class="editor" />
                                     <input type="button" id="3DayRedemption" value="3 Day" class="editor" />
                                     <input type="button" id="1WeekRedemption" value="1 Week" class="editor" />
+                                    <input type="button" id="ReturnExpiredRedemption" value="Return Expired" class="RFR" />
                                 </div>
                             </div>
                         </div>

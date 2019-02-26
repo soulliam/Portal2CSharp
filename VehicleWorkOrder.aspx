@@ -590,6 +590,14 @@
                     packageId = 0;
                 }
 
+                var thisComplaint = checkUndefinedString($("#complaint").val())
+                thisComplaint = thisComplaint.replace(/'/g, "''");
+                thisComplaint = thisComplaint.replace(/\\"/g, '"').replace(/"/g, '\\"');
+
+                var thisResolution = checkUndefinedString($("#resolution").val())
+                thisResolution = thisResolution.replace(/'/g, "''");
+                thisResolution = thisResolution.replace(/\\"/g, '"').replace(/"/g, '\\"');
+
                 var maintenanceString = '{ "VehicleId": ' + vehicle.value + ', ' +
                                           '"WorkOrder": "' + checkUndefinedString($("#txtWorkOrder").val()) + '", ' +
                                           '"MaintenanceDate": "' + DateTimeFormat(workOrderDate) + '", ' +
@@ -597,8 +605,8 @@
                                           '"PartsTax": ' + checkUndefinedNaN(Tax) + ', ' +
                                           '"MechanicId": ' + checkUndefinedNaN(mechanic.value) + ', ' +
                                           '"LaborCost": ' + checkUndefinedNaN(Labor) + ', ' +
-                                          '"Notes": "' + checkUndefinedString($("#complaint").val()) + '", ' +
-                                          '"MaintenanceDescription": "' + checkUndefinedString($("#resolution").val()) + '", ' +
+                                          '"Notes": "' + thisComplaint + '", ' +
+                                          '"MaintenanceDescription": "' + thisResolution + '", ' +
                                           '"DateTimeEntered": "' + DateTimeFormat(today) + '", ' +
                                           '"PackageId": ' + packageId + ', ' +
                                           '"WarranyWork": ' + checkUndefinedNaN(0) + ', ' +

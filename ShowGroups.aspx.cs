@@ -11,4 +11,21 @@ public partial class ShowGroups : System.Web.UI.Page
     {
 
     }
+
+    [System.Web.Services.WebMethod]
+    public static string SendEmail(string ToAddress, string From, string Subject, string Body, bool IsHtml)
+    {
+        try
+        {
+            clsCommon thisEmail = new clsCommon();
+
+            thisEmail.SendEmail(ToAddress, From, Subject, Body, IsHtml);
+
+            return "Email Sent!";
+        }
+        catch (Exception ex)
+        {
+            return (Convert.ToString(ex));
+        }
+    }
 }

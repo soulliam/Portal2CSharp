@@ -47,6 +47,10 @@
 
             $("#ProcessDate").jqxDateTimeInput({ width: '300px', height: '25px', formatString: "MM/dd/yyyy" });
             $("#InvoiceDate").jqxDateTimeInput({ width: '300px', height: '25px', formatString: "MM/dd/yyyy" });
+            $("#findProcessDate").jqxDateTimeInput({ width: '100%', formatString: "MM/dd/yyyy", showFooter: true, placeHolder: "Process Date" });
+            $("#findInvoiceDate").jqxDateTimeInput({ width: '100%', formatString: "MM/dd/yyyy", showFooter: true, placeHolder: "Invoice Date" });
+            $('#findProcessDate').jqxDateTimeInput('setDate', null);
+            $('#findInvoiceDate').jqxDateTimeInput('setDate', null);
             $("#newInvoice").jqxButton();
             $("#cancelInvoice").jqxButton();
             $("#saveInvoice").jqxButton();
@@ -296,7 +300,7 @@
                     dataType: "json",
                     success: function (Response) {
                         $("#popupInvoice").jqxWindow('hide');
-                        loadGrid();
+                        //loadGrid();
                         swal("Saved!");
                     },
                     error: function (request, status, error) {
@@ -463,6 +467,8 @@
                 url: url,
                 dataType: "json",
                 success: function (thisData) {
+                    var thisLoggedinUsername = $("#txtLoggedinUsername").val();
+                    PageMethods.logLocationChange(thisLoggedinUsername, thisInvoiceId);
                     swal(thisData.toString());
                     loadGrid();
                 },
@@ -705,7 +711,7 @@
                 success: function (data) {$("#InvoiceId").val(data[0].InvoiceID);
                     $("#InvoiceDate").jqxDateTimeInput('setDate', new Date(data[0].InvoiceDate));
                     $("#ProcessDate").jqxDateTimeInput('setDate', new Date(data[0].ProcessDate));
-                    $('#VendorSearchCombo').val(data[0].VendorName);
+                    $('#VendorSearchCombo').jqxInput('val', { label: data[0].VendorName, value: data[0].VendorID });
                     $('#InvoiceItem').val(data[0].InvoiceItem);
                     $('#InvoiceNumber').val(data[0].InvoiceNumber);
                     $('#Unit').val(data[0].Unit);
@@ -802,6 +808,7 @@
             var thisInvoiceDate = $("#InvoiceDate").val();
             var thisVendorId = $('#VendorSearchCombo').val().value;
             var thisInvoiceItem = $('#InvoiceItem').val();
+            thisInvoiceItem = thisInvoiceItem.replace(/'/g, "''");
             var thisInvoiceNumber = $('#InvoiceNumber').val();
             var thisUnit = $('#Unit').val();
             var thisInvoiceAmount = $('#InvoiceAmount').val();
@@ -904,10 +911,10 @@
                     <div id="LocationCombo" style="width:250px;"></div>
                 </div>
                 <div class="col-sm-2 search">
-                    <input type="text" id="findInvoiceNumber" placeholder="Invoice Number" /><input type="text" id="findProcessDate" placeholder="Process Date mm/dd/yyyy" />
+                    <input type="text" id="findInvoiceNumber" placeholder="Invoice Number" /><div id="findProcessDate"></div>
                 </div>
                 <div class="col-sm-2 search">
-                    <input type="text" id="findInvoiceDate" placeholder="Invoice Date mm/dd/yyyy" /><div id="findCategoryID"></div>
+                    <div id="findInvoiceDate"></div><div id="findCategoryID"></div>
                 </div>
                 <div class="col-sm-2 search">
                     <input type="text" id="findVendorID" placeholder="Vendor" /><input type="text" id="findInvoiceItem" placeholder="Invoice Description" />
