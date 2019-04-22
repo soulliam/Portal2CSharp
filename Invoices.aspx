@@ -274,7 +274,8 @@
 
                 
 
-                thisInvoiceAmount = thisInvoiceAmount.replace("$", "");
+                thisInvoiceAmount = thisInvoiceAmount.replace(/\$/gi, "");
+                thisInvoiceAmount = thisInvoiceAmount.replace(/,/gi, "");
 
                 if (thisInvoiceAmount == "") {
                     thisInvoiceAmount = "0";
@@ -814,6 +815,13 @@
             var thisInvoiceAmount = $('#InvoiceAmount').val();
             var thisExpenseCategoryID = $('#CategorySearchCombo').jqxComboBox('getSelectedItem').value;
             var thisLocationID = $('#LocationCombo').jqxComboBox('getSelectedItem').value;
+
+            thisInvoiceAmount = thisInvoiceAmount.replace(/\$/gi, "");
+            thisInvoiceAmount = thisInvoiceAmount.replace(/,/gi, "");
+
+            if (thisInvoiceAmount == "") {
+                thisInvoiceAmount = "0";
+            }
 
             $.ajax({
                 type: "POST",

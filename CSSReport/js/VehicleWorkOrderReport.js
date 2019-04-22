@@ -2,6 +2,7 @@
     var gridContent = $("#partsGrid").jqxGrid('exportdata', 'html');
     gridContent = gridContent.replace(/undefined/g, "");
     gridContent = gridContent.replace("<table", "<table id='partTable'");
+    gridContent = gridContent.replace(/&nbsp;/g, "$0.00");
     var newWindow = window.open('', '', 'width=' + screen.width + ',height=' + screen.height),
     document = newWindow.document.open(),
     pageContent =

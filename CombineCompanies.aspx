@@ -113,7 +113,7 @@
                                 $("#Company1Name").html('&nbsp;&nbsp;' + data[0].name);
                                 $("#Company1Address").html('&nbsp;&nbsp;' + data[0].address_1);
                                 $("#Company1cityStateZip").html('&nbsp;&nbsp;' + data[0].city + ', ' + data[0].state + ' ' + data[0].zip);
-                                $("#Company1Domain").html('');
+                                $("#Company1Domain").html('&nbsp;&nbsp;' + data[0].website);
                                 $("#Company1HomeRate").html('&nbsp;&nbsp;' + data[0].home_rate_code);
                                 $("#Company1AwayRate").html('&nbsp;&nbsp;' + data[0].away_rate_code);
                             },
@@ -193,7 +193,7 @@
                                 $("#Company2Name").html('&nbsp;&nbsp;' + data[0].name);
                                 $("#Company2Address").html('&nbsp;&nbsp;' + data[0].address_1);
                                 $("#Company2cityStateZip").html('&nbsp;&nbsp;' + data[0].city + ', ' + data[0].state + ' ' + data[0].zip);
-                                $("#Company2Domain").html('');
+                                $("#Company2Domain").html('&nbsp;&nbsp;' + data[0].website);
                                 $("#Company2HomeRate").html('&nbsp;&nbsp;' + data[0].home_rate_code);
                                 $("#Company2AwayRate").html('&nbsp;&nbsp;' + data[0].away_rate_code);
                             },

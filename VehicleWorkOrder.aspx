@@ -166,6 +166,9 @@
         var lastKey;
         var partCostValue = false;
         var partCostTotal = false;
+        var editDataField = "";
+        var editRow = -1;
+        var SelectedLocation = 0;
 
         $(document).ready(function () {
 
@@ -239,6 +242,7 @@
                 $("#popupLocation").jqxWindow('open');
             }
             else {
+                SelectedLocation = locationString;
                 $("#vehicleLocation").val(locationString);
                 loadVehicles(locationString);
                 loadMechanics(locationString);
@@ -248,6 +252,7 @@
                 if (event.args) {
                     var item = event.args.item;
                     if (item) {
+                        SelectedLocation = item.value;
                         var thisLocationId = item.value;
                         $("#vehicleLocation").val(thisLocationId);
                         $("#popupLocation").jqxWindow('hide');
@@ -333,6 +338,14 @@
                 showstatusbar: true,
                 showaggregates: true,
                 selectionmode: 'checkbox',
+                handlekeyboardnavigation: function (event) {
+                    var key = event.charCode ? event.charCode : event.keyCode ? event.keyCode : 0;
+                    if (key == 9 && editDataField == "Total") {
+                        $("#partsGrid").jqxGrid('begincelledit', editRow + 1, "PartDescription");
+                        return true;
+                    }
+                    return false;
+                },
                 ready: function () {
                     //Issue with values not appearing in cells. I set the begin edit and the cell values become visible.
                     var rows = $('#partsGrid').jqxGrid('getrows');
@@ -432,7 +445,7 @@
                                         partCostValue = false;
                                     }
                                 }
-                                if (partCostValue == false) {
+                                if (partCostValue == false || PartCostTotal == 0) {
                                     return '<div style="margin-top:10px;"><span>$0.00</span></div>';
                                 }
                             },
@@ -498,7 +511,7 @@
                                         partCostTotal = false;
                                     }
                                 }
-                                if (partCostTotal == false) {
+                                if (partCostTotal == false  || total == 0) {
                                     return '<div style="margin-top:10px;"><span>$0.00</span></div>';
                                 }
                             },
@@ -527,6 +540,12 @@
                     partSelected = true;
                 }
                 
+            });
+
+            $('#partsGrid').on('cellbeginedit', function (event) {
+                var args = event.args;
+                editDataField = event.args.datafield;
+                editRow = args.rowindex;
             });
 
             $("#clear").on('click', function () {
@@ -571,7 +590,7 @@
                 var vehicle = $("#vehiclesCombo").jqxDropDownList('getSelectedItem');
                 var mechanic = $("#mechanicCombo").jqxDropDownList('getSelectedItem');
                 var packageId = $("#pmiCombo").jqxDropDownList('getSelectedItem');
-                var locationId = $("#LocationCombo").jqxDropDownList('getSelectedItem');
+                var locationId = SelectedLocation;
                 var workOrderDate = $('#workOrderDate').jqxDateTimeInput('getDate');
                 var PartsCost = checkUndefinedNaN($("#partsGrid").jqxGrid('getcolumnaggregateddata', 'PartCost', ['sum']).sum);
                 var Labor = checkUndefinedNaN($("#partsGrid").jqxGrid('getcolumnaggregateddata', 'Labor', ['sum']).sum);
@@ -610,7 +629,7 @@
                                           '"DateTimeEntered": "' + DateTimeFormat(today) + '", ' +
                                           '"PackageId": ' + packageId + ', ' +
                                           '"WarranyWork": ' + checkUndefinedNaN(0) + ', ' +
-                                          '"LocationId": ' + checkUndefinedNaN(locationId.value) + ', ' +
+                                          '"LocationId": ' + checkUndefinedNaN(locationId) + ', ' +
                                           '"EnteredBy": "' + checkUndefinedString(userName) + '", ' +
                                           '"VehicleMaintenanceParts":['
                 '}';
@@ -628,6 +647,10 @@
                         swal("Vendor missing on part row " + rowNumber + '.');
                         partError = true;
                         return;
+                    } else {
+                        var vendor = checkUndefinedString(row.Vendor);
+                        vendor = vendor.replace(/\\"/g, '"').replace(/"/g, '\\"');
+                        vendor = vendor.replace(/'/g, "''");
                     }
 
                     if (firstPart == true) {
@@ -636,20 +659,24 @@
                         partsString = ', { ';
                     }
 
+                    var thisPartDesc = checkUndefinedString(row.PartDescription);
+                    thisPartDesc = thisPartDesc.replace(/'/g, "''");
+                    thisPartDesc = thisPartDesc.replace(/\\"/g, '"').replace(/"/g, '\\"');
+
                     partsString = partsString + '"PartId": ' + checkUndefinedNaN(row.PartId) + ', ' +
-                                  '"PartDescription": "' + checkUndefinedString(row.PartDescription) + '", ' +
-                                  '"PartNumber": "' + checkUndefinedString(row.PartNumber) + '", ' +
+                                  '"PartDescription": "' + thisPartDesc + '", ' +
+                                  '"PartModel": "' + checkUndefinedString(row.PartNumber) + '", ' +
                                   '"Quantity": ' + checkUndefinedNaN(row.Quantity) + ', ' +
                                   '"UnitPrice": ' + checkUndefinedNaN(row.UnitPrice) + ', ' +
                                   '"InvoiceNumber": "' + checkUndefinedString(row.InvoiceNumber) + '", ' +
-                                  '"Vendor": "' + checkUndefinedString(row.Vendor) + '", ' +
+                                  '"Vendor": "' + vendor + '", ' +
                                   '"Warranty": "' + checkUndefinedString(row.Warranty) + '", ' +
                                   '"PartCost": ' + checkUndefinedNaN(row.PartCost) + ', ' +
                                   '"Labor": ' + checkUndefinedNaN(row.Labor) + ', ' +
                                   '"Tax": ' + checkUndefinedNaN(row.Tax) + ', ' +
                                   '"Total": ' + checkUndefinedNaN(row.Total) + ', ' +
                                   '"FueltypeId": ' + checkUndefinedNaN($("#txtFuelTypeId").val()) + ', ' +
-                                  '"PartSupplierName": "' + checkUndefinedString(row.Vendor) + '", ' +
+                                  '"PartSupplierName": "' + vendor + '", ' +
                                   '"ModelId": ' + checkUndefinedNaN($("#txtModelId").val()) + ' }';
 
                     maintenanceString = maintenanceString + partsString;
@@ -943,6 +970,14 @@
                 showstatusbar: true,
                 showaggregates: true,
                 selectionmode: 'checkbox',
+                handlekeyboardnavigation: function (event) {
+                    var key = event.charCode ? event.charCode : event.keyCode ? event.keyCode : 0;
+                    if (key == 9 && editDataField == "Total") {
+                        $("#partsGrid").jqxGrid('begincelledit', editRow + 1, "PartDescription");
+                        return true;
+                    } 
+                    return false;
+                },
                 ready: function () {
                     //Issue with values not appearing in cells. I set the begin edit and the cell values become visible.
                     var rows = $('#partsGrid').jqxGrid('getrows');
@@ -1042,7 +1077,7 @@
                                         partCostValue = false;
                                     }
                                 }
-                                if (partCostValue == false) {
+                                if (partCostValue == false || PartCostTotal == 0) {
                                     return '<div style="margin-top:10px;"><span>$0.00</span></div>';
                                 }
                                 
@@ -1109,7 +1144,7 @@
                                         partCostTotal = false;
                                     }
                                 }
-                                if (partCostTotal == false) {
+                                if (partCostTotal == false || total == 0) {
                                     return '<div style="margin-top:10px;"><span>$0.00</span></div>';
                                 }
                                 
@@ -1140,6 +1175,12 @@
                         swal("Pick a Vendor");
                     }
                 }
+            });
+
+            $('#partsGrid').on('cellbeginedit', function (event) {
+                var args = event.args;
+                editDataField = event.args.datafield;
+                editRow = args.rowindex;
             });
         }
 
