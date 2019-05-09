@@ -48,9 +48,11 @@
         var glbHomeLocationId = 0;
         var searchCompaniesLoaded = false;
         var memberCompaniesLoaded = false;
+        
 
 
         $(document).ready(function () {
+            var lastKey;
 
             //Hide search bar if you are not in one of these groups Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager Portal_Marketing Portal_Auditadmin
 
@@ -1038,17 +1040,77 @@
                 $("#addCardWindow").jqxWindow('open');
             });
 
+            $("#addCardCreateDigitalCard").change(function (){
+                if ($("#addCardCreateDigitalCard").is(':checked')) {
+                    $("#addCardValidation").val('');
+                    $("#addCardFPNumber").attr("disabled", true);
+                    $("#addCardValidation").attr("disabled", true);
+                } else {
+                    $("#addCardFPNumber").attr("disabled", false);
+                    $("#addCardValidation").attr("disabled", false);
+                }
+            })
+
+            $(document).on('keypress', function (e) {
+                lastKey = e.which;
+            });
+
+            $('#addCardFPNumber').bind("paste", function (e) {
+                e.preventDefault();
+            });
+
+            $("#addCardFPNumber").attr("placeholder", "XXX-XXXXX");
+
+            $("#addCardFPNumber").on("input", function (event) {
+
+                var card = $("#addCardFPNumber").val();
+
+                if (card.length == 3 && lastKey != 8 && lastKey != 45 && !isNaN(card.substring(card.length - 1, card.length))) {
+                    card = card + '-';
+                    $("#addCardFPNumber").val(card);
+                } else if (lastKey == 45 || card.substring(card.length - 1, card.length) == ' ' || card.length == 10) {
+                    $("#addCardFPNumber").val(card.substring(0, card.length - 1));
+                } else {
+                    if (lastKey != 8) {
+                        if (isNaN(card.substring(card.length - 1, card.length)) && card.substring(card.length - 1, card.length) != '-' && card.length != 4) {
+                            $("#addCardFPNumber").val(card.substring(0, card.length - 1));
+                            return;
+                        } else {
+                            $("#addCardFPNumber").val(card);
+                        }
+                    }
+                }
+
+                if ($("#addCardFPNumber").val().length > 0) {
+                    $("#addCardCreateDigitalCard").attr("disabled", true);
+                } else {
+                    $("#addCardCreateDigitalCard").attr("disabled", false);
+                }
+
+                lastKey = 8;
+            })
+
             //call add card function on click
             $("#addCardSubmit").on("click", function (event) {
                 addCard();
             });
 
             $("#cancelCardSubmit").on("click", function (event) {
+                $("#addCardFPNumber").val('');
+                $("#addCardValidation").val('');
+                $("#addCardCreateDigitalCard").prop("checked", false);
+                $("#addCardFPNumber").attr("disabled", false);
+                $("#addCardValidation").attr("disabled", false);
+                $("#addCardCreateDigitalCard").attr("disabled", false);
+                $("#addCardIsPrimary").prop("checked", false);
                 $("#addCardWindow").jqxWindow('close');
             });
 
             //Delete Card from Member
             $("#deleteCard").on("click", function (event) {
+                var thisLoggedinUsername = $("#txtLoggedinUsername").val();
+                var thisMemberId = $("#MemberId").val();
+
                 //var result = confirm("Do you want to delete this card!");
                 //if (result != true) {
                 //    return null;
@@ -1090,6 +1152,7 @@
 
                                 dataType: "json",
                                 success: function () {
+                                    PageMethods.LogCardAddDelete(thisLoggedinUsername, thisMemberId, selectedRowData.FPNumber, 'Deleted');
                                     swal(
                                         'Deleted!',
                                         'Your card has been deleted.',
@@ -1110,6 +1173,8 @@
             });
 
             $("#UnDeleteCard").on("click", function (event) {
+                var thisLoggedinUsername = $("#txtLoggedinUsername").val();
+                var thisMemberId = $("#MemberId").val();
 
                 swal({
                     title: 'Are you sure?',
@@ -1141,6 +1206,7 @@
                                 url: url,
                                 dataType: "json",
                                 success: function () {
+                                    PageMethods.LogCardAddDelete(thisLoggedinUsername, thisMemberId, selectedRowData.FPNumber, 'UnDeleted');
                                     swal(
                                         'Un-Deleted!',
                                         'Your card has been Un-deleted.',
@@ -3799,11 +3865,61 @@
 
         function addCard() {
             var thisFPNumber = $("#addCardFPNumber").val();
+            thisFPNumber = thisFPNumber.replace(/-/g, "");
+            var thisValildation = $("#addCardValidation").val();
+            var validationCheck = -99;
             var thisIsPrimary = $("#addCardIsPrimary").is(':checked');
             var thisIsActive = $("#addCardIsActive").is(':checked');
             var thisCreateDigitalCard = $("#addCardCreateDigitalCard").is(':checked');
             var PageMemberID = $("#MemberId").val();
+            var thisLoggedinUsername = $("#txtLoggedinUsername").val();
 
+            var url = $("#localApiDomain").val() + "Cards/ValidateCard/" + thisFPNumber;
+            //var url = "http://localhost:52839/api/Cards/ValidateCard/" + thisFPNumber;
+
+            $.ajax({
+                type: "GET",
+
+                url: url,
+                async: false,
+                dataType: "json",
+                success: function (data) {
+                    validationCheck = data;
+                },
+                error: function (request, status, error) {
+                    swal(error);
+                    return;
+                }
+            });
+
+            if (validationCheck != thisValildation) {
+                $("#addCardWindow").jqxWindow('close');
+                swal({
+                    title: 'FP Card Validation?',
+                    text: "The card validation number did not match.",
+                    type: 'warning'
+                }).then(function () {
+                    $("#addCardWindow").jqxWindow('open');
+                })
+                return;
+            } else {
+                //alert("Validated");
+            }
+
+            if (thisFPNumber.length != 8) {
+                $("#addCardWindow").jqxWindow('close');
+                swal({
+                    title: 'FP Card?',
+                    text: "This card has the wrong number of digits.",
+                    type: 'warning'
+                }).then(function () {
+                    $("#addCardWindow").jqxWindow('open');
+                })
+                return;
+            }
+
+            url = $("#apiDomain").val() + "members/" + PageMemberID + "/cards/";
+            
             $.ajax({
                 headers: {
                     "Accept": "application/json",
@@ -3812,7 +3928,7 @@
                     "ApplicationKey": $("#AK").val()
                 },
                 type: "POST",
-                url: $("#apiDomain").val() + "members/" + PageMemberID + "/cards/",
+                url: url,
                 data: JSON.stringify({
                     "FPNumber": thisFPNumber,
                     "IsPrimary": thisIsPrimary,
@@ -3821,6 +3937,7 @@
                 }),
                 dataType: "json",
                 success: function () {
+                    PageMethods.LogCardAddDelete(thisLoggedinUsername, PageMemberID, thisFPNumber, 'Added');
                     swal("Card Added!");
                 },
                 error: function (request, status, error) {
@@ -3830,6 +3947,14 @@
                     thisMemberId = $("#MemberId").val();
                     $('#jqxCardGrid').jqxGrid('clearselection');
                     $('#jqxCardGrid').jqxGrid('clear');
+                    $("#addCardFPNumber").val('');
+                    $("#addCardValidation").val('');
+                    $("#addCardCreateDigitalCard").prop("checked", false);
+                    $("#addCardFPNumber").attr("disabled", false);
+                    $("#addCardValidation").attr("disabled", false);
+                    $("#addCardCreateDigitalCard").attr("disabled", false);
+                    $("#addCardIsPrimary").prop("checked", false);
+                    $("#addCardWindow").jqxWindow('close');
                     $("#addCardWindow").jqxWindow('hide');
                     loadCards(thisMemberId);
                 }
@@ -5134,6 +5259,7 @@
                                 <label for="addCardFPNumber" class="col-sm-3 col-md-4 control-label">FP Number:</label>
                                 <div class="col-sm-9 col-md-8">
                                     <input type="text" class="form-control" id="addCardFPNumber" placeholder="FPNumber" />
+                                    <input type="text" class="form-control" id="addCardValidation" placeholder="Validation Number" />
                                 </div>
                             </div>
                             <div class="form-group">

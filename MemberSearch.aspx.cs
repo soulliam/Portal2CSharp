@@ -205,6 +205,22 @@ public partial class MemberSearch : System.Web.UI.Page
     }
 
     [System.Web.Services.WebMethod]
+    public static string LogCardAddDelete(string thisUserName, string thisMemberId, string thisOld, string thisNew)
+    {
+        try
+        {
+            clsLogging LogMemberUpdate = new clsLogging();
+
+            LogMemberUpdate.logChange(thisUserName, thisMemberId, thisOld, thisNew, "MemberCard", "Member Card Information Updated", -1);
+            return "Request Made";
+        }
+        catch (Exception ex)
+        {
+            return Convert.ToString(ex);
+        }
+    }
+
+    [System.Web.Services.WebMethod]
     public static string logCertificate(string thisUserName, string thisMemberId, string NumberOfRedemption, string RedemptionTypeID)
     {
         try
