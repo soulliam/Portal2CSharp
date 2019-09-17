@@ -29,6 +29,7 @@ public partial class CombineCompanies : System.Web.UI.Page
             cn.Open();
             cmd = new SqlCommand("dbo.CombineCompaniesLocal");
             cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandTimeout = 120;
             cmd.Connection = cn;
            
             
@@ -50,6 +51,7 @@ public partial class CombineCompanies : System.Web.UI.Page
             cn.Open();
             cmd = new SqlCommand("dbo.CombineCompanies");
             cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandTimeout = 120;
             cmd.Connection = cn;
 
 

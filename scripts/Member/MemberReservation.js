@@ -5,11 +5,14 @@
     var thisEndDatetime = $("#reservationEndDate").val();;
     var thisReservationFeeId = ReservationFeeId;
     
-    if (ConnectionCheck.includes("pcafp-stg-api")) {
-        var thisPaymentMethodId = 8;  //hard coded for payment method ID 8 "member rewards" no payment method STAGE
-    } else {
-        var thisPaymentMethodId = 7;  //hard coded for payment method ID 8 "member rewards" no payment PRODUCTION
-    }
+    /// this must have been fixed by CoS in stage
+    //if (ConnectionCheck.includes("pcafp-stg-api")) {
+    //    var thisPaymentMethodId = 8;  //hard coded for payment method ID 8 "member rewards" no payment method STAGE
+    //} else {
+    //    var thisPaymentMethodId = 7;  //hard coded for payment method ID 8 "member rewards" no payment PRODUCTION
+    //}
+
+    var thisPaymentMethodId = 7;  //hard coded for payment method ID 8 "member rewards" no payment PRODUCTION
     
     var thisFeeDollars = $("#reservationFeeInput").val();
     var thisFeePoints = $("#reservationFeePointsInput").val();
@@ -92,6 +95,30 @@
             })
         },
         complete: function () {
+            $('#reservationFeeDiscountIdGrid').jqxGrid('clearselection');
+
+            $("#reservationFeeDiscountIdDDB").jqxDropDownButton('setContent', "Please Select");
+
+            $("#reservationStartDate").jqxDateTimeInput('today');
+            $("#reservationEndDate").jqxDateTimeInput('today');
+            $("#reservationFeeInput").val('');
+            $("#reservationFeePointsInput").val('');
+            $("#reservationFeeInputValue").val('');
+            $("#EstimatedReservationCost").val('');
+            $("#reservationTermsAndConditionsFlag").prop('checked', false);
+            $("#SendNotificationsFlag").prop('checked', false);
+            $("#reservationPaymentMethodId").jqxComboBox('selectItem', 0);
+            $("#ReservationNote").val('');
+
+            var parent = $("#reservationFeatures").parent();
+            $("#reservationFeatures").jqxComboBox('destroy');
+            $("<div id='reservationFeatures'></div>").appendTo(parent);
+
+            var parent = $("#reservationFeeCreditCombo").parent();
+            $("#reservationFeeCreditCombo").jqxComboBox('destroy');
+            $("<div id='reservationFeeCreditCombo'></div>").appendTo(parent);
+
+            $("#popupReservation").jqxWindow('hide');
             loadReservations(thisMemberId);
         }
     });
@@ -104,11 +131,13 @@ function editReservation(ReservationId, ReservationFeeId, ConnectionCheck) {
     var thisEndDatetime = $("#reservationEndDate").val();;
     var thisReservationFeeId = ReservationFeeId;
 
-    if (ConnectionCheck.includes("pcafp-stg-api")) {
-        var thisPaymentMethodId = 8;  //hard coded for payment method ID 8 "member rewards" no payment method STAGE
-    } else {
-        var thisPaymentMethodId = 7;  //hard coded for payment method ID 8 "member rewards" no payment PRODUCTION
-    }
+    //if (ConnectionCheck.includes("pcafp-stg-api")) {
+    //    var thisPaymentMethodId = 8;  //hard coded for payment method ID 8 "member rewards" no payment method STAGE
+    //} else {
+    //    var thisPaymentMethodId = 7;  //hard coded for payment method ID 8 "member rewards" no payment PRODUCTION
+    //}
+
+    var thisPaymentMethodId = 7;
 
     var thisEstimatedReservationCost = $("#EstimatedReservationCost").val();
     var thisMemberNote = $("#ReservationNote").val();;
@@ -121,7 +150,7 @@ function editReservation(ReservationId, ReservationFeeId, ConnectionCheck) {
         "StartDatetime": thisStartDatetime,
         "EndDatetime": thisEndDatetime,
         "ReservationFeeId": thisReservationFeeId,
-        "EstimatedReservationCost": thisEstimatedReservationCost,
+        "EstimatedCost": thisEstimatedReservationCost,
         "MemberNote": thisMemberNote,
         "SendNotificationsFlag": thisSendNotificationsFlag,
         "SaveReservationPreferencesFlag": thisSaveReservationPreferencesFlag,
@@ -163,6 +192,30 @@ function editReservation(ReservationId, ReservationFeeId, ConnectionCheck) {
             })
         },
         complete: function () {
+            $('#reservationFeeDiscountIdGrid').jqxGrid('clearselection');
+
+            $("#reservationFeeDiscountIdDDB").jqxDropDownButton('setContent', "Please Select");
+
+            $("#reservationStartDate").jqxDateTimeInput('today');
+            $("#reservationEndDate").jqxDateTimeInput('today');
+            $("#reservationFeeInput").val('');
+            $("#reservationFeePointsInput").val('');
+            $("#reservationFeeInputValue").val('');
+            $("#EstimatedReservationCost").val('');
+            $("#reservationTermsAndConditionsFlag").prop('checked', false);
+            $("#SendNotificationsFlag").prop('checked', false);
+            $("#reservationPaymentMethodId").jqxComboBox('selectItem', 0);
+            $("#ReservationNote").val('');
+
+            var parent = $("#reservationFeatures").parent();
+            $("#reservationFeatures").jqxComboBox('destroy');
+            $("<div id='reservationFeatures'></div>").appendTo(parent);
+
+            var parent = $("#reservationFeeCreditCombo").parent();
+            $("#reservationFeeCreditCombo").jqxComboBox('destroy');
+            $("<div id='reservationFeeCreditCombo'></div>").appendTo(parent);
+
+            $("#popupReservation").jqxWindow('hide');
             loadReservations(thisMemberId);
         }
     });
@@ -224,8 +277,11 @@ function loadReservationCalendars() {
     $('#reservationStartDate').on('change', function (event) {
         var thisDate = event.args.date;
         var type = event.args.type;
-
+        $("#EstimatedReservationCost").val('');
         setReservationFee(thisDate);
+    });
+    $('#reservationEndDate').on('change', function (event) {
+        $("#EstimatedReservationCost").val('');
     });
     $("#reservationEndDate").jqxDateTimeInput({ formatString: 'MM-dd-yyyy hh:mm tt', showTimeButton: true, width: '400px', height: '25px' });
 }

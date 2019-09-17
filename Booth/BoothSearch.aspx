@@ -925,13 +925,18 @@
                 url: url
             };
 
+            var dataAdapter = new $.jqx.dataAdapter(source, {
+                downloadComplete: function (data, status, xhr) { },
+                loadComplete: function (data) { },
+                loadError: function (xhr, status, error) { alert('There was an error loading the Member search results'); }
+            });
 
             // create Searchlist Grid
             $("#jqxSearchGrid").jqxGrid(
             {
                 width: '100%',
                 height: 450,
-                source: source,
+                source: dataAdapter,
                 rowsheight: 60,
                 ready: function () {
                 },

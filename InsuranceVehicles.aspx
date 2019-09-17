@@ -3,9 +3,6 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
     <link rel="stylesheet" href="/jqwidgets/styles/jqx.base.css" type="text/css" />
 
-
-    <script type="text/javascript" src="scripts/Member/UpdateMember.js"></script>
-    <script type="text/javascript" src="scripts/Member/MemberReservation.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxcore.js"></script>
     <script type="text/javascript" src="jqwidgets/globalization/globalize.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxbuttons.js"></script>
@@ -499,10 +496,31 @@
                     var thisCoverageRemovedDate = DateFormat(data["CoverageRemoved"]);
                 }
 
+                var StateId = 0;
+                if (checkUndefinedString(data["StateCode"]) == '') {
+                    var url = $("#localApiDomain").val() + "InsuranceVehicles/GetStateId/" + data["State"];
+
+                    $.ajax({
+                        async: false,
+                        type: 'GET',
+                        url: url,
+                        success: function (data) {
+                            StateId = data;
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            swal("Error: " + errorThrown);
+                            return;
+                        }
+                    });
+
+                } else {
+                    StateId = data["StateCode"];
+                }
+
                 //var url = "http://localhost:52839/api/InsuranceVehicles/UpdateInsuranceVehicleStatus/";
                 var url = $("#localApiDomain").val() + "InsuranceVehicles/UpdateInsuranceVehicleStatus/";
 
-                var postData = { 'VehicleId': data["VehicleId"], 'Coverage': data["CoverageCode"], 'Insurance': data["InsuranceCode"], 'CoverageAdded': thisCoverageAddedDate, 'CoverageRemoved': thisCoverageRemovedDate, 'StateID': data["StateCode"] }
+                var postData = { 'VehicleId': data["VehicleId"], 'Coverage': data["CoverageCode"], 'Insurance': data["InsuranceCode"], 'CoverageAdded': thisCoverageAddedDate, 'CoverageRemoved': thisCoverageRemovedDate, 'StateID': StateId }
 
                 postInsuranceChange(url, postData).done(function (data) {
                     console.log();

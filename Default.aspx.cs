@@ -10,7 +10,7 @@ public partial class _Default : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         var user = Page.User.Identity.Name;
-
+        
         //Create session variable with members groups
         string groupList = "";
         Boolean first = true;
@@ -34,8 +34,29 @@ public partial class _Default : System.Web.UI.Page
 
         if (groupList.IndexOf("PCA\\Portal") < 0)
         {
-            //Response.Redirect("http://www.thefastpark.com");
+            Response.Redirect("http://www.thefastpark.com");
         }
+
+        //++++++++++++++++++++test for aspnet user++++++++++++++++++++++++++++++
+        var userTest = user;
+        userTest = userTest.Substring(4, userTest.Length - 4);
+
+        var thisADO = new class_ADO.clsADO();
+
+        //userTest = "rfart";
+
+        var userSQL = "Select UserId from aspnetdb.dbo.aspnet_Users where username = '" + userTest + "'";
+
+        var isUser = thisADO.returnSingleValue(userSQL, false);
+
+
+        if (isUser == null && !IsPostBack)
+        {
+            Response.Write("<script>alert('User has not been added to aspnet_users.  The application will continue, but please contact IT about this issue.');</script>");
+            ClientScript.RegisterStartupScript(typeof(Page), "autoPostback", ClientScript.GetPostBackEventReference(this, String.Empty), true);
+            return;
+        }
+        //++++++++++++++++++++test for aspnet user++++++++++++++++++++++++++++++
 
         Session["UserName"] = user;
 

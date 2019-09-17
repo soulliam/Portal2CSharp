@@ -143,8 +143,6 @@ public partial class MemberSearch : System.Web.UI.Page
         {
             return ex.ToString();
         }
-
-
     }
 
     [System.Web.Services.WebMethod]
@@ -181,6 +179,60 @@ public partial class MemberSearch : System.Web.UI.Page
             cn.Close();
 
             return "Error";
+        }
+        catch (Exception ex)
+        {
+            return ex.ToString();
+        }
+    }
+
+    [System.Web.Services.WebMethod]
+    public static string unCombineCards(Int64 batch, string thisUserName, string thisMemberId)
+    {
+        try
+        {
+
+            class_ADO.clsADO thisADO = new class_ADO.clsADO();
+
+            SqlConnection cn = new SqlConnection(thisADO.getLocalConnectionString());
+
+            cn.Open();
+            SqlCommand cmd = new SqlCommand("dbo.UnCombineCards");
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Connection = cn;
+
+            SqlParameter thisBatch = cmd.Parameters.Add(new SqlParameter("@Batch", SqlDbType.BigInt));
+            
+            thisBatch.Value = batch;
+
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.ExecuteNonQuery();
+
+            cn.Close();
+
+            cn = new SqlConnection(thisADO.getMaxConnectionString());
+
+            cn.Open();
+            cmd = new SqlCommand("dbo.UnCombineCards");
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Connection = cn;
+
+            thisBatch = cmd.Parameters.Add(new SqlParameter("@Batch", SqlDbType.BigInt));
+
+            thisBatch.Value = batch;
+
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.ExecuteNonQuery();
+
+            cn.Close();
+
+            clsLogging LogMemberUpdate = new clsLogging();
+
+            LogMemberUpdate.logChange(thisUserName, thisMemberId, "0", "0", "MemberInformation", "Cards where uncombined using batch " + batch.ToString(), -1);
+
+            return "Success";
         }
         catch (Exception ex)
         {

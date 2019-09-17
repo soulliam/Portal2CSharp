@@ -176,6 +176,7 @@
                     var newCapacity = $("#Capacity").val();
                     var newDescription = $("#Description").val();
                     var newAlert = $("#Alert").val();
+                    var newShowAlert = $("#showAlert").prop("checked")
                     var newDailyRate = $("#DailyRate").val();
                     var newSlug = $("#Slug").val();
                     var newManager = $("#siteManager").val();
@@ -233,6 +234,7 @@
                             "LocationFaxNumber": newLocationFaxNumber,
                             "Description": newDescription,
                             "Alert": newAlert,
+                            "ShowAlert": newShowAlert,
                             "DailyRate": newDailyRate,
                             "Slug": newSlug,
                             "RateQualifications": newRateQualifications,
@@ -288,6 +290,7 @@
                         var newCapacity = $("#Capacity").val();
                         var newDescription = $("#Description").val();
                         var newAlert = $("#Alert").val();
+                        var newShowAlert = $("#showAlert").prop("checked");
                         var newDailyRate = $("#DailyRate").val();
                         var newSlug = $("#Slug").val();
                         var newManager = $("#siteManager").val();
@@ -324,6 +327,7 @@
 
                         var putUrl = $("#apiDomain").val() + "locations/" + selectedLocationId //ID of the location to update
 
+                        // used to extract json data for testing
                         var test = JSON.stringify({
                             "NameOfLocation": newNameOfLocation,
                             "DisplayName": newDisplayName,
@@ -343,6 +347,7 @@
                             "LocationFaxNumber": newLocationFaxNumber,
                             "Description": newDescription,
                             "Alert": newAlert,
+                            "ShowAlert": newShowAlert,
                             "DailyRate": newDailyRate,
                             "Slug": newSlug,
                             "RateQualifications": newRateQualifications,
@@ -393,6 +398,7 @@
                                 "LocationFaxNumber": newLocationFaxNumber,
                                 "Description": newDescription,
                                 "Alert": newAlert,
+                                "ShowAlert": newShowAlert,
                                 "DailyRate": newDailyRate,
                                 "Slug": newSlug,
                                 "RateQualifications": newRateQualifications,
@@ -832,6 +838,7 @@
                     { name: 'Capacity' },
                     { name: 'Description' },
                     { name: 'Alert' },
+                    { name: 'ShowAlert' },
                     { name: 'Slug' },
                     { name: 'Manager' },
                     { name: 'ManagerEmail' },
@@ -949,6 +956,7 @@
                                   $("#Capacity").val(dataRecord.Capacity);
                                   $("#Description").val(dataRecord.Description);
                                   $("#Alert").val(dataRecord.Alert);
+                                  $("#showAlert").prop("checked", dataRecord.ShowAlert);
                                   $("#Slug").val(dataRecord.Slug);
                                   $("#siteManager").val(dataRecord.Manager);
                                   $("#ManagerEmail").val(dataRecord.ManagerEmail);
@@ -1010,6 +1018,7 @@
                       { text: 'Capacity', datafield: 'Capacity', width: '5%' },
                       { text: 'Description', datafield: 'Description', hidden: true },
                       { text: 'Alert', datafield: 'Alert', hidden: true },
+                      { text: 'Show Alert', datafield: 'ShowAlert', hidden: true },
                       { text: 'Slug', datafield: 'Slug', hidden: true },
                       { text: 'Manager', datafield: 'Manager', width: '15%' },
                       { text: 'Manager Email', datafield: 'ManagerEmail', hidden: true },
@@ -1643,6 +1652,12 @@
                                                 <label for="Description" class="col-sm-3 col-md-2 control-label">Description:</label>
                                                 <div class="col-sm-9 col-md-10">
                                                     <textarea rows="5" class="form-control" id="Description"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="showAlert" class="col-sm-3 col-md-2 control-label">Show Alert:</label>
+                                                <div class="col-sm-9 col-md-10">
+                                                    <input type="checkbox" id="showAlert" style="width:20px" />
                                                 </div>
                                             </div>
                                             <div class="form-group">

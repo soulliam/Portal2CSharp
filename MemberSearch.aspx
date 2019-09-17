@@ -193,6 +193,7 @@
 
                 $("#cancelReservation").jqxButton();
                 $("#addReservation").jqxButton();
+                $("#editReservation").jqxButton();
 
                 $("#returnRedemption").jqxButton();
 
@@ -202,6 +203,7 @@
                 $("#UnDeleteCard").jqxButton();
                 $("#setCardPrimary").jqxButton();
                 $("#combineMemberCards").jqxButton();
+                $("#unCombineMemberCards").jqxButton();
                 $("#saveCombineMember").jqxButton();
                 $("#cancelCombineMember").jqxButton();
 
@@ -322,6 +324,21 @@
             });
 
             $("#saveReservation").on("click", function (event) {
+                if ($("#EstimatedReservationCost").val() == '') {
+                    $("#popupReservation").jqxWindow('close');
+                    swal({
+                        title: 'Missing Estimated Cost.',
+                        text: "Please press the 'Get Cost' button.",
+                        type: 'warning',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    }).then(function () {
+                        $("#popupReservation").jqxWindow('open');
+                    });
+                    
+                    return;
+                }
+
                 $("#popupReservation").jqxWindow('close');
 
                 var thisLocationId = $("#reservationLocationCombo").jqxComboBox('getSelectedItem').value;
@@ -340,6 +357,7 @@
                     url: url,
                     dataType: "json",
                     success: function (result, data) {
+                        
                         var thisReservationFeeId = result.result.data.ReservationFeeId;
                         var ConnectionCheck = '<%= System.Configuration.ConfigurationManager.AppSettings["ConStrMax"].ToString() %>';
                         if ($("#saveReservation").val() == 'Save') {
@@ -352,6 +370,7 @@
                        
                     },
                     error: function (request, status, error) {
+                        
                         swal(error);
                         return;
                     }
@@ -829,6 +848,95 @@
                     }
 
                 })
+            });
+
+            $("#editReservation").on("click", function (event) {
+                var getselectedrowindexes = $('#jqxReservationGrid').jqxGrid('getselectedrowindexes');
+                if (getselectedrowindexes.length <= 0) {
+                    swal("You have not selected a reservation.")
+                    return null;
+                } else if (getselectedrowindexes.length > 1) {
+                    swal("You can only select one reservation to edit.");
+                    return;
+                }
+
+                var selectedRowData = $('#jqxReservationGrid').jqxGrid('getrowdata', getselectedrowindexes[0]);
+                var thisReservationId = selectedRowData.ReservationId
+
+                var url = $("#apiDomain").val() + "reservations/" + thisReservationId;
+
+                $.ajax({
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json",
+                        "AccessToken": $("#userGuid").val(),
+                        "ApplicationKey": $("#AK").val()
+                    },
+                    type: "GET",
+                    url: url,
+                    dataType: "json",
+                    success: function (data) {
+                        $('#saveReservation').val('Edit');
+
+                        $("#reservationLocationCombo").jqxComboBox('selectItem', data.result.data.LocationInformation.LocationId);
+                        $("#reservationLocationCombo").change();
+
+                        $("#popupReservation").css('display', 'block');
+                        $("#popupReservation").css('visibility', 'hidden');
+
+                        var offset = $("#jqxMemberInfoTabs").offset();
+                        $("#popupReservation").jqxWindow({ position: { x: '10%', y: '5%' } });
+                        $('#popupReservation').jqxWindow({ resizable: false });
+                        $('#popupReservation').jqxWindow({ draggable: true });
+                        $('#popupReservation').jqxWindow({ isModal: true });
+                        $("#popupReservation").css("visibility", "visible");
+                        $('#popupReservation').jqxWindow({ height: '475px', width: '800px' });
+                        $('#popupReservation').jqxWindow({ minHeight: '400px', minWidth: '800px' });
+                        $('#popupReservation').jqxWindow({ maxHeight: '650px', maxWidth: '800px' });
+                        $('#popupReservation').jqxWindow({ showCloseButton: false });
+                        $('#popupReservation').jqxWindow({ animationType: 'combined' });
+                        $('#popupReservation').jqxWindow({ showAnimationDuration: 300 });
+                        $('#popupReservation').jqxWindow({ closeAnimationDuration: 500 });
+                        $("#popupReservation").jqxWindow('open');
+
+                        getReservationFeeCredit();
+                        
+                        $("#reservationPaymentMethodId").jqxComboBox('selectItem', 3);
+                        $("#reservationFeeCreditCombo").jqxComboBox('selectItem', 3);
+
+                        $('#reservationStartDate').jqxDateTimeInput('setDate', new Date(data.result.data.StartDatetime));
+                        $('#reservationEndDate').jqxDateTimeInput('setDate', new Date(data.result.data.EndDatetime));
+                        //$('#reservationFeatures').jqxComboBox('selectItem', data.result.data.LocationInformation.LocationId);
+                        $('#EstimatedReservationCost').val(data.result.data.EstimatedCost);
+                        $('#ReservationNote').val(data.result.data.MemberNote);
+                        
+                        if (data.result.data.SaveReservationPreferencesFlag == true) {
+                            $('#reservationTermsAndConditionsFlag').prop("checked", true);
+                        } else {
+                            $('#reservationTermsAndConditionsFlag').prop("checked", false);
+                        }
+
+                        if (data.result.data.SendNotificationsFlag == true) {
+                            $('#SendNotificationsFlag').prop("checked", true);
+                        } else {
+                            $('#SendNotificationsFlag').prop("checked", false);
+                        }
+
+                        loadReservationFeatures(data.result.data.LocationInformation.LocationId, data.result.data.ReservationFeatures);
+
+                        //for (var eachFeature = 0; eachFeature < data.result.data.ReservationFeatures.length; eachFeature++) {
+                        //    var item = $("#reservationFeatures").jqxComboBox('getItemByValue', data.result.data.ReservationFeatures[eachFeature].FeatureName);
+                        //    $("#reservationFeatures").jqxComboBox('checkItem', item.index);
+                        //}
+                    },
+                    error: function (request, status, error) {
+                        swal(error + " - " + request.responseJSON.message);
+                    },
+                    complete: function () {
+
+                    }
+                })
+
             });
 
             // Cancel Reservation
@@ -1431,6 +1539,29 @@
                 });
             });
 
+            $("#unCombineMemberCards").on("click", function (event) {
+                var thisLoggedinUsername = $("#txtLoggedinUsername").val();
+                var PageMemberID = $("#MemberId").val();
+
+                if (checkUndefinedNaN($("#unCombineBatch").val()) == 0){
+                    swal("Enter a batch number to un-combine.");
+                    return;
+                }
+
+                swal({
+                    title: 'Are you sure?',
+                    text: "Do you want to un-combine this combined batch?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, un-combine them!'
+                }).then(function () {
+                    var thisBatch = $("#unCombineBatch").val();
+                    PageMethods.unCombineCards(thisBatch, thisLoggedinUsername, PageMemberID, DisplayPageMethodResults);
+                })
+            })
+
             //submit manual Edit manualEditSubmit
             $("#manualEditSubmit").on("click", function (event) {
                 Date.prototype.toMMDDYYYYString = function () { return isNaN(this) ? 'NaN' : [this.getMonth() > 8 ? this.getMonth() + 1 : '0' + (this.getMonth() + 1), this.getDate() > 9 ? this.getDate() : '0' + this.getDate(), this.getFullYear()].join('/') }
@@ -1453,6 +1584,11 @@
 
                 thisNotes = thisNotes.split("'").join("''");
 
+                if (thisNotes == '') {
+                    swal("You must add a descriptive note.");
+                    return;
+                }
+                
                 
                 $.ajax({
                     type: "POST",
@@ -1866,12 +2002,32 @@
             //create loader Icon
             $("#jqxLoader").jqxLoader({ isModal: true, width: 100, height: 60, imagePosition: 'top' });
 
+            //receipt entry oldest date
+            var minDate = new Date();
+            minDate.setFullYear(minDate.getFullYear() - 2);
+
             //create receipt entry calendar
-            $("#jqxReceiptEntryCalendar").jqxDateTimeInput({ formatString: 'MM-dd-yyyy', width: '100%', height: '24px' });
+            $("#jqxReceiptEntryCalendar").jqxDateTimeInput({ formatString: 'MM-dd-yyyy', width: '100%', height: '24px', min: minDate });
 
             //create receipt Detail entry and exit date and time inputs
-            $("#jqxReceiptDetailEntryCalendar").jqxDateTimeInput({ formatString: 'MM-dd-yyyy HH:mm', showTimeButton: true, width: '100%', height: '24px' });
-            $("#jqxReceiptDetailExitCalendar").jqxDateTimeInput({ formatString: 'MM-dd-yyyy HH:mm', showTimeButton: true, width: '100%', height: '24px' });
+            $("#jqxReceiptDetailEntryCalendar").jqxDateTimeInput({ formatString: 'MM-dd-yyyy HH:mm', showTimeButton: true, width: '100%', height: '24px', min: minDate });
+            $("#jqxReceiptDetailExitCalendar").jqxDateTimeInput({ formatString: 'MM-dd-yyyy HH:mm', showTimeButton: true, width: '100%', height: '24px', min: minDate });
+
+            $('#jqxReceiptEntryCalendar').on('valueChanged', function (event) {
+                if (event.args.date < minDate) {
+                    alert('Receipt is too old.');
+                }
+            });
+            $('#jqxReceiptDetailEntryCalendar').on('valueChanged', function (event) {
+                if (event.args.date < minDate) {
+                    alert('Receipt is too old.');
+                }
+            });
+            $('#jqxReceiptDetailExitCalendar').on('valueChanged', function (event) {
+                if (event.args.date < minDate) {
+                    alert('Receipt is too old.');
+                }
+            });
 
             //removes place holder tab
             $('#jqxMemberTabs').jqxTabs('removeAt', 0);
@@ -2589,6 +2745,12 @@
                 url: url
             };
 
+            var dataAdapter = new $.jqx.dataAdapter(source, {
+                downloadComplete: function (data, status, xhr) { },
+                loadComplete: function (data) { },
+                loadError: function (xhr, status, error) { alert('There was an error loading the Member search results'); }
+            });
+
             // create Searchlist Grid
             $("#jqxSearchGrid").jqxGrid(
             {
@@ -2598,7 +2760,7 @@
                 //pagesizeoptions: ['10', '20', '50', '100'],
                 width: '100%',
                 height: 500,
-                source: source,
+                source: dataAdapter,
                 rowsheight: 35,
                 sortable: true,
                 altrows: true,
@@ -3892,33 +4054,56 @@
                 }
             });
 
-            if (validationCheck != thisValildation) {
-                $("#addCardWindow").jqxWindow('close');
-                swal({
-                    title: 'FP Card Validation?',
-                    text: "The card validation number did not match.",
-                    type: 'warning'
-                }).then(function () {
-                    $("#addCardWindow").jqxWindow('open');
-                })
-                return;
+            if ($("#addCardCreateDigitalCard").is(':checked')) {
+
             } else {
-                //alert("Validated");
+                if (validationCheck != thisValildation) {
+                    $("#addCardWindow").jqxWindow('close');
+                    swal({
+                        title: 'FP Card Validation?',
+                        text: "The card validation number did not match.",
+                        type: 'warning'
+                    }).then(function () {
+                        $("#addCardWindow").jqxWindow('open');
+                    })
+                    return;
+                } else {
+                    //alert("Validated");
+                }
             }
 
-            if (thisFPNumber.length != 8) {
-                $("#addCardWindow").jqxWindow('close');
-                swal({
-                    title: 'FP Card?',
-                    text: "This card has the wrong number of digits.",
-                    type: 'warning'
-                }).then(function () {
-                    $("#addCardWindow").jqxWindow('open');
-                })
-                return;
+            if ($("#addCardCreateDigitalCard").is(':checked')) {
+
+            } else {
+                if (thisFPNumber.length != 8) {
+                    $("#addCardWindow").jqxWindow('close');
+                    swal({
+                        title: 'FP Card?',
+                        text: "This card has the wrong number of digits.",
+                        type: 'warning'
+                    }).then(function () {
+                        $("#addCardWindow").jqxWindow('open');
+                    })
+                    return;
+                }
             }
 
             url = $("#apiDomain").val() + "members/" + PageMemberID + "/cards/";
+
+            if ($("#addCardCreateDigitalCard").is(':checked')) {
+                var CardData = JSON.stringify({
+                    "IsPrimary": thisIsPrimary,
+                    "IsActive": true,
+                    "CreateDigitalCard": thisCreateDigitalCard
+                })
+            } else {
+                var CardData = JSON.stringify({
+                    "FPNumber": thisFPNumber,
+                    "IsPrimary": thisIsPrimary,
+                    "IsActive": true,
+                    "CreateDigitalCard": thisCreateDigitalCard
+                })
+            }
             
             $.ajax({
                 headers: {
@@ -3929,12 +4114,7 @@
                 },
                 type: "POST",
                 url: url,
-                data: JSON.stringify({
-                    "FPNumber": thisFPNumber,
-                    "IsPrimary": thisIsPrimary,
-                    "IsActive": true,
-                    "CreateDigitalCard": thisCreateDigitalCard
-                }),
+                data: CardData,
                 dataType: "json",
                 success: function () {
                     PageMethods.LogCardAddDelete(thisLoggedinUsername, PageMemberID, thisFPNumber, 'Added');
@@ -5099,6 +5279,9 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div style="float:left; position:absolute;top:450px;margin: 0 auto;width: 100%;text-align: center">
+                                            <label style="font-size:x-large;color:red;font-weight:bold">The oldest receipt you can enter is <script>var minDateDisplay = new Date(); minDateDisplay.setFullYear(minDateDisplay.getFullYear() - 2); document.write(DateFormat(minDateDisplay.toString()));</script>.</label>
+                                        </div>
                                         <div class="col-sm-0 col-md-2">
                                         </div>
                                     </div>
@@ -5175,13 +5358,14 @@
                                 <div class="col-sm-3 col-md-2">
                                     <input type="button" id="addReservation" value="Add Reservation" class="editor" />
                                     <input type="button" id="cancelReservation" value="Cancel Reservation" class="editor" />
+                                    <input type="button" id="editReservation" value="Edit Reservation" class="editor" />
                                 </div>
                             </div>
                         </div>
                         <div id="tabReferrals" class="tab-body">
                             <div class="row">
                                 <div class="col-sm-12 col-md-12">
-                                    <div id="jqxReferralGrid"></div>
+                                    <div id="jqxReferralGrid"></div>sdfas
                                 </div>
                             </div>
                         </div>
@@ -5197,6 +5381,7 @@
                                 <input type="button" id="addCard" value="Add" class="editor" />
                                 <input type="button" id="setCardPrimary" value="Set as Primary" class="editor" />
                                 <input type="button" id="combineMemberCards" value="Combine Member Cards" class="RFR" />
+                                <table class="RFR" style="width:100%;"><tr><td style="padding:5px" colspan="2"><input type="button" id="unCombineMemberCards" value="Un-Combine" class="RFR" /></td></tr><tr><td style="padding:5px">Batch#</td><td style="padding:5px"><input id="unCombineBatch" type="text" class="RFR" /></td></tr></table>
                                 </div>
                             </div>
                         </div>
