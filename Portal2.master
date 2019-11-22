@@ -140,6 +140,12 @@
                                     <ul>
                                         <li><a href="InsuranceVehicles.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Insurance Vehicles</a></li>
                                     </ul>
+                                    <ul>
+                                        <li><a href="InsuranceClaims.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Insurance/Claims</a></li>
+                                    </ul>
+                                    <ul>
+                                        <li><a href="InsuranceWorkerComp.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Worker Comp</a></li>
+                                    </ul>
                                 </li>
                                 <li><a href="Legal.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Legal">Legal</a></li>
                                 <li><a href="Coupons.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Manager Portal_Asstmanager Portal_Couponadmin">Coupons</a></li>

@@ -156,14 +156,16 @@
                     sortable: true,
                     altrows: true,
                     filterable: true,
+                    columnsresize: true,
                     columns: [
                           { text: 'ManualEditId', datafield: 'ManualEditId', hidden: true },
-                          { text: 'FPNumber', datafield: 'FPNumber' },
-                          { text: 'Full Name', datafield: 'FullName' },
-                          { text: 'Points', datafield: 'Points' },
-                          { text: 'DateOfRequest', datafield: 'DateOfRequest' },
-                          { text: 'Certificate #', datafield: 'CertificateNumber' },
-                          { text: 'Explanation', datafield: 'Explanation' }
+                          { text: 'FPNumber', datafield: 'FPNumber', width: '10%' },
+                          { text: 'Full Name', datafield: 'FullName', width: '15%' },
+                          { text: 'Points', datafield: 'Points', width: '5%' },
+                          { text: 'DateOfRequest', datafield: 'DateOfRequest', width: '6%', cellsrenderer: DateRender },
+                          { text: 'Certificate #', datafield: 'CertificateNumber', width: '10%' },
+                          { text: 'Notes', datafield: 'Notes', width: '44%' },
+                          { text: 'Explanation', datafield: 'Explanation', width: '10%' }
                     ]
                 });
 
@@ -190,10 +192,12 @@
             {
                 datafields: [
                     { name: 'ManualEditID' },
+                    { name: 'FPNumber' },
                     { name: 'FullName' },
                     { name: 'Points' },
                     { name: 'DateOfRequest' },
                     { name: 'CertificateNumber' },
+                    { name: 'Notes' },
                     { name: 'Explanation' }
                 ],
 
@@ -210,17 +214,22 @@
                 height: 500,
                 source: source,
                 selectionmode: 'checkbox',
-                rowsheight: 35,
+                autorowheight: true,
+		rowsheight: 35,
+		pageable: true,
                 sortable: true,
                 altrows: true,
                 filterable: true,
+                columnsresize: true,
                 columns: [
-                        { text: 'ManualEditId', datafield: 'ManualEditId', hidden: true },
-                        { text: 'Full Name', datafield: 'FullName' },
-                        { text: 'Points', datafield: 'Points' },
-                        { text: 'DateOfRequest', datafield: 'DateOfRequest', cellsrenderer: DateTimeRender },
-                        { text: 'Certificate #', datafield: 'CertificateNumber' },
-                        { text: 'Explanation', datafield: 'Explanation' }
+                          { text: 'ManualEditId', datafield: 'ManualEditId', hidden: true },
+                          { text: 'FPNumber', datafield: 'FPNumber', width: '10%' },
+                          { text: 'Full Name', datafield: 'FullName', width: '15%' },
+                          { text: 'Points', datafield: 'Points', width: '5%' },
+                          { text: 'DateOfRequest', datafield: 'DateOfRequest', width: '6%', cellsrenderer: DateRender },
+                          { text: 'Certificate #', datafield: 'CertificateNumber', width: '10%' },
+                          { text: 'Notes', datafield: 'Notes', width: '44%' },
+                          { text: 'Explanation', datafield: 'Explanation', width: '10%' }
                 ]
             });
         }

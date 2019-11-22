@@ -75,11 +75,11 @@
 
             var offset = $("#mainDiv").offset();
 
-            //var WeatherInterval = setInterval(function () { GetNextWeather(); }, 7000);
+            var WeatherInterval = setInterval(function () { GetNextWeather(); }, 7000);
 
             var AlertInterval = setInterval(function () { GetLocationAlerts(); }, 7000);
 
-            //var DelayInterval = setInterval(function () { GetNextDelay(); }, 7000);
+            var DelayInterval = setInterval(function () { GetNextDelay(); }, 7000);
 
             var rateInterval = setInterval(function () { GetRateDescriptionAmounts(); }, 7000);
 
