@@ -139,11 +139,7 @@
                                 <li><a href="Insurance.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Insurance</a>
                                     <ul>
                                         <li><a href="InsuranceVehicles.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Insurance Vehicles</a></li>
-                                    </ul>
-                                    <ul>
                                         <li><a href="InsuranceClaims.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Insurance/Claims</a></li>
-                                    </ul>
-                                    <ul>
                                         <li><a href="InsuranceWorkerComp.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Worker Comp</a></li>
                                     </ul>
                                 </li>
