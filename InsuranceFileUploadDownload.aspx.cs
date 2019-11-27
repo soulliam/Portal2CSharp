@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Web;
 using System.Net;
 using System.Web.UI.WebControls;
+using class_ADO;
+using System.Collections.Generic;
 
 public partial class InsuranceFileUploadDownload : System.Web.UI.Page
 {
@@ -21,6 +23,9 @@ public partial class InsuranceFileUploadDownload : System.Web.UI.Page
 
         Session["LoginError"] = "";
 
+        PopulateTreeView(TreeView1);
+        PopulateTreeView(TreeView2);
+
     }
 
 
@@ -28,7 +33,13 @@ public partial class InsuranceFileUploadDownload : System.Web.UI.Page
     {
         try
         {
-            ImpersonationHelper.Impersonate("PCA", Session["username"].ToString(), Session["password"].ToString(), delegate
+            clsADO thisADO = new clsADO();
+            string SQL = "Select CredUserName, CredPassword from InsurancePCA.dbo.Cred";
+
+            List<clsADO.sql2DObject> thisPassInfo = new List<clsADO.sql2DObject>();
+            thisPassInfo = thisADO.return2DListLocal(SQL, false);
+
+            ImpersonationHelper.Impersonate("PCA", clsCrypt.Decrypt(thisPassInfo[0].one.ToString()), clsCrypt.Decrypt(thisPassInfo[0].two.ToString()), delegate
             {
                 string Dir = @"\\park12\\Insurance\1_New PCA Portal Claims\";
                 DirectoryInfo di = new DirectoryInfo(Dir);
@@ -113,97 +124,124 @@ public partial class InsuranceFileUploadDownload : System.Web.UI.Page
 
     void SaveDownFile()
     {
-        string fnPath = DownLoadLabel.Text;
-        string[] fnParts = fnPath.Split('\\');
-        string fn = fnParts[fnParts.Length - 1];
-
-        string SaveLocation = Server.MapPath(@"~\workingFolder\" + fn);
-
-        ImpersonationHelper.Impersonate("PCA", Session["username"].ToString(), Session["password"].ToString(), delegate
+        try
         {
-            File.Copy(DownLoadLabel.Text, SaveLocation);
-        });
+            clsADO thisADO = new clsADO();
+            string SQL = "Select CredUserName, CredPassword from InsurancePCA.dbo.Cred";
 
-        if (SaveLocation != "")
-        {
-            System.IO.FileInfo file = new System.IO.FileInfo(SaveLocation);
-            if (file.Exists)
+            List<clsADO.sql2DObject> thisPassInfo = new List<clsADO.sql2DObject>();
+            thisPassInfo = thisADO.return2DListLocal(SQL, false);
+
+            string fnPath = DownLoadLabel.Text;
+            string[] fnParts = fnPath.Split('\\');
+            string fn = fnParts[fnParts.Length - 1];
+
+            string SaveLocation = Server.MapPath(@"~\workingFolder\" + fn);
+
+            ImpersonationHelper.Impersonate("PCA", clsCrypt.Decrypt(thisPassInfo[0].one.ToString()), clsCrypt.Decrypt(thisPassInfo[0].two.ToString()), delegate
             {
-                Response.Clear();
-                Response.AddHeader("Content-Disposition", "attachment; filename=" + file.Name);
-                Response.AddHeader("Content-Length", file.Length.ToString());
-                Response.ContentType = "application/octet-stream";
-                Response.WriteFile(file.FullName);
-                Response.Flush();
-                HttpContext.Current.ApplicationInstance.CompleteRequest();
-            }
-            else
-            {
-                Response.Write("This file does not exist.");
-            }
-        }
+                File.Copy(DownLoadLabel.Text, SaveLocation);
+            });
 
-        if (File.Exists(SaveLocation))
-        {
-            System.IO.File.Delete(SaveLocation);
+            if (SaveLocation != "")
+            {
+                System.IO.FileInfo file = new System.IO.FileInfo(SaveLocation);
+                if (file.Exists)
+                {
+                    Response.Clear();
+                    Response.AddHeader("Content-Disposition", "attachment; filename=" + file.Name);
+                    Response.AddHeader("Content-Length", file.Length.ToString());
+                    Response.ContentType = "application/octet-stream";
+                    Response.WriteFile(file.FullName);
+                    Response.Flush();
+                    HttpContext.Current.ApplicationInstance.CompleteRequest();
+                }
+                else
+                {
+                    Response.Write("This file does not exist.");
+                }
+            }
+
+            if (File.Exists(SaveLocation))
+            {
+                System.IO.File.Delete(SaveLocation);
+            }
+
         }
+        catch
+        {
+
+        }
+        
 
     }
 
     void SaveFile(HttpPostedFile file)
     {
-        string fn = System.IO.Path.GetFileName(FileUpload1.PostedFile.FileName);
-        string SaveLocation = Server.MapPath(@"~\workingFolder\" + fn);
-
-        if ((FileUpload1.PostedFile != null) && (FileUpload1.PostedFile.ContentLength > 0))
+        try
         {
+            string fn = System.IO.Path.GetFileName(FileUpload1.PostedFile.FileName);
+            string SaveLocation = Server.MapPath(@"~\workingFolder\" + fn);
 
-            try
+            if ((FileUpload1.PostedFile != null) && (FileUpload1.PostedFile.ContentLength > 0))
             {
-                FileUpload1.PostedFile.SaveAs(SaveLocation);
-                TreeView1.Nodes.Clear();
-                TreeView2.Nodes.Clear();
-                PopulateTreeView(TreeView1);
-                PopulateTreeView(TreeView2);
-                Response.Write("The file has been uploaded.");
+
+                try
+                {
+                    FileUpload1.PostedFile.SaveAs(SaveLocation);
+                    TreeView1.Nodes.Clear();
+                    TreeView2.Nodes.Clear();
+                    PopulateTreeView(TreeView1);
+                    PopulateTreeView(TreeView2);
+                    Response.Write("The file has been uploaded.");
+                }
+                catch (Exception ex)
+                {
+                    Response.Write("Error: " + ex.Message);
+                }
             }
-            catch (Exception ex)
+            else
             {
-                Response.Write("Error: " + ex.Message);
+                Response.Write("Please select a file to upload.");
             }
-        }
-        else
-        {
-            Response.Write("Please select a file to upload.");
-        }
 
+            clsADO thisADO = new clsADO();
+            string SQL = "Select CredUserName, CredPassword from InsurancePCA.dbo.Cred";
 
+            List<clsADO.sql2DObject> thisPassInfo = new List<clsADO.sql2DObject>();
+            thisPassInfo = thisADO.return2DListLocal(SQL, false);
 
-        string[] fileName = FileUpload1.FileName.Split('.');
-        var path = Server.MapPath(@"~\workingFolder\" + fileName[0] + '.' + fileName[1]);
+            string[] fileName = FileUpload1.FileName.Split('.');
+            var path = Server.MapPath(@"~\workingFolder\" + fileName[0] + '.' + fileName[1]);
 
-        ImpersonationHelper.Impersonate("PCA", Session["username"].ToString(), Session["password"].ToString(), delegate
-        {
-            string[] Directories = Directory.GetFiles(UpLoadLabel.Text);
-
-            if (!File.Exists(UpLoadLabel.Text + "\\" + fileName[0] + '.' + fileName[1]))
+            ImpersonationHelper.Impersonate("PCA", clsCrypt.Decrypt(thisPassInfo[0].one.ToString()), clsCrypt.Decrypt(thisPassInfo[0].two.ToString()), delegate
             {
-                File.Copy(path, UpLoadLabel.Text + "\\" + fileName[0] + '.' + fileName[1]);
+                string[] Directories = Directory.GetFiles(UpLoadLabel.Text);
+
+                if (!File.Exists(UpLoadLabel.Text + "\\" + fileName[0] + '.' + fileName[1]))
+                {
+                    File.Copy(path, UpLoadLabel.Text + "\\" + fileName[0] + '.' + fileName[1]);
+                }
+            });
+
+
+            string strFileFullPath = SaveLocation;
+
+            if (System.IO.File.Exists(strFileFullPath))
+            {
+                System.IO.File.Delete(strFileFullPath);
             }
-        });
 
-
-        string strFileFullPath = SaveLocation;
-
-        if (System.IO.File.Exists(strFileFullPath))
-        {
-            System.IO.File.Delete(strFileFullPath);
+            TreeView1.Nodes.Clear();
+            TreeView2.Nodes.Clear();
+            PopulateTreeView(TreeView1);
+            PopulateTreeView(TreeView2);
         }
-
-        TreeView1.Nodes.Clear();
-        TreeView2.Nodes.Clear();
-        PopulateTreeView(TreeView1);
-        PopulateTreeView(TreeView2);
+        catch (Exception ex)
+        {
+            Console.Write(ex.ToString());
+        }
+        
     }
 
     protected void refresh_Click(object sender, EventArgs e)
@@ -214,11 +252,4 @@ public partial class InsuranceFileUploadDownload : System.Web.UI.Page
         PopulateTreeView(TreeView2);
     }
 
-    protected void Login_Click(object sender, EventArgs e)
-    {
-        Session["username"] = UserName.Text;
-        Session["password"] = Password.Text;
-        PopulateTreeView(TreeView1);
-        PopulateTreeView(TreeView2);
-    }
 }

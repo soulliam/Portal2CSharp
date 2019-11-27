@@ -16,29 +16,7 @@
     </script>
     <asp:Button ID="refresh" Text="Refresh" runat="server" OnClick="refresh_Click" Width="150px" />
     <br /><br />
-    <table>
-        <tr>
-            <td>
-                Username
-            </td>
-            <td>
-                Password
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <asp:TextBox ID="UserName" runat="server"></asp:TextBox>
-            </td>
-            <td>
-                <asp:TextBox ID="Password" runat="server" type="password"></asp:TextBox>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <asp:Button ID="Login" runat="server" Text="Lob In" OnClick="Login_Click" />
-            </td>
-        </tr>
-    </table>
+    
     <br />
     <table>
         <tr>
