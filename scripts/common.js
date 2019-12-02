@@ -158,6 +158,22 @@ function Security() {
         });
     }
 
+    if (group.indexOf("InsApp_Regional") > -1) {
+        $('.InsApp_Regional').each(function () {
+            $('.InsApp_Regional').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
+    }
+
+    if (group.indexOf("InsApp_Other") > -1) {
+        $('.InsApp_Other').each(function () {
+            $('.InsApp_Other').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
+    }
+
     if (group.indexOf("Portal_Marketing") > -1) {
         $('.Portal_Marketing').each(function () {
             $('.Portal_Marketing').removeClass('disabled');

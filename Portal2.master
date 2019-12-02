@@ -133,14 +133,14 @@
                                 <li><a href="VehicleWorkOrder.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Vehicle Work Order</a></li> 
                             </ul>
                         </li> 
-                        <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_Insurance Portal_Legal Portal_Couponadmin Portal_Manager Portal_Asstmanager">
+                        <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_Insurance Portal_Legal Portal_Couponadmin Portal_Manager Portal_Asstmanager InsApp_Regional InsApp_Other">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">PCA Apps<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="Insurance.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Insurance</a>
+                                <li><a href="Insurance.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance InsApp_Regional InsApp_Other">Insurance</a>
                                     <ul>
                                         <li><a href="InsuranceVehicles.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Insurance Vehicles</a></li>
-                                        <li><a href="InsuranceClaims.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Insurance/Claims</a></li>
-                                        <li><a href="InsuranceWorkerComp.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance">Worker Comp</a></li>
+                                        <li><a href="InsuranceClaims.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance InsApp_Regional InsApp_Other">Insurance/Claims</a></li>
+                                        <li><a href="InsuranceWorkerComp.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Insurance InsApp_Regional InsApp_Other">Worker Comp</a></li>
                                     </ul>
                                 </li>
                                 <li><a href="Legal.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Legal">Legal</a></li>
