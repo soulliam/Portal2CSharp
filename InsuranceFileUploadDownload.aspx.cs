@@ -14,8 +14,10 @@ public partial class InsuranceFileUploadDownload : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
-
+            PopulateTreeView(TreeView1);
+            PopulateTreeView(TreeView2);
         }
+
         if ((string)Session["LoginError"] != "" || (string)Session["LoginError"] == "null")
         {
             Page.ClientScript.RegisterStartupScript(this.GetType(), "scriptkey", "alert('" + Session["LoginError"] + "');");
@@ -23,8 +25,7 @@ public partial class InsuranceFileUploadDownload : System.Web.UI.Page
 
         Session["LoginError"] = "";
 
-        PopulateTreeView(TreeView1);
-        PopulateTreeView(TreeView2);
+        
 
     }
 
@@ -41,7 +42,7 @@ public partial class InsuranceFileUploadDownload : System.Web.UI.Page
 
             ImpersonationHelper.Impersonate("PCA", clsCrypt.Decrypt(thisPassInfo[0].one.ToString()), clsCrypt.Decrypt(thisPassInfo[0].two.ToString()), delegate
             {
-                string Dir = @"\\park12\\Insurance\1_New PCA Portal Claims\";
+                string Dir = @"\\pca-file\PCA Portal Claims";
                 DirectoryInfo di = new DirectoryInfo(Dir);
                 TreeNode tds = new TreeNode();
                 tds.Text = "<div style='color: red'>" + di.Name + "</div>";

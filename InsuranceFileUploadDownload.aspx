@@ -5,12 +5,48 @@
 
         void Select_ChangeDown(Object sender, EventArgs e)
         {
-            DownLoadLabel.Text = TreeView2.SelectedNode.ToolTip;
+            if (TreeView2.SelectedNode.ToolTip.Length > 0)
+            {
+                DownLoadLabel.Text = TreeView2.SelectedNode.ToolTip;
+
+                var thisPath = TreeView2.SelectedNode.ToolTip;
+                var thisDownload = thisPath.Split('\\');
+
+                var viewPath = "";
+
+                for (var index = 0; index < thisDownload.Length; index++) {
+                    if (index > 3)
+                    {
+                        viewPath = viewPath + "\\" + thisDownload[index];
+                    }
+                }
+
+                ViewDownLoadLabel.Text = viewPath;
+            }
+
         }
 
         void Select_ChangeUp(Object sender, EventArgs e)
         {
-            UpLoadLabel.Text = TreeView1.SelectedNode.ToolTip;
+            if (TreeView1.SelectedNode.ToolTip.Length > 0)
+            {
+                UpLoadLabel.Text = TreeView1.SelectedNode.ToolTip;
+
+                var thisPath = TreeView1.SelectedNode.ToolTip;
+                var thisUpload = thisPath.Split('\\');
+
+                var viewPath = "";
+
+                for (var index = 0; index < thisUpload.Length; index++) {
+                    if (index > 3)
+                    {
+                        viewPath = viewPath + "\\" + thisUpload[index];
+                    }
+                }
+
+                ViewUpLoadLabel.Text = viewPath;
+            }
+
         }
 
     </script>
@@ -18,27 +54,31 @@
     <br /><br />
     
     <br />
-    <table>
+    <table style="padding:10px">
         <tr>
             <td>
-                <asp:Label id="Label1" BackColor="White" Text="Pick Location To Upload To"
-                    runat="server">
-                </asp:Label>
-                <br />
-                <asp:Label id="UpLoadLabel" BackColor="White" Text=""
-                    runat="server">
-                </asp:Label>
-                <br />
-                <asp:TreeView ID="TreeView1" OnSelectedNodeChanged="Select_ChangeUp" runat="server"></asp:TreeView>
-                <br />
-                <br />
+                <asp:Label id="Label1" BackColor="White" Text="Pick Location To Upload To:" runat="server" Font-Bold="True"></asp:Label>
             </td>
             <td>
-                <asp:TreeView ID="TreeView2" OnSelectedNodeChanged="Select_ChangeDown" runat="server"></asp:TreeView>
-                <br />
-                <asp:Label id="DownLoadLabel" BackColor="White" Text="Down Load file"
-                    runat="server">
-                </asp:Label>
+                <asp:Label id="Label2" BackColor="White" Text="Pick File To Download:" runat="server" Font-Bold="True"></asp:Label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <asp:Label id="UpLoadLabel" BackColor="White" runat="server" Width="350px" style="display:none"></asp:Label>
+                <asp:Label id="ViewUpLoadLabel" BackColor="White" runat="server" Width="350px"></asp:Label>
+            </td>
+            <td>
+                <asp:Label id="DownLoadLabel" BackColor="White" runat="server" Width="350px" style="display:none"></asp:Label>
+                <asp:Label id="ViewDownLoadLabel" BackColor="White" runat="server" Width="350px"></asp:Label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div style="overflow:auto;height:230px;width:475px;border-width:.5px;border:solid"><asp:TreeView ID="TreeView1" OnSelectedNodeChanged="Select_ChangeUp" runat="server"></asp:TreeView></div>
+            </td>
+            <td>
+                <div style="overflow:auto;height:230px;width:475px;border-width:.5px;border:solid""><asp:TreeView ID="TreeView2" OnSelectedNodeChanged="Select_ChangeDown" runat="server"></asp:TreeView></div>
             </td>
         </tr>
         <tr>

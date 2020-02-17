@@ -33,7 +33,11 @@
     
     <div style="width:100%;height:100%;text-align:center;margin: 0 auto">
         <div><p style="font-size:xx-large;color:red;">Stage</p></div>
-        <iframe id="thisFrame" src="http://192.168.0.9:8282/Restricted/ClaimsEntry.aspx" style="width:1020px;background: transparent;border:none;" ></iframe>
+        <%--<iframe id="thisFrame" src="http://192.168.0.9:8282/Restricted/ClaimsEntry.aspx" style="width:1020px;background: transparent;border:none;" ></iframe>--%>
+        <object data="http://192.168.0.9:8282" width="600" height="400">
+            <embed src="http://192.168.0.9:8282/" width="600" height="400" />
+            Error: Embedded data could not be displayed.
+        </object>
     </div>
 </asp:Content>
 

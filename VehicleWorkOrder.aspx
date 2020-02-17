@@ -424,7 +424,7 @@
                             text: 'Warranty', datafield: 'Warranty', columntype: 'combobox', width: '10%',
                             createeditor: function (row, column, editor) {
                                 // assign a new data source to the combobox.
-                                var list = ['NA', '1 Month', '6 Month', '12 Month', 'Lifetime'];
+                                var list = ['NA', '1 Month', '6 Month', '12 Month', '2 year', 'Lifetime'];
                                 editor.jqxComboBox({ autoDropDownHeight: true, source: list, promptText: "Please Choose:" });
                             },
                             // update the editor's value before saving it.
