@@ -2,10 +2,189 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
         <script>
+            var group = '<%= Session["groupList"] %>';
+            var IncidentID = "";
+
             $(document).ready(function () {
 
+                $("#printReport").on('click', function () {
+                    $("#printReport").hide();
+                    $("#saveSubmit").hide();
+                    window.print();
+                    $(document).one('click', function () {
+                        $("#printReport").show();
+                        $("#saveSubmit").show();
+                    });
+                });
+
+                $("#saveSubmit").on('click', function () {
+
+                    var creator = $("#txtLoggedinUsername").val().replace('PCA\\', '');
+
+                    //var url = "http://localhost:52839/api/InsuranceIncidents/PutIncidentCheckList/";
+                    var url = $("#localApiDomain").val() + "InsuranceIncidents/PutIncidentCheckList/";
+
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: {
+                            "EmployeeStatementManager": $("#EmployeeStatementManager").val(),
+                            "EmployeeStatementRep": $("#EmployeeStatementRep").val(),
+                            "CustomerStatementManager": $("#CustomerStatementManager").val(),
+                            "CustomerStatementRep": $("#CustomerStatementRep").val(),
+                            "WitnessStatementManger": $("#WitnessStatementManger").val(),
+                            "WitnessStatementRep": $("#WitnessStatementRep").val(),
+                            "ManagerStatementManager": $("#ManagerStatementManager").val(),
+                            "ManagerStatementRep": $("#ManagerStatementRep").val(),
+                            "PicturesManager": $("#PicturesManager").val(),
+                            "PicturesRep": $("#PicturesRep").val(),
+                            "OrigDocsManager": $("#OrigDocsManager").val(),
+                            "OrigDocsRep": $("#OrigDocsRep").val(),
+                            "BusEstManager": $("#BusEstManager").val(),
+                            "BusEstRep": $("#BusEstRep").val(),
+                            "BusInvManager": $("#BusInvManager").val(),
+                            "BusInvRep": $("#BusInvRep").val(),
+                            "PoliceReportManager": $("#PoliceReportManager").val(),
+                            "PoliceReportRep": $("#PoliceReportRep").val(),
+                            "CustEstManager": $("#CustEstManager").val(),
+                            "CustEstRep": $("#CustEstRep").val(),
+                            "CustInvManager": $("#CustInvManager").val(),
+                            "CustInvRep": $("#CustInvRep").val(),
+                            "SlipFallWeatherManager": $("#SlipFallWeatherManager").val(),
+                            "SlipFallWeatherRep": $("#SlipFallWeatherRep").val(),
+                            "DriverMVRManager": $("#DriverMVRManager").val(),
+                            "DriverMVRRep": $("#DriverMVRRep").val(),
+                            "DrugTestManager": $("#DrugTestManager").val(),
+                            "DrugTestRep": $("#DrugTestRep").val(),
+                            "PayrollDeductManager": $("#PayrollDeductManager").val(),
+                            "PayrollDeductRep": $("#PayrollDeductRep").val(),
+                            "OtherPersonInsuranceManager": $("#OtherPersonInsuranceManager").val(),
+                            "OtherPersonInsuranceRep": $("#OtherPersonInsuranceRep").val(),
+                            "Comments": $("#Comments").val(),
+                            "IncidentID": IncidentID
+                        },
+                        dataType: "json",
+                        success: function (Response) {
+                            swal({
+                                title: 'Save',
+                                text: "Successful",
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'OK'
+                            }).then(function () {
+                                window.location.href = "InsuranceIncidentChecklist.aspx?IncidentID=" + IncidentID;
+                            });
+                        },
+                        error: function (request, status, error) {
+                            swal("Error Creating Checklist - " + error );
+                        },
+                        complete: function (data) {
+                            
+                        }
+                    });
+                });
+
+                const params = new URLSearchParams(window.location.search);
+                IncidentID = params.get("IncidentID");
+                $("#IncidentID").val(IncidentID);
+
                 loadLocations();
+                loadCheckList(IncidentID);
             });
+
+            function loadIncident(id) {
+                var url = $("#localApiDomain").val() + "InsuranceIncidents/GetIncidentByID/" + id;
+                //var url = "http://localhost:52839/api/InsuranceIncidents/GetIncidentByID/" + id;
+
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "json",
+                    beforeSend: function (jqXHR, settings) {
+                    },
+                    success: function (data) {
+                        for (i = 0; i < data.length; i++) {
+                            $("#location").val(data[0].LocationName);
+                            $("#IncidentNumber").val(data[0].IncidentNumber);
+                            $("#IncidentAddress").val(data[0].IncidentStreetAddress);
+                            $("#IncidentCity").val(data[0].IncidentCity);
+                            $("#IncidentZip").val(data[0].IncidentZip);
+                            $("#IncidentPhone").val(data[0].IncidentPhone);
+                            $("#IncidentState").val(data[0].StateAbbreviation);
+                            $("#IncidentLRS").val(data[0].IncidentLotRowSpace);
+                            $("input[name=operationType][value=" + data[0].OperationTypeID + "]").prop('checked', true);
+                            var thisIncidentDate = new Date(data[0].IncidentDate)
+                            $("#IncidentDate").val(DateFormatForHTML5(thisIncidentDate));
+                            $("#IncidentTime").val(data[0].IncidentTime);
+                            $("#IncidentStayDuration").val(data[0].StayDuration);
+                            $("#Injuries option[value=" + data[0].IncidentInjuries + "]").prop('selected', true);
+                            $("#IncidentPoliceReportNumber").val(data[0].PoliceReportNumber);
+                            var thisPoliceReportDate = new Date(data[0].PoliceReportDate)
+                            $("#IncidentPoliceReportDate").val(DateFormatForHTML5(thisPoliceReportDate));
+                            $("#IncidentPoliceName").val(data[0].OfficerName);
+                        }
+                    },
+                    error: function (request, status, error) {
+                        swal("There was an issue getting location information.");
+                    }
+                }).done(function () {
+
+                });
+            }
+
+            function loadCheckList(IncidentID) {
+                var url = $("#localApiDomain").val() + "InsuranceIncidents/getIncidentCheckListByID/" + IncidentID;
+                //var url = "http://localhost:52839/api/InsuranceIncidents/getIncidentCheckListByID/" + IncidentID;
+
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "json",
+                    beforeSend: function (jqXHR, settings) {
+                    },
+                    success: function (data) {
+                        for (i = 0; i < data.length; i++) {
+                            $("#EmployeeStatementManager option[value=" + data[0].EmployeeStatementManager + "]").prop('selected', true);
+                            $("#EmployeeStatementRep option[value=" + data[0].EmployeeStatementRep + "]").prop('selected', true);
+                            $("#CustomerStatementManager option[value=" + data[0].CustomerStatementManager + "]").prop('selected', true);
+                            $("#CustomerStatementRep option[value=" + data[0].CustomerStatementRep + "]").prop('selected', true);
+                            $("#WitnessStatementManger option[value=" + data[0].WitnessStatementManger + "]").prop('selected', true);
+                            $("#WitnessStatementRep option[value=" + data[0].WitnessStatementRep + "]").prop('selected', true);
+                            $("#ManagerStatementManager option[value=" + data[0].ManagerStatementManager + "]").prop('selected', true);
+                            $("#ManagerStatementRep option[value=" + data[0].ManagerStatementRep + "]").prop('selected', true);
+                            $("#PicturesManager option[value=" + data[0].PicturesManager + "]").prop('selected', true);
+                            $("#PicturesRep option[value=" + data[0].PicturesRep + "]").prop('selected', true);
+                            $("#OrigDocsManager option[value=" + data[0].OrigDocsManager + "]").prop('selected', true);
+                            $("#OrigDocsRep option[value=" + data[0].OrigDocsRep + "]").prop('selected', true);
+                            $("#BusEstManager option[value=" + data[0].BusEstManager + "]").prop('selected', true);
+                            $("#BusEstRep option[value=" + data[0].BusEstRep + "]").prop('selected', true);
+                            $("#BusInvManager option[value=" + data[0].BusInvManager + "]").prop('selected', true);
+                            $("#BusInvRep option[value=" + data[0].BusInvRep + "]").prop('selected', true);
+                            $("#PoliceReportManager option[value=" + data[0].PoliceReportManager + "]").prop('selected', true);
+                            $("#PoliceReportRep option[value=" + data[0].PoliceReportRep + "]").prop('selected', true);
+                            $("#CustEstManager option[value=" + data[0].CustEstManager + "]").prop('selected', true);
+                            $("#CustEstRep option[value=" + data[0].CustEstRep + "]").prop('selected', true);
+                            $("#CustInvManager option[value=" + data[0].CustInvManager + "]").prop('selected', true);
+                            $("#CustInvRep option[value=" + data[0].CustInvRep + "]").prop('selected', true);
+                            $("#SlipFallWeatherManager option[value=" + data[0].SlipFallWeatherManager + "]").prop('selected', true);
+                            $("#SlipFallWeatherRep option[value=" + data[0].SlipFallWeatherRep + "]").prop('selected', true);
+                            $("#DriverMVRManager option[value=" + data[0].DriverMVRManager + "]").prop('selected', true);
+                            $("#DriverMVRRep option[value=" + data[0].DriverMVRRep + "]").prop('selected', true);
+                            $("#DrugTestManager option[value=" + data[0].DrugTestManager + "]").prop('selected', true);
+                            $("#DrugTestRep option[value=" + data[0].DrugTestRep + "]").prop('selected', true);
+                            $("#PayrollDeductManager option[value=" + data[0].PayrollDeductManager + "]").prop('selected', true);
+                            $("#PayrollDeductRep option[value=" + data[0].PayrollDeductRep + "]").prop('selected', true);
+                            $("#OtherPersonInsuranceManager option[value=" + data[0].OtherPersonInsuranceManager + "]").prop('selected', true);
+                            $("#OtherPersonInsuranceRep option[value=" + data[0].OtherPersonInsuranceRep + "]").prop('selected', true);
+                            $("#Comments").val(data[0].Comments);
+                        }
+                    },
+                    error: function (request, status, error) {
+                        swal("There was an issue getting checklist information.");
+                    }
+                }).done(function () {
+
+                });
+            }
 
             function loadLocations() {
                 var locationString = $("#userVehicleLocation").val();
@@ -33,6 +212,8 @@
                     error: function (request, status, error) {
                         swal("There was an issue getting location information.");
                     }
+                }).then(function () {
+                    loadIncident(IncidentID);
                 });
             }
         </script>
@@ -278,7 +459,7 @@
                 height: 15pt;
             }
             </style>
-           
+            <input type="text" id="IncidentID" style="display:none" />
             <div align=center>
 
             <table border=0 cellpadding=0 cellspacing=0 width=789 style='border-collapse:
@@ -346,7 +527,7 @@
               <td height=20 class=xl153793 style='height:15.0pt'></td>
               <td class=xl683793>LOCATION OF INCIDENT</td>
               <td class=xl153793></td>
-              <td class=xl673793><select id="location" style="border:none"></select></td>
+              <td class=xl673793><input type="text" id="location" style="border:none" /></td>
               <td class=xl153793></td>
               <td class=xl683793>INCIDENT DETAILS</td>
               <td class=xl153793></td>
@@ -361,7 +542,7 @@
               <td class=xl153793></td>
               <td class=xl153793>Date of Incident<span style='mso-spacerun:yes'> </span></td>
               <td class=xl153793></td>
-              <td class=xl673793><input type='text' id='IncidentDate' style='border:none' /></td>
+              <td class=xl673793><input type='date' id='IncidentDate' style='border:none' /></td>
               <td class=xl153793></td>
              </tr>
              <tr height=20 style='height:15.0pt'>
@@ -372,7 +553,7 @@
               <td class=xl153793></td>
               <td class=xl153793>Time of Incident</td>
               <td class=xl153793></td>
-              <td class=xl673793 style='border-top:none'><input type='text' id='IncidentTime' style='border:none' /></td>
+              <td class=xl673793 style='border-top:none'><input type='time' id='IncidentTime' style='border:none' /></td>
               <td class=xl153793></td>
              </tr>
              <tr height=20 style='height:15.0pt'>
@@ -395,7 +576,7 @@
               <td class=xl153793>Any Injuries</td>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id="injuries" style="border:none">
+                  <select id="Injuries" style="border:none">
                       <option value="1">Yes</option>
                       <option value="0" selected>No</option>
                       <option value="2">Unknown</option>
@@ -422,14 +603,14 @@
               <td class=xl153793></td>
               <td class=xl153793>Date of Report</td>
               <td class=xl153793></td>
-              <td class=xl673793 style='border-top:none'><input type='text' id='IncidentPoliceReportDate' style='border:none' /></td>
+              <td class=xl673793 style='border-top:none'><input type='date' id='IncidentPoliceReportDate' style='border:none' /></td>
               <td class=xl153793></td>
              </tr>
              <tr height=20 style='height:15.0pt'>
               <td height=20 class=xl153793 style='height:15.0pt'></td>
               <td class=xl153793>Operation Type</td>
               <td class=xl153793></td>
-              <td class=xl673793 style='border-top:none'><input name="operationType" type="radio" value="1" style="width:25px" />Self Park<input name="operationType" type="radio" value="0" style="width:25px" />Valet</td>
+              <td class=xl673793 style='border-top:none'><input name="operationType" type="radio" value="0" style="width:25px" />Self Park<input name="operationType" type="radio" value="1" style="width:25px" />Valet</td>
               <td class=xl153793></td>
               <td class=xl153793>Officer's Name</td>
               <td class=xl153793></td>
@@ -474,14 +655,14 @@
               <td class=xl153793>Employee Statement</td>
               <td class=xl153793></td>
               <td class=xl673793>
-                <select id='ManagerEmployeeStatement' style="border:none">
+                <select id='EmployeeStatementManager' style="border:none">
                     <option value="1">Yes</option>
                     <option value="0" selected>No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793>
-                  <select id='RepEmployeeStatement' style="border:none">
+                  <select id='EmployeeStatementRep' style="border:none">
                     <option></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
@@ -495,14 +676,14 @@
               <td class=xl153793>Customer Statement</td>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='ManagerCustomerStatement' style="border:none">
+                  <select id='CustomerStatementManager' style="border:none">
                     <option value="1">Yes</option>
                     <option value="0" selected>No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='RepCustomerStatement' style="border:none">
+                  <select id='CustomerStatementRep' style="border:none">
                     <option></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
@@ -516,14 +697,14 @@
               <td class=xl153793>Witness Statements</td>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='ManagerWitnessStatement' style="border:none">
+                  <select id='WitnessStatementManger' style="border:none">
                     <option value="1">Yes</option>
                     <option value="0" selected>No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='RepWitnessStatement' style="border:none">
+                  <select id='WitnessStatementRep' style="border:none">
                     <option></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
@@ -537,14 +718,14 @@
               <td class=xl153793>Manager Statement</td>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='ManagerStatement' style="border:none">
+                  <select id='ManagerStatementManager' style="border:none">
                     <option value="1">Yes</option>
                     <option value="0" selected>No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='RepManagerStatement' style="border:none">
+                  <select id='ManagerStatementRep' style="border:none">
                     <option></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
@@ -558,14 +739,14 @@
               <td class=xl153793>Pictures</td>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='ManagerPictures' style="border:none">
+                  <select id='PicturesManager' style="border:none">
                     <option value="1">Yes</option>
                     <option value="0" selected>No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='RepPictures' style="border:none">
+                  <select id='PicturesRep' style="border:none">
                     <option></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
@@ -579,14 +760,14 @@
               <td class=xl153793>Original Documents Received</td>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='ManagerDocumentsReceived' style="border:none">
+                  <select id='OrigDocsManager' style="border:none">
                     <option value="1">Yes</option>
                     <option value="0" selected>No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='RepDocumentsReceived' style="border:none">
+                  <select id='OrigDocsRep' style="border:none">
                     <option></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
@@ -650,7 +831,7 @@
               <td class=auto-style2>Bus Estimate</td>
               <td class=auto-style2></td>
               <td class=auto-style3>
-                  <select id='MangerBusEst' style="border:none">
+                  <select id='BusEstManager' style="border:none">
                     <option value="1">Yes</option>
                     <option value="0" selected>No</option>
                     <option value="2">Requested</option>
@@ -658,7 +839,7 @@
                 </select>
               <td class=auto-style2></td>
               <td class=auto-style3>
-                  <select id='RepBusEst' style="border:none" name="D1">
+                  <select id='BusEstRep' style="border:none" name="D1">
                     <option></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
@@ -672,14 +853,14 @@
               <td class=xl153793>Bus Invoice</td>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='MangerBusInvoice' style="border:none">
+                  <select id='BusInvManager' style="border:none">
                     <option value="1">Yes</option>
                     <option value="0" selected>No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='RepBusInvoice' style="border:none" name="D2">
+                  <select id='BusInvRep' style="border:none" name="D2">
                     <option></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
@@ -693,14 +874,14 @@
               <td class=xl153793>Police Report</td>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                   <select id='MangerPoliceReport' style="border:none">
+                   <select id='PoliceReportManager' style="border:none">
                     <option value="1">Yes</option>
                     <option value="0" selected>No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='RepPoliceReport' style="border:none" name="D3">
+                  <select id='PoliceReportRep' style="border:none" name="D3">
                     <option></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
@@ -714,14 +895,14 @@
               <td class=auto-style2>Customer Estimate</td>
               <td class=auto-style2></td>
               <td class=auto-style3 style='border-top:none'>
-                  <select id='MangerCustomerEst' style="border:none">
+                  <select id='CustEstManager' style="border:none">
                     <option value="1">Yes</option>
                     <option value="0" selected>No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=auto-style2></td>
               <td class=auto-style3 style='border-top:none'>
-                  <select id='RepCustomerEst' style="border:none" name="D4">
+                  <select id='CustEstRep' style="border:none" name="D4">
                     <option></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
@@ -735,14 +916,14 @@
               <td class=xl153793>Customer Invoice</td>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='MangerCustomerInvoice' style="border:none">
+                  <select id='CustInvManager' style="border:none">
                     <option value="1">Yes</option>
                     <option value="0" selected>No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='RepCustomerInvoice' style="border:none" name="D5">
+                  <select id='CustInvRep' style="border:none" name="D5">
                     <option></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
@@ -756,14 +937,14 @@
               <td class=xl153793>Slip &amp; Fall Weather Report</td>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='MangerSlipFall' style="border:none">
+                  <select id='SlipFallWeatherManager' style="border:none">
                     <option value="1">Yes</option>
                     <option value="0" selected>No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='RepSlipFall' style="border:none" name="D6">
+                  <select id='SlipFallWeatherRep' style="border:none" name="D6">
                     <option></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
@@ -777,14 +958,14 @@
               <td class=xl153793>Driver MVR</td>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='MangerMVR' style="border:none">
+                  <select id='DriverMVRManager' style="border:none">
                     <option value="1">Yes</option>
                     <option value="0" selected>No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='RepMVR' style="border:none" name="D7">
+                  <select id='DriverMVRRep' style="border:none" name="D7">
                     <option></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
@@ -798,14 +979,14 @@
               <td class=xl153793>Drug Test Obtained</td>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='ManagerDrugTestObtained' style="border:none">
+                  <select id='DrugTestManager' style="border:none">
                     <option value="1">Yes</option>
                     <option value="0" selected>No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='RepDrugTestObtained' style="border:none" name="D8">
+                  <select id='DrugTestRep' style="border:none" name="D8">
                     <option></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
@@ -849,14 +1030,14 @@
               <td class=xl153793>Payroll deduction<span style='mso-spacerun:yes'> </span></td>
               <td class=xl153793></td>
               <td class=xl673793>
-                  <select id='ManagerPayrollReduction' style="border:none" name="D9">
+                  <select id='PayrollDeductManager' style="border:none" name="D9">
                     <option value="1">Yes</option>
                     <option value="0" selected>No</option>
                     <option value="2">Maybe</option>
                 </select></td>
               <td class=xl153793></td>
               <td class=xl673793>
-                  <select id='RepPayrollReduction' style="border:none" name="D11">
+                  <select id='PayrollDeductRep' style="border:none" name="D11">
                     <option></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
@@ -870,14 +1051,14 @@
               <td class=xl153793>Other Person's Insurance Info</td>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='ManagerOtherInsurance' style="border:none" name="D10">
+                  <select id='OtherPersonInsuranceManager' style="border:none" name="D10">
                     <option value="1">Yes</option>
                     <option value="0" selected>No</option>
                     <option value="2">Requested</option>
                 </select></td>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
-                  <select id='RepOtherInsurance' style="border:none" name="D12">
+                  <select id='OtherPersonInsuranceRep' style="border:none" name="D12">
                     <option></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
@@ -927,9 +1108,9 @@
              </tr>
              <tr height=20 style='height:15.0pt'>
               <td height=20 class=xl153793 style='height:15.0pt'></td>
-              <td class=xl703793>SAVE &amp; SUBMIT</td>
+              <td class=xl153793><input id="saveSubmit" type="button" value="SAVE &amp; SUBMIT" style="background-color:black;color:white;font-weight:bold" /></td>
               <td class=xl153793></td>
-              <td class=xl713793>PRINT</td>
+              <td class=xl153793><input id="printReport" type="button" value="Print Report" style="background-color:black;color:white;font-weight:bold" /></td>
               <td class=xl153793></td>
               <td class=xl153793></td>
               <td class=xl153793></td>

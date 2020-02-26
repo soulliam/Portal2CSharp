@@ -16,7 +16,39 @@ public partial class InsuranceFileUploadDownload : System.Web.UI.Page
         {
             PopulateTreeView(TreeView1);
             PopulateTreeView(TreeView2);
+
         }
+
+        string IncidentNumber = Request.QueryString["IncidentNumber"];
+        //string IncidentNumber = "TEST"; //Request.QueryString["IncidentNumber"];
+
+        string WCNumber = Request.QueryString["WCNumber"];
+        //string IncidentNumber = "TEST"; //Request.QueryString["IncidentNumber"];
+
+        TreeNode itn = SearchTreeView(IncidentNumber, TreeView1.Nodes);
+        if (itn == null)
+        {
+            TreeView1.CollapseAll();
+        }
+        else
+        {
+            itn.Select();
+            TreeView1.SelectedNodeStyle.BackColor = System.Drawing.Color.LightBlue;
+            ExpandSelectedAndParents(itn);
+        }
+
+        TreeNode wctn = SearchTreeView(WCNumber, TreeView2.Nodes);
+        if (wctn == null)
+        {
+            TreeView2.CollapseAll();
+        }
+        else
+        {
+            wctn.Select();
+            TreeView2.SelectedNodeStyle.BackColor = System.Drawing.Color.LightBlue;
+            ExpandSelectedAndParents(wctn);
+        }
+
 
         if ((string)Session["LoginError"] != "" || (string)Session["LoginError"] == "null")
         {
@@ -25,10 +57,38 @@ public partial class InsuranceFileUploadDownload : System.Web.UI.Page
 
         Session["LoginError"] = "";
 
-        
+    }
+    private void ExpandSelectedAndParents(TreeNode tn)
+    {
+        tn.Expand();
+        if (tn.Parent != null)
+        {
+            ExpandSelectedAndParents(tn.Parent);
+        }
 
     }
 
+    private TreeNode SearchTreeView(string p_sSearchTerm, TreeNodeCollection p_Nodes)
+    {
+        foreach (TreeNode node in p_Nodes)
+        {
+            if (node.Text.Contains(p_sSearchTerm))
+            {
+                return node;
+            }
+            
+            if (node.ChildNodes.Count > 0)
+            {
+                TreeNode child = SearchTreeView(p_sSearchTerm, node.ChildNodes);
+                if (child != null)
+                {
+                    return child;
+                }
+            }
+        }
+
+        return null;
+    }
 
     private void PopulateTreeView(TreeView tree)
     {

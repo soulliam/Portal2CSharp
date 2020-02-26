@@ -445,6 +445,9 @@ function DateFormat(dateObject) {
 }
 
 function DateFormatForHTML5(dateObject) {
+    if (dateObject == null) {
+        return null;
+    }
     var d = new Date(dateObject);
     var day = d.getDate();
     var month = d.getMonth() + 1;
@@ -513,6 +516,20 @@ function JsonDateTimeFormatNotMilitary(dateObject) {
     } else {
         var date = month + "/" + day + "/" + year + ' ' + Hours + ':' + Minutes + ' am';
     }
+
+    return date;
+}
+
+//formats Json dates to MM/dd/yyyy HH:mm
+function JsonDateNoTimeFormat(dateObject) {
+    var thisDate = String(dateObject);
+
+    var day = thisDate.substr(8, 2);
+    var month = thisDate.substr(5, 2);
+    var year = thisDate.substr(0, 4);
+
+
+    var date = month + "/" + day + "/" + year;
 
     return date;
 }

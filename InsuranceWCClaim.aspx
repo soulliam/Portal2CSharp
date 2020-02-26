@@ -32,6 +32,9 @@
 
 
     <script>
+        var group = '<%= Session["groupList"] %>';
+        var WCClaimID = "";
+
         $(document).ready(function () {
             var noteNumber = 0;
 
@@ -55,19 +58,105 @@
                 $(thisDate).val(DateTimeFormat(new Date()));
             });
 
-            $("#dateReportToCarrier").jqxDateTimeInput({ width: '175px', height: '25px', formatString: 'd' });
-            $("#statusDate").jqxDateTimeInput({ width: '175px', height: '25px', formatString: 'd' });
-            $("#fullReleaseDate").jqxDateTimeInput({ width: '175px', height: '25px', formatString: 'd' });
-            $("#dateReturnedWork").jqxDateTimeInput({ width: '175px', height: '25px', formatString: 'd' });
-            $("#repFollowUpDate").jqxDateTimeInput({ width: '175px', height: '25px', formatString: 'd' });
-            $("#datePCAReceivedClaim").jqxDateTimeInput({ width: '175px', height: '25px', formatString: 'd' });
-
-            $('#fullReleaseDate').find("input").addClass("jqxDateTimeInputBackground");
-            $('#dateReturnedWork').find("input").addClass("jqxDateTimeInputBackground");
-            $('#repFollowUpDate').find("input").addClass("jqxDateTimeInputBackground");
-
             loadPCARep();
+
+            const params = new URLSearchParams(window.location.search);
+            WCClaimID = params.get("WCClaimID");
+            $("#WCClaimID").val(WCClaimID);
+
+            loadLocations();
+            loadWCCLaim(WCClaimID);
+
+            Security();
         });
+
+        function loadWCCLaim(WCClaimID) {
+            var url = $("#localApiDomain").val() + "InsuranceWCClaims/GetWCClaimByID/" + WCClaimID;
+            //var url = "http://localhost:52839/api/InsuranceWCClaims/GetWCClaimByID/" + WCClaimID;
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                dataType: "json",
+                beforeSend: function (jqXHR, settings) {
+                },
+                success: function (data) {
+                    for (i = 0; i < data.length; i++) {
+                        $("#IncidentID").val(data[0].IncdidentID);
+                        $("#WCClaimNumber").val(data[0].WCClaimNumber);
+                        $("#IncidentNumber").val(data[0].IncidentNumber + '-' + data[0].ClaimId);
+                        $("#WCIncidentDate").val(DateFormat(data[0].WCIncidentDate));
+                        $("#ClaimantName").val(data[0].ClaimantName);
+                        var getLocationOption = '#location option[value=' + data[0].LocationId + ']';
+                        $(getLocationOption).prop("selected", true);
+                        $("#ReportedToCarrierDate").val(DateFormatForHTML5(data[0].ReportedToCarrierDate));
+                        $("#PolicyTypeID option[value=" + data[0].PolicyTypeID + "]").prop('selected', true);
+                        $("#PCAInsuranceNumber").val(data[0].PCAInsuranceNumber);
+                        $("#OSHALog").val(data[0].OSHALog);
+                        $("#WCClaimStatusID").val(WCClaimStatusID);
+                        $("#WCClaimStatusDate").val(DateFormatForHTML5(data[0].WCClaimStatusDate));
+                        $("#DaysMissed").val(data[0].DaysMissed);
+                        $("#NumberOfDaysMissed").val(data[0].NumberOfDaysMissed);
+                        $("#LiteRelease").val(data[0].LiteRelease);
+                        $("#NumberOfLiteDutyDays").val(data[0].NumberOfLiteDutyDays);
+                        $("#FullReleaseDate").val(DateFormatForHTML5(data[0].FullReleaseDate));
+                        $("#DateReturnedToWork").val(DateFormatForHTML5(data[0].DateReturnedToWork));
+                        $("#FollowUpApptDate").val(DateFormatForHTML5(data[0].FollowUpApptDate));
+                        $("#ImpairmentRating").val(data[0].ImpairmentRating);
+                        $("#JobClass").val(data[0].JobClass);
+                        $("#RepFollowUpDate").val(DateFormatForHTML5(data[0].RepFollowUpDate));
+                        $("#ModifiedDutyRequired option[value=" + data[0].ModifiedDutyRequired + "]").prop('selected', true);
+                        $("#Subro").val(data[0].Subro);
+                        $("#IndemnityCompPaid").val(data[0].IndemnityCompPaid);
+                        $("#IndemnityCompReserve").val(data[0].IndemnityCompReserve);
+                        $("#MedicalPaid").val(data[0].MedicalPaid);
+                        $("#MedicalReserve").val(data[0].MedicalReserve);
+                        $("#WCClaimExpensePaid").val(data[0].WCClaimExpensePaid);
+                        $("#WCExpenseReserve").val(data[0].WCExpenseReserve);
+                        $("#SubroAmount").val(data[0].SubroAmount);
+                        $("#Settlement").val(data[0].Settlement);
+                        $("#PoliceReportNumber").val(data[0].PoliceReportNumber);
+                        $("#PCAReceivedClaimDate").val(JsonDateNoTimeFormat(data[0].PCAReceivedClaimDate));
+                        $("#PCARepID option[value=" + data[0].PCARepID + "]").prop('selected', true);
+                    }
+                },
+                error: function (request, status, error) {
+                    swal("There was an issue getting WC information.");
+                }
+            }).then(function () {
+
+            });
+        }
+
+        function loadLocations() {
+            var locationString = $("#userVehicleLocation").val();
+            var dropdown = $('#location');
+
+            dropdown.empty();
+
+            dropdown.append('<option selected="true">Location</option>');
+            dropdown.prop('selectedIndex', 0);
+
+            //var url = "http://localhost:52839/api/InsuranceLocations/GetUserLocations/" + locationString;
+            var url = $("#localApiDomain").val() + "InsuranceLocations/GetUserLocations/" + locationString;
+
+            $.ajax({
+                type: "GET",
+                async: "false",
+                url: url,
+                dataType: "json",
+                beforeSend: function (jqXHR, settings) {
+                },
+                success: function (data) {
+                    for (i = 0; i < data.length; i++) {
+                        dropdown.append("<option value='" + data[i].LocationID + "' style='font-weight: bold;'>" + data[i].LocationName + "</option>");
+                    }
+                },
+                error: function (request, status, error) {
+                    swal("There was an issue getting location information.");
+                }
+            });
+        }
 
         function loadPCARep() {
             var dropdown = $('#PCARepAssigned');
@@ -673,7 +762,7 @@
         
 
         <div align=center>
-
+        <input type="text" id="WCCliamID" style="display:none" />
         <table id="topTable" border=0 cellpadding=0 cellspacing=0 width=798 style='border-collapse:collapse;table-layout:fixed;width:601pt'>
          <col width=18 style='mso-width-source:userset;mso-width-alt:658;width:14pt'>
          <col width=177 style='mso-width-source:userset;mso-width-alt:6473;width:133pt'>
@@ -730,7 +819,7 @@
           <td class=xl1532610></td>
           <td class=xl6732610><input type='text' id='IncidentNumber' style='border:none' /></td>
           <td class=xl1532610></td>
-          <td colspan=3 class=xl9232610 style='border-right:.5pt solid black'><input type='text' id='EmployeeName' style='border:none' /></td>
+          <td colspan=3 class=xl9232610 style='border-right:.5pt solid black'><input type='text' id='ClaimantName' style='border:none' /></td>
           <td class=xl1532610></td>
          </tr>
          <tr height=20 style='height:15.0pt'>
@@ -757,14 +846,14 @@
          </tr>
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
-          <td class=xl7532610><input type='text' id='DateOfIncident' style='border:none' /></td>
+          <td class=xl7532610><input type='text' id='WCIncidentDate' style='border:none' /></td>
           <td class=xl1532610></td>
-          <td class=xl6732610><input type='text' id='Location' style='border:none' /></td>
+          <td class=xl6732610><select id="location" style="border:none"></select></td>
           <td class=xl1532610></td>
-          <td class=xl7632610><div id="dateReportToCarrier" style="border:none"></div></td>
+          <td class=xl7632610><div id="ReportedToCarrierDate" style="border:none"></div></td>
           <td class=xl1532610></td>
           <td class=xl7632610>
-            <select id="PolicyType" style='border:none;background-color:#DBDBDB'>
+            <select id="PolicyTypeID" style='border:none;background-color:#DBDBDB'>
                 <option value=""></option>
                 <option value="Lost Time">Lost Time</option>
                 <option value="Medical">Medical</option>
@@ -798,10 +887,10 @@
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl8632610><input type='text' id='PCAInsuranceNumber' style='border:none;background-color:#DBDBDB' /></td>
           <td class=xl1532610></td>
-          <td class=xl8632610><input type='text' id='Location0' style='border:none;background-color:#DBDBDB' /></td>
+          <td class=xl8632610><input type='text' id='OSHALog' style='border:none;background-color:#DBDBDB' /></td>
           <td class=xl1532610></td>
           <td class=xl7632610>
-            <select id="PolicyType" style='border:none;background-color:#DBDBDB'>
+            <select id="WCClaimStatusID" style='border:none;background-color:#DBDBDB'>
                 <option value=""></option>
                 <option value="Open">Open</option>
                 <option value="Closed">Closed</option>
@@ -809,7 +898,7 @@
             </select>
           </td>
           <td class=xl1532610></td>
-          <td class=xl8032610><div id="statusDate" style="border:none"></td>
+          <td class=xl8032610><input type="date" id="WCClaimStatusDate" style="border:none"></td>
           <td class=xl1532610></td>
          </tr>
          <tr height=20 style='height:15.0pt'>
@@ -837,7 +926,7 @@
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl8632610>
-              <select id="daysMissed" style='border:none;background-color:#DBDBDB'>
+              <select id="DaysMissed" style='border:none;background-color:#DBDBDB'>
                 <option value=""></option>
                 <option value="1">Yes</option>
                 <option value="0">No</option>
@@ -848,7 +937,7 @@
           <td class=xl1532610></td>
           <td class=xl8632610><input type='text' id='LiteRelease' style='border:none;background-color:#DBDBDB' /></td>
           <td class=xl1532610></td>
-          <td class=xl8632610><input type='text' id='NumberOfLiteDays' style='border:none;background-color:#DBDBDB' /></td>
+          <td class=xl8632610><input type='text' id='NumberOfLiteDutyDays' style='border:none;background-color:#DBDBDB' /></td>
           <td class=xl1532610></td>
          </tr>
          <tr height=20 style='height:15.0pt'>
@@ -875,11 +964,11 @@
          </tr>
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
-          <td class=xl8632610><div id="fullReleaseDate" style="border:none"></td>
+          <td class=xl8632610><input type="date" id="FullReleaseDate" style="border:none" /></td>
           <td class=xl1532610></td>
-          <td class=xl8632610><div id="dateReturnedWork" style="border:none"></td>
+          <td class=xl8632610><input type="date" id="DateReturnedToWork" style="border:none" /></td>
           <td class=xl1532610></td>
-          <td class=xl8632610><input type='text' id='followUpAppt' style='border:none;background-color:#DBDBDB' /></td>
+          <td class=xl8632610><input type='date' id='FollowUpApptDate' style='border:none;background-color:#DBDBDB' /></td>
           <td class=xl1532610><span style='mso-spacerun:yes'> </span></td>
           <td class=xl8632610><input type='text' id='ImpairmentRating' style='border:none;background-color:#DBDBDB' /></td>
           <td class=xl1532610></td>
@@ -910,7 +999,7 @@
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl8632610><input type='text' id='JobClass' style='border:none;background-color:#DBDBDB' /></td>
           <td class=xl1532610><span style='mso-spacerun:yes'> </span></td>
-          <td class=xl8632610><div id="repFollowUpDate" style="border:none"></td>
+          <td class=xl8632610><input type="date" id="repFollowUpDate" style="border:none" /></td>
           <td class=xl1532610></td>
           <td class=xl8632610>
             <select id="ModifiedDutyRequired" style='border:none;background-color:#DBDBDB'>
@@ -993,7 +1082,7 @@
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl1532610>Claim Expense Paid</td>
           <td class=xl1532610></td>
-          <td class=xl7732610 style='border-top:none'><input type='text' id='ClaimExpensePaid' style='border:none;background-color:#DBDBDB' /></td>
+          <td class=xl7732610 style='border-top:none'><input type='text' id='WCClaimExpensePaid' style='border:none;background-color:#DBDBDB' /></td>
           <td class=xl1532610></td>
           <td class=xl7332610></td>
           <td class=xl1532610></td>
@@ -1004,7 +1093,7 @@
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl1532610>Claim Expense Reserve</td>
           <td class=xl1532610></td>
-          <td class=xl7732610 style='border-top:none'><input type='text' id='ClaimExpenseReserve' style='border:none;background-color:#DBDBDB' /></td>
+          <td class=xl7732610 style='border-top:none'><input type='text' id='WCExpenseReserve' style='border:none;background-color:#DBDBDB' /></td>
           <td class=xl1532610></td>
           <td class=xl7332610></td>
           <td class=xl1532610></td>
@@ -1068,9 +1157,9 @@
          </tr>
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
-          <td class=xl7632610><input type='text' id='PoliceReportNumber' style='border:none;background-color:#DBDBDB' /></td>
+          <td class=xl7532610><input type='text' id='PoliceReportNumber' style='border:none;' /></td>
           <td class=xl1532610></td>
-          <td class=xl7532610><div id="datePCAReceivedClaim" style="border:none"></div></td>
+          <td class=xl7532610><input type="text" id="PCAReceivedClaimDate" style="border:none" /></td>
           <td class=xl1532610></td>
           <td class=xl7932610><select id="PCARepAssigned" style='background-color:#E7E6E6;border:none'></select></td>
           <td class=xl1532610></td>

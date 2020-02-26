@@ -63,6 +63,13 @@
     <script>
         var group = '<%= Session["groupList"] %>';
 
+        onload = function () {
+            onfocus = function () {
+                onfocus = function () { }
+                location.reload(true)
+            }
+        }
+
         $('document').ready(function () {
             
             var locationString = $("#userVehicleLocation").val();
@@ -81,8 +88,8 @@
             $("<div id='jqxgrid'></div>").appendTo(parent);
 
 
-            //var url = $("#localApiDomain").val() + "InsuranceIncidents/GetIncidentList/" + viewSettings;
-            var url = "http://localhost:52839/api/InsuranceIncidents/GetIncidentList/" + viewSettings;
+            var url = $("#localApiDomain").val() + "InsuranceIncidents/GetIncidentList/" + viewSettings;
+            //var url = "http://localhost:52839/api/InsuranceIncidents/GetIncidentList/" + viewSettings;
             
             var source =
             {
@@ -90,6 +97,7 @@
                     { name: 'IncidentID' },
                     { name: 'IncidentNumber' },
                     { name: 'ClaimNumber' },
+                    { name: 'ClaimID' },
                     { name: 'WCClaimNumber' },
                     { name: 'WCClaimID' },
                     { name: 'IncidentDate' },
@@ -119,7 +127,7 @@
             var ClaimLinkRenderer = function (row, column, value) {
                 var data = $('#jqxgrid').jqxGrid('getrowdata', row);
 
-                html = "<a href='./InsuranceClaim.aspx?IncidentID=" + data.IncidentID + "' target='_blank'>" + data.ClaimNumber + "</a>"
+                html = "<a href='./InsuranceClaim.aspx?ClaimID=" + data.ClaimID + "' target='_blank'>" + data.ClaimNumber + "</a>"
 
                 return html;
             }
@@ -137,8 +145,17 @@
             }
 
             var DocUploadRenderer = function (row, column, value) {
+                var data = $('#jqxgrid').jqxGrid('getrowdata', row);
+                var html = '';
+                var WCClaimNumber = [];
+
+                if (data.WCClaimNumber == null) {
+                    WCClaimNumber.push('0');
+                } else {
+                    WCClaimNumber = data.WCClaimNumber.split('-');
+                }
                 
-                html = "<a href='./InsuranceFileUploadDownload.aspx' target='_blank'>Upload Docs</a>"
+                html = "<a href='./InsuranceFileUploadDownload.aspx?IncidentNumber=PCA " + data.IncidentNumber + "&WCNumber=WC " + WCClaimNumber[0] + "' target='_blank'>Upload Docs</a>"
                 
                 return html;
             }
@@ -167,6 +184,7 @@
                           { text: 'IncidentID', datafield: 'IncidentID', hidden: true },
                           { text: 'Incident Number', datafield: 'IncidentNumber', cellsrenderer: IncidentLinkRenderer },
                           { text: 'Claims #', datafield: 'ClaimNumber', cellsrenderer: ClaimLinkRenderer },
+                          { text: 'ClaimID', datafield: 'ClaimID', hidden: true },
                           { text: 'WC Claim', datafield: 'WCClaimNumber', cellsrenderer: WCLinkRenderer },
                           { text: 'WCClaimID', datafield: 'WCClaimID', hidden: true },
                           { text: 'Date of Incident', datafield: 'IncidentDate', cellsrenderer: DateRender },
@@ -181,7 +199,8 @@
                 });
 
             $("#newIncident").on("click", function () {
-                window.location.href = './InsuranceIncidentReport.aspx'
+                //window.location.href = './InsuranceIncidentReport.aspx'
+                window.open('./InsuranceIncidentReport.aspx', '_blank');
             });
 
             Security();

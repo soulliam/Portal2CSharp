@@ -31,48 +31,133 @@
     <script type="text/javascript" src="jqwidgets/jqxgrid.export.js"></script>
 
     <script>
+        var group = '<%= Session["groupList"] %>';
         var noteNumber = 0;
         var payableNumber = 0;
         var receivableNumber = 0;
+        var PaidByInsuranceCount = 0;
+        var PaidByThridPartyInsuranceCount = 0;
+        var PCADeductibleCount = 0;
+        var PCAOutOfPocketCount = 0;
+        var EmployeePaidCount = 0;
+        var MonthlyAllocationCount = 0;
+        var ReserveCount = 0;
 
         $(document).ready(function () {
 
-            //$("#Button1").on('click', function () {
-            //    window.print();
-            //});
-            
-            $("#addNote").on('click', function (e) {
-                noteNumber = noteNumber + 1;
+            //************************* Currency Mask **************************************
+            $("#Main").delegate('.MoneyFormat', 'blur', function (e) {
 
-                NoteInfoBuild = claimNote;
-                NoteInfoBuild = NoteInfoBuild.replace(/ClaimNote1/g, 'ClaimNote' + (noteNumber).toString());
-                NoteInfoBuild = NoteInfoBuild.replace('NOTE 1', 'NOTE ' + (noteNumber).toString());
-                var insertAt = "#ClaimNote" + (noteNumber - 1).toString();
-                if (noteNumber == 1) {
-                    $('#topTable').after(NoteInfoBuild);
-                } else {
-                    $(insertAt).after(NoteInfoBuild);
+                var Globals = Object.keys(window);
+
+                for (var i = 600; i <= Globals.length - 1 ; i++) {
+                    if (Globals[i].match(/.*Count/)) {
+                        var thisVariable = Globals[i].match(/.*Count/)
+                        eval(thisVariable + " = 0");
+                    }
                 }
-                var thisFocus = "#noteClaimNote" + (noteNumber).toString();
-                $(thisFocus).focus();
-                var enteredBy = "#EnteredByClaimNote" + (noteNumber).toString();
-                $(enteredBy).val($("#txtLoggedinUsername").val());
-                var thisDate = "#DateClaimNote" + (noteNumber).toString();
-                $(thisDate).val(DateTimeFormat(new Date()));
+                
+            })
+
+            $("#Main").delegate('.MoneyFormat', 'keydown', function (e) {
+                var KeyID = e.keyCode;
+
+                if (document.activeElement.classList.contains('MoneyFormat')) {
+                    switch (KeyID) {
+                        case 8:
+                            $("#" + document.activeElement.id).val('');
+                            $("#" + document.activeElement.id).focus();
+                            var thisElementName = document.activeElement.id.toString();
+                            eval(thisElementName + "Count = 0");
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            });
+
+            $("#Main").delegate('.MoneyFormat', 'input', function (e) {
+                $(this).val(parseFloat($(this).val()).toFixed(2));
+
+                if (e.originalEvent.target.value.includes('..')) {
+                    e.originalEvent.target.value.replace('..', '.');
+                }
+
+                var thisElementName = document.activeElement.id.toString();
+                var thisCursorCount = eval(thisElementName + "Count = " + thisElementName + "Count + 1");
+
+                setCursorPosition(this, thisCursorCount);
+
+                var TotalClaimAmount = AddPaidByAmounts();
+
+                $("#TotalClaim").val(TotalClaimAmount);
+                $("#TotalClaim").val(parseFloat($(TotalClaim).val()).toFixed(2));
+
+                var TotalPayableAmount = AddPayableAmounts();
+                $("#TotalPayables").val(TotalPayableAmount);
+                $("#TotalPayables").val(parseFloat($(TotalPayables).val()).toFixed(2));
+                $("#PCAPayables").val(TotalPayableAmount);
+                $("#PCAPayables").val(parseFloat($(PCAPayables).val()).toFixed(2));
+                
+            });
+
+            $(".MoneyFormat").keypress(function (e) {
+                var keyCode = e.which;
+
+                if ((keyCode != 8 || keyCode == 32 || keyCode == 46) && ((keyCode < 48 && keyCode != 46) || keyCode > 57)) {
+                    return false;
+                }
+            });
+
+            $("#Main").delegate('.MoneyFormat', 'dblclick', function (e) {
+                $(this).val(parseFloat($(this).val()).toFixed(2));
+                
+                var TotalClaimNumber = AddPaidByAmounts();
+
+                $("#TotalClaim").val(TotalClaimNumber);
+                $("#TotalClaim").val(parseFloat($(TotalClaim).val()).toFixed(2));
+
+                var TotalPayableAmount = AddPayableAmounts();
+
+                $("#TotalPayables").val(TotalPayableAmount);
+                $("#TotalPayables").val(parseFloat($(TotalPayables).val()).toFixed(2));
+                $("#PCAPayables").val(TotalPayableAmount);
+                $("#PCAPayables").val(parseFloat($(PCAPayables).val()).toFixed(2));
+            });
+
+            function setCursorPosition(ctrl, pos) {
+                // Modern browsers
+                if (ctrl.setSelectionRange) {
+                    ctrl.focus();
+                    ctrl.setSelectionRange(pos, pos);
+
+                    // IE8 and below
+                } else if (ctrl.createTextRange) {
+                    var range = ctrl.createTextRange();
+                    range.collapse(true);
+                    range.moveEnd('character', pos);
+                    range.moveStart('character', pos);
+                    range.select();
+                }
+            }
+
+            // ************************* end currency mask *****************************************************
+
+            $("#Save").on("click", function () {
+                SaveClaim("save");
+                //location.reload();
+            });
+
+            $("#saveSubmit").on("click", function () {
+                saveClaim("SaveSubmit");
+            });
+
+            $("#addNote").on('click', function (e) {
+                addClaimNote();
             });
 
             $("#addPayable").on('click', function (e) {
-                payableNumber = payableNumber + 1;
-
-                payableInfoBuild = payable;
-                payableInfoBuild = payableInfoBuild.replace(/Payable1/g, 'Payable' + (payableNumber).toString());
-                var insertAt = "#Payable" + (payableNumber - 1).toString();
-                if (payableNumber == 1) {
-                    $('#payableTable').after(payableInfoBuild);
-                } else {
-                    $(insertAt).after(payableInfoBuild);
-                }
-
+                addClaimPayable();
             });
 
             $("#addReceivable").on('click', function (e) {
@@ -90,14 +175,446 @@
             });
 
             loadLocations();
-            loadClaimType();
-            loadPolicyType();
-            loadClaimStatus();
-            loadPCARep();
-            loadPendingClaimStatus();
-            $("#incidentDate").jqxDateTimeInput({ width: '175px', height: '25px', formatString: 'd' });
-            $("#statusDate").jqxDateTimeInput({ width: '173px', height: '25px', formatString: 'd' });
+            
+            const params = new URLSearchParams(window.location.search);
+            const ClaimID = params.get("ClaimID");
+            $("#ClaimID").val(ClaimID);
+
+            LoadClaimInfo(ClaimID);
         });
+
+        function AddPaidByAmounts() {
+            var PaidByInsuranceAmount = 0;
+            var PaidByThridPartyInsuranceAmount = 0;
+            var PCADeductibleAmount = 0;
+            var PCAOutOfPocketAmount = 0;
+            var EmployeePaidAmount = 0;
+
+
+            if ($("#PaidByInsurance").val() != '') {
+                PaidByInsuranceAmount = parseFloat($("#PaidByInsurance").val());
+            }
+
+            if ($("#PaidByThridPartyInsurance").val() != '') {
+                PaidByThridPartyInsuranceAmount = parseFloat($("#PaidByThridPartyInsurance").val());
+            }
+
+            if ($("#PCADeductible").val() != '') {
+                PCADeductibleAmount = parseFloat($("#PCADeductible").val());
+            }
+
+            if ($("#PCAOutOfPocket").val() != '') {
+                PCAOutOfPocketAmount = parseFloat($("#PCAOutOfPocket").val());
+            }
+
+            if ($("#EmployeePaid").val() != '') {
+                EmployeePaidAmount = parseFloat($("#EmployeePaid").val());
+            }
+
+            var TotalClaimNumber = parseFloat(PaidByInsuranceAmount + PaidByThridPartyInsuranceAmount + PCADeductibleAmount + PCAOutOfPocketAmount + EmployeePaidAmount);
+
+            return TotalClaimNumber;
+        }
+
+        function LoadClaimInfo(ClaimID) {
+            var url = "http://localhost:52839/api/InsuranceClaims/GetClaimByID/" + ClaimID;
+            //var url = $("#localApiDomain").val() + "InsuranceClaims/GetClaimByID/" + ClaimID;
+
+            var ClaimantName = "";
+            var ClaimantNameID = 0;
+            var EmployeeEnvolvedClaimID = 0;
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                dataType: "json",
+                beforeSend: function (jqXHR, settings) {
+                },
+                success: function (data) {
+                    ClaimantName = data[0].ClaimantName;
+                    ClaimantNameID = data[0].ClaimantNameID;
+                    EmployeeEnvolvedClaimID = data[0].EmployeeEnvolvedClaimID;
+
+                    $("#IncidentID").val(data[0].IncidentID);
+
+                    $.when(loadClaimType().then(function (thisData) {
+                        $("#claimType").val(data[0].ClaimTypeID);
+                    }).fail(function (error) {
+                        alert("error " + error);
+                    })
+                    );
+
+                    $.when(loadPolicyType().then(function (thisData) {
+                        $("#PolicyType").val(data[0].PolicyTypeID);
+                    }).fail(function (error) {
+                        alert("error " + error);
+                    })
+                    );
+
+                    $("#IncidentClaimNumber").val(data[0].ClaimNumber);
+
+                    $.when(loadClaimStatus().then(function (thisData) {
+                        $("#claimStatus").val(data[0].ClaimStatusID);
+                    }).fail(function (error) {
+                        alert("error " + error);
+                    })
+                    );
+
+
+                    $("#ClaimStatusDate").val(DateFormatForHTML5(data[0].ClaimStatusDate));
+                    $("#PCAVehicleNumber").val(data[0].VehicleNumber);
+                    $("#PaidByInsurance").val(data[0].PaidByInsurance).trigger('dblclick');
+                    $("#PaidByThridPartyInsurance").val(data[0].PaidByThridPartyInsurance).trigger('dblclick');
+                    $("#PCADeductible").val(data[0].PCADeductible).trigger('dblclick');
+                    $("#PCAOutOfPocket").val(data[0].PCAOutOfPocket).trigger('dblclick');
+                    $("#EmployeePaid").val(data[0].EmployeePaid).trigger('dblclick');
+                    $("#IncidentDate").val(DateFormatForHTML5(data[0].IncidentDate));
+                    $("#location").val(data[0].IncidentLocationName);
+                    $("#RepFollowUpDate").val(DateFormatForHTML5(data[0].RepFollowUpDate));
+                    $("#PCAInsuranceClaimNumber").val(data[0].PCAInsuranceClaimNumber);
+                    $("#OtherInsuranceClaimNumber").val(data[0].OtherInsuranceClaimNumber);
+                    $("#PoliceReportNumber").val(data[0].PoliceReportNumber);
+                    $("#IncidentReceivedDate").val(DateFormat(data[0].IncidentReceivedDate));
+
+                    $.when(loadPCARep().then(function (thisData) {
+                        $("#PCARepAssigned").val(data[0].PCARepID);
+                    }).fail(function (error) {
+                        alert("error " + error);
+                    })
+                    );
+
+                    $("#MonthlyAllocation").val(data[0].MonthlyAllocation).trigger('dblclick');
+                    $("#Reserve").val(data[0].Reserve).trigger('dblclick');
+
+                    $.when(loadPendingClaimStatus().then(function (thisData) {
+                        $("#pendingClaimStatus").val(data[0].PendingStatusID);
+                    }).fail(function (error) {
+                        alert("error " + error);
+                    })
+                    );
+
+
+                },
+                error: function (request, status, error) {
+                    swal("There was an issue getting claim information.");
+                }
+            }).then(function () {
+                loadEmployeeEnvolved(EmployeeEnvolvedClaimID);
+                loadThirdPartyEnvolved(ClaimantName, ClaimantNameID);
+                loadClaimNote();
+                loadClaimPayable();
+            });
+        }
+
+        function SaveClaim(action) {
+            if (action == "save") {
+
+            } else {
+
+            }
+
+            //var url = $("#localApiDomain").val() + "InsuranceClaims/PutInsuranceClaim/";
+            var url = "http://localhost:52839/api/InsuranceClaims/PutInsuranceClaim/";
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: {
+                    "ClaimTypeID": $("#claimType").val(),
+                    "PolicyTypeID": $("#PolicyType").val(),
+                    "IncidentClaimNumber": $("#IncidentClaimNumber").val(),
+                    "ClaimStatusID": $("#claimStatus").val(),
+                    "ClaimStatusDate": $("#ClaimStatusDate").val(),
+                    "PCAVehicleNumber": $("#PCAVehicleNumber").val(),
+                    "PaidByInsurance": $("#PaidByInsurance").val(),
+                    "PaidByThridPartyInsurance": $("#PaidByThridPartyInsurance").val(),
+                    "PCADeductible": $("#PCADeductible").val(),
+                    "PCAOutOfPocket": $("#PCAOutOfPocket").val(),
+                    "EmployeePaid": $("#EmployeePaid").val(),
+                    "IncidentDate": $("#IncidentDate").val(),
+                    "location": $("#location").val(),
+                    "RepFollowUpDate": $("#RepFollowUpDate").val(),
+                    "PCARepID": $("#PCARepAssigned").val(),
+                    "EmployeeEnvolvedClaimID": $("#EmployeeEnvolvedClaimID").val(),
+                    "ClaimantNameID": $("#ClaimantName").val(),
+                    "ClaimantName": $('#ClaimantName').find(":selected").text(),
+                    "MonthlyAllocation": $("#MonthlyAllocation").val(),
+                    "Reserve": $("#Reserve").val(),
+                    "ClaimID": $("#ClaimID").val(),
+                    "PendingStatusID": $('#pendingClaimStatus').val(),
+                    "PCAInsuranceClaimNumber": $("#PCAInsuranceClaimNumber").val(),
+                    "OtherInsuranceClaimNumber": $("#OtherInsuranceClaimNumber").val()
+
+                },
+                dataType: "json",
+                success: function (data) {
+
+                },
+                error: function (request, status, error) {
+                    swal("Error saving third party vehicle");
+                }
+            }).then(function () {
+                saveClaimNotes();
+                saveClaimPayable();
+                
+            });;
+        }
+
+        function saveClaimNotes() {
+            for (var i = 1; i <= noteNumber; i++) {
+
+                if ($("#NoteIDClaimNote" + i.toString()).val() == '') {
+
+                    //var url = $("#localApiDomain").val() + "InsuranceClaims/PostClaimNote/";
+                    var url = "http://localhost:52839/api/InsuranceClaims/PostClaimNote/";
+
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: {
+                            "ClaimID": $("#ClaimID").val(),
+                            "ClaimNoteContent": $("#noteClaimNote" + i.toString()).val(),
+                            "ClaimNoteEnteredBy": $("#EnteredByClaimNote" + i.toString()).val(),
+                            "ClaimNoteDate": $("#DateClaimNote" + i.toString()).val()
+                        },
+                        dataType: "json",
+                        success: function (data) {
+
+                        },
+                        error: function (request, status, error) {
+                            swal("Error saving note " + i);
+                        }
+                    }).then(function () {
+                        
+                    });;
+                }
+            }
+        }
+
+        function loadClaimNote() {
+            var ClaimID = $("#ClaimID").val();
+
+            var url = "http://localhost:52839/api/InsuranceClaims/GetClaimNote/" + ClaimID;
+            //var url = $("#localApiDomain").val() + "InsuranceClaims/GetClaimNote/" + ClaimID;
+
+            return $.ajax({
+                type: "GET",
+                url: url,
+                dataType: "json",
+                beforeSend: function (jqXHR, settings) {
+                },
+                success: function (data) {
+                    for (i = 0; i < data.length; i++) {
+                        addClaimNote(data[i].ClaimNoteID, data[i].ClaimNoteContent, data[i].ClaimNoteEnteredBy, data[i].ClaimNoteDate);
+                    }
+                },
+                error: function (request, status, error) {
+                    swal("There was an issue getting claim notes.");
+                }
+            }).then(function () {
+                
+            });
+        }
+
+        function addClaimNote(NoteIDClaimNote, ClaimNoteContent, ClaimNoteEnteredBy, ClaimNoteDate) {
+            noteNumber = noteNumber + 1;
+
+            NoteInfoBuild = claimNote;
+            NoteInfoBuild = NoteInfoBuild.replace(/ClaimNote1/g, 'ClaimNote' + (noteNumber).toString());
+            NoteInfoBuild = NoteInfoBuild.replace('NOTE 1', 'NOTE ' + (noteNumber).toString());
+            var insertAt = "#ClaimNote" + (noteNumber - 1).toString();
+            if (noteNumber == 1) {
+                $('#topTable').after(NoteInfoBuild);
+            } else {
+                $(insertAt).after(NoteInfoBuild);
+            }
+            var thisFocus = "#noteClaimNote" + (noteNumber).toString();
+            $(thisFocus).focus();
+
+            if (NoteIDClaimNote === undefined) {
+                var enteredBy = "#EnteredByClaimNote" + (noteNumber).toString();
+                $(enteredBy).val($("#txtLoggedinUsername").val());
+                var thisDate = "#DateClaimNote" + (noteNumber).toString();
+                $(thisDate).val(DateTimeFormat(new Date()));
+            } else {
+                var enteredBy = "#EnteredByClaimNote" + (noteNumber).toString();
+                $(enteredBy).val(ClaimNoteEnteredBy);
+                var thisDate = "#DateClaimNote" + (noteNumber).toString();
+                $(thisDate).val(DateTimeFormat(ClaimNoteDate));
+                var thisContent = "#noteClaimNote" + (noteNumber).toString();
+                $(thisContent).val((ClaimNoteContent));
+                var ClaimNoteID = "#NoteIDClaimNote" + (noteNumber).toString();
+                $(ClaimNoteID).val(NoteIDClaimNote);
+            }
+            
+        }
+
+        function loadClaimPayable() {
+            var ClaimID = $("#ClaimID").val();
+
+            var url = "http://localhost:52839/api/InsuranceClaims/GetClaimPayable/" + ClaimID;
+            //var url = $("#localApiDomain").val() + "InsuranceClaims/GetClaimPayable/" + ClaimID;
+
+            return $.ajax({
+                type: "GET",
+                url: url,
+                dataType: "json",
+                beforeSend: function (jqXHR, settings) {
+                },
+                success: function (data) {
+                    for (i = 0; i < data.length; i++) {
+                        addClaimPayable(data[i].ClaimPayableID, data[i].ClaimPayablePayee, data[i].ClaimPayableCheckNumber, data[i].ClaimPayableCheckAmount, data[i].ClaimPayableMailedDate);
+                    }
+                },
+                error: function (request, status, error) {
+                    swal("There was an issue getting claim notes.");
+                }
+            }).then(function () {
+
+            });
+        }
+
+
+        function addClaimPayable(ClaimPayableID, ClaimPayablePayee, ClaimPayableCheckNumber, ClaimPayableCheckAmount, ClaimPayableMailedDate) {
+            payableNumber = payableNumber + 1;
+
+            payableInfoBuild = payable;
+            payableInfoBuild = payableInfoBuild.replace(/Payable1/g, 'Payable' + (payableNumber).toString());
+            var insertAt = "#Payable" + (payableNumber - 1).toString();
+            if (payableNumber == 1) {
+                $('#payableTable').after(payableInfoBuild);
+            } else {
+                $(insertAt).after(payableInfoBuild);
+            }
+
+            eval("window.CheckAmountPayable" + payableNumber + "Count = 0");
+
+            if (ClaimPayableID === undefined) {
+                
+            } else {
+                var ClaimPayableID = "#ClaimPayableIDPayable" + (payableNumber).toString();
+                $(ClaimPayableID).val(ClaimPayableID);
+                var PayorPayeePayable = "#PayorPayeePayable" + (payableNumber).toString();
+                $(PayorPayeePayable).val(ClaimPayablePayee);
+                var CheckAmountPayable = "#CheckAmountPayable" + (payableNumber).toString();
+                $(CheckAmountPayable).val((ClaimPayableCheckAmount)).trigger('dblclick');
+                var CheckNumberPayable = "#CheckNumberPayable" + (payableNumber).toString();
+                $(CheckNumberPayable).val(ClaimPayableCheckNumber);
+                var MailDatePayable = "#MailDatePayable" + (payableNumber).toString();
+                $(MailDatePayable).val(DateFormat(ClaimPayableMailedDate));
+            }
+        }
+
+        
+        function saveClaimPayable() {
+            for (var i = 1; i <= payableNumber; i++) {
+
+                if ($("#ClaimPayableIDPayable" + i.toString()).val() == '' && $("#PayorPayeePayable" + i.toString()).val() != '') {
+
+                    //var url = $("#localApiDomain").val() + "InsuranceClaims/PostPayable/";
+                    var url = "http://localhost:52839/api/InsuranceClaims/PostPayable/";
+
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: {
+                            "ClaimID": $("#ClaimID").val(),
+                            "ClaimPayablePayee": $("#PayorPayeePayable" + i.toString()).val(),
+                            "CheckNumberPayable": $("#EnteredByClaimNote" + i.toString()).val(),
+                            "ClaimPayableCheckNumber": $("#CheckNumberPayable" + i.toString()).val(),
+                            "ClaimPayableCheckAmount": $("#CheckAmountPayable" + i.toString()).val(),
+                            "ClaimPayableMailedDate": $("#MailDatePayable" + i.toString()).val()
+                        },
+                        dataType: "json",
+                        success: function (data) {
+
+                        },
+                        error: function (request, status, error) {
+                            swal("Error saving payable " + i);
+                        }
+                    }).then(function () {
+
+                    });;
+                }
+            }
+        }
+
+        function AddPayableAmounts() {
+            var TotalPayables = 0;
+
+            for (var i = 1; i <= payableNumber; i++) {
+
+                if ($("#CheckAmountPayable" + i.toString()).val() != '') {
+                    TotalPayables = parseFloat(TotalPayables) + parseFloat($("#CheckAmountPayable" + i.toString()).val());
+                }
+            }
+
+            return TotalPayables;
+        }
+
+        function loadEmployeeEnvolved(EmployeeEnvolvedClaimID) {
+            var dropdown = $('#EmployeeEnvolvedClaimID');
+
+            dropdown.empty();
+
+            dropdown.append('<option selected="true" value="0">Pick Employee</option>');
+            dropdown.prop('selectedIndex', 0);
+
+            //var url = "http://localhost:52839/api/InsuranceClaims/GetEmployeeEnvolved/" + $("#IncidentID").val();
+            var url = $("#localApiDomain").val() + "InsuranceClaims/GetEmployeeEnvolved/" + $("#IncidentID").val();
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                dataType: "json",
+                beforeSend: function (jqXHR, settings) {
+                },
+                success: function (data) {
+                    for (i = 0; i < data.length; i++) {
+                        dropdown.append($("<option style='font-weight: bold;'></option>").attr("value", data[i].ClaimID).text(data[i].DriverName));
+                    }
+                },
+                error: function (request, status, error) {
+                    swal("There was an issue getting envolved employee information.");
+                }
+            }).then(function () {
+                $("#EmployeeEnvolvedClaimID").val(EmployeeEnvolvedClaimID);
+            });
+        }
+
+        function loadThirdPartyEnvolved(ClaimantName, ClaimantNameID) {
+            var dropdown = $('#ClaimantName');
+
+            dropdown.empty();
+
+            dropdown.append('<option value="0">Pick Claimant</option>');
+            dropdown.prop('selectedIndex', 0);
+
+            //var url = "http://localhost:52839/api/InsuranceClaims/GetThirdPartyEnvolved/" + $("#IncidentID").val();
+            var url = $("#localApiDomain").val() + "InsuranceClaims/GetThirdPartyEnvolved/" + $("#IncidentID").val();
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                dataType: "json",
+                beforeSend: function (jqXHR, settings) {
+                },
+                success: function (data) {
+                    for (i = 0; i < data.length; i++) {
+                        dropdown.append($("<option style='font-weight: bold;'></option>").attr("value", data[i].ClaimID).text(data[i].ClaimantName));
+                    }
+                },
+                error: function (request, status, error) {
+                    swal("There was an issue getting envolved employee information.");
+                }
+            }).then(function () {
+                if (ClaimantNameID == null) {
+                    $("#ClaimantName option:contains(" + ClaimantName + ")").attr('selected', 'selected');
+                } else {
+                    $("#ClaimantName").val(ClaimantNameID);
+                }
+            });
+        }
 
         function loadLocations() {
             var locationString = $("#userVehicleLocation").val();
@@ -133,13 +650,13 @@
 
             dropdown.empty();
 
-            dropdown.append('<option selected="true">Claim Type</option>');
+            dropdown.append('<option selected="true" value="0">Claim Type</option>');
             dropdown.prop('selectedIndex', 0);
 
-            //var url = "http://localhost:52839/api/Claims/GetClaimTypes/";
-            var url = $("#localApiDomain").val() + "Claims/GetClaimTypes/";
+            //var url = "http://localhost:52839/api/InsuranceClaims/GetClaimTypes/";
+            var url = $("#localApiDomain").val() + "InsuranceClaims/GetClaimTypes/";
 
-            $.ajax({
+            return $.ajax({
                 type: "GET",
                 url: url,
                 dataType: "json",
@@ -157,17 +674,17 @@
         }
 
         function loadPolicyType() {
-            var dropdown = $('#policyType');
+            var dropdown = $('#PolicyType');
 
             dropdown.empty();
 
-            dropdown.append('<option selected="true">Policy Type</option>');
+            dropdown.append('<option selected="true" value="0">Policy Type</option>');
             dropdown.prop('selectedIndex', 0);
 
-            //var url = "http://localhost:52839/api/Claims/GetPolicyTypes/";
-            var url = $("#localApiDomain").val() + "Claims/GetPolicyTypes/";
+            //var url = "http://localhost:52839/api/InsuranceClaims/GetPolicyTypes/";
+            var url = $("#localApiDomain").val() + "InsuranceClaims/GetPolicyTypes/";
 
-            $.ajax({
+            return $.ajax({
                 type: "GET",
                 url: url,
                 dataType: "json",
@@ -189,13 +706,13 @@
 
             dropdown.empty();
 
-            dropdown.append('<option selected="true">Claim Status</option>');
+            dropdown.append('<option selected="true" value="0">Claim Status</option>');
             dropdown.prop('selectedIndex', 0);
 
-            //var url = "http://localhost:52839/api/Claims/GetClaimStatuses/";
-            var url = $("#localApiDomain").val() + "Claims/GetClaimStatuses/";
+            //var url = "http://localhost:52839/api/InsuranceClaims/GetClaimStatuses/";
+            var url = $("#localApiDomain").val() + "InsuranceClaims/GetClaimStatuses/";
 
-            $.ajax({
+            return $.ajax({
                 type: "GET",
                 url: url,
                 dataType: "json",
@@ -217,13 +734,13 @@
 
             dropdown.empty();
 
-            dropdown.append('<option selected="true">Pending Status</option>');
+            dropdown.append('<option selected="true" value="0">Pending Status</option>');
             dropdown.prop('selectedIndex', 0);
 
-            //var url = "http://localhost:52839/api/Claims/GetPendingClaimStatuses/";
-            var url = $("#localApiDomain").val() + "Claims/GetPendingClaimStatuses/";
+            //var url = "http://localhost:52839/api/InsuranceClaims/GetPendingClaimStatuses/";
+            var url = $("#localApiDomain").val() + "InsuranceClaims/GetPendingClaimStatuses/";
 
-            $.ajax({
+            return $.ajax({
                 type: "GET",
                 url: url,
                 dataType: "json",
@@ -245,13 +762,13 @@
 
             dropdown.empty();
 
-            dropdown.append('<option selected="true"></option>');
+            dropdown.append('<option selected="true" value="0"></option>');
             dropdown.prop('selectedIndex', 0);
 
-            //var url = "http://localhost:52839/api/Claims/GetPCAReps/";
-            var url = $("#localApiDomain").val() + "Claims/GetPCAReps/";
+            //var url = "http://localhost:52839/api/InsuranceClaims/GetPCAReps/";
+            var url = $("#localApiDomain").val() + "InsuranceClaims/GetPCAReps/";
 
-            $.ajax({
+            return $.ajax({
                 type: "GET",
                 url: url,
                 dataType: "json",
@@ -267,9 +784,13 @@
                 }
             });
         }
+
     </script>
 
     <style>
+        .MoneyFormat{
+            text-align: right;
+        }
         .xl1525500
 	        {padding-top:1px;
 	        padding-right:1px;
@@ -893,8 +1414,9 @@
         }
         -->
         </style>
-
-
+        
+        <input type="text" id="IncidentID" style="display:none" />
+        <input type="text" id="ClaimID" style="display:none" />
         <div id="Main" align=center>
 
         <table id="topTable" border=0 cellpadding=0 cellspacing=0 width=795 style='border-collapse:collapse;table-layout:fixed;width:598pt'>
@@ -950,15 +1472,15 @@
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1525500 style='height:15.0pt'></td>
           <td class=xl6725500>
-              <div id="incidentDate" style="border:none"></div></td>
+              <input type='date' id='IncidentDate' style='border:none' /></td>
           <td class=xl1525500></td>
           <td class=xl7925500>
               <select id="claimType" style='background-color:#E7E6E6;border:none'></select></td>
           <td class=xl1525500></td>
-          <td class=xl6725500><select id="location" style="border:none"></select></td>
+          <td class=xl6725500><input type="text" id="location" style="border:none" /></td>
           <td class=xl1525500></td>
           <td class=xl7925500>
-              <select id="policyType" style='background-color:#E7E6E6;border:none'></select></td>
+              <select id="PolicyType" style='background-color:#E7E6E6;border:none'></select></td>
           <td class=xl1525500></td>
          </tr>
          <tr height=20 style='height:15.0pt'>
@@ -989,13 +1511,13 @@
               <input id="IncidentClaimNumber" type="text" style="border:none" /></td>
           <td class=xl1525500></td>
           <td class=xl6725500>
-              <input id="EmployeeEnvolved" type="text" style="border:none" /></td>
+              <select id="EmployeeEnvolvedClaimID" style='background-color:#E7E6E6;border:none;'></select>
           <td class=xl1525500></td>
           <td class=xl7925500>
               <select id="claimStatus" style='background-color:#E7E6E6;border:none'></select></td>
           <td class=xl1525500></td>
           <td class=xl7225500>
-              <div id="statusDate" style="border:none"></div></td>
+              <input type='date' id='ClaimStatusDate' style='border:none' /></td>
           <td class=xl1525500></td>
          </tr>
          <tr height=20 style='height:15.0pt'>
@@ -1023,10 +1545,10 @@
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1525500 style='height:15.0pt'></td>
           <td class=xl6725500>
-              <input id="ClaimantName" type="text" style="border:none" /></td>
+              <select id="ClaimantName" style='background-color:#E7E6E6;border:none;'></select>
           <td class=xl1525500></td>
           <td class=xl8525500>
-              <input id="RepFollowUpDate" type="text"  style='background-color:#E7E6E6;border:none' /></td>
+              <input id="RepFollowUpDate" type="date"  style='background-color:#E7E6E6;border:none' /></td>
           <td class=xl1525500></td>
           <td class=xl7925500>
               <select id="pendingClaimStatus" style='background-color:#E7E6E6;border:none' /></td>
@@ -1074,13 +1596,13 @@
           <td class=xl1525500>PCA Insurance</td>
           <td class=xl1525500></td>
           <td class=xl8025500>
-              <input id="PCAInsurance" type="text"  style='background-color:#E7E6E6;border:none' /></td>
+              <input id="PaidByInsurance" type="text"  style='background-color:#E7E6E6;border:none' class="MoneyFormat" /></td>
           <td class=xl1525500></td>
           <td class=xl6825500>
-              <input id="PCAPayables" type="text" style="border:none" /></td>
+              <input id="PCAPayables" type="text" style="border:none" class="MoneyFormat" /></td>
           <td class=xl1525500></td>
           <td class=xl8025500>
-              <input id="MonthlyAllocation" type="text"  style='background-color:#E7E6E6;border:none' /></td>
+              <input id="MonthlyAllocation" type="text"  style='background-color:#E7E6E6;border:none' class="MoneyFormat" /></td>
           <td class=xl1525500></td>
          </tr>
          <tr height=20 style='height:15.0pt'>
@@ -1088,7 +1610,7 @@
           <td class=xl1525500>3rd Party Insurance</td>
           <td class=xl1525500></td>
           <td class=xl8025500 style='border-top:none'>
-              <input id="ThirdPartyInsurance" type="text"  style='background-color:#E7E6E6;border:none' /></td>
+              <input id="PaidByThridPartyInsurance" type="text"  style='background-color:#E7E6E6;border:none' class="MoneyFormat" /></td>
           <td class=xl1525500></td>
           <td class=xl1525500></td>
           <td class=xl1525500></td>
@@ -1100,7 +1622,7 @@
           <td class=xl1525500>PCA Deductible</td>
           <td class=xl1525500></td>
           <td class=xl8025500 style='border-top:none'>
-              <input id="PCADeductible" type="text"  style='background-color:#E7E6E6;border:none' /></td>
+              <input id="PCADeductible" type="text"  style='background-color:#E7E6E6;border:none' class="MoneyFormat" /></td>
           <td class=xl1525500></td>
           <td class=xl7025500>PCA ACTUAL EXPENSE</td>
           <td class=xl1525500></td>
@@ -1113,13 +1635,13 @@
           <td class=xl1525500>PCA Out of Pocket</td>
           <td class=xl1525500></td>
           <td class=xl8025500 style='border-top:none'>
-              <input id="PCAOutOfPocket" type="text"  style='background-color:#E7E6E6;border:none' /></td>
+              <input id="PCAOutOfPocket" type="text"  style='background-color:#E7E6E6;border:none' class="MoneyFormat" /></td>
           <td class=xl1525500></td>
           <td class=xl6825500>
               <input id="PCAActualExpense" type="text" style="border:none" /></td>
           <td class=xl1525500></td>
           <td class=xl8025500>
-              <input id="Reserve" type="text"  style='background-color:#E7E6E6;border:none' /></td>
+              <input id="Reserve" type="text"  style='background-color:#E7E6E6;border:none' class="MoneyFormat" /></td>
           <td class=xl1525500></td>
          </tr>
          <tr height=21 style='height:15.75pt'>
@@ -1127,7 +1649,7 @@
           <td class=xl1525500>Employee Paid</td>
           <td class=xl1525500></td>
           <td class=xl8025500 style='border-top:none'>
-              <input id="EmployeePaid" type="text"  style='background-color:#E7E6E6;border:none' /></td>
+              <input id="EmployeePaid" type="text"  style='background-color:#E7E6E6;border:none' class="MoneyFormat" /></td>
           <td class=xl1525500></td>
           <td class=xl7425500></td>
           <td class=xl1525500></td>
@@ -1139,7 +1661,7 @@
           <td class=xl1525500>PCA Direct</td>
           <td class=xl1525500></td>
           <td class=xl8025500 style='border-top:none'>
-              <input id="PCADirect" type="text"  style='background-color:#E7E6E6;border:none' /></td>
+              <input id="PCADirect" type="text"  style='background-color:#E7E6E6;border:none' class="MoneyFormat" /></td>
           <td class=xl1525500></td>
           <td class=xl7425500></td>
           <td class=xl1525500></td>
@@ -1151,7 +1673,7 @@
           <td class=xl7125500>TOTAL CLAIM</td>
           <td class=xl1525500></td>
           <td class=xl6925500>
-              <input id="TotalClaim" type="text" style="border:none" /></td>
+              <input id="TotalClaim" type="text" style="border:none" class="MoneyFormat" disabled /></td>
           <td class=xl1525500></td>
           <td class=xl1525500></td>
           <td class=xl1525500></td>
@@ -1199,11 +1721,11 @@
           <td class=xl7925500>
               <input id="OtherInsuranceClaimNumber" type="text"  style='background-color:#E7E6E6;border:none' /></td>
           <td class=xl1525500></td>
-          <td class=xl7925500>
+          <td class=xl6725500>
               <input id="PoliceReportNumber" type="text"  style='background-color:#E7E6E6;border:none' /></td>
           <td class=xl1525500></td>
           <td class=xl6725500>
-              <input id="DatePCAReceivedClaim" type="text" style="border:none" /></td>
+              <input id="IncidentReceivedDate" type="text" style="border:none" /></td>
           <td class=xl1525500></td>
          </tr>
          <tr height=20 style='height:15.0pt'>
@@ -1326,7 +1848,7 @@
           <td class=xl8225500><a href="#RANGE!A1"><span style='color:white;font-weight:
           700;text-decoration:none'>ADD CLAIM TO INCIDENT</span></a></td>
           <td class=xl8625500></td>
-          <td class=xl7525500>SAVE</td>
+          <td class=xl1525500><input id="Save" type="button" value="SAVE" style="background-color:black;color:white;font-weight:bold" /></td>
           <td class=xl8625500><span style='mso-spacerun:yes'> </span></td>
           <td class=xl8625500>
               &nbsp;</td>
@@ -1400,7 +1922,7 @@
           <td class=xl7025500>TOTAL PAYABLES</td>
           <td class=xl1525500></td>
           <td class=xl6925500>
-              <input id="TotalPayables" type="text" style="border:none" /></td>
+              <input id="TotalPayables" type="text" style="border:none" class="MoneyFormat" /></td>
           <td class=xl1525500></td>
           <td class=xl1525500><span style='mso-spacerun:yes'> </span></td>
           <td class=xl1525500></td>
@@ -1456,12 +1978,12 @@
          <col width=17 style='mso-width-source:userset;mso-width-alt:621;width:13pt'>
          <tr height=21 style='height:15.75pt'>
           <td height=21 class=xl1525500 style='height:15.75pt'></td>
-          <td class=xl7525500><input id="addReceivable" type="button" value="ADD PAYABLE" style="background-color:black;color:white" /></td>
+          <td class=xl7525500><input id="addReceivable" type="button" value="ADD RECEIVABLE" style="background-color:black;color:white" /></td>
           <td class=xl1525500></td>
           <td class=xl7025500>TOTAL RECEIVABLES</td>
           <td class=xl1525500></td>
           <td class=xl6925500>
-              <input id="TotalReceivables" type="text" style="border:none" /></td>
+              <input id="TotalReceivables" type="text" class="MoneyFormat" style="border:none" /></td>
           <td class=xl1525500></td>
           <td colspan=2 class=xl8625500></td>
          </tr>
@@ -1483,7 +2005,7 @@
           <td class=xl7025500>TOTAL EXPENSE TO PCA</td>
           <td class=xl1525500></td>
           <td class=xl6925500>
-              <input id="TotalExpenseToPCA" type="text" style="border:none" /></td>
+              <input id="TotalExpenseToPCA" type="text" class="MoneyFormat" style="border:none" /></td>
           <td class=xl1525500></td>
           <td class=xl1525500></td>
           <td class=xl1525500></td>
@@ -1503,7 +2025,7 @@
           <td height=20 class=xl1525500 style='height:15.0pt'></td>
           <td class=xl7525500>CLOSE CLAIM</td>
           <td class=xl1525500></td>
-          <td class=xl7525500>SAVE / SUBMIT</td>
+          <td class=xl7525500><input id="saveSubmit" type="button" value="SAVE &amp; SUBMIT" style="background-color:black;color:white;font-weight:bold" /></td>
           <td class=xl1525500></td>
           <td class=xl1525500></td>
           <td class=xl1525500></td>
@@ -1562,7 +2084,7 @@
 				 "<tr height=20 style='height:15.0pt'>" +
 				  "<td height=20 class=xl1525500 style='height:15.0pt'></td>" +
 				  "<td colspan=5 rowspan=3 class=xl9225500 style='border-right:.5pt solid black'>" +
-					  "<textarea id='noteClaimNote1' class='auto-style1' cols='20' style='background-color:#E7E6E6;border:none;margin: 0px; height: 61px;'></textarea></td>" +
+					  "<textarea id='noteClaimNote1' class='auto-style1' cols='20' style='background-color:#E7E6E6;border:none;margin: 0px; height: 61px;'></textarea><input type='text' id='NoteIDClaimNote1' style='display:none' /></td>" +
 				  "<td class=xl1525500></td>" +
 				  "<td class=xl6725500>" +
 					  "<input id='DateClaimNote1' type='text' style='background-color:#E7E6E6;border:none' disabled/></td>" +
@@ -1617,11 +2139,11 @@
                 "<col width=17 style='mso-width-source:userset;mso-width-alt:621;width:13pt'>" +
 				"<tr height=20 style='height:15.0pt'>" +
 				  "<td height=20 class=xl1525500 style='height:15.0pt'></td>" +
-				  "<td class=xl7925500><input id='PayorPayeePayable1' type='text' style='background-color:#E7E6E6;border:none' /></td>" +
+				  "<td class=xl7925500><input id='PayorPayeePayable1' type='text' style='background-color:#E7E6E6;border:none' /><input type='text' id='ClaimPayableIDPayable1' style='display:none' /></td>" +
 				  "<td class=xl1525500></td>" +
 				  "<td class=xl7925500><input id='CheckNumberPayable1' type='text' style='background-color:#E7E6E6;border:none' /></td>" +
 				  "<td class=xl1525500></td>" +
-				  "<td class=xl8025500><input id='CheckAmountPayable1' type='text' style='background-color:#E7E6E6;border:none' /></td>" +
+				  "<td class=xl8025500><input id='CheckAmountPayable1' type='text' style='background-color:#E7E6E6;border:none' class='MoneyFormat' /></td>" +
 				  "<td class=xl1525500></td>" +
 				  "<td class=xl8125500><input id='MailDatePayable1' type='text' style='background-color:#E7E6E6;border:none' /></td>" +
 				  "<td class=xl1525500></td>" +
@@ -1655,7 +2177,7 @@
 				  "<td class=xl1525500></td>" +
 				  "<td class=xl7925500><input id='CheckNumberReceivable1' type='text' style='background-color:#E7E6E6;border:none' /></td>" +
 				  "<td class=xl1525500></td>" +
-				  "<td class=xl8025500><input id='CheckAmountReceivable1' type='text' style='background-color:#E7E6E6;border:none' /></td>" +
+				  "<td class=xl8025500><input id='CheckAmountReceivable1' type='text' class='MoneyFormat' style='background-color:#E7E6E6;border:none' /></td>" +
 				  "<td class=xl1525500></td>" +
 				  "<td class=xl1525500></td>" +
 				  "<td class=xl1525500></td>" +

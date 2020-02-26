@@ -2,6 +2,7 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
     <script>
+        var group = '<%= Session["groupList"] %>';
         var VehiclePCAArray = [];
         var ThirdPartyVehiclePCAArray = [];
 
@@ -29,12 +30,22 @@
                 var numberOfVehiclesInvolved = Number(PCAVehicles) + Number(thirdPartyVehicles);
                 var creator = $("#txtLoggedinUsername").val().replace('PCA\\', '');
 
+                var edit = false;
+
+                if ($("#MainContent_IncidentID").val() == '') {
+                    //var url = "http://localhost:52839/api/InsuranceIncidents/PostIncident/";
+                    var url = $("#localApiDomain").val() + "InsuranceIncidents/PostIncident/";
+                } else {
+                    //var url = "http://localhost:52839/api/InsuranceIncidents/PutIncident/";
+                    var url = $("#localApiDomain").val() + "InsuranceIncidents/PutIncident/";
+                    edit = true;
+                }
+
                 $.ajax({
                     type: "POST",
-                    url: "http://localhost:52839/api/InsuranceIncidents/POSTIncident/",
-                    //url: $("#localApiDomain").val() + "InsuranceIncidents/POSTIncident/",
-
+                    url: url,
                     data: {
+                        "IncidentID": $("#MainContent_IncidentID").val(),
                         "IncidentNumber": $("#IncidentNumber").val(),
                         "LocationId": $("#location").children("option:selected").val(),
                         "IncidentStreetAddress": $("#IncidentLoationAddress").val(),
@@ -65,11 +76,15 @@
                         success = true;
                     },
                     error: function (request, status, error) {
-                        swal(error);
+                        swal("Error Creating Incident");
                     },
                     complete: function (data) {
-                        $("#IncidentID").val(data.responseJSON);
-                        saveClaims();
+                        if (edit == false) {
+                            $("#MainContent_IncidentID").val(data.responseJSON);
+                            saveClaims();
+                        } else {
+                            UpdateVehicles()
+                        }
                     }
                 });
             });
@@ -136,8 +151,11 @@
                             loadPCAVehiclesState((i).toString());
                         }
                     }
+                    window.scrollBy(0, 700); // Scroll 100px downwards
                 }
                 turnOffAutoComplete();
+                
+
             });
 
             $("#IncidentNumThirdPartyVehicle").on('blur', function () {
@@ -195,8 +213,10 @@
                             $(thisFocus).focus();
                         }
                     }
+                    window.scrollBy(0, 100); // Scroll 100px downwards
                 }
                 turnOffAutoComplete();
+                
             });
 
             $(document).on('keypress', function (e) {
@@ -215,6 +235,7 @@
                                 VehiclePCAArray.length = 0;
                                 $(".pcaVehicleSection").remove();
                             } else if (vehicleNumber > VehiclePCAArray.length && VehiclePCAArray.length != 0) {
+                                var thisElement = 0;
                                 for (i = vehicleNumber - VehiclePCAArray.length ; i > 0; i--) {
                                     vehicleInfoBuild = pcaVehicleInfo;
                                     vehicleInfoBuild = vehicleInfoBuild.replace(/VehiclePCA1/g, 'VehiclePCA' + (VehiclePCAArray.length + 1).toString());
@@ -259,68 +280,72 @@
                             }
                         }
                     }
-                }
 
-                if (document.activeElement.id == 'IncidentNumThirdPartyVehicle') {
-                    if (isNaN($("#IncidentNumThirdPartyVehicle").val()) == false) {
-                        var thirdPartyvehicleNumber = $("#IncidentNumThirdPartyVehicle").val();
-                        var vehicleThirdPartyInfoBuild = "";
-                        if (thirdPartyvehicleNumber == 0) {
-                            ThirdPartyVehiclePCAArray.length = 0;
-                            $(".pcaVehicleThirdPartySection").remove();
-                        } else if (thirdPartyvehicleNumber > ThirdPartyVehiclePCAArray.length && ThirdPartyVehiclePCAArray.length != 0) {
-                            var thisElement = 0;
-                            for (i = thirdPartyvehicleNumber - ThirdPartyVehiclePCAArray.length ; i > 0; i--) {
-                                vehicleThirdPartyInfoBuild = pcaThirdPersonOrVehicle;
-                                vehicleThirdPartyInfoBuild = vehicleThirdPartyInfoBuild.replace(/ThirdPartyVehiclePCA1/g, 'ThirdPartyVehiclePCA' + (ThirdPartyVehiclePCAArray.length + 1).toString());
-                                vehicleThirdPartyInfoBuild = vehicleThirdPartyInfoBuild.replace('NO. 1', 'NO.' + (ThirdPartyVehiclePCAArray.length + 1).toString());
-                                var placementTable = '#ThirdPartyVehiclePCA' + (ThirdPartyVehiclePCAArray.length).toString();
-                                $(placementTable).after(vehicleThirdPartyInfoBuild);
-                                var newVehicle = '#ThirdPartyVehiclePCA' + (ThirdPartyVehiclePCAArray.length + 1).toString();
-                                ThirdPartyVehiclePCAArray.splice(0, 0, newVehicle);
+                    if (document.activeElement.id == 'IncidentNumThirdPartyVehicle') {
+                        if (isNaN($("#IncidentNumThirdPartyVehicle").val()) == false) {
+                            var thirdPartyvehicleNumber = $("#IncidentNumThirdPartyVehicle").val();
+                            var vehicleThirdPartyInfoBuild = "";
+                            if (thirdPartyvehicleNumber == 0) {
+                                ThirdPartyVehiclePCAArray.length = 0;
+                                $(".pcaVehicleThirdPartySection").remove();
+                            } else if (thirdPartyvehicleNumber > ThirdPartyVehiclePCAArray.length && ThirdPartyVehiclePCAArray.length != 0) {
+                                var thisElement = 0;
+                                for (i = thirdPartyvehicleNumber - ThirdPartyVehiclePCAArray.length ; i > 0; i--) {
+                                    vehicleThirdPartyInfoBuild = pcaThirdPersonOrVehicle;
+                                    vehicleThirdPartyInfoBuild = vehicleThirdPartyInfoBuild.replace(/ThirdPartyVehiclePCA1/g, 'ThirdPartyVehiclePCA' + (ThirdPartyVehiclePCAArray.length + 1).toString());
+                                    vehicleThirdPartyInfoBuild = vehicleThirdPartyInfoBuild.replace('NO. 1', 'NO.' + (ThirdPartyVehiclePCAArray.length + 1).toString());
+                                    var placementTable = '#ThirdPartyVehiclePCA' + (ThirdPartyVehiclePCAArray.length).toString();
+                                    $(placementTable).after(vehicleThirdPartyInfoBuild);
+                                    var newVehicle = '#ThirdPartyVehiclePCA' + (ThirdPartyVehiclePCAArray.length + 1).toString();
+                                    ThirdPartyVehiclePCAArray.splice(0, 0, newVehicle);
 
-                                if (thisElement == 0) {
-                                    thisElement = ThirdPartyVehiclePCAArray.length;
-                                } else {
-                                    thisElement = thisElement + 1
-                                }
+                                    if (thisElement == 0) {
+                                        thisElement = ThirdPartyVehiclePCAArray.length;
+                                    } else {
+                                        thisElement = thisElement + 1
+                                    }
 
-                                if ($("#VehiclePCA" + thisElement + "State").val() == null) {
-                                    loadThirdPartyVehiclesState(thisElement.toString(), '', 'State');
-                                    loadThirdPartyVehiclesState(thisElement.toString(), '', 'PlateState');
+                                    if ($("#VehiclePCA" + thisElement + "State").val() == null) {
+                                        loadThirdPartyVehiclesState(thisElement.toString(), '', 'State');
+                                        loadThirdPartyVehiclesState(thisElement.toString(), '', 'PlateState');
+                                    }
                                 }
-                            }
-                        } else if (thirdPartyvehicleNumber < ThirdPartyVehiclePCAArray.length) {
-                            var arrayLength = ThirdPartyVehiclePCAArray.length;
-                            for (i = 0; i <= arrayLength - thirdPartyvehicleNumber - 1; i++) {
-                                $(ThirdPartyVehiclePCAArray[0]).remove();
-                                ThirdPartyVehiclePCAArray.splice(0, 1);
-                            }
-                        } else if (ThirdPartyVehiclePCAArray.length == 0) {
-                            for (i = $("#IncidentNumThirdPartyVehicle").val() ; i > 0; i--) {
-                                vehicleThirdPartyInfoBuild = pcaThirdPersonOrVehicle;
-                                vehicleThirdPartyInfoBuild = vehicleThirdPartyInfoBuild.replace(/ThirdPartyVehiclePCA1/g, 'ThirdPartyVehiclePCA' + (i).toString());
-                                vehicleThirdPartyInfoBuild = vehicleThirdPartyInfoBuild.replace('NO. 1', 'NO.' + (i).toString());
-                                if (i == 1) {
-                                    vehicleThirdPartyInfoBuild = vehicleThirdPartyInfoBuild.replace("'~'", "autofocus");
+                            } else if (thirdPartyvehicleNumber < ThirdPartyVehiclePCAArray.length) {
+                                var arrayLength = ThirdPartyVehiclePCAArray.length;
+                                for (i = 0; i <= arrayLength - thirdPartyvehicleNumber - 1; i++) {
+                                    $(ThirdPartyVehiclePCAArray[0]).remove();
+                                    ThirdPartyVehiclePCAArray.splice(0, 1);
                                 }
-                                $("#thirdPartyTable").after(vehicleThirdPartyInfoBuild);
-                                var newVehicle = '#ThirdPartyVehiclePCA' + (i).toString();
-                                ThirdPartyVehiclePCAArray.push(newVehicle);
-                                loadThirdPartyVehiclesState((i).toString(), '', 'State');
-                                loadThirdPartyVehiclesState((i).toString(), '', 'PlateState');
+                            } else if (ThirdPartyVehiclePCAArray.length == 0) {
+                                for (i = $("#IncidentNumThirdPartyVehicle").val() ; i > 0; i--) {
+                                    vehicleThirdPartyInfoBuild = pcaThirdPersonOrVehicle;
+                                    vehicleThirdPartyInfoBuild = vehicleThirdPartyInfoBuild.replace(/ThirdPartyVehiclePCA1/g, 'ThirdPartyVehiclePCA' + (i).toString());
+                                    vehicleThirdPartyInfoBuild = vehicleThirdPartyInfoBuild.replace('NO. 1', 'NO.' + (i).toString());
+                                    if (i == 1) {
+                                        vehicleThirdPartyInfoBuild = vehicleThirdPartyInfoBuild.replace("'~'", "autofocus");
+                                    }
+                                    $("#thirdPartyTable").after(vehicleThirdPartyInfoBuild);
+                                    var newVehicle = '#ThirdPartyVehiclePCA' + (i).toString();
+                                    ThirdPartyVehiclePCAArray.push(newVehicle);
+                                    loadThirdPartyVehiclesState((i).toString(), '', 'State');
+                                    loadThirdPartyVehiclesState((i).toString(), '', 'PlateState');
+                                }
                             }
                         }
+                        window.scrollBy(0, 100); // Scroll 100px downwards
                     }
                 }
+
+
                 turnOffAutoComplete();
+                
             });
 
             const params = new URLSearchParams(window.location.search);
             const IncidentID = params.get("IncidentID");
 
             if (IncidentID != null) {
-                $("#IncidentID").val(IncidentID);
+                $("#MainContent_IncidentID").val(IncidentID);
                 loadIncident(IncidentID);
                 loadIncidentPCAVehicles(IncidentID);
                 loadIncidentThirdPartyVehicles(IncidentID);
@@ -330,6 +355,8 @@
                 var id = $("#location").children("option:selected").val();
                 getLocationInfo(id);
             });
+
+            Security();
 
         });
 
@@ -352,10 +379,40 @@
             for (i = 0; i <= ThirdPartyVehiclePCAArray.length - 1; i++) {
                 ThirdPartyVehicleClaims(ThirdPartyVehiclePCAArray[i]);
             }
+
+            swal({
+                title: 'Save',
+                text: "Successful",
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            }).then(function () {
+                window.location.href = "InsuranceIncidentReport.aspx?IncidentID=" + $("#MainContent_IncidentID").val();
+            });
+
+        }
+
+        function UpdateVehicles() {
+            for (i = 0; i <= VehiclePCAArray.length - 1; i++) {
+                savePCAVehicle('', VehiclePCAArray[i]);
+            }
+
+            for (i = 0; i <= ThirdPartyVehiclePCAArray.length - 1; i++) {
+                saveThirdPartyVehicle('', ThirdPartyVehiclePCAArray[i]);
+            }
+
+            swal({
+                title: 'Save',
+                text: "Successful",
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            }).then(function () {
+                location.reload(true);
+            });
+            
         }
 
         function PCAVehicleClaims(item) {
-            var thisIncidentID = $("#IncidentID").val();
+            var thisIncidentID = $("#MainContent_IncidentID").val();
 
             thisIncidentID.replace(/""/g, "\"");
 
@@ -367,12 +424,11 @@
             $.ajax({
                 type: "POST",
                 async: false,
-                url: "http://localhost:52839/api/InsuranceIncidents/PostInitialIncidentClaim/",
-                //url: $("#localApiDomain").val() + "InsuranceIncidents/POSTIncident/",
+                //url: "http://localhost:52839/api/InsuranceIncidents/PostInitialIncidentClaim/",
+                url: $("#localApiDomain").val() + "InsuranceIncidents/PostInitialIncidentClaim/",
 
                 data: {
                     "IncidentID": thisIncidentID,
-                    "ClaimantName": $(item).find("input[id*='EmployeeName']").val(),
                     "ClaimStatusID": 4,
                     "ClaimStatusDate": DateFormat(today)
                 },
@@ -381,7 +437,7 @@
                     savePCAVehicle(data, item);
                 },
                 error: function (request, status, error) {
-                    swal(error);
+                    swal("Error creating initial claim for vehicle");
                 },
                 complete: function (data) {
                     
@@ -390,19 +446,27 @@
         }
 
         function savePCAVehicle(claimID, item) {
-            var thisClaimID = claimID;
+            if (claimID != '') {
+                var thisClaimID = claimID;
+                //var url = "http://localhost:52839/api/InsuranceIncidents/PostPCAVehicle/";
+                var url = $("#localApiDomain").val() + "InsuranceIncidents/PostPCAVehicle/";
+            } else {
+                var thisClaimID = $(item).find("input[id*='ClaimID']").val();
+                //var url = "http://localhost:52839/api/InsuranceIncidents/PutPCAVehicle/";
+                var url = $("#localApiDomain").val() + "InsuranceIncidents/PutPCAVehicle/";
+            }
+            
             var DriverName = $(item).find("input[id*='EmployeeName']").val();
             var VehicleID = $(item).find("select[id*='FleetNumber']").val();
             var DriverLicenseNumber = $(item).find("input[id*='DriverLicNumber']").val();
-            var Injuries = $(item).find("input:radio[name*='Injuries']").val();
+            var Injuries = $(item).find("input[name*='Injuries']:checked").val();
             var TagNumber = $(item).find("input[id*='TagNumber']").val();
             var TagStateID = $(item).find("select[id*='State']").val();
-
+            var PoliceReportNumber = $("#IncidentPoliceReportNumber").val();
+            var PCAReceivedClaimDate = $("#IncidentDate").val();
             $.ajax({
                 type: "POST",
-                url: "http://localhost:52839/api/InsuranceIncidents/PostPCAVehicle/",
-                //url: $("#localApiDomain").val() + "InsuranceIncidents/PostPCAVehicle/",
-
+                url: url,
                 data: {
                     "ClaimID": thisClaimID,
                     "DriverName": DriverName,
@@ -410,23 +474,25 @@
                     "DriverLicenseNumber": DriverLicenseNumber,
                     "Injuries": Injuries,
                     "TagNumber": TagNumber,
-                    "TagStateID": TagStateID
+                    "TagStateID": TagStateID,
+                    "PoliceReportNumber": PoliceReportNumber,
+                    "PCAReceivedClaimDate": PCAReceivedClaimDate
                 },
                 dataType: "json",
                 success: function (data) {
-                    
+                    console.log(data.toString());
                 },
-                error: function (request, status, error) {
-                    swal(error);
+                error: function () {
+                    swal("Error saving PCA vehicle");
                 },
-                complete: function () {
-                    
+                complete: function (data) {
+                    console.log(data.toString());
                 }
             });
         }
 
         function ThirdPartyVehicleClaims(item) {
-            var thisIncidentID = $("#IncidentID").val();
+            var thisIncidentID = $("#MainContent_IncidentID").val();
 
             thisIncidentID.replace(/""/g, "\"");
 
@@ -438,12 +504,12 @@
             $.ajax({
                 type: "POST",
                 async: false,
-                url: "http://localhost:52839/api/InsuranceIncidents/PostInitialIncidentClaim/",
-                //url: $("#localApiDomain").val() + "InsuranceIncidents/POSTIncident/",
+                //url: "http://localhost:52839/api/InsuranceIncidents/PostInitialIncidentClaim/",
+                url: $("#localApiDomain").val() + "InsuranceIncidents/PostInitialIncidentClaim/",
 
                 data: {
                     "IncidentID": thisIncidentID,
-                    "ClaimantName": $(item).find("input[id*='ThirdPartyVehiclePCA1CustomerName']").val(),
+                    "ClaimantName": $(item).find("input[id*='CustomerName']").val(),
                     "ClaimStatusID": 4,
                     "ClaimStatusDate": DateFormat(today)
                 },
@@ -452,16 +518,25 @@
                     saveThirdPartyVehicle(data, item);
                 },
                 error: function (request, status, error) {
-                    swal(error);
+                    swal("Error creating third party initial claim");
                 },
                 complete: function (data) {
-
+                    
                 }
             });
         }
 
         function saveThirdPartyVehicle(claimID, item) {
-            var thisClaimID = claimID;
+            if (claimID != '') {
+                var thisClaimID = claimID;
+                //var url = "http://localhost:52839/api/InsuranceIncidents/PostThirdPartyVehicle/";
+                var url = $("#localApiDomain").val() + "InsuranceIncidents/PostThirdPartyVehicle/";
+            } else {
+                var thisClaimID = $(item).find("input[id*='ClaimID']").val();
+                //var url = "http://localhost:52839/api/InsuranceIncidents/PutThirdPartyVehicle/";
+                var url = $("#localApiDomain").val() + "InsuranceIncidents/PutThirdPartyVehicle/";
+            }
+
             var CustomerName = $(item).find("input[id*='CustomerName']").val();
             var CustomerEmailAddress = '';
             var CustomerStreetAddress = $(item).find("input[id*='CStreetAddress']").val();
@@ -484,14 +559,12 @@
             var VehicleVIN = $(item).find("input[id*='VIN']").val();
             var VehicleLicensePlate = $(item).find("input[id*='LicensePlate']").val();
             var VehicleLicensePlateStateID = $(item).find("select[id*='PlateState']").val();
-            var Injuries = $(item).find("input:radio[name*='CInjuries']").val();
+            var Injuries = $(item).find("input[name*='CInjuries']:checked").val();
 
 
             $.ajax({
                 type: "POST",
-                url: "http://localhost:52839/api/InsuranceIncidents/PostThirdPartyVehicle/",
-                //url: $("#localApiDomain").val() + "InsuranceIncidents/PostThirdPartyVehicle/",
-
+                url: url,
                 data: {
                     "ClaimID": thisClaimID,
                     "CustomerName": CustomerName,
@@ -524,7 +597,7 @@
 
                 },
                 error: function (request, status, error) {
-                    swal(error);
+                    swal("Error saving third party vehicle");
                 },
                 complete: function () {
 
@@ -560,8 +633,8 @@
         }
 
         function loadIncident(id) {
-            //var url = $("#localApiDomain").val() + "InsuranceIncidents/GetIncidentByID/" + id;
-            var url = "http://localhost:52839/api/InsuranceIncidents/GetIncidentByID/" + id;
+            var url = $("#localApiDomain").val() + "InsuranceIncidents/GetIncidentByID/" + id;
+            //var url = "http://localhost:52839/api/InsuranceIncidents/GetIncidentByID/" + id;
 
             $.ajax({
                 type: "GET",
@@ -601,7 +674,7 @@
                 error: function (request, status, error) {
                     swal("There was an issue getting location information.");
                 }
-            }).done(function () {
+            }).then(function () {
                 var id = $("#location").children("option:selected").val();
                 getLocationInfo(id);
             });
@@ -695,7 +768,7 @@
                 error: function (request, status, error) {
                     swal("There was an issue getting location vehicle list information.");
                 }
-            }).done(function () {
+            }).then(function () {
                 $(dropdown).on('change', function () {
                     var elementNumber = this.id.toString().match(/\d+/g);
                     var vehicleId = $('#VehiclePCA' + elementNumber[0] + 'FleetNumber').val();
@@ -709,8 +782,8 @@
 
             var loadData = id.split('~');
 
-            var url = "http://localhost:52839/api/Vehicles/GetVehicleByID/" + loadData[0];
-            //var url = $("#localApiDomain").val() + "Vehicles/GetVehicleByID/" + loadData[0];
+            //var url = "http://localhost:52839/api/Vehicles/GetVehicleByID/" + loadData[0];
+            var url = $("#localApiDomain").val() + "Vehicles/GetVehicleByID/" + loadData[0];
 
             $.ajax({
                 type: "GET",
@@ -734,8 +807,8 @@
 
         function loadIncidentPCAVehicles(id) {
 
-            var url = "http://localhost:52839/api/PCAVehicleClaims/GetPCAClaimVehiclesByIncident/" + id;
-            //var url = $("#localApiDomain").val() + "PCAVehicleClaims/GetPCAClaimVehiclesByIncident/" + id;
+            //var url = "http://localhost:52839/api/InsuranceIncidents/GetPCAClaimVehiclesByIncident/" + id;
+            var url = $("#localApiDomain").val() + "InsuranceIncidents/GetPCAClaimVehiclesByIncident/" + id;
 
             $.ajax({
                 type: "GET",
@@ -766,20 +839,21 @@
                         var thisVehicleNumber = data[i].VehicleNumber;
                         var thisState = data[i].StateAbbreviation;
 
-                        $.when(loadPCAVehicles(thisElementNum, thisVehicleNumber).done(function (thisData) {
+                        $.when(loadPCAVehicles(thisElementNum, thisVehicleNumber).then(function (thisData) {
                                 $("#VehiclePCA" + thisData[thisData.length - 2].toString() + "FleetNumber" + " option:contains(" + thisData[thisData.length - 1].toString() + ")").prop('selected', true);
                             }).fail(function (error) {
                                 alert("error " + error);
                             })
                         );
 
-                        $.when(loadPCAVehiclesState(thisElementNum, thisState).done(function (thisData) {
+                        $.when(loadPCAVehiclesState(thisElementNum, thisState).then(function (thisData) {
                                 $("#VehiclePCA" + thisData[thisData.length - 2].toString() + "State" + " option:contains(" + thisData[thisData.length - 1].toString() + ")").prop('selected', true);
                             }).fail(function (error) {
                                 alert("error " + error);
                             })
                         );
 
+                        $("#VehiclePCA" + (i + 1).toString() + "ClaimID").val(data[i].ClaimID);
                         $("#VehiclePCA" + (i + 1).toString() + "Year").val(data[i].Year);
                         $("#VehiclePCA" + (i + 1).toString() + "TagNumber").val(data[i].TagNumber);
                         $("#VehiclePCA" + (i + 1).toString() + "Make").val(data[i].MakeName);
@@ -791,15 +865,13 @@
                 error: function (request, status, error) {
                     swal("There was an issue getting PCA vehicle information information.");
                 }
-            }).done(function () {
-                
             });
         }
 
         function loadIncidentThirdPartyVehicles(id) {
 
-            var url = "http://localhost:52839/api/InsuranceIncidents/GetThirdPartyClaimVehiclesByIncident/" + id;
-            //var url = $("#localApiDomain").val() + "InsuranceIncidents/GetThirdPartyClaimVehiclesByIncident/" + id;
+            //var url = "http://localhost:52839/api/InsuranceIncidents/GetThirdPartyClaimVehiclesByIncident/" + id;
+            var url = $("#localApiDomain").val() + "InsuranceIncidents/GetThirdPartyClaimVehiclesByIncident/" + id;
 
             $.ajax({
                 type: "GET",
@@ -819,6 +891,7 @@
                         var newVehicle = '#ThirdPartyVehiclePCA' + (i + 1).toString();
                         ThirdPartyVehiclePCAArray.push(newVehicle);
 
+                        $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "ClaimID").val(data[i].ClaimID);
                         $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "CustomerName").val(data[i].CustomerName);
                         $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "CStreetAddress").val(data[i].CustomerStreetAddress);
                         $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "City").val(data[i].CustomerCity);
@@ -851,14 +924,14 @@
                         var CustomerState = data[i].CustomerState;
                         var VehicleLicensePlateState = data[i].VehicleLicensePlateState;
 
-                        $.when(loadThirdPartyVehiclesState(thisElementNum, CustomerState, 'State').done(function (thisData) {
+                        $.when(loadThirdPartyVehiclesState(thisElementNum, CustomerState, 'State').then(function (thisData) {
                                 $("#ThirdPartyVehiclePCA" + thisData[thisData.length - 2].toString() + "State" + " option:contains(" + thisData[thisData.length - 1].toString() + ")").prop('selected', true);
                             }).fail(function (error) {
                                 alert("error " + error);
                             })
                         );
 
-                        $.when(loadThirdPartyVehiclesState(thisElementNum, VehicleLicensePlateState, 'PlateState').done(function (thisData) {
+                        $.when(loadThirdPartyVehiclesState(thisElementNum, VehicleLicensePlateState, 'PlateState').then(function (thisData) {
                             $("#ThirdPartyVehiclePCA" + thisData[thisData.length - 2].toString() + "PlateState" + " option:contains(" + thisData[thisData.length - 1].toString() + ")").prop('selected', true);
                         }).fail(function (error) {
                             alert("error " + error);
@@ -1758,7 +1831,7 @@
           <td height=20 class=xl1527147 style='height:15.0pt'></td>
           <td class=xl1527147>Operation Type</td>
           <td class=xl1527147></td>
-          <td class=xl6727147 style='border-top:none'><input name="operationType" type="radio" value="1" style="width:25px" />Self Park<input name="operationType" type="radio" value="2" style="width:25px" />Valet</td>
+          <td class=xl6727147 style='border-top:none'><input name="operationType" type="radio" value="0" style="width:25px" />Self Park<input name="operationType" type="radio" value="1" style="width:25px" />Valet</td>
           <td class=xl1527147></td>
           <td class=xl1527147></td>
           <td class=xl1527147></td>
@@ -2055,7 +2128,7 @@
           <td class=xl1527147></td>
           <td class=xl1527147></td>
           <td class=xl1527147></td>
-          <td class=xl1527147><input id="IncidentID" type="text" style="display:none" /></td>
+          <td class=xl1527147><asp:TextBox ID="IncidentID" runat="server" Style="display:none"></asp:TextBox></td>
           <td class=xl1527147></td>
          </tr>
          <tr height=21 style='height:15.75pt'>
@@ -2182,7 +2255,7 @@
                                  " <td class=xl1527147>Employee Name</td>" +
                                  " <td class=xl1527147></td>" +
                                  " <td colspan=3 class=xl9027147>" +
-                                 "     <input type='text' id='VehiclePCA1EmployeeName' style='border:none' '~' /></td>" +
+                                 "     <input type='text' id='VehiclePCA1EmployeeName' style='border:none' '~' /><input type='text' id='VehiclePCA1ClaimID' style='display:none' /></td>" +
                                  " <td class=xl1527147></td>" +
                                  " <td class=xl1527147></td>" +
                                  " <td class=xl1527147></td>" +
@@ -2279,7 +2352,7 @@
                                         "<td class=xl1527147>Customer Name</td>" +
                                         "<td class=xl1511590></td>" +
                                         "<td colspan=3 class=xl6727147 width=371 style='width:279pt'>" +
-                                        "<input id='ThirdPartyVehiclePCA1CustomerName' type='text' style='border:none;' /></td>" +
+                                        "<input id='ThirdPartyVehiclePCA1CustomerName' type='text' style='border:none;' /><input type='text' id='ThirdPartyVehiclePCA1ClaimID' style='display:none' /></td>" +
                                         "<td class=xl1511590></td>" +
                                         "<td class=xl1511590></td>" +
                                         "<td class=xl1511590></td>" +
