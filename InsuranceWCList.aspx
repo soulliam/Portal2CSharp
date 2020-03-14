@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Portal2.master" AutoEventWireup="true" CodeFile="InsuranceIncidentList.aspx.cs" Inherits="InsuranceClaims" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Portal2.master" AutoEventWireup="true" CodeFile="InsuranceWCList.aspx.cs" Inherits="InsuranceWCList" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
     <link rel="stylesheet" href="jqwidgets/styles/jqx.base.css" type="text/css" />
@@ -88,11 +88,6 @@
         .main {
             height:100%;
             margin-top:40px;
-        }
-
-        incidentClass
-        {
-            background-color: lightblue;
         }
 
     </style>
@@ -205,18 +200,6 @@
                 return html;
             }
 
-            var WCLinkRenderer = function (row, column, value) {
-                var data = $('#jqxgrid').jqxGrid('getrowdata', row);
-                var html = '';
-
-                if (data.WCClaimID != 0) {
-                    html = "<div style='margin-top:9px'><a href='./InsuranceWCClaim.aspx?WCClaimID=" + data.WCClaimID + "' target='_blank'>" + data.WCClaimNumber + "</a></div>"
-                }
-
-
-                return html;
-            }
-
             var DocUploadRenderer = function (row, column, value) {
                 var data = $('#jqxgrid').jqxGrid('getrowdata', row);
                 var html = '';
@@ -233,19 +216,9 @@
                 return html;
             }
 
-            var cellclassname = function (row, column, value, data) {
-                datarow = row;
-                var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', datarow);
-
-                if (FirstColorRowCount == true) {
-                    FirstColorRowCount = false;
-                    return "incidentClass";
-                }
-            };
 
             var UploadCount = '';
             var FirstRowCount = '';
-            var FirstColorRowCount = true;
             var AddClaimcount = '';
 
             $("#jqxgrid").jqxGrid(
@@ -253,10 +226,10 @@
                     width: '100%',
                     height: 500,
                     source: source,
-                    //selectionmode: 'checkbox',
+                    selectionmode: 'checkbox',
                     rowsheight: 35,
                     sortable: true,
-                    //altrows: true,
+                    altrows: true,
                     filterable: true,
                     columnsresize: true,
                     columns: [
@@ -271,13 +244,13 @@
                                       html = "<div style='margin-top:9px'><a href='./InsuranceIncidentReport.aspx?IncidentID=" + dataRecord.IncidentID + "' target='_blank'>" + dataRecord.IncidentNumber + "</a></div>"
                                       return html;
                                   }
-                              }, cellclassname: cellclassname
+                              }
                           },
-                          { text: 'Claims #', datafield: 'ClaimNumber', cellsrenderer: ClaimLinkRenderer, cellclassname: cellclassname },
+                          { text: 'Claims #', datafield: 'ClaimNumber', cellsrenderer: ClaimLinkRenderer },
                           { text: 'ClaimID', datafield: 'ClaimID', hidden: true },
-                          { text: 'WC Claim', datafield: 'WCClaimNumber', cellsrenderer: WCLinkRenderer, cellclassname: cellclassname },
+                          { text: 'WC Claim', datafield: 'WCClaimNumber' },
                           { text: 'WCClaimID', datafield: 'WCClaimID', hidden: true },
-                          { text: 'Date of Incident', datafield: 'IncidentDate', cellsrenderer: DateRender, cellclassname: cellclassname },
+                          { text: 'Date of Incident', datafield: 'IncidentDate', cellsrenderer: DateRender },
                           {
                               text: 'Incident Status',
                               cellsrenderer: function (row, column, value) {
@@ -287,12 +260,12 @@
                                   if (dataRecord.IncidentNumber != FirstRowCount) {
                                       return "<div style='margin-top:9px'>" + dataRecord.IncidentStatus + "</div>";
                                   }
-                              }, cellclassname: cellclassname
+                              }
                           },
-                          { text: 'Claim Status', datafield: 'ClaimStatusDesc', cellclassname: cellclassname },
-                          { text: 'Location', datafield: 'LocationName', cellclassname: cellclassname },
-                          { text: 'Claimant Name', datafield: 'ClaimantName', cellclassname: cellclassname },
-                          { text: 'Ins Claim #', datafield: 'PCAInsuranceClaimNumber', cellclassname: cellclassname },
+                          { text: 'Claim Status', datafield: 'ClaimStatusDesc' },
+                          { text: 'Location', datafield: 'LocationName' },
+                          { text: 'Claimant Name', datafield: 'ClaimantName' },
+                          { text: 'Ins Claim #', datafield: 'PCAInsuranceClaimNumber' },
                           { text: 'Upload Docs', cellsrenderer: DocUploadRenderer },
                           {
                               text: 'Check List',
@@ -304,9 +277,9 @@
                                       FirstRowCount = dataRecord.IncidentNumber;
                                       return "<div style='margin-top:9px'><a href='./InsuranceIncidentChecklist.aspx?IncidentID=" + dataRecord.IncidentID + "' target='_blank'>Check List</a></div>";
                                   }
-                              }, cellclassname: cellclassname
+                              }
                           },
-                          { text: 'Closed', datafield: 'Closed', cellclassname: cellclassname }
+                          { text: 'Closed', datafield: 'Closed' }
                     ]
                 });
         }
@@ -401,7 +374,7 @@
 
         
     </script>
-    <img id="keepAliveIMG" width="1" height="1" src="./images/FastPark.png?" style="display:none" />
+    <img id="keepAliveIMG" width="1" height="1" src="./images/FastPark.png?" />
     <input type="text" id="InsuranceLocation" style="display:none" />
 
     <div class="grid-container">        
@@ -417,8 +390,8 @@
         <div class="search19"></div>
         <div class="search20"></div>
 
-        <div class="search14"><input type="button" id="Search" value="Search" /></div>
         <div class="search21"><input id="newIncident" type="button" value="New Incident" /></div>
+        <div class="search14"><input type="button" id="Search" value="Search" /></div>
         <div class="search28"><input type="button" id="ClearSearch" value="Clear" /></div>
 
         <div class="search8"><input type="text" id="SearchIncidentNumber" /></div>
@@ -442,8 +415,6 @@
             <div id="jqxgrid"></div>
         </div>  
     </div>
-    
-    
 </asp:Content>
 
 

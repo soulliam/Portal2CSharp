@@ -470,9 +470,8 @@ function DateTimeFormat(dateObject) {
     var day = d.getDate();
     var month = d.getMonth() + 1;
     var year = d.getFullYear();
-    var Hours = d.getHours();
-    var Minutes = d.getMinutes();
-    var minutes = d.getHours
+    var Hours = padNumber(d.getHours(), 2);
+    var Minutes = padNumber(d.getMinutes(), 2);
 
     if (day < 10) {
         day = "0" + day;
@@ -802,6 +801,11 @@ function exportGridToCsv(Results, fileName, headerString, IncludeID) {
     x.setAttribute("download", fileName);
     document.body.appendChild(x);
     x.click();
+}
+
+function keepMeAlive(imgName) {
+    myImg = document.getElementById(imgName);
+    if (myImg) myImg.src = myImg.src.replace(/\?.*$/, '?' + Math.random());
 }
 
 

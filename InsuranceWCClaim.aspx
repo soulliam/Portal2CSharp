@@ -34,28 +34,148 @@
     <script>
         var group = '<%= Session["groupList"] %>';
         var WCClaimID = "";
+        var noteNumber = 0;
+        var IndemnityCompPaidCount = 0;
+        var IndemnityCompReserveCount = 0;
+        var MedicalPaidCount = 0;
+        var MedicalReserveCount = 0;
+        var WCClaimExpensePaidCount = 0;
+        var WCExpenseReserveCount = 0;
+        var SubroAmount = 0;
+        var SettlementCount = 0;
 
         $(document).ready(function () {
-            var noteNumber = 0;
+
+            //************************* Currency Mask **************************************
+            $("#topTable").delegate('.MoneyFormat', 'blur', function (e) {
+
+                var Globals = Object.keys(window);
+
+                for (var i = 600; i <= Globals.length - 1 ; i++) {
+                    if (Globals[i].match(/.*Count/)) {
+                        var thisVariable = Globals[i].match(/.*Count/)
+                        eval(thisVariable + " = 0");
+                    }
+                }
+
+            })
+
+            $("#topTable").delegate('.MoneyFormat', 'keydown', function (e) {
+                var KeyID = e.keyCode;
+
+                if (document.activeElement.classList.contains('MoneyFormat')) {
+                    switch (KeyID) {
+                        case 8:
+                            $("#" + document.activeElement.id).val('');
+                            $("#" + document.activeElement.id).focus();
+                            var thisElementName = document.activeElement.id.toString();
+                            eval(thisElementName + "Count = 0");
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            });
+
+            $("#topTable").delegate('.MoneyFormat', 'input', function (e) {
+                $(this).val(parseFloat($(this).val()).toFixed(2));
+
+                if (e.originalEvent.target.value.includes('..')) {
+                    e.originalEvent.target.value.replace('..', '.');
+                }
+
+                var thisElementName = document.activeElement.id.toString();
+                var thisCursorCount = eval(thisElementName + "Count = " + thisElementName + "Count + 1");
+
+                setCursorPosition(this, thisCursorCount);
+
+                var totalExpenseAmount = sumExpenseAmount();
+                $("#TotalIncurred").val(totalExpenseAmount.toFixed(2));
+
+            });
+
+            $(".MoneyFormat").keypress(function (e) {
+                var keyCode = e.which;
+
+                if ((keyCode != 8 || keyCode == 32 || keyCode == 46) && ((keyCode < 48 && keyCode != 46) || keyCode > 57)) {
+                    return false;
+                }
+            });
+
+            $("#topTable").delegate('.MoneyFormat', 'dblclick', function (e) {
+                $(this).val(parseFloat($(this).val()).toFixed(2));
+
+                var totalExpenseAmount = sumExpenseAmount();
+                $("#TotalIncurred").val(totalExpenseAmount.toFixed(2));
+            });
+
+           
+            function setCursorPosition(ctrl, pos) {
+                // Modern browsers
+                if (ctrl.setSelectionRange) {
+                    ctrl.focus();
+                    ctrl.setSelectionRange(pos, pos);
+
+                    // IE8 and below
+                } else if (ctrl.createTextRange) {
+                    var range = ctrl.createTextRange();
+                    range.collapse(true);
+                    range.moveEnd('character', pos);
+                    range.moveStart('character', pos);
+                    range.select();
+                }
+            }
+
+            function sumExpenseAmount() {
+                var totalExpensAmount = 0;
+
+                if ($("#IndemnityCompPaid").val() != '') {
+                    IndemnityCompPaid = parseFloat($("#IndemnityCompPaid").val());
+                }
+
+                if ($("#IndemnityCompReserve").val() != '') {
+                    IndemnityCompReserve = parseFloat($("#IndemnityCompReserve").val());
+                }
+
+                if ($("#MedicalPaid").val() != '') {
+                    MedicalPaid = parseFloat($("#MedicalPaid").val());
+                }
+
+                if ($("#MedicalReserve").val() != '') {
+                    MedicalReserve = parseFloat($("#MedicalReserve").val());
+                }
+
+                if ($("#WCClaimExpensePaid").val() != '') {
+                    WCClaimExpensePaid = parseFloat($("#WCClaimExpensePaid").val());
+                }
+
+                if ($("#WCExpenseReserve").val() != '') {
+                    WCExpenseReserve = parseFloat($("#WCExpenseReserve").val());
+                }
+
+                if ($("#SubroAmount").val() != '') {
+                    SubroAmount = parseFloat($("#SubroAmount").val());
+                }
+
+                if ($("#Settlement").val() != '') {
+                    Settlement = parseFloat($("#Settlement").val());
+                }
+
+                var totalExpensAmount = parseFloat(IndemnityCompPaid + IndemnityCompReserve + MedicalPaid + MedicalReserve + WCClaimExpensePaid + WCExpenseReserve + SubroAmount + Settlement);
+
+                return totalExpensAmount;
+            }
+
+            // ************************* end currency mask *****************************************************
+            
+
+            $("#SaveSubmit").on('click', function () {
+                saveWCClaim();
+                swal("Saved");
+            });
 
             $("#addNote").on('click', function (e) {
-                noteNumber = noteNumber + 1;
-
-                NoteInfoBuild = claimNote;
-                NoteInfoBuild = NoteInfoBuild.replace(/ClaimNote1/g, 'ClaimNote' + (noteNumber).toString());
-                NoteInfoBuild = NoteInfoBuild.replace('NOTE 1', 'NOTE ' + (noteNumber).toString());
-                var insertAt = "#ClaimNote" + (noteNumber - 1).toString();
-                if (noteNumber == 1) {
-                    $('#topTable').after(NoteInfoBuild);
-                } else {
-                    $(insertAt).after(NoteInfoBuild);
-                }
-                var thisFocus = "#noteClaimNote" + (noteNumber).toString();
-                $(thisFocus).focus();
-                var enteredBy = "#EnteredByClaimNote" + (noteNumber).toString();
-                $(enteredBy).val($("#txtLoggedinUsername").val());
-                var thisDate = "#DateClaimNote" + (noteNumber).toString();
-                $(thisDate).val(DateTimeFormat(new Date()));
+                addClaimNote();
             });
 
             loadPCARep();
@@ -70,6 +190,8 @@
             Security();
         });
 
+
+        //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ Start WC Claim Section ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         function loadWCCLaim(WCClaimID) {
             var url = $("#localApiDomain").val() + "InsuranceWCClaims/GetWCClaimByID/" + WCClaimID;
             //var url = "http://localhost:52839/api/InsuranceWCClaims/GetWCClaimByID/" + WCClaimID;
@@ -82,51 +204,205 @@
                 },
                 success: function (data) {
                     for (i = 0; i < data.length; i++) {
+                        $("#ClaimID").val(data[0].ClaimID);
                         $("#IncidentID").val(data[0].IncdidentID);
                         $("#WCClaimNumber").val(data[0].WCClaimNumber);
-                        $("#IncidentNumber").val(data[0].IncidentNumber + '-' + data[0].ClaimId);
+                        $("#IncidentNumber").val(data[0].IncidentNumber);
                         $("#WCIncidentDate").val(DateFormat(data[0].WCIncidentDate));
                         $("#ClaimantName").val(data[0].ClaimantName);
-                        var getLocationOption = '#location option[value=' + data[0].LocationId + ']';
+                        var getLocationOption = '#location option[value=' + data[0].LocationID + ']';
                         $(getLocationOption).prop("selected", true);
                         $("#ReportedToCarrierDate").val(DateFormatForHTML5(data[0].ReportedToCarrierDate));
                         $("#PolicyTypeID option[value=" + data[0].PolicyTypeID + "]").prop('selected', true);
                         $("#PCAInsuranceNumber").val(data[0].PCAInsuranceNumber);
                         $("#OSHALog").val(data[0].OSHALog);
-                        $("#WCClaimStatusID").val(WCClaimStatusID);
+                        $("#WCClaimStatusID").val(data[0].WCClaimStatusID);
                         $("#WCClaimStatusDate").val(DateFormatForHTML5(data[0].WCClaimStatusDate));
                         $("#DaysMissed").val(data[0].DaysMissed);
                         $("#NumberOfDaysMissed").val(data[0].NumberOfDaysMissed);
                         $("#LiteRelease").val(data[0].LiteRelease);
                         $("#NumberOfLiteDutyDays").val(data[0].NumberOfLiteDutyDays);
                         $("#FullReleaseDate").val(DateFormatForHTML5(data[0].FullReleaseDate));
-                        $("#DateReturnedToWork").val(DateFormatForHTML5(data[0].DateReturnedToWork));
+                        $("#ReturnedToWorkDate").val(DateFormatForHTML5(data[0].ReturnedToWorkDate));
                         $("#FollowUpApptDate").val(DateFormatForHTML5(data[0].FollowUpApptDate));
                         $("#ImpairmentRating").val(data[0].ImpairmentRating);
                         $("#JobClass").val(data[0].JobClass);
                         $("#RepFollowUpDate").val(DateFormatForHTML5(data[0].RepFollowUpDate));
                         $("#ModifiedDutyRequired option[value=" + data[0].ModifiedDutyRequired + "]").prop('selected', true);
                         $("#Subro").val(data[0].Subro);
-                        $("#IndemnityCompPaid").val(data[0].IndemnityCompPaid);
-                        $("#IndemnityCompReserve").val(data[0].IndemnityCompReserve);
-                        $("#MedicalPaid").val(data[0].MedicalPaid);
-                        $("#MedicalReserve").val(data[0].MedicalReserve);
-                        $("#WCClaimExpensePaid").val(data[0].WCClaimExpensePaid);
-                        $("#WCExpenseReserve").val(data[0].WCExpenseReserve);
-                        $("#SubroAmount").val(data[0].SubroAmount);
-                        $("#Settlement").val(data[0].Settlement);
+                        $("#IndemnityCompPaid").val(data[0].IndemnityCompPaid).trigger('dblclick');
+                        $("#IndemnityCompReserve").val(data[0].IndemnityCompReserve).trigger('dblclick');
+                        $("#MedicalPaid").val(data[0].MedicalPaid).trigger('dblclick');
+                        $("#MedicalReserve").val(data[0].MedicalReserve).trigger('dblclick');
+                        $("#WCClaimExpensePaid").val(data[0].WCClaimExpensePaid).trigger('dblclick');
+                        $("#WCExpenseReserve").val(data[0].WCExpenseReserve).trigger('dblclick');
+                        $("#SubroAmount").val(data[0].SubroAmount).trigger('dblclick');
+                        $("#Settlement").val(data[0].Settlement).trigger('dblclick');
                         $("#PoliceReportNumber").val(data[0].PoliceReportNumber);
                         $("#PCAReceivedClaimDate").val(JsonDateNoTimeFormat(data[0].PCAReceivedClaimDate));
                         $("#PCARepID option[value=" + data[0].PCARepID + "]").prop('selected', true);
+                        $("#Closed").val(data[0].Closed);
                     }
                 },
                 error: function (request, status, error) {
                     swal("There was an issue getting WC information.");
                 }
             }).then(function () {
+                loadClaimNote();
+            });
+        }
+
+        function saveWCClaim() {
+            var url = $("#localApiDomain").val() + "InsuranceWCClaims/PutWCClaim/";
+            //var url = "http://localhost:52839/api/InsuranceWCClaims/PutWCClaim/";
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: {
+                    "ClaimID": $("#ClaimID").val(),
+                    "WCClaimID": $("#WCClaimID").val(),
+                    "ReportedToCarrierDate": $("#ReportedToCarrierDate").val(),
+                    "PolicyTypeID": $("#PolicyTypeID").val(),
+                    "WCClaimNumber": $("#WCClaimNumber").val(),
+                    "PCAInsuranceNumber": $("#PCAInsuranceNumber").val(),
+                    "WCClaimStatusID": $("#WCClaimStatusID").val(),
+                    "WCClaimStatusDate": $("#WCClaimStatusDate").val(),
+                    "OSHALog": $("#OSHALog").val(),
+                    "DaysMissed": $("#DaysMissed").val(),
+                    "NumberOfDaysMissed": $("#NumberOfDaysMissed").val(),
+                    "LiteRelease": $("#LiteRelease").val(),
+                    "NumberOfLiteDutyDays": $("#NumberOfLiteDutyDays").val(),
+                    "FullReleaseDate": $("#FullReleaseDate").val(),
+                    "ReturnedToWorkDate": $("#ReturnedToWorkDate").val(),
+                    "FollowUpApptDate": $("#FollowUpApptDate").val(),
+                    "ImpairmentRating": $("#ImpairmentRating").val(),
+                    "Subro": $("#Subro").val(),
+                    "JobClass": $('#JobClass').val(),
+                    "RepFollowUpDate": $("#RepFollowUpDate").val(),
+                    "ModifiedDutyRequired": $("#ModifiedDutyRequired").val(),
+                    "IndemnityCompPaid": $("#IndemnityCompPaid").val(),
+                    "IndemnityCompReserve": $('#IndemnityCompReserve').val(),
+                    "MedicalPaid": $("#MedicalPaid").val(),
+                    "MedicalReserve": $("#MedicalReserve").val(),
+                    "WCClaimExpensePaid": $('#WCClaimExpensePaid').val(),
+                    "WCExpenseReserve": $("#WCExpenseReserve").val(),
+                    "SubroAmount": $("#SubroAmount").val(),
+                    "Settlement": $("#Settlement").val(),
+                    "PoliceReportNumber": $('#PoliceReportNumber').val(),
+                    "PCARepID": $("#PCARepID").val(),
+                    "Closed": $("#Closed").val()
+
+                },
+                dataType: "json",
+                success: function (data) {
+
+                },
+                error: function (request, status, error) {
+                    swal("Error saving WC Claim ");
+                }
+            }).then(function () {
+                saveClaimNotes();
+            });
+        }
+
+        //+++++++++++++++++++++++++++++++++++++++++++++ End WC Claim Section +++++++++++++++++++++++++++++++++++++++++++++++++
+
+        // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ Start Note Section +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        function saveClaimNotes() {
+            for (var i = 1; i <= noteNumber; i++) {
+
+                if ($("#NoteIDClaimNote" + i.toString()).val() == '') {
+
+                    var url = $("#localApiDomain").val() + "InsuranceWCClaims/PostWCClaimNote/";
+                    //var url = "http://localhost:52839/api/InsuranceWCClaims/PostWCClaimNote/";
+
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: {
+                            "WCClaimID": $("#WCClaimID").val(),
+                            "WCClaimNoteContent": $("#noteClaimNote" + i.toString()).val(),
+                            "WCClaimEnteredBy": $("#EnteredByClaimNote" + i.toString()).val(),
+                            "WCClaimNoteDate": $("#DateClaimNote" + i.toString()).val()
+                        },
+                        dataType: "json",
+                        success: function (data) {
+
+                        },
+                        error: function (request, status, error) {
+                            swal("Error saving note " + i);
+                        }
+                    }).then(function () {
+
+                    });;
+                }
+            }
+        }
+
+        function loadClaimNote() {
+            var WCClaimID = $("#WCClaimID").val();
+
+            //var url = "http://localhost:52839/api/InsuranceWCClaims/GetWCClaimNote/" + WCClaimID;
+            var url = $("#localApiDomain").val() + "InsuranceWCClaims/GetWCClaimNote/" + WCClaimID;
+
+            return $.ajax({
+                type: "GET",
+                url: url,
+                dataType: "json",
+                beforeSend: function (jqXHR, settings) {
+                },
+                success: function (data) {
+                    for (i = 0; i < data.length; i++) {
+                        addClaimNote(data[i].WCClaimNoteID, data[i].WCClaimNoteContent, data[i].WCClaimEnteredBy, data[i].WCClaimNoteDate);
+                    }
+                },
+                error: function (request, status, error) {
+                    swal("There was an issue getting claim notes.");
+                }
+            }).then(function () {
 
             });
         }
+
+        function addClaimNote(NoteIDClaimNote, ClaimNoteContent, ClaimNoteEnteredBy, ClaimNoteDate) {
+            noteNumber = noteNumber + 1;
+
+            NoteInfoBuild = claimNote;
+            NoteInfoBuild = NoteInfoBuild.replace(/ClaimNote1/g, 'ClaimNote' + (noteNumber).toString());
+            NoteInfoBuild = NoteInfoBuild.replace('NOTE 1', 'NOTE ' + (noteNumber).toString());
+            var insertAt = "#ClaimNote" + (noteNumber - 1).toString();
+            if (noteNumber == 1) {
+                $('#topTable').after(NoteInfoBuild);
+            } else {
+                $(insertAt).after(NoteInfoBuild);
+            }
+            var thisFocus = "#noteClaimNote" + (noteNumber).toString();
+            $(thisFocus).focus();
+
+            if (NoteIDClaimNote === undefined) {
+                var enteredBy = "#EnteredByClaimNote" + (noteNumber).toString();
+                $(enteredBy).val($("#txtLoggedinUsername").val());
+                var thisDate = "#DateClaimNote" + (noteNumber).toString();
+                $(thisDate).val(DateTimeFormat(new Date()));
+            } else {
+                var enteredBy = "#EnteredByClaimNote" + (noteNumber).toString();
+                $(enteredBy).val(ClaimNoteEnteredBy);
+                var thisDate = "#DateClaimNote" + (noteNumber).toString();
+                $(thisDate).val(DateTimeFormat(ClaimNoteDate));
+                var thisContent = "#noteClaimNote" + (noteNumber).toString();
+                $(thisContent).val((ClaimNoteContent));
+                var ClaimNoteID = "#NoteIDClaimNote" + (noteNumber).toString();
+                $(ClaimNoteID).val(NoteIDClaimNote);
+            }
+
+        }
+
+        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++End Note Section +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+        //+++++++++++++++++++++++++++++++++++++++++++++ start Load dropdowns ++++++++++++++++++++++++++++++++++++++++++++++++++
 
         function loadLocations() {
             var locationString = $("#userVehicleLocation").val();
@@ -159,15 +435,15 @@
         }
 
         function loadPCARep() {
-            var dropdown = $('#PCARepAssigned');
+            var dropdown = $('#PCARepID');
 
             dropdown.empty();
 
             dropdown.append('<option selected="true"></option>');
             dropdown.prop('selectedIndex', 0);
 
-            //var url = "http://localhost:52839/api/Claims/GetPCAReps/";
-            var url = $("#localApiDomain").val() + "Claims/GetPCAReps/";
+            //var url = "http://localhost:52839/api/InsuranceClaims/GetPCAReps/";
+            var url = $("#localApiDomain").val() + "InsuranceClaims/GetPCAReps/";
 
             $.ajax({
                 type: "GET",
@@ -185,12 +461,15 @@
                 }
             });
         }
+
+        //+++++++++++++++++++++++++++++++++++++++ end Load dropdowns ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     </script>
     
     <style>
-        .jqxDateTimeInputBackground{
-          background-color:lightgray;
+        .MoneyFormat{
+            text-align: right;
         }
+
         .xl1532610
 	        {padding:0px;
 	        mso-ignore:padding;
@@ -760,7 +1039,9 @@
 	        white-space:nowrap;}
         </style>
         
-
+        <input type="text" id="WCClaimID" style="display:none" />
+        <input type="text" id="IncidentID" style="display:none" />
+        <input type="text" id="ClaimID" style="display:none" />
         <div align=center>
         <input type="text" id="WCCliamID" style="display:none" />
         <table id="topTable" border=0 cellpadding=0 cellspacing=0 width=798 style='border-collapse:collapse;table-layout:fixed;width:601pt'>
@@ -850,13 +1131,13 @@
           <td class=xl1532610></td>
           <td class=xl6732610><select id="location" style="border:none"></select></td>
           <td class=xl1532610></td>
-          <td class=xl7632610><div id="ReportedToCarrierDate" style="border:none"></div></td>
+          <td class=xl7632610><input type="date" id="ReportedToCarrierDate" style="border:none" /></td>
           <td class=xl1532610></td>
           <td class=xl7632610>
             <select id="PolicyTypeID" style='border:none;background-color:#DBDBDB'>
-                <option value=""></option>
-                <option value="Lost Time">Lost Time</option>
-                <option value="Medical">Medical</option>
+                <option value="0"></option>
+                <option value="1">Lost Time</option>
+                <option value="2">Medical</option>
             </select>
           </td>
           <td class=xl1532610></td>
@@ -891,10 +1172,10 @@
           <td class=xl1532610></td>
           <td class=xl7632610>
             <select id="WCClaimStatusID" style='border:none;background-color:#DBDBDB'>
-                <option value=""></option>
-                <option value="Open">Open</option>
-                <option value="Closed">Closed</option>
-                <option value="Report Only">Report Only</option>
+                <option value="0"></option>
+                <option value="1">Open</option>
+                <option value="2">Closed</option>
+                <option value="3">Report Only</option>
             </select>
           </td>
           <td class=xl1532610></td>
@@ -926,7 +1207,7 @@
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl8632610>
-              <select id="DaysMissed" style='border:none;background-color:#DBDBDB'>
+            <select id="DaysMissed" style='border:none;background-color:#DBDBDB'>
                 <option value=""></option>
                 <option value="1">Yes</option>
                 <option value="0">No</option>
@@ -935,7 +1216,13 @@
           <td class=xl1532610></td>
           <td class=xl8632610><input type='text' id='NumberOfDaysMissed' style='border:none;background-color:#DBDBDB' /></td>
           <td class=xl1532610></td>
-          <td class=xl8632610><input type='text' id='LiteRelease' style='border:none;background-color:#DBDBDB' /></td>
+          <td class=xl8632610>
+            <select id="LiteRelease" style='border:none;background-color:#DBDBDB'>
+                <option value=""></option>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+          </td>
           <td class=xl1532610></td>
           <td class=xl8632610><input type='text' id='NumberOfLiteDutyDays' style='border:none;background-color:#DBDBDB' /></td>
           <td class=xl1532610></td>
@@ -966,7 +1253,7 @@
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl8632610><input type="date" id="FullReleaseDate" style="border:none" /></td>
           <td class=xl1532610></td>
-          <td class=xl8632610><input type="date" id="DateReturnedToWork" style="border:none" /></td>
+          <td class=xl8632610><input type="date" id="ReturnedToWorkDate" style="border:none" /></td>
           <td class=xl1532610></td>
           <td class=xl8632610><input type='date' id='FollowUpApptDate' style='border:none;background-color:#DBDBDB' /></td>
           <td class=xl1532610><span style='mso-spacerun:yes'> </span></td>
@@ -999,7 +1286,7 @@
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl8632610><input type='text' id='JobClass' style='border:none;background-color:#DBDBDB' /></td>
           <td class=xl1532610><span style='mso-spacerun:yes'> </span></td>
-          <td class=xl8632610><input type="date" id="repFollowUpDate" style="border:none" /></td>
+          <td class=xl8632610><input type="date" id="RepFollowUpDate" style="border:none" /></td>
           <td class=xl1532610></td>
           <td class=xl8632610>
             <select id="ModifiedDutyRequired" style='border:none;background-color:#DBDBDB'>
@@ -1038,7 +1325,7 @@
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl1532610>Indemnity Comp Paid</td>
           <td class=xl1532610></td>
-          <td class=xl7732610><input type='text' id='IndemnityCompPaid' style='border:none;background-color:#DBDBDB' /></td>
+          <td class=xl7732610><input type='text' id='IndemnityCompPaid' style='border:none;background-color:#DBDBDB' class="MoneyFormat" /></td>
           <td class=xl1532610></td>
           <td class=xl7332610></td>
           <td class=xl1532610></td>
@@ -1049,7 +1336,7 @@
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl1532610>Indemnity Comp Reserve</td>
           <td class=xl1532610></td>
-          <td class=xl7732610 style='border-top:none'><input type='text' id='IndemnityCompReserve' style='border:none;background-color:#DBDBDB' /></td>
+          <td class=xl7732610 style='border-top:none'><input type='text' id='IndemnityCompReserve' style='border:none;background-color:#DBDBDB' class="MoneyFormat" /></td>
           <td class=xl1532610></td>
           <td class=xl7332610></td>
           <td class=xl1532610></td>
@@ -1060,7 +1347,7 @@
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl1532610>Medical Paid</td>
           <td class=xl1532610></td>
-          <td class=xl7732610 style='border-top:none'><input type='text' id='MedicalPaid' style='border:none;background-color:#DBDBDB' /></td>
+          <td class=xl7732610 style='border-top:none'><input type='text' id='MedicalPaid' style='border:none;background-color:#DBDBDB' class="MoneyFormat" /></td>
           <td class=xl1532610></td>
           <td class=xl7032610></td>
           <td class=xl1532610></td>
@@ -1071,7 +1358,7 @@
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl1532610>Medical Reserve</td>
           <td class=xl1532610></td>
-          <td class=xl7732610 style='border-top:none'><input type='text' id='MedicalReserve' style='border:none;background-color:#DBDBDB' /></td>
+          <td class=xl7732610 style='border-top:none'><input type='text' id='MedicalReserve' style='border:none;background-color:#DBDBDB' class="MoneyFormat" /></td>
           <td class=xl1532610></td>
           <td class=xl7332610></td>
           <td class=xl1532610></td>
@@ -1082,7 +1369,7 @@
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl1532610>Claim Expense Paid</td>
           <td class=xl1532610></td>
-          <td class=xl7732610 style='border-top:none'><input type='text' id='WCClaimExpensePaid' style='border:none;background-color:#DBDBDB' /></td>
+          <td class=xl7732610 style='border-top:none'><input type='text' id='WCClaimExpensePaid' style='border:none;background-color:#DBDBDB' class="MoneyFormat" /></td>
           <td class=xl1532610></td>
           <td class=xl7332610></td>
           <td class=xl1532610></td>
@@ -1093,7 +1380,7 @@
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl1532610>Claim Expense Reserve</td>
           <td class=xl1532610></td>
-          <td class=xl7732610 style='border-top:none'><input type='text' id='WCExpenseReserve' style='border:none;background-color:#DBDBDB' /></td>
+          <td class=xl7732610 style='border-top:none'><input type='text' id='WCExpenseReserve' style='border:none;background-color:#DBDBDB' class="MoneyFormat" /></td>
           <td class=xl1532610></td>
           <td class=xl7332610></td>
           <td class=xl1532610></td>
@@ -1104,7 +1391,7 @@
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl1532610>Subro</td>
           <td class=xl1532610></td>
-          <td class=xl7732610 style='border-top:none'><input type='text' id='SubroAmount' style='border:none;background-color:#DBDBDB' /></td>
+          <td class=xl7732610 style='border-top:none'><input type='text' id='SubroAmount' style='border:none;background-color:#DBDBDB' class="MoneyFormat" /></td>
           <td class=xl1532610></td>
           <td class=xl8132610></td>
           <td class=xl1532610></td>
@@ -1115,7 +1402,7 @@
           <td height=21 class=xl1532610 style='height:15.75pt'></td>
           <td class=xl1532610>Settlement</td>
           <td class=xl1532610></td>
-          <td class=xl7832610 style='border-top:none'><input type='text' id='Settlement' style='border:none;background-color:#DBDBDB' /></td>
+          <td class=xl7832610 style='border-top:none'><input type='text' id='Settlement' style='border:none;background-color:#DBDBDB' class="MoneyFormat" /></td>
           <td class=xl1532610></td>
           <td class=xl7332610></td>
           <td class=xl1532610></td>
@@ -1126,7 +1413,7 @@
           <td height=21 class=xl1532610 style='height:15.75pt'></td>
           <td class=xl7132610>TOTAL INCURRED</td>
           <td class=xl1532610></td>
-          <td class=xl6832610><input type='text' id='TotalIncurred' style='border:none;' /></td>
+          <td class=xl6832610><input type='text' id='TotalIncurred' style='border:none;' class="MoneyFormat" /></td>
           <td class=xl1532610></td>
           <td class=xl1532610></td>
           <td class=xl1532610></td>
@@ -1161,7 +1448,7 @@
           <td class=xl1532610></td>
           <td class=xl7532610><input type="text" id="PCAReceivedClaimDate" style="border:none" /></td>
           <td class=xl1532610></td>
-          <td class=xl7932610><select id="PCARepAssigned" style='background-color:#E7E6E6;border:none'></select></td>
+          <td class=xl7932610><select id="PCARepID" style='background-color:#E7E6E6;border:none'></select></td>
           <td class=xl1532610></td>
           <td class=xl8532610></td>
           <td class=xl1532610></td>
@@ -1202,7 +1489,7 @@
          </tr>
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
-          <td class=xl1532610></td>
+          <td class=xl7032610>Claim Closed?<span style='mso-spacerun:yes'> </span></td>
           <td class=xl1532610></td>
           <td class=xl6932610></td>
           <td class=xl1532610></td>
@@ -1213,27 +1500,21 @@
          </tr>
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
-          <td class=xl7432610>CLAIM DOCUMENTS</td>
+          <td class=xl7932610>
+              <select id="Closed" style='background-color:#E7E6E6;border:none' tabindex="4">
+                  <option value="0">No</option>
+                  <option value="1">Yes</option>
+              </select></td>
+          </td>
           <td class=xl1532610></td>
-          <td class=xl7432610>SAVE &amp; SUBMIT</td>
-          <td class=xl1532610></td>
-          <td class=xl1532610></td>
-          <td class=xl1532610></td>
-          <td class=xl1532610></td>
-          <td class=xl1532610></td>
-         </tr>
-         <tr height=0 style='display:none'>
-          <td class=xl1532610></td>
-          <td class=xl7432610 style='border-top:none'>ADD MULTIPLE CLAIMS</td>
-          <td class=xl1532610></td>
-          <td class=xl1532610></td>
+          <td class=xl1532610><input id="SaveSubmit" type="button" value="SAVE" style="background-color:black;color:white;font-weight:bold" /></td>
           <td class=xl1532610></td>
           <td class=xl1532610></td>
           <td class=xl1532610></td>
           <td class=xl1532610></td>
           <td class=xl1532610></td>
          </tr>
-         <tr height=0 style='display:none'>
+         <tr height=20>
           <td class=xl1532610></td>
           <td class=xl1532610></td>
           <td class=xl1532610></td>
@@ -1244,8 +1525,7 @@
           <td class=xl1532610></td>
           <td class=xl1532610></td>
          </tr>
-         <tr height=20 style='height:15.0pt'>
-          <td height=20 class=xl1532610 style='height:15.0pt'></td>
+         <tr height=20>
           <td class=xl1532610></td>
           <td class=xl1532610></td>
           <td class=xl1532610></td>
@@ -1253,28 +1533,7 @@
           <td class=xl1532610></td>
           <td class=xl1532610></td>
           <td class=xl1532610></td>
-          <td class=xl1532610><span style='mso-spacerun:yes'> </span></td>
-         </tr>
-         <tr height=20 style='height:15.0pt'>
-          <td height=20 class=xl1532610 style='height:15.0pt'></td>
-          <td class=xl7432610>CLOSE CLAIM</td>
           <td class=xl1532610></td>
-          <td class=xl8332610></td>
-          <td class=xl1532610></td>
-          <td class=xl1532610></td>
-          <td class=xl1532610></td>
-          <td class=xl1532610></td>
-          <td class=xl1532610></td>
-         </tr>
-         <tr height=20 style='height:15.0pt'>
-          <td height=20 class=xl1532610 style='height:15.0pt'></td>
-          <td class=xl1532610></td>
-          <td class=xl1532610></td>
-          <td class=xl1532610></td>
-          <td class=xl1532610></td>
-          <td class=xl1532610></td>
-          <td class=xl1532610></td>
-          <td class=xl1532610><span style='mso-spacerun:yes'> </span></td>
           <td class=xl1532610></td>
          </tr>
          <![if supportMisalignedColumns]>
@@ -1315,7 +1574,7 @@
 				 "<tr height=20 style='height:15.0pt'>" +
 				  "<td height=20 class=xl1525500 style='height:15.0pt'></td>" +
 				  "<td colspan=5 rowspan=3 class=xl9225500 style='border-right:.5pt solid black'>" +
-					  "<textarea id='noteClaimNote1' class='auto-style1' cols='20' style='background-color:#E7E6E6;border:none;margin: 0px; height: 61px;'></textarea></td>" +
+					  "<textarea id='noteClaimNote1' class='auto-style1' cols='20' style='background-color:#E7E6E6;border:none;margin: 0px; height: 61px;'></textarea><input type='text' id='NoteIDClaimNote1' style='display:none' /></td>" +
 				  "<td class=xl1525500></td>" +
 				  "<td class=xl6725500>" +
 					  "<input id='DateClaimNote1' type='text' style='background-color:#E7E6E6;border:none' disabled/></td>" +

@@ -29,6 +29,7 @@
                 var thirdPartyVehicles = $("#IncidentNumThirdPartyVehicle").val();
                 var numberOfVehiclesInvolved = Number(PCAVehicles) + Number(thirdPartyVehicles);
                 var creator = $("#txtLoggedinUsername").val().replace('PCA\\', '');
+                var thisCurrentDate = new Date();
 
                 var edit = false;
 
@@ -54,7 +55,7 @@
                         "IncidentZip": $("#IncidentLocationZip").val(),
                         "IncidentPhone": $("#IncidentLocationPhone").val(),
                         "IncidentLotRowSpace": $("#IncidentLocationLRS").val(),
-                        "OperationTypeID": $("input[name='operationType']:checked"). val(),
+                        "OperationTypeID": $("input[name='operationType']:checked").val(),
                         "IncidentDate": $("#IncidentDate").val(),
                         "IncidentTime": $("#IncidentTime").val(),
                         "IncidentStatusID": 1,
@@ -69,7 +70,8 @@
                         "IncidentCreatedBy": creator,
                         "IncidentCustomerSignature": $("#IncidentCustomerSignature").val(),
                         "IncidentEmployeeSignature": $("#IncidentEmployeeSignature").val(),
-                        "IncidentManagerSignature": $("#IncidentManagerSignature").val()
+                        "IncidentManagerSignature": $("#IncidentManagerSignature").val(),
+                        "PCAReceiveDate": DateFormat(thisCurrentDate)
                     },
                     dataType: "json",
                     success: function (Response) {
@@ -77,17 +79,28 @@
                     },
                     error: function (request, status, error) {
                         swal("Error Creating Incident");
-                    },
-                    complete: function (data) {
-                        if (edit == false) {
-                            $("#MainContent_IncidentID").val(data.responseJSON);
-                            saveClaims();
-                        } else {
-                            UpdateVehicles()
-                        }
                     }
+                }).then(function (data) {
+                    if (edit == false) {
+                        $("#MainContent_IncidentID").val(data);
+                        saveClaims(false);
+                    } else {
+                        saveClaims(true);
+                        //UpdateVehicles()
+                    }
+                }).then(function () {
+                    swal({
+                        title: 'Save',
+                        text: "Successful",
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    }).then(function () {
+                        window.location.replace("./InsuranceManagerInvestigation.aspx?IncidentID=" + IncidentID);
+                    });
                 });
+
             });
+
 
             $("#IncidentNumPCAVehicles").on('blur', function () {
                 if (isNaN($("#IncidentNumPCAVehicles").val()) == false) {
@@ -183,7 +196,7 @@
                                 thisElement = thisElement + 1
                             }
 
-                            if ($("#VehiclePCA" + thisElement + "State").val() == null) {
+                            if ($("#ThirdPartyVehiclePCA" + thisElement + "State").val() == null) {
                                 loadThirdPartyVehiclesState(thisElement.toString(), '', 'State');
                                 loadThirdPartyVehiclesState(thisElement.toString(), '', 'PlateState');
                             }
@@ -305,7 +318,7 @@
                                         thisElement = thisElement + 1
                                     }
 
-                                    if ($("#VehiclePCA" + thisElement + "State").val() == null) {
+                                    if ($("#ThirdPartyVehiclePCA" + thisElement + "State").val() == null) {
                                         loadThirdPartyVehiclesState(thisElement.toString(), '', 'State');
                                         loadThirdPartyVehiclesState(thisElement.toString(), '', 'PlateState');
                                     }
@@ -358,6 +371,9 @@
 
             Security();
 
+            document.body.scrollTop = 0; // For Safari
+            document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+
         });
 
         function turnOffAutoComplete() {
@@ -371,7 +387,7 @@
             }
         }
 
-        function saveClaims() {
+        function saveClaims(edit) {
             for (i = 0; i <= VehiclePCAArray.length - 1; i++) {
                 PCAVehicleClaims(VehiclePCAArray[i]);
             }
@@ -380,38 +396,17 @@
                 ThirdPartyVehicleClaims(ThirdPartyVehiclePCAArray[i]);
             }
 
-            swal({
-                title: 'Save',
-                text: "Successful",
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'OK'
-            }).then(function () {
-                window.location.href = "InsuranceIncidentReport.aspx?IncidentID=" + $("#MainContent_IncidentID").val();
-            });
-
-        }
-
-        function UpdateVehicles() {
-            for (i = 0; i <= VehiclePCAArray.length - 1; i++) {
-                savePCAVehicle('', VehiclePCAArray[i]);
-            }
-
-            for (i = 0; i <= ThirdPartyVehiclePCAArray.length - 1; i++) {
-                saveThirdPartyVehicle('', ThirdPartyVehiclePCAArray[i]);
-            }
-
-            swal({
-                title: 'Save',
-                text: "Successful",
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'OK'
-            }).then(function () {
-                location.reload(true);
-            });
-            
         }
 
         function PCAVehicleClaims(item) {
+            if ($(item).find("input[id*='ClaimID']").val() === undefined  || $(item).find("input[id*='ClaimID']").val() == "") {
+                
+            } else {
+                var claimID = $(item).find("input[id*='ClaimID']").val()
+                savePCAVehicle(claimID, item, true);
+                return;
+            }
+
             var thisIncidentID = $("#MainContent_IncidentID").val();
 
             thisIncidentID.replace(/""/g, "\"");
@@ -434,7 +429,7 @@
                 },
                 dataType: "json",
                 success: function (data) {
-                    savePCAVehicle(data, item);
+                    savePCAVehicle(data, item, false);
                 },
                 error: function (request, status, error) {
                     swal("Error creating initial claim for vehicle");
@@ -445,8 +440,8 @@
             });
         }
 
-        function savePCAVehicle(claimID, item) {
-            if (claimID != '') {
+        function savePCAVehicle(claimID, item, edit) {
+            if (edit == false) {
                 var thisClaimID = claimID;
                 //var url = "http://localhost:52839/api/InsuranceIncidents/PostPCAVehicle/";
                 var url = $("#localApiDomain").val() + "InsuranceIncidents/PostPCAVehicle/";
@@ -464,6 +459,9 @@
             var TagStateID = $(item).find("select[id*='State']").val();
             var PoliceReportNumber = $("#IncidentPoliceReportNumber").val();
             var PCAReceivedClaimDate = $("#IncidentDate").val();
+            var LocationID = $("#location").children("option:selected").val();
+            var WCIncidentDate = $("#IncidentDate").val();
+
             $.ajax({
                 type: "POST",
                 url: url,
@@ -476,7 +474,9 @@
                     "TagNumber": TagNumber,
                     "TagStateID": TagStateID,
                     "PoliceReportNumber": PoliceReportNumber,
-                    "PCAReceivedClaimDate": PCAReceivedClaimDate
+                    "PCAReceivedClaimDate": PCAReceivedClaimDate,
+                    "LocationID": LocationID,
+                    "WCIncidentDate": WCIncidentDate
                 },
                 dataType: "json",
                 success: function (data) {
@@ -492,6 +492,14 @@
         }
 
         function ThirdPartyVehicleClaims(item) {
+            if ($(item).find("input[id*='ClaimID']").val() === undefined || $(item).find("input[id*='ClaimID']").val() == "") {
+
+            } else {
+                var claimID = $(item).find("input[id*='ClaimID']").val()
+                saveThirdPartyVehicle(claimID, item, true);
+                return;
+            }
+
             var thisIncidentID = $("#MainContent_IncidentID").val();
 
             thisIncidentID.replace(/""/g, "\"");
@@ -515,7 +523,7 @@
                 },
                 dataType: "json",
                 success: function (data) {
-                    saveThirdPartyVehicle(data, item);
+                    saveThirdPartyVehicle(data, item, false);
                 },
                 error: function (request, status, error) {
                     swal("Error creating third party initial claim");
@@ -526,8 +534,8 @@
             });
         }
 
-        function saveThirdPartyVehicle(claimID, item) {
-            if (claimID != '') {
+        function saveThirdPartyVehicle(claimID, item, edit) {
+            if (edit == false) {
                 var thisClaimID = claimID;
                 //var url = "http://localhost:52839/api/InsuranceIncidents/PostThirdPartyVehicle/";
                 var url = $("#localApiDomain").val() + "InsuranceIncidents/PostThirdPartyVehicle/";
@@ -543,8 +551,8 @@
             var CustomerCity = $(item).find("input[id*='City']").val();
             var CustomerStateID = $(item).find("select[id*='State']").val();;
             var CustomerZip = $(item).find("input[id*='Zip']").val();
-            var CustomerPhoneDay = $(item).find("input[id*='PhoneDay']").val();
-            var CustomerPhoneEvening = $(item).find("input[id*='PhoneEvening']").val();
+            var CustomerPhoneMobile = $(item).find("input[id*='PhoneMobile']").val();
+            var CustomerPhoneHome = $(item).find("input[id*='PhoneHome']").val();
             var CustomerDriverLicenseNumber = $(item).find("input[id*='DriversLicenseNumber']").val();
             var InsuranceCompany = $(item).find("input[id*='InsuranceCompany']").val();
             var InsCompAddress = $(item).find("input[id*='InsuranceAddress']").val();
@@ -573,8 +581,8 @@
                     "CustomerCity": CustomerCity,
                     "CustomerStateID": CustomerStateID,
                     "CustomerZip": CustomerZip,
-                    "CustomerPhoneDay": CustomerPhoneDay,
-                    "CustomerPhoneEvening": CustomerPhoneEvening,
+                    "CustomerPhoneMobile": CustomerPhoneMobile,
+                    "CustomerPhoneHome": CustomerPhoneHome,
                     "CustomerDriverLicenseNumber": CustomerDriverLicenseNumber,
                     "InsuranceCompany": InsuranceCompany,
                     "InsCompAddress": InsCompAddress,
@@ -767,14 +775,15 @@
                 },
                 error: function (request, status, error) {
                     swal("There was an issue getting location vehicle list information.");
+                },
+                complete: function () {
+                    $(dropdown).on('change', function () {
+                        var elementNumber = this.id.toString().match(/\d+/g);
+                        var vehicleId = $('#VehiclePCA' + elementNumber[0] + 'FleetNumber').val();
+                        var loadData = vehicleId + '~' + elementNumber[0]
+                        loadPCAVehicleInfo(loadData)
+                    });
                 }
-            }).then(function () {
-                $(dropdown).on('change', function () {
-                    var elementNumber = this.id.toString().match(/\d+/g);
-                    var vehicleId = $('#VehiclePCA' + elementNumber[0] + 'FleetNumber').val();
-                    var loadData = vehicleId + '~' + elementNumber[0]
-                    loadPCAVehicleInfo(loadData)
-                });
             });
         }
 
@@ -819,6 +828,8 @@
                 success: function (data) {
                     $("#IncidentNumPCAVehicles").val(data.length);
                     var thisElementNum = 0;
+                    var vehicleInfoBuild = "";
+
                     for (i = data.length - 1 ; i >= 0; i--) {
                         vehicleInfoBuild = pcaVehicleInfo;
                         vehicleInfoBuild = vehicleInfoBuild.replace(/VehiclePCA1/g, 'VehiclePCA' + (i + 1).toString());
@@ -898,9 +909,9 @@
                         $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "State").val(data[i].CustomerState);
                         $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "Zip").val(data[i].CustomerZip);
                         $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "VehicleYear").val(data[i].VehicleYear);
-                        $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "PhoneDay").val(data[i].CustomerPhoneDay);
+                        $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "PhoneMobile").val(data[i].CustomerPhoneMobile);
                         $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "Make").val(data[i].VehicleMake);
-                        $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "PhoneEvening").val(data[i].CustomerPhoneEvening);
+                        $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "PhoneHome").val(data[i].CustomerPhoneHome);
                         $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "Model").val(data[i].VehicleModel);
                         $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "DriversLicenseNumber").val(data[i].CustomerDriverLicenseNumber);
                         $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "Color").val(data[i].VehicleColor);
@@ -2395,10 +2406,10 @@
                                         "</tr>" +
                                         "<tr height=20 style='height:15.0pt'>" +
                                         "<td height=20 class=xl1511590 style='height:15.0pt'></td>" +
-                                        "<td class=xl1527147>Phone (Day)</td>" +
+                                        "<td class=xl1527147>Phone (Mobile)</td>" +
                                         "<td class=xl1511590></td>" +
                                         "<td class=xl6727147 style='border-top:none'>" +
-                                        "<input id='ThirdPartyVehiclePCA1PhoneDay' type='text' style='border:none;' /></td>" +
+                                        "<input id='ThirdPartyVehiclePCA1PhoneMobile' type='text' style='border:none;' /></td>" +
                                         "<td class=xl1511590></td>" +
                                         "<td class=xl1527147>Make<span style='mso-spacerun:yes'> </span></td>" +
                                         "<td class=xl1511590></td>" +
@@ -2408,10 +2419,10 @@
                                         "</tr>" +
                                         "<tr height=20 style='height:15.0pt'>" +
                                         "<td height=20 class=xl1511590 style='height:15.0pt'></td>" +
-                                        "<td class=xl1527147>Phone (Evening)</td>" +
+                                        "<td class=xl1527147>Phone (Home)</td>" +
                                         "<td class=xl1511590></td>" +
                                         "<td class=xl6727147 style='border-top:none'>" +
-                                        "<input id='ThirdPartyVehiclePCA1PhoneEvening' type='text' style='border:none;' /></td>" +
+                                        "<input id='ThirdPartyVehiclePCA1PhoneHome' type='text' style='border:none;' /></td>" +
                                         "<td class=xl1511590></td>" +
                                         "<td class=xl1527147>Model</td>" +
                                         "<td class=xl1511590></td>" +

@@ -31,15 +31,61 @@
     <script type="text/javascript" src="jqwidgets/jqxgrid.export.js"></script>
 
         <script>
-            $(document).ready(function () {
-                $("#incidentDate").jqxDateTimeInput({ width: '175px', height: '25px', formatString: 'd' });
+            var group = '<%= Session["groupList"] %>';
 
-                $("#saveContinue").on("click", function () {
-                    window.location.href = './InsuranceWitnessStatement.aspx'
+            $(document).ready(function () {
+
+                $("#save").on("click", function () {
+                    saveStatement();
+                    swal({
+                        title: 'Save',
+                        text: "Successful",
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    }).then(function () {
+                        var thisIncidentID = $("#IncidentID").val();
+                    });
+
                 });
 
-                loadLocations();
+                $("#saveContinue").on("click", function () {
+                    saveStatement();
+                    swal({
+                        title: 'Save',
+                        text: "Successful",
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    }).then(function () {
+                        var thisIncidentID = $("#IncidentID").val();
+                        window.location.href = './InsuranceWitnessStatement.aspx?IncidentID=' + thisIncidentID;
+                    });
+
+                });
+
+                $("#printReport").on('click', function () {
+                    $("#printReport").hide();
+                    $("#saveContinue").hide();
+                    $("#save").hide();
+                    window.print();
+                    $(document).one('click', function () {
+                        $("#printReport").show();
+                        $("#saveContinue").show();
+                        $("#save").show();
+                    });
+                });
+
+                const params = new URLSearchParams(window.location.search);
+                $("#IncidentID").val(params.get("IncidentID"));
+
+                loadLocations().then(function () {
+                    var thisIncidentID = $("#IncidentID").val();
+                    loadIncident(thisIncidentID);
+                    loadThirdPartyName(thisIncidentID);
+                });
+
+                Security();
             });
+
 
             function loadLocations() {
                 var locationString = $("#userVehicleLocation").val();
@@ -53,6 +99,27 @@
                 //var url = "http://localhost:52839/api/InsuranceLocations/GetUserLocations/" + locationString;
                 var url = $("#localApiDomain").val() + "InsuranceLocations/GetUserLocations/" + locationString;
 
+                return $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "json",
+                    beforeSend: function (jqXHR, settings) {
+                    },
+                    success: function (data) {
+                        for (i = 0; i < data.length; i++) {
+                            dropdown.append($("<option style='font-weight: bold;'></option>").attr("value", data[i].LocationID).text(data[i].LocationName));
+                        }
+                    },
+                    error: function (request, status, error) {
+                        swal("There was an issue getting location information.");
+                    }
+                });
+            }
+
+            function loadIncident(id) {
+                var url = $("#localApiDomain").val() + "InsuranceIncidents/GetIncidentByID/" + id;
+                //var url = "http://localhost:52839/api/InsuranceIncidents/GetIncidentByID/" + id;
+
                 $.ajax({
                     type: "GET",
                     url: url,
@@ -61,14 +128,167 @@
                     },
                     success: function (data) {
                         for (i = 0; i < data.length; i++) {
-                            dropdown.append($("<option style='font-weight: bold;'></option>").attr("value", data[i].LocationId).text(data[i].LocationName));
+                            var getLocationOption = '#location option[value=' + data[0].LocationId + ']';
+                            $(getLocationOption).prop("selected", true);
+                            $("#IncidentNumber").val(data[0].IncidentNumber);
+                            $("#IncidentDate").val(DateFormatForHTML5(data[0].IncidentDate));
+
                         }
                     },
                     error: function (request, status, error) {
                         swal("There was an issue getting location information.");
                     }
+                }).then(function () {
+
                 });
             }
+
+            function loadThirdPartyName(id) {
+                var dropdown = $('#ThirdPartyName');
+
+                dropdown.empty();
+
+                dropdown.append('<option value="0">Pick Customer</option>');
+                dropdown.prop('selectedIndex', 0);
+
+                //var url = "http://localhost:52839/api/InsuranceClaims/GetThirdPartyEnvolved/" + id;
+                var url = $("#localApiDomain").val() + "InsuranceClaims/GetThirdPartyEnvolved/" + id;
+
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "json",
+                    beforeSend: function (jqXHR, settings) {
+                    },
+                    success: function (data) {
+                        for (i = 0; i < data.length; i++) {
+                            dropdown.append($("<option style='font-weight: bold;'></option>").prop("value", data[i].ClaimID).text(data[i].ClaimantName));
+                        }
+                    },
+                    complete: function (data) {
+                        $("#ThirdPartyName").on("change", function (e) {
+                            loadThirdPartyIncidentInfo(e.currentTarget.value);
+                            loadThirdPartyStatementInfo(e.currentTarget.value);
+                        });
+                    },
+                    error: function (request, status, error) {
+                        swal("There was an issue getting third party information.");
+                    }
+                }).then(function () {
+
+                });
+            }
+
+            function loadThirdPartyIncidentInfo(id) {
+
+                //var url = "http://localhost:52839/api/InsuranceIncidents/GetThirdPartyClaimVehiclesByClaim/" + id;
+                var url = $("#localApiDomain").val() + "InsuranceIncidents/GetThirdPartyClaimVehiclesByClaim/" + id;
+
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "json",
+                    beforeSend: function (jqXHR, settings) {
+                    },
+                    success: function (data) {
+                        for (i = data.length - 1 ; i >= 0; i--) {
+                            $("#ClaimID").val(data[i].ClaimID);
+                            $("#ThirdPartyName").val(data[i].ClaimID);
+                            $("#ThirdPartyAddress").val(data[i].CustomerStreetAddress);
+                            $("#ThirdPartyCity").val(data[i].CustomerCity);
+                            $("#ThirdPartyState").val(data[i].CustomerState);
+                            $("#ThirdPartyZip").val(data[i].CustomerZip);
+                            $("#ThirdPartyMobilePhone").val(data[i].CustomerPhoneMobile);
+                            $("#ThirdPartyHomePhone").val(data[i].CustomerPhoneHome);
+                            $("#ThirdPartyEmail").val(data[i].CustomerEmailAddress);
+                            $("input[name=Injuries][value=" + data[i].Injuries + "]").prop('checked', true);
+                        }
+                    },
+                    error: function (request, status, error) {
+                        swal("There was an issue getting third party information.");
+                    }
+                });
+            }
+
+            function loadThirdPartyStatementInfo(id) {
+
+                //var url = "http://localhost:52839/api/InsuranceIncidents/GetThirdPartyStatementByClaimID/" + id;
+                var url = $("#localApiDomain").val() + "InsuranceIncidents/GetThirdPartyStatementByClaimID/" + id;
+
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "json",
+                    beforeSend: function (jqXHR, settings) {
+                    },
+                    success: function (data) {
+                        if (data.length == 0) {
+                            clearThirdPartyStatement();
+                        }
+                        for (i = data.length - 1 ; i >= 0; i--) {
+                            $("#ThirdPartyStatementID").val(data[i].ThirdPartyStatementID);
+                            $("#StayDuration").val(data[i].StayDuration);
+                            $("#LotRowSpace").val(data[i].LotRowSpace);
+                            $("#IncidentDesc").val(data[i].IncidentDesc);
+                            $("#ThirdPartySignature").val(data[i].ThirdPartySignature);
+                            $("#SignatureDate").val(DateFormat(data[i].SignatureDate));
+                        }
+                    },
+                    error: function (request, status, error) {
+                        swal("There was an issue getting third party information.");
+                    }
+                });
+            }
+
+            function clearThirdPartyStatement() {
+                $("#ThirdPartyStatementID").val("");
+                $("#StayDuration").val("");
+                $("#LotRowSpace").val("");
+                $("#IncidentDesc").val("");
+                $("#ThirdPartySignature").val("");
+                $("#SignatureDate").val("");
+            }
+
+            function saveStatement(save) {
+
+                var CustClaimID = $("#ClaimID").val();
+                var StayDuration = $("#StayDuration").val();
+                var LotRowSpace = $("#LotRowSpace").val();
+                var IncidentDesc = $("#IncidentDesc").val();
+                var ThirdPartySignature = $("#ThirdPartySignature").val();
+                var SignatureDate = $("#SignatureDate").val();
+
+                if ($("#ThirdPartyStatementID").val() != "") {
+                    var url = $("#localApiDomain").val() + "InsuranceIncidents/PutThirdPartyStatement/";
+                    //var url = "http://localhost:52839/api/InsuranceIncidents/PutThirdPartyStatement/";
+                } else {
+                    var url = $("#localApiDomain").val() + "InsuranceIncidents/PostThirdPartyStatement/";
+                    //var url = "http://localhost:52839/api/InsuranceIncidents/PostThirdPartyStatement/";
+                }
+
+                return $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: {
+                        "CustClaimID": CustClaimID,
+                        "StayDuration": StayDuration,
+                        "LotRowSpace": LotRowSpace,
+                        "IncidentDesc": IncidentDesc,
+                        "ThirdPartySignature": ThirdPartySignature,
+                        "SignatureDate": SignatureDate
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        ManagerInvestigationID = data;
+                    },
+                    error: function (request, status, error) {
+                        swal("Error saving statement " + error.toString());
+                    }
+                }).then(function () {
+
+                });
+            }
+
         </script>
 
         <style>
@@ -389,7 +609,9 @@
         
 
         <div align=center>
-
+        <input type="text" id="IncidentID" style="display:none" />
+        <input type="text" id="ClaimID" style="display:none" />
+        <input type="text" id="ThirdPartyStatementID" style="display:none" />
         <table border=0 cellpadding=0 cellspacing=0 width=800 style='border-collapse:
          collapse;table-layout:fixed;width:603pt'>
          <col width=18 style='mso-width-source:userset;mso-width-alt:658;width:14pt'>
@@ -470,10 +692,10 @@
          </tr>
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1517237 style='height:15.0pt'></td>
-          <td class=xl6817237>CUSTOMER NAME</td>
+          <td class=xl6817237>ThirdParty NAME</td>
           <td class=xl1517237></td>
           <td colspan=3 class=xl7617237>
-              <input id="CustomerName" type="text" style="border:none" /></td>
+              <select id="ThirdPartyName" style="border:none"></select></td>
           <td class=xl1517237></td>
           <td class=xl1517237></td>
           <td class=xl1517237></td>
@@ -483,7 +705,7 @@
           <td class=xl6817237>ADDRESS</td>
           <td class=xl1517237></td>
           <td colspan=3 class=xl7617237>
-              <input id="CustomerAddress" type="text" style="border:none" /></td>
+              <input id="ThirdPartyAddress" type="text" style="border:none" /></td>
           <td class=xl1517237></td>
           <td class=xl1517237></td>
           <td class=xl1517237></td>
@@ -493,12 +715,12 @@
           <td class=xl6817237>CITY</td>
           <td class=xl1517237></td>
           <td class=xl6717237 style='border-top:none'>
-              <input id="CustomerCity" type="text" style="border:none" /></td>
+              <input id="ThirdPartyCity" type="text" style="border:none" /></td>
           <td class=xl1517237></td>
           <td class=xl6817237>STATE</td>
           <td class=xl1517237></td>
           <td class=xl6717237>
-              <input id="CustomerState" type="text" style="border:none" /></td>
+              <input id="ThirdPartyState" type="text" style="border:none" /></td>
           <td class=xl1517237></td>
          </tr>
          <tr height=20 style='height:15.0pt'>
@@ -506,12 +728,12 @@
           <td class=xl6817237>ZIP CODE</td>
           <td class=xl1517237></td>
           <td class=xl6717237 style='border-top:none'>
-              <input id="CustomerZip" type="text" style="border:none" /></td>
+              <input id="ThirdPartyZip" type="text" style="border:none" /></td>
           <td class=xl1517237></td>
           <td class=xl6817237>DATE OF INCIDENT</td>
           <td class=xl1517237></td>
           <td class=xl6717237 style='border-top:none'>
-              <div id="incidentDate" style="border:none"></div></td>
+              <input type="date" id="IncidentDate" style="border:none"></input></td>
           <td class=xl1517237></td>
          </tr>
          <tr height=20 style='height:15.0pt'>
@@ -519,7 +741,7 @@
           <td class=xl6817237>HOME PHONE</td>
           <td class=xl1517237></td>
           <td class=xl6717237 style='border-top:none'>
-              <input id="CustomerHomePhone" type="text" style="border:none" /></td>
+              <input id="ThirdPartyHomePhone" type="text" style="border:none" /></td>
           <td class=xl1517237></td>
           <td class=xl6817237>LOCATION OF INCIDENT</td>
           <td class=xl1517237></td>
@@ -532,7 +754,7 @@
           <td class=xl6817237>MOBILE PHONE</td>
           <td class=xl1517237></td>
           <td class=xl6717237 style='border-top:none'>
-              <input id="CustomerMobilePhone" type="text" style="border:none" /></td>
+              <input id="ThirdPartyMobilePhone" type="text" style="border:none" /></td>
           <td class=xl1517237></td>
           <td class=xl6817237>DURATION OF STAY IN LOT</td>
           <td class=xl1517237></td>
@@ -545,7 +767,7 @@
           <td class=xl6817237>EMAIL ADDRESS</td>
           <td class=xl1517237></td>
           <td class=xl6717237 style='border-top:none'>
-              <input id="CustomerEmail" type="text" style="border:none" /></td>
+              <input id="ThirdPartyEmail" type="text" style="border:none" /></td>
           <td class=xl1517237></td>
           <td class=xl6817237>LOT-ROW-SPACE</td>
           <td class=xl1517237></td>
@@ -648,11 +870,11 @@
          </tr>
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1517237 style='height:15.0pt'></td>
-          <td class=xl7017237><input id="saveContinue" type="button" value="Save & Continue" style="height:26px;background-color:black;color:white;font-weight:bold" /></td>
+          <td class=xl1517237><input id="save" type="button" value="Save" style="height:26px;background-color:black;color:white;font-weight:bold" /></td>
           <td class=xl1517237></td>
-          <td class=xl7017237>PRINT REPORT</td>
+          <td class=xl1517237><input id="saveContinue" type="button" value="Save & Continue" style="height:26px;background-color:black;color:white;font-weight:bold" /></td>
           <td class=xl1517237></td>
-          <td class=xl1517237></td>
+          <td class=xl1517237><input id="printReport" type="button" value="Print Report" style="background-color:black;color:white;font-weight:bold" /></td>
           <td class=xl1517237></td>
           <td class=xl7217237>PAGE 4 OF 5</td>
           <td class=xl1517237></td>

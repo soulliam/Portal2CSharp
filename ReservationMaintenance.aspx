@@ -631,6 +631,9 @@
 
         function loadfeeLocationCombo(thisLocationString) {
 
+            var url = $("#localApiDomain").val() + "Locations/LocationByLocationIds/" + thisLocationString;
+            //var url = "http://localhost:52839/api/Locations/LocationByLocationIds/" + thisLocationString;
+
             //set up the location combobox
             var locationSource =
             {
@@ -641,7 +644,7 @@
                     { name: 'NameOfLocation' },
                     { name: 'LocationId' }
                 ],
-                url: $("#localApiDomain").val() + "Locations/LocationByLocationIds/" + thisLocationString,
+                url: url,
 
             };
             var locationDataAdapter = new $.jqx.dataAdapter(locationSource);

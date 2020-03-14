@@ -577,8 +577,8 @@
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id="Injuries" style="border:none">
-                      <option value="1">Yes</option>
-                      <option value="0" selected>No</option>
+                      <option value="-1" selected></option><option value="1">Yes</option>
+                      <option value="0" >No</option>
                       <option value="2">Unknown</option>
                     </select>
               </td>
@@ -656,14 +656,14 @@
               <td class=xl153793></td>
               <td class=xl673793>
                 <select id='EmployeeStatementManager' style="border:none">
-                    <option value="1">Yes</option>
-                    <option value="0" selected>No</option>
+                    <option value="-1" selected></option><option value="1">Yes</option>
+                    <option value="0" >No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793>
                   <select id='EmployeeStatementRep' style="border:none">
-                    <option></option>
+                    <option value="-1"></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
                 </select>
@@ -677,14 +677,14 @@
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='CustomerStatementManager' style="border:none">
-                    <option value="1">Yes</option>
-                    <option value="0" selected>No</option>
+                    <option value="-1" selected></option><option value="1">Yes</option>
+                    <option value="0" >No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='CustomerStatementRep' style="border:none">
-                    <option></option>
+                    <option value="-1"></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
                 </select>
@@ -698,14 +698,14 @@
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='WitnessStatementManger' style="border:none">
-                    <option value="1">Yes</option>
-                    <option value="0" selected>No</option>
+                    <option value="-1" selected></option><option value="1">Yes</option>
+                    <option value="0" >No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='WitnessStatementRep' style="border:none">
-                    <option></option>
+                    <option value="-1"></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
                 </select>
@@ -719,14 +719,14 @@
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='ManagerStatementManager' style="border:none">
-                    <option value="1">Yes</option>
-                    <option value="0" selected>No</option>
+                    <option value="-1" selected></option><option value="1">Yes</option>
+                    <option value="0" >No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='ManagerStatementRep' style="border:none">
-                    <option></option>
+                    <option value="-1"></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
                 </select>
@@ -740,14 +740,14 @@
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='PicturesManager' style="border:none">
-                    <option value="1">Yes</option>
-                    <option value="0" selected>No</option>
+                    <option value="-1" selected></option><option value="1">Yes</option>
+                    <option value="0" >No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='PicturesRep' style="border:none">
-                    <option></option>
+                    <option value="-1"></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
                 </select>
@@ -761,14 +761,14 @@
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='OrigDocsManager' style="border:none">
-                    <option value="1">Yes</option>
-                    <option value="0" selected>No</option>
+                    <option value="-1" selected></option><option value="1">Yes</option>
+                    <option value="0" >No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='OrigDocsRep' style="border:none">
-                    <option></option>
+                    <option value="-1"></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
                 </select>
@@ -832,15 +832,15 @@
               <td class=auto-style2></td>
               <td class=auto-style3>
                   <select id='BusEstManager' style="border:none">
-                    <option value="1">Yes</option>
-                    <option value="0" selected>No</option>
+                    <option value="-1" selected></option><option value="1">Yes</option>
+                    <option value="0" >No</option>
                     <option value="2">Requested</option>
                     <option value="3">Repaired In-house</option>
                 </select>
               <td class=auto-style2></td>
               <td class=auto-style3>
                   <select id='BusEstRep' style="border:none" name="D1">
-                    <option></option>
+                    <option value="-1"></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
                 </select></td>
@@ -854,14 +854,14 @@
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='BusInvManager' style="border:none">
-                    <option value="1">Yes</option>
-                    <option value="0" selected>No</option>
+                    <option value="-1" selected></option><option value="1">Yes</option>
+                    <option value="0" >No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='BusInvRep' style="border:none" name="D2">
-                    <option></option>
+                    <option value="-1"></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
                 </select></td>
@@ -875,14 +875,14 @@
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                    <select id='PoliceReportManager' style="border:none">
-                    <option value="1">Yes</option>
-                    <option value="0" selected>No</option>
+                    <option value="-1" selected></option><option value="1">Yes</option>
+                    <option value="0" >No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='PoliceReportRep' style="border:none" name="D3">
-                    <option></option>
+                    <option value="-1"></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
                 </select></td>
@@ -896,14 +896,14 @@
               <td class=auto-style2></td>
               <td class=auto-style3 style='border-top:none'>
                   <select id='CustEstManager' style="border:none">
-                    <option value="1">Yes</option>
-                    <option value="0" selected>No</option>
+                    <option value="-1" selected></option><option value="1">Yes</option>
+                    <option value="0" >No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=auto-style2></td>
               <td class=auto-style3 style='border-top:none'>
                   <select id='CustEstRep' style="border:none" name="D4">
-                    <option></option>
+                    <option value="-1"></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
                 </select></td>
@@ -917,14 +917,14 @@
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='CustInvManager' style="border:none">
-                    <option value="1">Yes</option>
-                    <option value="0" selected>No</option>
+                    <option value="-1" selected></option><option value="1">Yes</option>
+                    <option value="0" >No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='CustInvRep' style="border:none" name="D5">
-                    <option></option>
+                    <option value="-1"></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
                 </select></td>
@@ -938,14 +938,14 @@
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='SlipFallWeatherManager' style="border:none">
-                    <option value="1">Yes</option>
-                    <option value="0" selected>No</option>
+                    <option value="-1" selected></option><option value="1">Yes</option>
+                    <option value="0" >No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='SlipFallWeatherRep' style="border:none" name="D6">
-                    <option></option>
+                    <option value="-1"></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
                 </select></td>
@@ -959,14 +959,14 @@
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='DriverMVRManager' style="border:none">
-                    <option value="1">Yes</option>
-                    <option value="0" selected>No</option>
+                    <option value="-1" selected></option><option value="1">Yes</option>
+                    <option value="0" >No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='DriverMVRRep' style="border:none" name="D7">
-                    <option></option>
+                    <option value="-1"></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
                 </select></td>
@@ -980,14 +980,14 @@
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='DrugTestManager' style="border:none">
-                    <option value="1">Yes</option>
-                    <option value="0" selected>No</option>
+                    <option value="-1" selected></option><option value="1">Yes</option>
+                    <option value="0" >No</option>
                     <option value="2">Requested</option>
                 </select>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='DrugTestRep' style="border:none" name="D8">
-                    <option></option>
+                    <option value="-1"></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
                 </select></td>
@@ -1031,14 +1031,14 @@
               <td class=xl153793></td>
               <td class=xl673793>
                   <select id='PayrollDeductManager' style="border:none" name="D9">
-                    <option value="1">Yes</option>
-                    <option value="0" selected>No</option>
+                    <option value="-1" selected></option><option value="1">Yes</option>
+                    <option value="0" >No</option>
                     <option value="2">Maybe</option>
                 </select></td>
               <td class=xl153793></td>
               <td class=xl673793>
                   <select id='PayrollDeductRep' style="border:none" name="D11">
-                    <option></option>
+                    <option value="-1"></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
                 </select></td>
@@ -1052,14 +1052,14 @@
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='OtherPersonInsuranceManager' style="border:none" name="D10">
-                    <option value="1">Yes</option>
-                    <option value="0" selected>No</option>
+                    <option value="-1" selected></option><option value="1">Yes</option>
+                    <option value="0" >No</option>
                     <option value="2">Requested</option>
                 </select></td>
               <td class=xl153793></td>
               <td class=xl673793 style='border-top:none'>
                   <select id='OtherPersonInsuranceRep' style="border:none" name="D12">
-                    <option></option>
+                    <option value="-1"></option>
                     <option value="1">Received</option>
                     <option value="0" >N/A</option>
                 </select></td>
