@@ -44,6 +44,23 @@
         var ReserveCount = 0;
 
         $(document).ready(function () {
+            turnOffAutoComplete();
+
+            $("#printReport").on('click', function () {
+                $("#addNote").hide();
+                $("#addPayable").hide();
+                $("#addReceivable").hide();
+                $("#saveSubmit").hide();
+                $("#printReport").hide();
+                window.print();
+                $(document).one('click', function () {
+                    $("#addNote").show();
+                    $("#addPayable").show();
+                    $("#addReceivable").show();
+                    $("#saveSubmit").show();
+                    $("#printReport").show();
+                });
+            });
 
             //************************* Currency Mask **************************************
             $("#Main").delegate('.MoneyFormat', 'blur', function (e) {
@@ -279,7 +296,7 @@
                     })
                     );
 
-                    $("#Closed").val(data[0].Closed);
+                    $("#Active").val(data[0].Active);
                 },
                 error: function (request, status, error) {
                     swal("There was an issue getting claim information.");
@@ -328,7 +345,7 @@
                     "OtherInsuranceClaimNumber": $("#OtherInsuranceClaimNumber").val(),
                     "EmployeeInvolvedName": $('#EmployeeInvolvedClaimID').find(":selected").text(),
                     "EmployeeInvolvedClaimID": $("#EmployeeInvolvedClaimID").val(),
-                    "Closed": $("#Closed").val()
+                    "Active": $("#Active").val()
 
                 },
                 dataType: "json",
@@ -529,7 +546,7 @@
                 var CheckNumberPayable = "#CheckNumberPayable" + (payableNumber).toString();
                 $(CheckNumberPayable).val(ClaimPayableCheckNumber);
                 var MailDatePayable = "#MailDatePayable" + (payableNumber).toString();
-                $(MailDatePayable).val(DateFormat(ClaimPayableMailedDate));
+                $(MailDatePayable).val(DateFormatForHTML5(ClaimPayableMailedDate));
             }
         }
 
@@ -1960,7 +1977,7 @@
          </tr>
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1525500 style='height:15.0pt'></td>
-          <td class=xl7525500>
+          <td class=xl1525500>
               <input id="addNote" type="button" value="ADD NOTE" style="background-color:black;color:white" tabindex="25" /></td>
           <td class=xl1525500></td>
           <td class=xl1525500></td>
@@ -2022,7 +2039,7 @@
          <col width=17 style='mso-width-source:userset;mso-width-alt:621;width:13pt'>
          <tr height=21 style='height:15.75pt'>
           <td height=21 class=xl1525500 style='height:15.75pt'></td>
-          <td class=xl7525500><input id="addPayable" type="button" value="ADD PAYABLE" style="background-color:black;color:white" /></td>
+          <td class=xl1525500><input id="addPayable" type="button" value="ADD PAYABLE" style="background-color:black;color:white" /></td>
           <td class=xl1525500></td>
           <td class=xl7025500>TOTAL PAYABLES</td>
           <td class=xl1525500></td>
@@ -2083,7 +2100,7 @@
          <col width=17 style='mso-width-source:userset;mso-width-alt:621;width:13pt'>
          <tr height=21 style='height:15.75pt'>
           <td height=21 class=xl1525500 style='height:15.75pt'></td>
-          <td class=xl7525500><input id="addReceivable" type="button" value="ADD RECEIVABLE" style="background-color:black;color:white" tabindex="26" /></td>
+          <td class=xl1525500><input id="addReceivable" type="button" value="ADD RECEIVABLE" style="background-color:black;color:white" tabindex="26" /></td>
           <td class=xl1525500></td>
           <td class=xl7025500>TOTAL RECEIVABLES</td>
           <td class=xl1525500></td>
@@ -2117,7 +2134,7 @@
          </tr>
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1525500 style='height:15.0pt'></td>
-          <td class=xl7025500>Claim Closed?</td>
+          <td class=xl7025500>Claim Active?</td>
           <td class=xl1525500></td>
           <td class=xl1525500></td>
           <td class=xl1525500></td>
@@ -2129,14 +2146,14 @@
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1525500 style='height:15.0pt'></td>
           <td class=xl7925500>
-              <select id="Closed" style='background-color:#E7E6E6;border:none' tabindex="4">
+              <select id="Active" style='background-color:#E7E6E6;border:none' tabindex="4">
                   <option value="0">No</option>
                   <option value="1">Yes</option>
               </select></td>
           <td class=xl1525500></td>
-          <td class=xl7525500><input id="saveSubmit" type="button" value="SAVE" style="background-color:black;color:white;font-weight:bold" tabindex="27" /></td>
+          <td class=xl1525500><input id="saveSubmit" type="button" value="SAVE" style="background-color:black;color:white;font-weight:bold" tabindex="27" /></td>
           <td class=xl1525500></td>
-          <td class=xl1525500></td>
+          <td class=xl1525500><input id="printReport" type="button" value="Print Report" style="background-color:black;color:white;font-weight:bold" /></td>
           <td class=xl1525500></td>
           <td class=xl1525500></td>
           <td class=xl1525500></td>
@@ -2254,7 +2271,7 @@
 				  "<td class=xl1525500></td>" +
 				  "<td class=xl8025500><input id='CheckAmountPayable1' type='text' style='background-color:#E7E6E6;border:none' class='MoneyFormat' /></td>" +
 				  "<td class=xl1525500></td>" +
-				  "<td class=xl8125500><input id='MailDatePayable1' type='text' style='background-color:#E7E6E6;border:none' /></td>" +
+				  "<td class=xl8125500><input id='MailDatePayable1' type='date' style='background-color:#E7E6E6;border:none' /></td>" +
 				  "<td class=xl1525500></td>" +
 				 "</tr>" +
 				 "<tr height=20 style='height:15.0pt'>" +

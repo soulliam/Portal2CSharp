@@ -133,7 +133,7 @@
                                 <li><a href="VehicleWorkOrder.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Vehiclesadmin Portal_Mechanic Portal_Manager Portal_Asstmanager">Vehicle Work Order</a></li> 
                             </ul>
                         </li> 
-                        <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_Insurance Portal_Legal Portal_Couponadmin Portal_Manager Portal_Asstmanager InsApp_Regional InsApp_Other">
+                        <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_Insurance Portal_Legal Portal_Couponadmin Portal_Manager Portal_Asstmanager InsApp_Regional InsApp_Other Portal_Parkplace">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">PCA Apps<span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="http://192.168.0.9:8282/login.aspx?ReturnUrl=%2fRestricted%2fClaimsEntry.aspx" target="_blank" class="menuSecurity disabled Portal_Superadmin Portal_Insurance InsApp_Regional InsApp_Other">Insurance</a>
@@ -147,6 +147,7 @@
                                 <li><a href="http://192.168.0.9:8282/login.aspx?ReturnUrl=%2fRestricted%2fCouponTracking.aspx" target="_blank" class="menuSecurity disabled Portal_Superadmin Portal_Manager Portal_Asstmanager Portal_Couponadmin">Coupons</a></li>
                                 <li><a href="https://parkingcompanystore.mybrightsites.com/permissions_denied" target="_blank" class="menuSecurity disabled Portal_Superadmin Portal_Manager">Uniforms</a></li>
                                 <li><a href="Invoices.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Manager Portal_Asstmanager">Invoices</a></li>
+                                <li><a href="PCATagNumbers.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Manager Portal_Asstmanager Portal_ParkPlace">Upload Tag Numbers</a></li>
                             </ul>
                         </li>
                         <li class="dropdown menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">

@@ -34,6 +34,17 @@
             var group = '<%= Session["groupList"] %>';
 
             $(document).ready(function () {
+                turnOffAutoComplete();
+
+                $("#Next").on('click', function () {
+                    var thisIncidentID = $("#IncidentID").val();
+                    window.location.href = './InsuranceWitnessStatement.aspx?IncidentID=' + thisIncidentID;
+                });
+
+                $("#Previous").on('click', function () {
+                    var thisIncidentID = $("#IncidentID").val();
+                    window.location.replace("./InsuranceEmployeeStatement.aspx?IncidentID=" + thisIncidentID);
+                });
 
                 $("#save").on("click", function () {
                     saveStatement();
@@ -66,11 +77,15 @@
                     $("#printReport").hide();
                     $("#saveContinue").hide();
                     $("#save").hide();
+                    $("#Next").hide();
+                    $("#Previous").hide();
                     window.print();
                     $(document).one('click', function () {
                         $("#printReport").show();
                         $("#saveContinue").show();
                         $("#save").show();
+                        $("#Next").show();
+                        $("#Previous").show();
                     });
                 });
 
@@ -231,7 +246,7 @@
                             $("#LotRowSpace").val(data[i].LotRowSpace);
                             $("#IncidentDesc").val(data[i].IncidentDesc);
                             $("#ThirdPartySignature").val(data[i].ThirdPartySignature);
-                            $("#SignatureDate").val(DateFormat(data[i].SignatureDate));
+                            $("#SignatureDate").val(DateFormatForHTML5(data[i].SignatureDate));
                         }
                     },
                     error: function (request, status, error) {
@@ -841,7 +856,7 @@
               <input id="ThirdPartySignature" type="text" style="border:none" /></td>
           <td class=xl1517237></td>
           <td class=xl6917237>
-              <input id="SignatureDate" type="text" style="border:none" /></td>
+              <input id="SignatureDate" type="date" style="border:none" /></td>
           <td class=xl1517237></td>
           <td class=xl1517237><span style='mso-spacerun:yes'> </span></td>
           <td class=xl1517237></td>
@@ -876,8 +891,30 @@
           <td class=xl1517237></td>
           <td class=xl1517237><input id="printReport" type="button" value="Print Report" style="background-color:black;color:white;font-weight:bold" /></td>
           <td class=xl1517237></td>
-          <td class=xl7217237>PAGE 4 OF 5</td>
+          <td class=xl7217237>SECTION 4 OF 5</td>
           <td class=xl1517237></td>
+         </tr>
+         <tr height=20 style='height:15.0pt'>
+          <td height=20 class=xl1517237 style='height:15.0pt'></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+         </tr>
+         <tr height=20 style='height:15.0pt'>
+          <td height=20 class=xl1527147 style='height:15.0pt'></td>
+          <td class=xl6817237><input id="Previous" type="button" value="&larr; Previous" style="background-color:black;color:white;font-weight:bold" /></td>
+          <td class=xl1527147></td>
+          <td class=xl7627147></td>
+          <td class=xl1527147></td>
+          <td class=xl8227147></td>
+          <td class=xl1527147></td>
+          <td class=xl6817237><input id="Next" type="button" value="NEXT &rarr;" style="background-color:black;color:white;font-weight:bold" /></td>
+          <td class=xl1527147></td>
          </tr>
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1517237 style='height:15.0pt'></td>

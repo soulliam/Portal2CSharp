@@ -34,6 +34,18 @@
             var group = '<%= Session["groupList"] %>';
 
             $(document).ready(function () {
+
+                turnOffAutoComplete();
+
+                $("#Next").on('click', function () {
+                    var thisIncidentID = $("#IncidentID").val();
+                    window.location.href = './InsuranceThirdPartyStatement.aspx?IncidentID=' + thisIncidentID;
+                });
+
+                $("#Previous").on('click', function () {
+                    var thisIncidentID = $("#IncidentID").val();
+                    window.location.replace("./InsuranceManagerInvestigation.aspx?IncidentID=" + thisIncidentID);
+                });
                
                 $("#save").on("click", function () {
                     saveStatement();
@@ -66,11 +78,15 @@
                     $("#printReport").hide();
                     $("#saveContinue").hide();
                     $("#save").hide();
+                    $("#Next").hide();
+                    $("#Previous").hide();
                     window.print();
                     $(document).one('click', function () {
                         $("#printReport").show();
                         $("#saveContinue").show();
                         $("#save").show();
+                        $("#Next").show();
+                        $("#Previous").show();
                     });
                 });
 
@@ -97,7 +113,7 @@
                 var EmpSignature = $("#EmployeeSignature").val();
                 var StatementDate = $("#SignatureDate").val();
 
-                if ($("#EmpClaimID").val() != "") {
+                if ($("#EmpClaimID").val() != 0) {
                     var url = $("#localApiDomain").val() + "InsuranceIncidents/PutEmployeeStatement/";
                     //var url = "http://localhost:52839/api/InsuranceIncidents/PutEmployeeStatement/";
                 } else {
@@ -205,7 +221,7 @@
                     },
                     success: function (data) {
                         for (i = 0; i < data.length; i++) {
-                            dropdown.append($("<option style='font-weight: bold;'></option>").attr("value", data[i].ClaimID).text(data[i].DriverName));
+                            dropdown.append($("<option style='font-weight: bold;'></option>").attr("value", data[i].EmpClaimID).text(data[i].DriverName));
                         }
                     },
                     
@@ -240,12 +256,13 @@
                             //$(getLocationOption).prop("selected", true);
                             $("#EmployeeName").val(data[0].EmpClaimID);
                             $("#EmpClaimID").val(data[0].EmpClaimID);
+                            $("#ClaimID").val(data[0].ClaimID);
                             $("#CustomerName").val(data[0].CustClaimID);
                             $("#Position").val(data[0].Position);
                             $("#IncidentDescription").val(data[0].IncidentDesc);
                             $("#InjuriesDescription").val(data[0].InjuryDesc);
                             $("#EmployeeSignature").val(data[0].EmpSignature);
-                            $("#SignatureDate").val(DateFormat(data[0].StatementDate));
+                            $("#SignatureDate").val(DateFormatForHTML5(data[0].StatementDate));
                         }
                     },
                     error: function (request, status, error) {
@@ -589,6 +606,7 @@
         }
 
     </style>
+        <input type="text" id="ClaimID" style="display:none" />
         <input type="text" id="EmpClaimID" style="display:none" />
         <div align=center>
         <input type="text" id="IncidentID" style="display:none" />
@@ -810,7 +828,7 @@
               <input id="EmployeeSignature" type="text" style="border:none" /></td>
           <td class=xl1513889></td>
           <td class=xl6813889>
-              <input id="SignatureDate" type="text" style="border:none" /></td>
+              <input id="SignatureDate" type="date" style="border:none" /></td>
           <td class=xl1513889></td>
           <td class=xl1513889></td>
           <td class=xl1513889></td>
@@ -845,7 +863,7 @@
           <td class=xl1513889></td>
           <td class=xl1513889><input id="printReport" type="button" value="Print Report" style="background-color:black;color:white;font-weight:bold" /></td>
           <td class=xl1513889></td>
-          <td class=xl7113889>PAGE 3 OF 5</td>
+          <td class=xl7113889>SECTION 3 OF 5</td>
           <td class=xl1513889></td>
          </tr>
          <tr height=20 style='height:15.0pt'>
@@ -858,6 +876,28 @@
           <td class=xl1513889></td>
           <td class=xl1513889></td>
           <td class=xl1513889></td>
+         </tr>
+         <tr height=20 style='height:15.0pt'>
+          <td height=20 class=xl1527147 style='height:15.0pt'></td>
+          <td class=xl6713889><input id="Previous" type="button" value="&larr; Previous" style="background-color:black;color:white;font-weight:bold" /></td>
+          <td class=xl1527147></td>
+          <td class=xl7627147></td>
+          <td class=xl1527147></td>
+          <td class=xl8227147></td>
+          <td class=xl1527147></td>
+          <td class=xl6713889><input id="Next" type="button" value="NEXT &rarr;" style="background-color:black;color:white;font-weight:bold" /></td>
+          <td class=xl1527147></td>
+         </tr>
+         <tr height=20 style='height:15.0pt'>
+          <td height=20 class=xl1517237 style='height:15.0pt'></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
          </tr>
          <![if supportMisalignedColumns]>
          <tr height=0 style='display:none'>

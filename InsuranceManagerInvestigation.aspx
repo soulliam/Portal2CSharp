@@ -9,6 +9,8 @@
         var ManagerInvestigationID = 0;
 
         $(document).ready(function () {
+            turnOffAutoComplete();
+
             //++++++++++++++++++++++++++++++++++++++++++++ start witnesses, number of Persons Involved and PCA drivers Involved create UI ++++++++++++++++++++++++++++++++++++++++++++++++++++
             $("#NumberOfWitnesses").on('blur', function () {
                 if (isNaN($("#NumberOfWitnesses").val()) == false) {
@@ -54,6 +56,7 @@
                         }
                     }
                 }
+                turnOffAutoComplete();
             });
 
             $("#NumberOtherInvolved").on('blur', function () {
@@ -96,7 +99,7 @@
                         }
                     }
                 }
-
+                turnOffAutoComplete();
             });
 
             $("#NumberOfPCAInvolved").on('blur', function () {
@@ -139,6 +142,7 @@
                         }
                     }
                 }
+                turnOffAutoComplete();
             });
 
             $(document).on('keypress', function (e) {
@@ -265,18 +269,30 @@
                         }
                     }
                 }
+                turnOffAutoComplete();
             });
 
             //++++++++++++++++++++++++++++++++++++++++++++ end witnesses, number of Persons Involved and PCA drivers Involved Creat UI++++++++++++++++++++++++++++++++++++++++++++++++++++
+            
+            $("#Next").on('click', function () {
+                window.location.href = './InsuranceEmployeeStatement.aspx?IncidentID=' + thisIncidentID;
+            });
 
+            $("#Previous").on('click', function () {
+                window.location.replace("./InsuranceIncidentReport.aspx?IncidentID=" + thisIncidentID);
+            });
 
             $("#printReport").on('click', function () {
                 $("#printReport").hide();
                 $("#saveContinue").hide();
+                $("#Next").hide();
+                $("#Previous").hide();
                 window.print();
                 $(document).one('click', function () {
                     $("#printReport").show();
                     $("#saveContinue").show();
+                    $("#Next").show();
+                    $("#Previous").show();
                 });
             });
 
@@ -462,7 +478,7 @@
                         $("#PCAVehicleEstAmount").val(data[0].PCAVehicleAmountDamage);
                         $("#PCAPropertyEstAmount").val(data[0].PCAPropertyDamage);
                         $("#CustomerVehicleEstAmount").val(data[0].CustomerVehicleAmountDamage);
-                        $("#SignatureDate").val(DateFormat(data[0].InvestigationDate));
+                        $("#SignatureDate").val(DateFormatForHTML5(data[0].InvestigationDate));
                         $("#ManagerSignature").val(data[0].ManagerSignature);
                     }
                 },
@@ -527,8 +543,8 @@
 
         function loadIncidentWitness(id) {
 
-            //var url = "http://localhost:52839/api/InsuranceIncidents/GetIncidentWitnessByManagerInvestigationID/" + id;
-            var url = $("#localApiDomain").val() + "InsuranceIncidents/GetIncidentWitnessByManagerInvestigationID/" + id;
+            //var url = "http://localhost:52839/api/InsuranceIncidents/GetIncidentWitnessByIncidentID/" + id;
+            var url = $("#localApiDomain").val() + "InsuranceIncidents/GetIncidentWitnessByIncidentID/" + id;
 
             $.ajax({
                 type: "GET",
@@ -537,6 +553,10 @@
                 beforeSend: function (jqXHR, settings) {
                 },
                 success: function (data) {
+                    if (data.length == 0) {
+                        return;
+                    }
+
                     $("#NumberOfWitnesses").val(data.length);
                     var thisElementNum = 0;
                     var PCAWitnessInfo = "";
@@ -638,8 +658,8 @@
 
         function loadOtherInvolved(id) {
 
-            //var url = "http://localhost:52839/api/InsuranceIncidents/GetIncidentOtherInvolvedByManagerInvestigationID/" + id;
-            var url = $("#localApiDomain").val() + "InsuranceIncidents/GetIncidentOtherInvolvedByManagerInvestigationID/" + id;
+            //var url = "http://localhost:52839/api/InsuranceIncidents/GetIncidentOtherInvolvedByManagerIncidentID/" + id;
+            var url = $("#localApiDomain").val() + "InsuranceIncidents/GetIncidentOtherInvolvedByManagerIncidentID/" + id;
 
             $.ajax({
                 type: "GET",
@@ -648,6 +668,10 @@
                 beforeSend: function (jqXHR, settings) {
                 },
                 success: function (data) {
+                    if (data.length == 0) {
+                        return;
+                    }
+
                     $("#NumberOtherInvolved").val(data.length);
                     var thisElementNum = 0;
                     var otherInvolvedBuild = "";
@@ -739,6 +763,10 @@
                 beforeSend: function (jqXHR, settings) {
                 },
                 success: function (data) {
+                    if (data.length == 0) {
+                        return;
+                    }
+
                     $("#NumberOfPCAInvolved").val(data.length);
                     var thisElementNum = 0;
                     var vehicleInfoBuild = "";
@@ -1419,6 +1447,10 @@
             table-layout: fixed;
             width: 603pt;
         }
+        .auto-style3 {
+            height: 26px;
+            margin-bottom: 0;
+        }
         -->
         </style>
        
@@ -1856,7 +1888,7 @@
               <input id="ManagerSignature" type="text" style="border:none" /></td>
           <td class=xl1519097></td>
           <td class=xl6919097>
-              <input id="SignatureDate" type="text" style="border:none" /></td>
+              <input id="SignatureDate" type="date" style="border:none" /></td>
           <td class=xl1519097></td>
           <td class=xl1519097></td>
           <td class=xl1519097></td>
@@ -1885,13 +1917,13 @@
          </tr>
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1519097 style='height:15.0pt'></td>
-          <td id="scCell"><input id="saveContinue" type="button" value="Save & Continue" style="height:26px;background-color:black;color:white;font-weight:bold" /></td>
+          <td id="scCell"><input id="saveContinue" type="button" value="Save & Continue" style="background-color:black;color:white;font-weight:bold" class="auto-style3" /></td>
           <td class=xl1519097></td>
           <td id="printCell"><input id="printReport" type="button" value="Print Report" style="height:26px;background-color:black;color:white;font-weight:bold" /></td>
           <td class=xl1519097></td>
           <td class=xl1519097></td>
           <td class=xl1519097></td>
-          <td class=xl8619097>PAGE 2 OF 5</td>
+          <td class=xl8619097>SECTION 2 OF 5</td>
           <td class=xl1519097></td>
          </tr>
          <tr height=20 style='height:15.0pt'>
@@ -1904,6 +1936,28 @@
           <td class=xl1519097></td>
           <td class=xl1519097></td>
           <td class=xl1519097></td>
+         </tr>
+         <tr height=20 style='height:15.0pt'>
+          <td height=20 class=xl1527147 style='height:15.0pt'></td>
+          <td class=xl6819097><input id="Previous" type="button" value="&larr; Previous" style="background-color:black;color:white;font-weight:bold" /></td>
+          <td class=xl1527147></td>
+          <td class=xl7627147></td>
+          <td class=xl1527147></td>
+          <td class=xl8227147></td>
+          <td class=xl1527147></td>
+          <td class=xl6819097><input id="Next" type="button" value="NEXT &rarr;" style="background-color:black;color:white;font-weight:bold" /></td>
+          <td class=xl1527147></td>
+         </tr>
+         <tr height=20 style='height:15.0pt'>
+          <td height=20 class=xl1517237 style='height:15.0pt'></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
          </tr>
          <![if supportMisalignedColumns]>
          <tr height=0 style='display:none'>

@@ -41,10 +41,11 @@
         var MedicalReserveCount = 0;
         var WCClaimExpensePaidCount = 0;
         var WCExpenseReserveCount = 0;
-        var SubroAmount = 0;
+        var SubroAmountCount = 0;
         var SettlementCount = 0;
 
         $(document).ready(function () {
+            turnOffAutoComplete();
 
             //************************* Currency Mask **************************************
             $("#topTable").delegate('.MoneyFormat', 'blur', function (e) {
@@ -171,7 +172,6 @@
 
             $("#SaveSubmit").on('click', function () {
                 saveWCClaim();
-                swal("Saved");
             });
 
             $("#addNote").on('click', function (e) {
@@ -181,20 +181,24 @@
             loadPCARep();
 
             const params = new URLSearchParams(window.location.search);
-            WCClaimID = params.get("WCClaimID");
-            $("#WCClaimID").val(WCClaimID);
+            WCInvestigationID = params.get("WCInvestigationID");
+            
 
-            loadLocations();
-            loadWCCLaim(WCClaimID);
+            loadLocations().then(function (data) {
+                if (WCInvestigationID != null) {
+                    $("#WCInvestigationID").val(WCInvestigationID);
+                    loadWCCLaim(WCInvestigationID);
+                }
+            });
 
             Security();
         });
 
 
         //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ Start WC Claim Section ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        function loadWCCLaim(WCClaimID) {
-            var url = $("#localApiDomain").val() + "InsuranceWCClaims/GetWCClaimByID/" + WCClaimID;
-            //var url = "http://localhost:52839/api/InsuranceWCClaims/GetWCClaimByID/" + WCClaimID;
+        function loadWCCLaim(WCInvestigationID) {
+            var url = $("#localApiDomain").val() + "InsuranceWCClaims/GetWCClaimByWCInvestigationID/" + WCInvestigationID;
+            //var url = "http://localhost:52839/api/InsuranceWCClaims/GetWCClaimByWCInvestigationID/" + WCInvestigationID;
 
             $.ajax({
                 type: "GET",
@@ -204,11 +208,11 @@
                 },
                 success: function (data) {
                     for (i = 0; i < data.length; i++) {
-                        $("#ClaimID").val(data[0].ClaimID);
                         $("#IncidentID").val(data[0].IncdidentID);
+                        $("#WCClaimID").val(data[0].WCClaimID);
                         $("#WCClaimNumber").val(data[0].WCClaimNumber);
                         $("#IncidentNumber").val(data[0].IncidentNumber);
-                        $("#WCIncidentDate").val(DateFormat(data[0].WCIncidentDate));
+                        $("#WCIncidentDate").val(DateFormatForHTML5(data[0].WCIncidentDate));
                         $("#ClaimantName").val(data[0].ClaimantName);
                         var getLocationOption = '#location option[value=' + data[0].LocationID + ']';
                         $(getLocationOption).prop("selected", true);
@@ -239,28 +243,39 @@
                         $("#SubroAmount").val(data[0].SubroAmount).trigger('dblclick');
                         $("#Settlement").val(data[0].Settlement).trigger('dblclick');
                         $("#PoliceReportNumber").val(data[0].PoliceReportNumber);
-                        $("#PCAReceivedClaimDate").val(JsonDateNoTimeFormat(data[0].PCAReceivedClaimDate));
+                        $("#PCAReceivedClaimDate").val(DateFormatForHTML5(data[0].PCAReceivedClaimDate));
                         $("#PCARepID option[value=" + data[0].PCARepID + "]").prop('selected', true);
-                        $("#Closed").val(data[0].Closed);
+                        $("#Active").val(data[0].Active);
                     }
                 },
                 error: function (request, status, error) {
                     swal("There was an issue getting WC information.");
                 }
-            }).then(function () {
+            }).then(function (data) {
+                $("#WCClaimID").val(data[0].WCClaimID);
                 loadClaimNote();
             });
         }
 
         function saveWCClaim() {
-            var url = $("#localApiDomain").val() + "InsuranceWCClaims/PutWCClaim/";
-            //var url = "http://localhost:52839/api/InsuranceWCClaims/PutWCClaim/";
+            if ($("#location").val() == "Location") {
+                swal("Pick a location.");
+                return;
+            }
+
+            if ($("#WCClaimNumber").val() == "") {
+                var url = $("#localApiDomain").val() + "InsuranceWCClaims/PutWCClaim/";
+                //var url = "http://localhost:52839/api/InsuranceWCClaims/PostWCClaim/";
+            } else {
+                var url = $("#localApiDomain").val() + "InsuranceWCClaims/PutWCClaim/";
+                //var url = "http://localhost:52839/api/InsuranceWCClaims/PutWCClaim/";
+            }
 
             $.ajax({
                 type: "POST",
                 url: url,
                 data: {
-                    "ClaimID": $("#ClaimID").val(),
+                    "WCInvestigationID": $("#WCInvestigationID").val(),
                     "WCClaimID": $("#WCClaimID").val(),
                     "ReportedToCarrierDate": $("#ReportedToCarrierDate").val(),
                     "PolicyTypeID": $("#PolicyTypeID").val(),
@@ -291,18 +306,39 @@
                     "Settlement": $("#Settlement").val(),
                     "PoliceReportNumber": $('#PoliceReportNumber').val(),
                     "PCARepID": $("#PCARepID").val(),
-                    "Closed": $("#Closed").val()
+                    "Active": $("#Active").val(),
+                    "WCIncidentDate": $("#WCIncidentDate").val(),
+                    "LocationID": $("#location").val(),
+                    "PCAReceivedClaimDate": $("#PCAReceivedClaimDate").val(),
+                    "ClaimantName": $("#ClaimantName").val()
 
                 },
                 dataType: "json",
                 success: function (data) {
-
+                    
                 },
                 error: function (request, status, error) {
                     swal("Error saving WC Claim ");
                 }
-            }).then(function () {
-                saveClaimNotes();
+            }).then(function (data) {
+                swal({
+                    title: "WC Save",
+                    text: "Saved",
+                    type: 'success',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                }).then(function () {
+                    if (data == null) {
+                        thisClaimID = $("#WCClaimID").val();
+                        $("#WCClaimID").val(thisClaimID);
+                        saveClaimNotes(thisClaimID);
+                    } else {
+                        $("#WCClaimID").val(data);
+                        saveClaimNotes(data);
+                    }
+                    
+                });
+                
             });
         }
 
@@ -310,7 +346,7 @@
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ Start Note Section +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-        function saveClaimNotes() {
+        function saveClaimNotes(WCCLaimID) {
             for (var i = 1; i <= noteNumber; i++) {
 
                 if ($("#NoteIDClaimNote" + i.toString()).val() == '') {
@@ -318,14 +354,19 @@
                     var url = $("#localApiDomain").val() + "InsuranceWCClaims/PostWCClaimNote/";
                     //var url = "http://localhost:52839/api/InsuranceWCClaims/PostWCClaimNote/";
 
+                    var WCCLaimID = WCCLaimID;
+                    var noteClaimNote = $("#noteClaimNote" + i.toString()).val();
+                    var EnteredByClaimNote = $("#EnteredByClaimNote" + i.toString()).val();
+                    var DateClaimNote = $("#DateClaimNote" + i.toString()).val();
+
                     $.ajax({
                         type: "POST",
                         url: url,
                         data: {
-                            "WCClaimID": $("#WCClaimID").val(),
-                            "WCClaimNoteContent": $("#noteClaimNote" + i.toString()).val(),
-                            "WCClaimEnteredBy": $("#EnteredByClaimNote" + i.toString()).val(),
-                            "WCClaimNoteDate": $("#DateClaimNote" + i.toString()).val()
+                            "WCClaimID": WCCLaimID,
+                            "WCClaimNoteContent": noteClaimNote,
+                            "WCClaimEnteredBy": EnteredByClaimNote,
+                            "WCClaimNoteDate": DateClaimNote
                         },
                         dataType: "json",
                         success: function (data) {
@@ -335,7 +376,8 @@
                             swal("Error saving note " + i);
                         }
                     }).then(function () {
-
+                        var thisWCClaimID = $("#WCClaimID").val();
+                        //window.location.replace("./InsuranceWCClaim.aspx?WCClaimID =" + thisWCClaimID);
                     });;
                 }
             }
@@ -416,7 +458,7 @@
             //var url = "http://localhost:52839/api/InsuranceLocations/GetUserLocations/" + locationString;
             var url = $("#localApiDomain").val() + "InsuranceLocations/GetUserLocations/" + locationString;
 
-            $.ajax({
+            return $.ajax({
                 type: "GET",
                 async: "false",
                 url: url,
@@ -1041,7 +1083,7 @@
         
         <input type="text" id="WCClaimID" style="display:none" />
         <input type="text" id="IncidentID" style="display:none" />
-        <input type="text" id="ClaimID" style="display:none" />
+        <input type="text" id="WCInvestigationID" style="display:none" />
         <div align=center>
         <input type="text" id="WCCliamID" style="display:none" />
         <table id="topTable" border=0 cellpadding=0 cellspacing=0 width=798 style='border-collapse:collapse;table-layout:fixed;width:601pt'>
@@ -1096,9 +1138,9 @@
          </tr>
          <tr height=21 style='height:15.75pt'>
           <td height=21 class=xl1532610 style='height:15.75pt'></td>
-          <td class=xl8432610><input type='text' id='WCClaimNumber' style='border:none' /></td>
+          <td class=xl8432610><input type='text' id='WCClaimNumber' style='border:none' disabled /></td>
           <td class=xl1532610></td>
-          <td class=xl6732610><input type='text' id='IncidentNumber' style='border:none' /></td>
+          <td class=xl6732610><input type='text' id='IncidentNumber' style='border:none' disabled /></td>
           <td class=xl1532610></td>
           <td colspan=3 class=xl9232610 style='border-right:.5pt solid black'><input type='text' id='ClaimantName' style='border:none' /></td>
           <td class=xl1532610></td>
@@ -1127,7 +1169,7 @@
          </tr>
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
-          <td class=xl7532610><input type='text' id='WCIncidentDate' style='border:none' /></td>
+          <td class=xl7532610><input type='date' id='WCIncidentDate' style='border:none' /></td>
           <td class=xl1532610></td>
           <td class=xl6732610><select id="location" style="border:none"></select></td>
           <td class=xl1532610></td>
@@ -1168,7 +1210,12 @@
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl8632610><input type='text' id='PCAInsuranceNumber' style='border:none;background-color:#DBDBDB' /></td>
           <td class=xl1532610></td>
-          <td class=xl8632610><input type='text' id='OSHALog' style='border:none;background-color:#DBDBDB' /></td>
+          <td class=xl8632610>
+              <select id="OSHALog" style='background-color:#E7E6E6;border:none'>
+                  <option value="0">No</option>
+                  <option value="1">Yes</option>
+              </select>
+          </td>
           <td class=xl1532610></td>
           <td class=xl7632610>
             <select id="WCClaimStatusID" style='border:none;background-color:#DBDBDB'>
@@ -1413,7 +1460,7 @@
           <td height=21 class=xl1532610 style='height:15.75pt'></td>
           <td class=xl7132610>TOTAL INCURRED</td>
           <td class=xl1532610></td>
-          <td class=xl6832610><input type='text' id='TotalIncurred' style='border:none;' class="MoneyFormat" /></td>
+          <td class=xl6832610><input type='text' id='TotalIncurred' style='border:none;' class="MoneyFormat" disabled /></td>
           <td class=xl1532610></td>
           <td class=xl1532610></td>
           <td class=xl1532610></td>
@@ -1446,7 +1493,7 @@
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl7532610><input type='text' id='PoliceReportNumber' style='border:none;' /></td>
           <td class=xl1532610></td>
-          <td class=xl7532610><input type="text" id="PCAReceivedClaimDate" style="border:none" /></td>
+          <td class=xl7532610><input type="date" id="PCAReceivedClaimDate" style="border:none" /></td>
           <td class=xl1532610></td>
           <td class=xl7932610><select id="PCARepID" style='background-color:#E7E6E6;border:none'></select></td>
           <td class=xl1532610></td>
@@ -1489,7 +1536,7 @@
          </tr>
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
-          <td class=xl7032610>Claim Closed?<span style='mso-spacerun:yes'> </span></td>
+          <td class=xl7032610>Claim Active?<span style='mso-spacerun:yes'> </span></td>
           <td class=xl1532610></td>
           <td class=xl6932610></td>
           <td class=xl1532610></td>
@@ -1501,7 +1548,7 @@
          <tr height=20 style='height:15.0pt'>
           <td height=20 class=xl1532610 style='height:15.0pt'></td>
           <td class=xl7932610>
-              <select id="Closed" style='background-color:#E7E6E6;border:none' tabindex="4">
+              <select id="Active" style='background-color:#E7E6E6;border:none' tabindex="4">
                   <option value="0">No</option>
                   <option value="1">Yes</option>
               </select></td>

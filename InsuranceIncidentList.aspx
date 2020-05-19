@@ -101,9 +101,9 @@
         window.setInterval("keepMeAlive('keepAliveIMG')", 100000);
         var group = '<%= Session["groupList"] %>';
 
-        //$(window).focus(function () {
-        //    loadGrid(true);
-        //});
+        $(window).focus(function () {
+            loadGrid(false);
+        });
 
         $('document').ready(function () {
             $("#Search").jqxButton();
@@ -125,7 +125,18 @@
 
             loadClaimStatus();
             loadLocations();
-            loadGrid(false);
+            loadLocations();
+
+            const params = new URLSearchParams(window.location.search);
+            var IncidentNumber = params.get("IncidentNumber");
+            $("#SearchIncidentNumber").val(IncidentNumber);
+
+            if (IncidentNumber == "" || IncidentNumber == null) {
+                loadGrid(false);
+            } else {
+                loadGrid(true);
+            }
+            
 
             Security();
         });
@@ -177,9 +188,9 @@
                     { name: 'IncidentID' },
                     { name: 'IncidentNumber' },
                     { name: 'ClaimNumber' },
-                    { name: 'ClaimID' },
                     { name: 'WCClaimNumber' },
-                    { name: 'WCClaimID' },
+                    { name: 'WCInvestigationID' },
+                    { name: 'ClaimID' },
                     { name: 'IncidentDate' },
                     { name: 'IncidentStatus' },
                     { name: 'ClaimStatusDesc' },
@@ -209,8 +220,8 @@
                 var data = $('#jqxgrid').jqxGrid('getrowdata', row);
                 var html = '';
 
-                if (data.WCClaimID != 0) {
-                    html = "<div style='margin-top:9px'><a href='./InsuranceWCClaim.aspx?WCClaimID=" + data.WCClaimID + "' target='_blank'>" + data.WCClaimNumber + "</a></div>"
+                if (data.WCInvestigationID != 0) {
+                    html = "<div style='margin-top:9px'><a href='./InsuranceWCClaim.aspx?WCInvestigationID=" + data.WCInvestigationID + "' target='_blank'>" + data.WCClaimNumber + "</a></div>"
                 }
 
 
@@ -274,9 +285,9 @@
                               }, cellclassname: cellclassname
                           },
                           { text: 'Claims #', datafield: 'ClaimNumber', cellsrenderer: ClaimLinkRenderer, cellclassname: cellclassname },
-                          { text: 'ClaimID', datafield: 'ClaimID', hidden: true },
                           { text: 'WC Claim', datafield: 'WCClaimNumber', cellsrenderer: WCLinkRenderer, cellclassname: cellclassname },
-                          { text: 'WCClaimID', datafield: 'WCClaimID', hidden: true },
+                          { text: 'WCInvestigationID', datafield: 'WCInvestigationID', hidden: true },
+                          { text: 'ClaimID', datafield: 'ClaimID', hidden: true },
                           { text: 'Date of Incident', datafield: 'IncidentDate', cellsrenderer: DateRender, cellclassname: cellclassname },
                           {
                               text: 'Incident Status',

@@ -148,24 +148,29 @@ public partial class ReportViewer : System.Web.UI.Page
 
                 string[] thisLocation;
                 var thisGroups = group.Split(',');
+                Boolean first = true;
+                List<string> locationList = new List<string>();
+
                 foreach (string locGroup in thisGroups)
                 {
                     if (locGroup.IndexOf("\\PP_LOC_") > -1)
                     {
                         thisLocation = locGroup.Split('_');
                         ID = thisLocation[3];
+                        if (first == true)
+                        {
+                            locationList.Add(ID);
+                        }
                     }
                 }
 
-                //string ID = "86";
-                string userId = getOldPortalGuid(Convert.ToString(Session["UserName"]));
-
                 ReportParameter[] parameters = new ReportParameter[2];
 
-                //not sure we need the userloginId param.
-                parameters[0] = new ReportParameter("UserLoginId", "00000000-0000-0000-0000-000000000000");
-                //parameters[0] = new ReportParameter("UserLoginId", userId);
-                parameters[1] = new ReportParameter("City", ID);
+                string[] thisLocationArray = locationList.ToArray();
+
+                parameters[0] = new ReportParameter("City", thisLocationArray);
+                parameters[1] = new ReportParameter("UserLoginId", "00000000-0000-0000-0000-000000000000");
+
                 serverReport.ReportPath = reportLocation;
                 serverReport.SetParameters(parameters);
             }

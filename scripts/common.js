@@ -221,6 +221,25 @@ function Security() {
             if (old != "") $(this).attr('href', old);
         });
     }
+
+    if (group.indexOf("Portal_Parkplace") > -1) {
+        $('.Portal_Parkplace').each(function () {
+            $('.Portal_Parkplace').removeClass('disabled');
+            var old = $(this).attr('temp-hrf');
+            if (old != "") $(this).attr('href', old);
+        });
+    }
+}
+
+function turnOffAutoComplete() {
+    if (document.getElementsByTagName) {
+        var inputElements = document.getElementsByTagName("input");
+        for (i = 0; inputElements[i]; i++) {
+            if (!inputElements[i].hasAttribute("autocomplete")) {
+                inputElements[i].setAttribute("autocomplete", "smartystreets");
+            }
+        }
+    }
 }
 
 function isValidDate(s) {

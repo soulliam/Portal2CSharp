@@ -103,7 +103,7 @@
         $('document').ready(function () {
             $("#Search").jqxButton();
             $("#ClearSearch").jqxButton();
-            $("#newIncident").jqxButton();
+            $("#newWCClaim").jqxButton();
 
             $("#Search").on("click", function () {
                 loadGrid(true);
@@ -113,13 +113,11 @@
                 location.reload();
             });
 
-            $("#newIncident").on("click", function () {
+            $("#newWCClaim").on("click", function () {
                 //window.location.href = './InsuranceIncidentReport.aspx'
-                window.open('./InsuranceIncidentReport.aspx', '_blank');
+                window.open('./InsuranceWCClaim.aspx', '_blank');
             });
 
-            loadClaimStatus();
-            loadLocations();
             loadGrid(false);
 
             Security();
@@ -139,54 +137,46 @@
             $("#jqxgrid").jqxGrid('destroy');
             $("<div id='jqxgrid'></div>").appendTo(parent);
 
-            if (search != true) {
-                var url = $("#localApiDomain").val() + "InsuranceIncidents/GetIncidentList/" + viewSettings;
-                //var url = "http://localhost:52839/api/InsuranceIncidents/GetIncidentList/" + viewSettings;
-
-                var data = "";
-                var type = "Get";
-            } else {
-                var url = $("#localApiDomain").val() + "InsuranceIncidents/SearchIncidentList/" ;
-                //var url = "http://localhost:52839/api/InsuranceIncidents/SearchIncidentList/";
-
-                var data = {
-                    "IncidentNumber": $("#SearchIncidentNumber").val(),
-                    "ClaimNumber": $("#SearchClaimNumber").val(),
-                    "WCClaimNumber": $("#SearchWCClaimNumber").val(),
-                    "IncidentDate": $("#SearchDateOfIncident").val(),
-                    "IncidentStatus": $("#SearchIncidentStatus").val(),
-                    "ClaimStatusID": $("#SearchClaimStatus").val(),
-                    "LocationId": $("#SearchIncidentLocation").val(),
-                    "ClaimantName": $("#SearchClaimantname").val(),
-                    "PCAInsuranceClaimNumber": $("#SearchInsClaimNumber").val(),
-                    "Closed": $("#SearchClaimClosed").val(),
-                    "viewSettings":viewSettings
-                };
-                var type = "Post";
-            }
+            var url = $("#localApiDomain").val() + "InsuranceWCClaims/SearchWCClaimsList/"
+            //var url = "http://localhost:52839/api/InsuranceWCClaims/SearchWCClaimsList/";
             
+            if (search == false) {
+                var thisIncidentDate = "1/1/0001 12:00:00 AM";
+            } else {
+                var thisIncidentDate = $("#SearchDateOfIncident").val();
+            }
+
+            var data = {
+                "WCClaimNumber": $("#SearchWCClaimNumber").val(),
+                "IncidentNumber": $("#SearchCompanionIncident").val(),
+                "WCIncidentDate": thisIncidentDate,
+                "Closed": $("#SearchInvestigationStatus").val(),
+                "PCAInsuranceNumber": $("#SearchInsClaimNumber").val(),
+                "WCClaimStatusID": $("#SearchClaimStatus").val(),
+                "LocationID": $("#SearchLocationName").val(),
+                "ClaimantName": $("#SearchClaimantname").val(),
+                "viewSettings": viewSettings
+            }
+
 
             var source =
             {
                 datafields: [
-                    { name: 'IncidentID' },
-                    { name: 'IncidentNumber' },
-                    { name: 'ClaimNumber' },
-                    { name: 'ClaimID' },
-                    { name: 'WCClaimNumber' },
                     { name: 'WCClaimID' },
-                    { name: 'IncidentDate' },
-                    { name: 'IncidentStatus' },
-                    { name: 'ClaimStatusDesc' },
+                    { name: 'WCClaimNumber' },
+                    { name: 'CompanionIncident' },
+                    { name: 'IncidentNumber' },
+                    { name: 'WCIncidentDate' },
+                    { name: 'Closed' },
+                    { name: 'PCAInsuranceNumber' },
+                    { name: 'WCStatus' },
                     { name: 'LocationName' },
                     { name: 'ClaimantName' },
-                    { name: 'PCAInsuranceClaimNumber' },
                     { name: 'Documents' },
-                    { name: 'Checklist' },
-                    { name: 'Closed' }
+                    { name: 'Checklist' }
                 ],
 
-                type: type,
+                type: "Post",
                 datatype: "json",
                 data: data,
                 url: url,
@@ -195,7 +185,18 @@
             var ClaimLinkRenderer = function (row, column, value) {
                 var data = $('#jqxgrid').jqxGrid('getrowdata', row);
 
-                html = "<div style='margin-top:9px'><a href='./InsuranceClaim.aspx?ClaimID=" + data.ClaimID + "' target='_blank'>" + data.ClaimNumber + "</a></div>"
+                html = "<div style='margin-top:9px'><a href='./InsuranceWCClaim.aspx?WCClaimID=" + data.WCClaimID + "' target='_blank'>" + data.WCClaimNumber + "</a></div>"
+
+                return html;
+            }
+
+            var IncidentLinkRenderer = function (row, column, value) {
+                var data = $('#jqxgrid').jqxGrid('getrowdata', row);
+                var html = "";
+
+                if (data.CompanionIncident != null) {
+                    html = "<div style='margin-top:9px'><a href='./insuranceincidentlist.aspx?IncidentNumber=" + data.IncidentNumber + "' target='_blank'>" + data.CompanionIncident + "</a></div>";
+                }
 
                 return html;
             }
@@ -216,72 +217,41 @@
                 return html;
             }
 
-
-            var UploadCount = '';
-            var FirstRowCount = '';
-            var AddClaimcount = '';
+            var firstRowCou
 
             $("#jqxgrid").jqxGrid(
-                {
-                    width: '100%',
-                    height: 500,
-                    source: source,
-                    selectionmode: 'checkbox',
-                    rowsheight: 35,
-                    sortable: true,
-                    altrows: true,
-                    filterable: true,
-                    columnsresize: true,
-                    columns: [
-                          { text: 'IncidentID', datafield: 'IncidentID', hidden: true },
-                          {
-                              text: 'Incident Number',
-                              cellsrenderer: function (row, column, value) {
-                                  datarow = row;
-                                  var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', datarow);
-
-                                  if (dataRecord.IncidentNumber != FirstRowCount) {
-                                      html = "<div style='margin-top:9px'><a href='./InsuranceIncidentReport.aspx?IncidentID=" + dataRecord.IncidentID + "' target='_blank'>" + dataRecord.IncidentNumber + "</a></div>"
-                                      return html;
-                                  }
-                              }
-                          },
-                          { text: 'Claims #', datafield: 'ClaimNumber', cellsrenderer: ClaimLinkRenderer },
-                          { text: 'ClaimID', datafield: 'ClaimID', hidden: true },
-                          { text: 'WC Claim', datafield: 'WCClaimNumber' },
-                          { text: 'WCClaimID', datafield: 'WCClaimID', hidden: true },
-                          { text: 'Date of Incident', datafield: 'IncidentDate', cellsrenderer: DateRender },
-                          {
-                              text: 'Incident Status',
-                              cellsrenderer: function (row, column, value) {
-                                  datarow = row;
-                                  var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', datarow);
-
-                                  if (dataRecord.IncidentNumber != FirstRowCount) {
-                                      return "<div style='margin-top:9px'>" + dataRecord.IncidentStatus + "</div>";
-                                  }
-                              }
-                          },
-                          { text: 'Claim Status', datafield: 'ClaimStatusDesc' },
-                          { text: 'Location', datafield: 'LocationName' },
-                          { text: 'Claimant Name', datafield: 'ClaimantName' },
-                          { text: 'Ins Claim #', datafield: 'PCAInsuranceClaimNumber' },
-                          { text: 'Upload Docs', cellsrenderer: DocUploadRenderer },
-                          {
-                              text: 'Check List',
-                              cellsrenderer: function (row, column, value) {
-                                  datarow = row;
-                                  var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', datarow);
-
-                                  if (dataRecord.IncidentNumber != FirstRowCount) {
-                                      FirstRowCount = dataRecord.IncidentNumber;
-                                      return "<div style='margin-top:9px'><a href='./InsuranceIncidentChecklist.aspx?IncidentID=" + dataRecord.IncidentID + "' target='_blank'>Check List</a></div>";
-                                  }
-                              }
-                          },
-                          { text: 'Closed', datafield: 'Closed' }
-                    ]
-                });
+            {
+                width: '100%',
+                height: 500,
+                source: source,
+                selectionmode: 'checkbox',
+                rowsheight: 35,
+                sortable: true,
+                altrows: true,
+                filterable: true,
+                columnsresize: true,
+                columns: [
+                        { text: 'WCClaimID', datafield: 'WCClaimID', hidden: true },
+                        { text: 'WC Claims #', datafield: 'WCClaimNumber', cellsrenderer: ClaimLinkRenderer },
+                        { text: 'Companion Incident', datafield: 'CompanionIncident', cellsrenderer: IncidentLinkRenderer },
+                        { text: 'Date of Injury', datafield: 'WCIncidentDate', cellsrenderer: DateRender },
+                        { text: 'IncidentNumber', datafield: 'IncidentNumber', hidden: true },
+                        { text: 'Investigation Status', datafield: 'Closed' },
+                        { text: 'Insurance Claim #', datafield: 'PCAInsuranceNumber' },
+                        { text: 'Claim Status', datafield: 'WCStatus' },
+                        { text: 'Location', datafield: 'LocationName' },
+                        { text: 'Employee name', datafield: 'ClaimantName' },
+                        { text: 'Upload Docs', cellsrenderer: DocUploadRenderer },
+                        {
+                            text: 'Check List',
+                            cellsrenderer: function (row, column, value) {
+                                datarow = row;
+                                var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', datarow);
+                                return "<div style='margin-top:9px'><a href='./InsuranceWCChecklist.aspx?WCClaimID=" + dataRecord.WCClaimID + "' target='_blank'>Check List</a></div>";
+                            }
+                        }
+                ]
+            });
         }
 
         function LoadLocationPopup(thisLocationString) {
@@ -378,37 +348,37 @@
     <input type="text" id="InsuranceLocation" style="display:none" />
 
     <div class="grid-container">        
-        <div class="search1"><span style="color:white;font-size:large">Incident Number</span></div>
-        <div class="search2"><span style="color:white;font-size:large">WC Claim Number</span></div>
-        <div class="search3"><span style="color:white;font-size:large">Date of Incident</span></div>
-        <div class="search4"><span style="color:white;font-size:large">Incident Status</span></div>
-        <div class="search5"><span style="color:white;font-size:large">Claim Status</span></div>
-        <div class="search15"><span style="color:white;font-size:large">Location</span></div>
-        <div class="search16"><span style="color:white;font-size:large">Claimant Name</span></div>
-        <div class="search17"><span style="color:white;font-size:large">Insurance Claim Number</span></div>
-        <div class="search18"><span style="color:white;font-size:large">Closed</span></div>
+        <div class="search1"><span style="color:white;font-size:large">WC Claim Incident #</span></div>
+        <div class="search2"><span style="color:white;font-size:large">Companion Incident</span></div>
+        <div class="search3"><span style="color:white;font-size:large">Date of Injury</span></div>
+        <div class="search4"><span style="color:white;font-size:large">Investigation Status</span></div>
+        <div class="search5"><span style="color:white;font-size:large">Inusrance Claim #</span></div>
+        <div class="search15"><span style="color:white;font-size:large">Claimant Status</span></div>
+        <div class="search16"><span style="color:white;font-size:large">Location</span></div>
+        <div class="search17"><span style="color:white;font-size:large">Employee Name</span></div>
+        <div class="search18"></div>
         <div class="search19"></div>
         <div class="search20"></div>
 
-        <div class="search21"><input id="newIncident" type="button" value="New Incident" /></div>
+        <div class="search21"><input id="newWCClaim" type="button" value="New WC Claim" /></div>
         <div class="search14"><input type="button" id="Search" value="Search" /></div>
         <div class="search28"><input type="button" id="ClearSearch" value="Clear" /></div>
 
-        <div class="search8"><input type="text" id="SearchIncidentNumber" /></div>
-        <div class="search9"><input type="text" id="SearchWCClaimNumber" /></div>
+        <div class="search8"><input type="text" id="SearchWCClaimNumber" /></div>
+        <div class="search9"><input type="text" id="SearchCompanionIncident" /></div>
         <div class="search10"><input type="date" id="SearchDateOfIncident" /></div>
-        <div class="search11"><input type="text" id="SearchIncidentStatus" /></div>
-        <div class="search12"><select id="SearchClaimStatus" style="font-size:larger"></select></div>
-        <div class="search22"><select id="SearchIncidentLocation" style="font-size:larger"></select></div>
-        <div class="search23"><input type="text" id="SearchClaimantname" /></div>
-        <div class="search24"><input type="text" id="SearchInsClaimNumber" /></div>
-        <div class="search25">
-            <select id="SearchClaimClosed" style="font-size:larger">
+        <div class="search11"><input type="text" id="SearchInvestigationStatus" /></div>
+        <div class="search12"><select id="SearchInsClaimNumber" style="font-size:larger"></select></div>
+        <div class="search22">
+            <select id="SearchClaimStatus" style="font-size:larger">
                 <option value=""></option>
                 <option value="0">No</option>
                 <option value="1">Yes</option>
             </select>
         </div>
+        <div class="search23"><select id="SearchLocationName" style="font-size:larger"></select></div>
+        <div class="search24"><input type="text" id="SearchClaimantname" /></div>
+        <div class="search25"></div>
 
 
         <div class="main">

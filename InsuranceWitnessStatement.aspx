@@ -5,6 +5,12 @@
             var group = '<%= Session["groupList"] %>';
 
             $(document).ready(function () {
+                turnOffAutoComplete();
+
+                $("#Previous").on('click', function () {
+                    var thisIncidentID = $("#IncidentID").val();
+                    window.location.replace("./InsuranceThirdPartyStatement.aspx?IncidentID=" + thisIncidentID);
+                });
 
                 $("#saveContinue").on("click", function () {
                     saveStatement(true);
@@ -36,11 +42,16 @@
                 $("#printReport").on('click', function () {
                     $("#printReport").hide();
                     $("#saveContinue").hide();
+                    $("#Next").hide();
+                    $("#Previous").hide();
+                    $("#Save").hide();
                     window.print();
                     $(document).one('click', function () {
                         $("#printReport").show();
                         $("#saveContinue").show();
-                        $("#save").show();
+                        $("#Save").show();
+                        $("#Next").show();
+                        $("#Previous").show();
                     });
                 });
 
@@ -49,9 +60,10 @@
 
                 loadLocations().then(function () {
                     var thisIncidentID = $("#IncidentID").val();
-                    loadStates()
-                    loadIncident(thisIncidentID);
-                    loadWitnessList(thisIncidentID);
+                    loadWitnessList(thisIncidentID).then(function () {
+                        loadStates()
+                        loadIncident(thisIncidentID);
+                    });
                 });
 
                 Security();
@@ -151,10 +163,10 @@
                 dropdown.append('<option value="0">Pick Witness</option>');
                 dropdown.prop('selectedIndex', 0);
 
-                //var url = "http://localhost:52839/api/InsuranceIncidents/GetIncidentWitnessByManagerInvestigationID/" + id;
-                var url = $("#localApiDomain").val() + "InsuranceIncidents/GetIncidentWitnessByManagerInvestigationID/" + id;
+                //var url = "http://localhost:52839/api/InsuranceIncidents/GetIncidentWitnessByIncidentID/" + id;
+                var url = $("#localApiDomain").val() + "InsuranceIncidents/GetIncidentWitnessByIncidentID/" + id;
 
-                $.ajax({
+                return $.ajax({
                     type: "GET",
                     url: url,
                     dataType: "json",
@@ -173,7 +185,7 @@
                         });
                     },
                     error: function (request, status, error) {
-                        swal("There was an issue getting third party information.");
+                        swal("There was an issue getting witness information.");
                     }
                 }).then(function () {
 
@@ -221,7 +233,7 @@
                             $("#WitnessID").val(data[0].WitnessID);
                             $("#IncidentDesc").val(data[0].IncidentDesc);
                             $("#WitnessSignature").val(data[0].WitnessSignature);
-                            $("#SignatureDate").val(DateFormat(data[0].SignatureDate));
+                            $("#SignatureDate").val(DateFormatForHTML5(data[0].SignatureDate));
                         } 
                     },
                     error: function (request, status, error) {
@@ -823,7 +835,7 @@
               <td height=20 class=xl1527937 style='height:15.0pt'></td>
               <td colspan=3 class=xl8027937><input type='text' id='WitnessSignature' style='border:none' /></td>
               <td class=xl1527937></td>
-              <td class=xl6927937><input type='text' id='SignatureDate' style='border:none' /></td>
+              <td class=xl6927937><input type='date' id='SignatureDate' style='border:none' /></td>
               <td class=xl1527937></td>
               <td class=xl1527937></td>
               <td class=xl1527937></td>
@@ -858,7 +870,7 @@
               <td class=xl1527937></td>
               <td class=xl1527937><input id="printReport" type="button" value="Print Report" style="background-color:black;color:white;font-weight:bold" /></td>
               <td class=xl1527937></td>
-              <td class=xl7327937>PAGE 5 OF 5</td>
+              <td class=xl7327937>SECTION 5 OF 5</td>
               <td class=xl1527937></td>
              </tr>
              <tr height=20 style='height:15.0pt'>
@@ -871,6 +883,28 @@
               <td class=xl1527937></td>
               <td class=xl1527937></td>
               <td class=xl1527937></td>
+             </tr>
+             <tr height=20 style='height:15.0pt'>
+              <td height=20 class=xl1527147 style='height:15.0pt'></td>
+              <td class=xl6827937><input id="Previous" type="button" value="&larr; Previous" style="background-color:black;color:white;font-weight:bold" /></td>
+              <td class=xl1527147></td>
+              <td class=xl7627147></td>
+              <td class=xl1527147></td>
+              <td class=xl8227147></td>
+              <td class=xl1527147></td>
+              <td class=xl6817237></td>
+              <td class=xl1527147></td>
+             </tr>
+             <tr height=20 style='height:15.0pt'>
+              <td height=20 class=xl1517237 style='height:15.0pt'></td>
+              <td class=xl1517237></td>
+              <td class=xl1517237></td>
+              <td class=xl1517237></td>
+              <td class=xl1517237></td>
+              <td class=xl1517237></td>
+              <td class=xl1517237></td>
+              <td class=xl1517237></td>
+              <td class=xl1517237></td>
              </tr>
              <![if supportMisalignedColumns]>
              <tr height=0 style='display:none'>

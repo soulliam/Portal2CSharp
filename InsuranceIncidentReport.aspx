@@ -6,21 +6,26 @@
         var VehiclePCAArray = [];
         var ThirdPartyVehiclePCAArray = [];
 
+
         $(document).ready(function () {
 
             turnOffAutoComplete();
             
-            loadLocations();
-            loadStates();
 
             $("#printReport").on('click', function () {
                 $("#printReport").hide();
                 $("#saveContinue").hide();
+                $("#Next").hide();
                 window.print();
                 $(document).one('click', function () {
                     $("#printReport").show();
                     $("#saveContinue").show();
+                    $("#Next").show();
                 });
+            });
+
+            $("#Next").on('click', function () {
+                window.location.replace("./InsuranceManagerInvestigation.aspx?IncidentID=" + IncidentID);
             });
 
             $("#saveContinue").on('click', function () {
@@ -83,6 +88,7 @@
                 }).then(function (data) {
                     if (edit == false) {
                         $("#MainContent_IncidentID").val(data);
+                        IncidentID = $("#MainContent_IncidentID").val();
                         saveClaims(false);
                     } else {
                         saveClaims(true);
@@ -355,14 +361,20 @@
             });
 
             const params = new URLSearchParams(window.location.search);
-            const IncidentID = params.get("IncidentID");
+            var IncidentID = params.get("IncidentID");
 
-            if (IncidentID != null) {
-                $("#MainContent_IncidentID").val(IncidentID);
-                loadIncident(IncidentID);
-                loadIncidentPCAVehicles(IncidentID);
-                loadIncidentThirdPartyVehicles(IncidentID);
-            }
+
+            loadLocations().then(function () {
+                loadStates();
+
+                if (IncidentID != null) {
+                    $("#MainContent_IncidentID").val(IncidentID);
+                    loadIncident(IncidentID);
+                    loadIncidentPCAVehicles(IncidentID);
+                    loadIncidentThirdPartyVehicles(IncidentID);
+                }
+            });
+            
 
             $("#location").on("change", function () {
                 var id = $("#location").children("option:selected").val();
@@ -375,17 +387,6 @@
             document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
 
         });
-
-        function turnOffAutoComplete() {
-            if (document.getElementsByTagName) {
-                var inputElements = document.getElementsByTagName("input");
-                for (i = 0; inputElements[i]; i++) {
-                    if (!inputElements[i].hasAttribute("autocomplete")) {
-                        inputElements[i].setAttribute("autocomplete", "smartystreets");
-                    }
-                }
-            }
-        }
 
         function saveClaims(edit) {
             for (i = 0; i <= VehiclePCAArray.length - 1; i++) {
@@ -546,7 +547,7 @@
             }
 
             var CustomerName = $(item).find("input[id*='CustomerName']").val();
-            var CustomerEmailAddress = '';
+            var CustomerEmailAddress = $(item).find("input[id*='CustomerEmail']").val();;
             var CustomerStreetAddress = $(item).find("input[id*='CStreetAddress']").val();
             var CustomerCity = $(item).find("input[id*='City']").val();
             var CustomerStateID = $(item).find("select[id*='State']").val();;
@@ -558,7 +559,7 @@
             var InsCompAddress = $(item).find("input[id*='InsuranceAddress']").val();
             var InsCompPhone = $(item).find("input[id*='InsurancePhone']").val();
             var InsCompAgentName = $(item).find("input[id*='AgentName']").val();
-            var InsCompEmailAddress = $(item).find("input[id*='InsuranceEmail']").val();
+            var InsCompEmailAddress = '';
             var InsCompPolicyNumber = $(item).find("input[id*='PolicyNumber']").val();
             var VehicleYear = $(item).find("input[id*='VehicleYear']").val();
             var VehicleMake = $(item).find("input[id*='Make']").val();
@@ -702,7 +703,7 @@
             //var url = "http://localhost:52839/api/InsuranceLocations/GetUserLocations/" + locationString;
             var url = $("#localApiDomain").val() + "InsuranceLocations/GetUserLocations/" + locationString;
 
-            $.ajax({
+            return $.ajax({
                 type: "GET",
                 async: "false",
                 url: url,
@@ -921,7 +922,7 @@
                         $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "LicensePlate").val(data[i].VehicleLicensePlate);
                         $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "InsurancePhone").val(data[i].InsCompPhone);
                         $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "PlateState").val(data[i].VehicleLicensePlateState);
-                        $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "InsuranceEmail").val(data[i].InsCompEmailAddress);
+                        $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "CustomerEmail").val(data[i].CustomerEmailAddress);
                         $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "AgentName").val(data[i].InsCompAgentName);
                         $("input[name=ThirdPartyVehiclePCA" + (i + 1).toString() + "CInjuries][value=" + data[i].Injuries + "]").prop('checked', true);
                         $("#ThirdPartyVehiclePCA" + (i + 1).toString() + "PolicyNumber").val(data[i].InsCompPolicyNumber);
@@ -2206,7 +2207,7 @@
           <td class=xl1527147></td>
           <td class=xl8227147></td>
           <td class=xl1527147></td>
-          <td class=xl8527147>PAGE 1 OF 5</td>
+          <td class=xl8527147>SECTION 1 OF 5</td>
           <td class=xl1527147></td>
          </tr>
          <tr height=20 style='height:15.0pt'>
@@ -2219,6 +2220,28 @@
           <td class=xl1527147></td>
           <td class=xl1527147></td>
           <td class=xl1527147></td>
+         </tr>
+         <tr height=20 style='height:15.0pt'>
+          <td height=20 class=xl1527147 style='height:15.0pt'></td>
+          <td class=xl7627147></td>
+          <td class=xl1527147></td>
+          <td class=xl7627147></td>
+          <td class=xl1527147></td>
+          <td class=xl8227147></td>
+          <td class=xl1527147></td>
+          <td class=xl7627147><input id="Next" type="button" value="NEXT &rarr;" style="background-color:black;color:white;font-weight:bold" /></td>
+          <td class=xl1527147></td>
+         </tr>
+         <tr height=20 style='height:15.0pt'>
+          <td height=20 class=xl1517237 style='height:15.0pt'></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
+          <td class=xl1517237></td>
          </tr>
          <![if supportMisalignedColumns]>
          <tr height=0 style='display:none'>
@@ -2484,10 +2507,10 @@
                                         "</tr>" +
                                         "<tr height=20 style='height:15.0pt'>" +
                                         "<td height=20 class=xl1511590 style='height:15.0pt'></td>" +
-                                        "<td class=xl1527147>Email Address</td>" +
+                                        "<td class=xl1527147>Customer Email Address</td>" +
                                         "<td class=xl1511590></td>" +
                                         "<td class=xl6727147 style='border-top:none'>" +
-                                        "<input id='ThirdPartyVehiclePCA1InsuranceEmail' type='text' style='border:none;' /></td>" +
+                                        "<input id='ThirdPartyVehiclePCA1CustomerEmail' type='text' style='border:none;' /></td>" +
                                         "<td class=xl1511590></td>" +
                                         "<td class=xl1527147>Agent Name</td>" +
                                         "<td class=xl1511590></td>" +
