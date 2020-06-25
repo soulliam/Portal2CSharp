@@ -418,6 +418,14 @@
                                 // return the old value, if the new value is empty.
                                 //if (newvalue == "") swal("Pick a Vendor");
                                 $("#partsGrid").jqxGrid('begincelledit', row, "Vendor");
+                            },
+                            geteditorvalue: function (row, cellvalue, editor) {
+                                var index = editor.jqxComboBox("getSelectedIndex");
+                                if (index == -1) {
+                                    swal("The vendor you chose did not match an existing vendor.  Please check you spelling or contact William about adding this vendor.");
+                                } else {
+                                    return editor.val();
+                                }
                             }
                         },
                         {
@@ -612,10 +620,12 @@
                 var thisComplaint = checkUndefinedString($("#complaint").val())
                 thisComplaint = thisComplaint.replace(/'/g, "''");
                 thisComplaint = thisComplaint.replace(/\\"/g, '"').replace(/"/g, '\\"');
+                thisComplaint = thisComplaint.replace(/[\r\n]+/gm, "\\n");
 
                 var thisResolution = checkUndefinedString($("#resolution").val())
                 thisResolution = thisResolution.replace(/'/g, "''");
                 thisResolution = thisResolution.replace(/\\"/g, '"').replace(/"/g, '\\"');
+                thisResolution = thisResolution.replace(/[\r\n]+/gm, "\\n");
 
                 var maintenanceString = '{ "VehicleId": ' + vehicle.value + ', ' +
                                           '"WorkOrder": "' + checkUndefinedString($("#txtWorkOrder").val()) + '", ' +
@@ -1305,6 +1315,7 @@
             var parent = $("#pmiCombo").parent();
             $("#pmiCombo").jqxDropDownList('destroy');
             $("<div id='pmiCombo'></div>").appendTo(parent);
+            $("#workOrderDate").val(new Date());
         }
 
     </script>

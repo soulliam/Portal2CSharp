@@ -236,7 +236,8 @@
                     { name: 'IsGuest', type: 'boolean' },
                     { name: 'Options', type: 'boolean' },
                     { name: 'ReservationStatusName' },
-                    { name: 'UpdateExternalUserData' }
+                    { name: 'UpdateExternalUserData' },
+                    { name: 'EmailAddress' }
                 ],
                 id: 'ReservationId',
                 type: 'Get',
@@ -294,24 +295,28 @@
                 rowdetails: true,
                 initrowdetails: initrowdetails,
                 selectionmode: 'checkbox',
+                selectionmode: 'multiplecellsextended',
                 rowdetailstemplate: { rowdetails: "<div id='grid' style='margin: 10px;'></div>", rowdetailsheight: 220, rowdetailshidden: true },
                 //ready: function () {
                 //    $("#jqxgrid").jqxGrid('showrowdetails', 1);
                 //},
                 columns: [
-                      { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
-                      { text: 'ReservationNumber', datafield: 'ReservationNumber' },
-                      { text: 'StartDatetime', datafield: 'StartDatetime', filtertype: 'range', cellsrenderer: DateRenderWithTime },
-                      { text: 'EndDatetime', datafield: 'EndDatetime', cellsrenderer: DateRenderWithTime },
-                      { text: 'First Name', datafield: 'FirstName' },
-                      { text: 'LastName', datafield: 'LastName' },
-                      { text: 'FPNumber', datafield: 'FPNumber' },
-                      { text: 'IsGuest', datafield: 'IsGuest', columntype: 'checkbox' },
-                      { text: 'Options', datafield: 'Options', columntype: 'checkbox' },
-                      { text: 'Status', datafield: 'ReservationStatusName' },
-                      { text: 'Updated By', datafield: 'UpdateExternalUserData' }
+                    { text: 'ReservationId', datafield: 'ReservationId', hidden: true },
+                    { text: 'ReservationNumber', datafield: 'ReservationNumber', width: '9%' },
+                    { text: 'StartDatetime', datafield: 'StartDatetime', filtertype: 'range', cellsrenderer: DateRenderWithTime, width: '9%' },
+                    { text: 'EndDatetime', datafield: 'EndDatetime', cellsrenderer: DateRenderWithTime, width: '9%' },
+                    { text: 'First Name', datafield: 'FirstName', width: '10%' },
+                    { text: 'LastName', datafield: 'LastName', width: '10%' },
+                    { text: 'FPNumber', datafield: 'FPNumber', width: '6%' },
+                    { text: 'IsGuest', datafield: 'IsGuest', columntype: 'checkbox', width: '4%' },
+                    { text: 'Options', datafield: 'Options', columntype: 'checkbox', width: '4%' },
+                    { text: 'Status', datafield: 'ReservationStatusName', width: '9%' },
+                    { text: 'Updated By', datafield: 'UpdateExternalUserData', width: '9%' },
+                    { text: 'Email', datafield: 'EmailAddress', width: '21%' }
                 ]
-            });
+             });
+
+
         }
 
         function loadGridOut(thisLocationId) {

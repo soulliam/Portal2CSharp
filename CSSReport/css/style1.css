@@ -8,7 +8,7 @@
 body { font: 14px/1.4 Georgia, serif; }
 #page-wrap { width: 800px; margin: 0 auto; }
 
-textarea { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; }
+textarea { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: vertical; }
 table { border-collapse: collapse; }
 table td, table th { border: 1px solid black; padding: 5px; }
 

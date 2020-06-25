@@ -10,7 +10,7 @@
         '<head> ' +
 	    '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> ' +
 	    '<title>Work Order</title> ' +
-	    '<link rel="stylesheet" type="text/css" href="CSSReport/css/style.css" /> ' +
+	    '<link rel="stylesheet" type="text/css" href="CSSReport/css/style1.css" /> ' +
 	    '<link rel="stylesheet" type="text/css" href="CSSReport/css/print.css" media="print" /> ' +
 	    '<script type="text/javascript" src="CSSReport/js/jquery-1.3.2.min.js"></script> ' +
 	    '<script type="text/javascript" src="CSSReport/js/example.js"></script> ' +
@@ -26,8 +26,8 @@
         '$("#txtMileage").val("' + $("#txtMileage").val() + '"); ' +
         '$("#txtDate").val("' + DateFormat($('#workOrderDate').jqxDateTimeInput('getDate')) + '"); ' +
         '$("#txtVin").val("' + $("#txtVINNumber").val() + '"); ' +
-        '$("#txtComplaint").val("' + $("#complaint").val().replace(/"/g, '"').replace(/"/g, '\\"') + '"); ' +
-        '$("#txtResolution").val("' + $("#resolution").val().replace(/"/g, '"').replace(/"/g, '\\"') + '"); ' +
+        '$("#txtComplaint").val("' + $("#complaint").val().replace(/"/g, '"').replace(/"/g, '\\"').replace(/[\r\n]+/gm, "\\n") + '"); ' +
+        '$("#txtResolution").val("' + $("#resolution").val().replace(/"/g, '"').replace(/"/g, '\\"').replace(/[\r\n]+/gm, "\\n") + '"); ' +
         '$("#txtHours").val("' + $("#txtHours").val() + '"); ' +
         '}); ' +
         'function PrintWorkOrder () { ' +

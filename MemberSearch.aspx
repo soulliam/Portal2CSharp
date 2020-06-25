@@ -48,6 +48,7 @@
         var glbHomeLocationId = 0;
         var searchCompaniesLoaded = false;
         var memberCompaniesLoaded = false;
+        var editMemberClick = false;
         
 
 
@@ -1032,6 +1033,7 @@
                     confirmButtonText: 'Yes, update!'
                 }).then(function () {
                     $('#jqxLoader').jqxLoader('open');
+                    editMemberClick = false;
                     updateMemberInfo();
                 }, function (dismiss) {
 
@@ -1581,6 +1583,7 @@
                 var thisNotes = $("#manualEditNote").val();
                 var thisPerformedByUserId = null;
                 var thisSubmittedByUserId = null;
+                var thisUpdateExternalUserData = $("#txtLoggedinUsername").val();
 
                 thisNotes = thisNotes.split("'").join("''");
 
@@ -1616,7 +1619,7 @@
                         "UpdateUserId": null,
                         "IsDeleted": null,
                         "CreateExternalUserData": null,
-                        "UpdateExternalUserData": null,
+                        "UpdateExternalUserData": thisUpdateExternalUserData,
                     },
                     dataType: "json",
                     success: function (Response) {
@@ -1810,37 +1813,103 @@
                 //    $("#MemberDetails").toggle();
                 //}
 
-                $('#jqxMemberInfoTabs').jqxTabs('select', 0);
+                if (editMemberClick == true) {
+                    swal({
+                        title: 'Did you mean to search.',
+                        text: "You pressed edit but did not save.  Do you want to cancel the search?",
+                        type: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Search!'
+                    }).then(function () {
+                        editMemberClick = false;
 
-                clearMemberInfo();
+                        $('#jqxMemberInfoTabs').jqxTabs('select', 0);
 
-                var thisParameters = GetSearchParameters();
+                        clearMemberInfo();
 
-                if ($("#jqxSearchGrid").is(":visible")) {
-                    if (thisParameters != "") {
-                        loadSearchResults(thisParameters);
-                    }       
-                }
-                else {
-                    if (thisParameters != "") {
-                        $("#MemberDetails").toggle();
-                        $("#jqxSearchGrid").toggle();
-                        loadSearchResults(thisParameters);
+                        var thisParameters = GetSearchParameters();
+
+                        if ($("#jqxSearchGrid").is(":visible")) {
+                            if (thisParameters != "") {
+                                loadSearchResults(thisParameters);
+                            }
+                        }
+                        else {
+                            if (thisParameters != "") {
+                                $("#MemberDetails").toggle();
+                                $("#jqxSearchGrid").toggle();
+                                loadSearchResults(thisParameters);
+                            }
+                        }
+                    })
+                } else {
+                    $('#jqxMemberInfoTabs').jqxTabs('select', 0);
+
+                    clearMemberInfo();
+
+                    var thisParameters = GetSearchParameters();
+
+                    if ($("#jqxSearchGrid").is(":visible")) {
+                        if (thisParameters != "") {
+                            loadSearchResults(thisParameters);
+                        }
+                    }
+                    else {
+                        if (thisParameters != "") {
+                            $("#MemberDetails").toggle();
+                            $("#jqxSearchGrid").toggle();
+                            loadSearchResults(thisParameters);
+                        }
                     }
                 }
                
             });
 
             $("#btnClear").on("click", function (event) {
-                $("div.FPR_SearchLeft input:text").val("");
-                $("#SearchFPNumber").val('');
-                $("#jqxSearchGrid").jqxGrid('clear');
-                
-                if ($("#jqxSearchGrid").is(":hidden")) {
-                    $("#MemberDetails").toggle();
-                    $("#jqxSearchGrid").toggle();
-                    clearMemberInfo();
+                if (editMemberClick == true) {
+                    swal({
+                        title: 'Did you mean to clear.',
+                        text: "You pressed edit but did not save.  Do you want to cancel the clear?",
+                        type: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Clear!'
+                    }).then(function () {
+                        editMemberClick = false;
+
+                        $("#editMember").val("Edit");
+                        $("#updateMemberInfo").css("visibility", "hidden");
+
+                        $("div.FPR_SearchLeft input:text").val("");
+                        $("#SearchFPNumber").val('');
+                        $("#jqxSearchGrid").jqxGrid('clear');
+
+                        if ($("#jqxSearchGrid").is(":hidden")) {
+                            $("#MemberDetails").toggle();
+                            $("#jqxSearchGrid").toggle();
+                            clearMemberInfo();
+                        }
+                    })
+                } else {
+
+                    $("#editMember").val("Edit");
+                    $("#updateMemberInfo").css("visibility", "hidden");
+
+                    $("div.FPR_SearchLeft input:text").val("");
+                    $("#SearchFPNumber").val('');
+                    $("#jqxSearchGrid").jqxGrid('clear');
+
+                    if ($("#jqxSearchGrid").is(":hidden")) {
+                        $("#MemberDetails").toggle();
+                        $("#jqxSearchGrid").toggle();
+                        clearMemberInfo();
+                    }
                 }
+
+                
             });
 
             $("#saveNote").on("click", function (event) {
@@ -1870,6 +1939,7 @@
                     $("#MailerCompanyCombo").attr("disabled", true);
                     $('#phoneGrid').jqxGrid({ editable: false });
 
+                    editMemberClick = false;
 
                 }
                 else {
@@ -1889,7 +1959,7 @@
                     //    $("#MailerCompanyCombo").attr("disabled", false);
                     //}
 
-                    
+                    editMemberClick = true;             
 
                     Security();
                 }
@@ -4323,6 +4393,8 @@
         function clearMemberInfo() {
             var parent;
 
+            $("#editMember").val("Edit");
+            $("#updateMemberInfo").css("visibility", "hidden");
             $('.tabMemberInfo').find('input:text').val('');
             $("#topPointsBalance").html("");
             $("#topPointsBalanceAccountBar").html("");
@@ -5346,7 +5418,7 @@
                                     <input type="button" id="1DayRedemption" value="1 Day" class="editor" />
                                     <input type="button" id="3DayRedemption" value="3 Day" class="editor" />
                                     <input type="button" id="1WeekRedemption" value="1 Week" class="editor" />
-                                    <input type="button" id="ReturnExpiredRedemption" value="Return Expired" class="RFR" />
+                                    <input type="button" id="ReturnExpiredRedemption" value="Return Expired" class="RFR MANAGER" />
                                 </div>
                             </div>
                         </div>

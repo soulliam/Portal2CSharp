@@ -164,8 +164,9 @@
                           { text: 'Points', datafield: 'Points', width: '5%' },
                           { text: 'DateOfRequest', datafield: 'DateOfRequest', width: '6%', cellsrenderer: DateRender },
                           { text: 'Certificate #', datafield: 'CertificateNumber', width: '10%' },
-                          { text: 'Notes', datafield: 'Notes', width: '44%' },
-                          { text: 'Explanation', datafield: 'Explanation', width: '10%' }
+                          { text: 'Notes', datafield: 'Notes', width: '34%' },
+                          { text: 'Explanation', datafield: 'Explanation', width: '10%' },
+                          { text: 'Submitted By', datafield: 'UpdateExternalUserData', width: '10%' }
                     ]
                 });
 
@@ -198,7 +199,8 @@
                     { name: 'DateOfRequest' },
                     { name: 'CertificateNumber' },
                     { name: 'Notes' },
-                    { name: 'Explanation' }
+                    { name: 'Explanation' },
+                    { name: 'UpdateExternalUserData' }
                 ],
 
                 id: 'ManualEditId',
@@ -228,8 +230,9 @@
                           { text: 'Points', datafield: 'Points', width: '5%' },
                           { text: 'DateOfRequest', datafield: 'DateOfRequest', width: '6%', cellsrenderer: DateRender },
                           { text: 'Certificate #', datafield: 'CertificateNumber', width: '10%' },
-                          { text: 'Notes', datafield: 'Notes', width: '44%' },
-                          { text: 'Explanation', datafield: 'Explanation', width: '10%' }
+                          { text: 'Notes', datafield: 'Notes', width: '34%' },
+                          { text: 'Explanation', datafield: 'Explanation', width: '10%' },
+                          { text: 'Submitted By', datafield: 'UpdateExternalUserData', width: '10%' }
                 ]
             });
         }
