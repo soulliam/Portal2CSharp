@@ -21,11 +21,12 @@ public partial class InsuranceIncidentReport : System.Web.UI.Page
             {
                 var thisADO = new clsADO();
 
-                string checkFolders = "Select l.LocationName + '-' + l.LocationGLCode as Location, 'PCA ' + i.IncidentNumber as Incident, i.IncidentNumber + '-' + c.ClaimNumber as Claim, 'WC ' + wc.WCClaimNumber as WC, wc.WCClaimNumber + '-01' as WCClaim " +
-                                        "from InsurancePCA.dbo.Incident i " +
-                                        "Left Outer Join InsurancePCA.dbo.Location l on i.LocationId = l.LocationID " +
-                                        "Left Outer Join InsurancePCA.dbo.Claim c on i.IncidentID = c.IncidentID " +
-                                        "Left Outer Join InsurancePCA.dbo.WCClaim wc on c.ClaimID = wc.ClaimID " +
+                string checkFolders = "SELECT l.LocationName + '-' + l.LocationGLCode AS Location, 'PCA ' + i.IncidentNumber AS Incident, i.IncidentNumber + '-' + c.ClaimNumber AS Claim, 'WC ' + wc.WCClaimNumber AS WC, wc.WCClaimNumber + '-01' AS WCClaim " +
+                                        "FROM InsurancePCA.dbo.Incident AS i " +
+                                        "LEFT OUTER JOIN InsurancePCA.dbo.Location AS l ON i.LocationId = l.LocationID " +
+                                        "LEFT OUTER JOIN InsurancePCA.dbo.Claim AS c ON i.IncidentID = c.IncidentID " +
+                                        "Left Outer JOIN InsurancePCA.dbo.WCInvestigation AS wci ON c.ClaimID = wci.ClaimID " +
+                                        "LEFT OUTER JOIN InsurancePCA.dbo.WCClaim AS wc ON wci.WCInvestigationID = wc.WCInvestigationID " +
                                         "Where i.IncidentID = " + IncidentID;
                 string conn = thisADO.getLocalConnectionString();
 

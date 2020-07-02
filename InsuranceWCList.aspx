@@ -163,6 +163,7 @@
             {
                 datafields: [
                     { name: 'WCClaimID' },
+                    { name: 'WCInvestigationNumber'},
                     { name: 'WCClaimNumber' },
                     { name: 'CompanionIncident' },
                     { name: 'IncidentNumber' },
@@ -181,6 +182,14 @@
                 data: data,
                 url: url,
             };
+
+            var InvestigationLinkRenderer = function (row, column, value) {
+                var data = $('#jqxgrid').jqxGrid('getrowdata', row);
+
+                html = "<div style='margin-top:9px'><a href='./InsuranceWCInvestigation.aspx?WCClaimID=" + data.WCClaimID + "' target='_blank'>" + data.WCInvestigationNumber + "</a></div>"
+
+                return html;
+            }
 
             var ClaimLinkRenderer = function (row, column, value) {
                 var data = $('#jqxgrid').jqxGrid('getrowdata', row);
@@ -232,6 +241,7 @@
                 columnsresize: true,
                 columns: [
                         { text: 'WCClaimID', datafield: 'WCClaimID', hidden: true },
+                        { text: 'Investigation Number', datafield: 'WCInvestigationNumber', cellsrenderer: InvestigationLinkRenderer },
                         { text: 'WC Claims #', datafield: 'WCClaimNumber', cellsrenderer: ClaimLinkRenderer },
                         { text: 'Companion Incident', datafield: 'CompanionIncident', cellsrenderer: IncidentLinkRenderer },
                         { text: 'Date of Injury', datafield: 'WCIncidentDate', cellsrenderer: DateRender },
