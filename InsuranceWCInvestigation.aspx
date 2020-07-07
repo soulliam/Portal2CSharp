@@ -32,6 +32,7 @@
 
     <script>
         var witnessArray = [];
+        var group = '<%= Session["groupList"] %>';
 
         $(document).ready(function () {
             $(document).on('keypress', function (e) {
@@ -118,14 +119,38 @@
                 }
             });
 
-            loadLocations('#employeeWorkLocation');
-            loadLocations('#accidentLocation');
             $("#accidentInjuryDate").jqxDateTimeInput({ width: '175px', height: '25px', formatString: 'd' });
             $("#accidentEmployerNotifiedDate").jqxDateTimeInput({ width: '175px', height: '25px', formatString: 'd' });
             $("#accidentInjuryTime").jqxDateTimeInput({ width: '175px', height: '25px', formatString: 'h:mm tt', showTimeButton: true, showCalendarButton: false });
             $("#accidentShiftBeginTime").jqxDateTimeInput({ width: '160px', height: '25px', formatString: 'h:mm tt', showTimeButton: true, showCalendarButton: false });
             $("#employeeDateHire").jqxDateTimeInput({ width: '175px', height: '25px', formatString: 'd' });
             $("#employeeDateReturned").jqxDateTimeInput({ width: '160px', height: '25px', formatString: 'd' });
+
+            const params = new URLSearchParams(window.location.search);
+            $("#WCClaimID").val(params.get("WCClaimID"));
+
+            $.when(loadLocations('#employeeWorkLocation').then(function (thisData) {
+                    $.when(loadLocations('#accidentLocation').then(function (thisData) {
+                        if ($("#WCClaimID").val() == '') {
+                            //alert("Mike");
+                        } else {
+                            //alert($("#WCClaimID").val());
+                        }
+                            //thisIncidentID = $("#IncidentID").val();
+                            //loadIncident(thisIncidentID);
+                            //loadIncidentPCAVehicles(thisIncidentID);
+                            //loadIncidentWitness(thisIncidentID);
+                            //loadOtherInvolved(thisIncidentID);
+                        }).fail(function (error) {
+                            alert("error " + error);
+                        })
+                    );
+                }).fail(function (error) {
+                    alert("error " + error);
+                })
+            );
+
+            Security();
         });
 
         function loadLocations(element) {
@@ -140,7 +165,7 @@
             //var url = "http://localhost:52839/api/InsuranceLocations/GetUserLocations/" + locationString;
             var url = $("#localApiDomain").val() + "InsuranceLocations/GetUserLocations/" + locationString;
 
-            $.ajax({
+            return $.ajax({
                 type: "GET",
                 url: url,
                 dataType: "json",
@@ -964,7 +989,7 @@
         
 
         <div align=center>
-
+        <input type="text" id="WCClaimID" style ="display:none" />
         <table id="mainTable" border=0 cellpadding=0 cellspacing=0 width=794 style='border-collapse:
          collapse;table-layout:fixed;width:598pt'>
          <col width=18 style='mso-width-source:userset;mso-width-alt:658;width:14pt'>
