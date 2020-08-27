@@ -440,10 +440,16 @@ function DatesUTCOffSet(thisDate) {
 }
 
 //Difference between dates in Days
-function thisDateDiff (date1, date2) {
-    dt1 = new Date(date1);
-    dt2 = new Date(date2);
-    return Math.floor((Date.UTC(dt2.getFullYear(), dt2.getMonth(), dt2.getDate()) - Date.UTC(dt1.getFullYear(), dt1.getMonth(), dt1.getDate()) ) /(1000 * 60 * 60 * 24));
+function thisDateDiff(date1, date2, Hours) {
+    if (Hours == "Hours") {
+        var diff = (date2.getTime() - date1.getTime()) / 1000;
+        diff /= (60 * 60);
+        return Math.abs(Math.round(diff));
+    } else {
+        dt1 = new Date(date1);
+        dt2 = new Date(date2);
+        return Math.floor((Date.UTC(dt2.getFullYear(), dt2.getMonth(), dt2.getDate()) - Date.UTC(dt1.getFullYear(), dt1.getMonth(), dt1.getDate())) / (1000 * 60 * 60 * 24));
+    }
 }
 
 //formats date to 10/16/2016 type
@@ -593,6 +599,9 @@ function loadPoints(thisAccountId, textInput) {
 }
 
 function getCompanyName(CompanyID, jqxinput) {
+    if (CompanyID == null) {
+        return 0;
+    }
     
     var url = $("#localApiDomain").val() + "CompanyDropDowns/GetCompanyName/" + CompanyID;
     //var url = "http://localhost:52839/api/CompanyDropDowns/GetCompanyName/" + CompanyID;

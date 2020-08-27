@@ -6,6 +6,11 @@
             font-size:20px;
             font-weight: bold;
         }
+
+        #popupHistory *{
+            font-size:15px;
+            font-weight: bold;
+        }
         
         #popupRedemptionList *{
             font-size:20px;
@@ -105,6 +110,7 @@
             $("#newEmailCancel").jqxButton({ width: 100, height: 60 });
             $("#newEmailSubmit").jqxButton({ width: 100, height: 60 });
             $("#showRedemptionList").jqxButton({ width: 175, height: 60 });
+            $("#showHistory").jqxButton({ width: 175, height: 60 });
             $("#closeRedemptionList").jqxButton({ width: 100, height: 60 });
             $("#cancelExistingRedemption").jqxButton({ width: 100, height: 50 }); 
             $("#cancelNewRedemption").jqxButton({ width: 100, height: 50 });
@@ -136,6 +142,10 @@
 
             $("#btnInstructions").on("click", function (event) {
                 showInstructions();
+            });
+
+            $("#showHistory").on("click", function (event) {
+                showHistory();
             });
 
             $("#cancelInstructions").on("click", function (event) {
@@ -471,6 +481,18 @@
                 thisCompanyId = null
             }
 
+            var DOtest = DOTest();
+
+            if (DOtest != "") {
+                var url = $("#localApiDomain").val() + "RateLists/GetRatesDO/";
+                //var url = "http://localhost:52839/api/RateLists/GetRatesDO/";
+                $("#RateLabel").html("DO Rate");
+            } else {
+                var url = $("#localApiDomain").val() + "RateLists/GetRates/" + thisCompanyId;
+                //var url = "http://localhost:52839/api/RateLists/GetRates/" + thisCompanyId;
+                $("#RateLabel").html("Rate");
+            }
+
             var rateSource =
             {
                 async: true,
@@ -481,8 +503,7 @@
                     { name: 'LocationId' },
                     { name: 'RateDisplay' }
                 ],
-                url: $("#localApiDomain").val() + "RateLists/GetRates/" + thisCompanyId,
-                //url: "http://localhost:52839/api/RateLists/GetRates/" + thisCompanyId,
+                url: url,
             };
 
             var rateSourceAdapter = new $.jqx.dataAdapter(rateSource);
@@ -500,74 +521,31 @@
             });
         }
 
-        //function loadRate() {
-        //    $("#memberRate").jqxComboBox('clearSelection');
-        //    $("#memberRate").jqxComboBox('clear');
-        //    var parent = $("#memberRate").parent();
-        //    $("#memberRate").jqxComboBox('destroy');
-        //    $("<div id='memberRate'></div>").appendTo(parent);
+        function DOTest() {
+            var thisMemberId = $("#MemberId").html();
 
+            var url = $("#localApiDomain").val() + "RateLists/MemberHasDO/" + thisMemberId;
+            //var url = "http://localhost:52839/api/RateLists/MemberHasDO/" + thisMemberId;
 
-        //    //set rate combobox
-        //    var rateSource =
-        //    {
-        //        async: true,
-        //        width: '100%',
-        //        height: 35,
-        //        datatype: "json",
-        //        type: "Get",
-        //        root: "data",
-        //        datafields: [
-        //            { name: 'LocationId' },
-        //            { name: 'NameOfLocation' }
-        //        ],
-        //        url: $("#localApiDomain").val() + "Locations/Locations/",
+            var thisReturn = "";
 
-        //    };
-        //    var rateDataAdapter = new $.jqx.dataAdapter(rateSource);
-        //    $('#memberRate').jqxComboBox({
-        //        selectedIndex: 0, source: rateDataAdapter, displayMember: "NameOfLocation", valueMember: "LocationId", height: 24, width: '100%',
-        //        renderer: function (index, label, value) {
-        //            var rateObj = { rate: "0" };
-        //            rateObj = { rateCode: "0" };
-        //            rateObj = { locationList: "" };
+            $.ajax({
+                async: false,
+                type: "GET",
+                url: url,
+                dataType: "json",
+                success: function (thisData) {
+                    if (thisData.length > 0) {
+                        thisReturn = thisData[0].MemberId;
+                    }
+                },
+                error: function (request, status, error) {
+                    alert(error);
+                }
+            });
 
-        //            getRate(rateObj, value);
-
-        //            var homeLocations = String(rateObj.locationList).split("_");
-
-        //            if (homeLocations.indexOf(String(value)) > -1) {
-        //                var table = '<div style="color:black">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + ' **</div>';
-        //            } else {
-        //                var table = '<div style="color:black">' + label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + '</div>';
-        //            }
-
-        //            return table;
-        //        },
-        //        renderSelectedItem: function (index, item) {
-        //            var rateObj = { rate: "0" };
-        //            rateObj = { rateCode: "0" };
-        //            rateObj = { locationList: "" };
-
-        //            getRate(rateObj, item.value);
-
-        //            var homeLocations = String(rateObj.locationList).split("_");
-
-        //            if (homeLocations.indexOf(String(item.value)) > -1) {
-        //                var table = item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate + ' **';
-        //            } else {
-        //                var table = item.label + ' - ' + rateObj.rateCode + ' - ' + rateObj.rate
-        //            }
-
-        //            return table;
-        //        }
-        //    });
-
-        //    $("#memberRate").on('bindingComplete', function (event) {
-        //        $("#memberRate").jqxComboBox('selectItem', $("#boothLocation").val());
-        //    });
-            
-        //}
+            return thisReturn;
+        }
 
         function getRate(obj, thisLocationId) {
             //var thisCompanyId = $("#MailerCompanyCombo").jqxComboBox('getSelectedItem').value;
@@ -1108,6 +1086,65 @@
             $("#popupInstructions").jqxWindow('open');
         }
 
+        function showHistory(thisRedemptionId) {
+
+            $("#popupHistory").css('display', 'block');
+            $("#popupHistory").css('visibility', 'hidden');
+
+            $("#popupHistory").jqxWindow({ position: { x: '3%', y: '3%' } });
+            $('#popupHistory').jqxWindow({ isModal: true });
+            $("#popupHistory").css("visibility", "visible");
+            $('#popupHistory').jqxWindow({ height: '660px', width: '1180px' });
+            $('#popupHistory').jqxWindow({ maxHeight: '660px', maxWidth: '1180px' });
+            $('#popupHistory').jqxWindow({ showCloseButton: true });
+            $('#popupHistory').jqxWindow({ animationType: 'combined' });
+            $('#popupHistory').jqxWindow({ showAnimationDuration: 300 });
+            $('#popupHistory').jqxWindow({ closeAnimationDuration: 500 });
+            $("#popupHistory").jqxWindow('open');
+        }
+
+        function loadHistory() {
+            var parent = $("#jqxHistoryGrid").parent();
+            $("#jqxHistoryGrid").jqxGrid('destroy');
+            $("<div id='jqxHistoryGrid'></div>").appendTo(parent);
+
+            var thisMemberId = $("#MemberId").html();
+
+            var url = $("#localApiDomain").val() + "Audits/GetDOAudits/" + thisMemberId;
+            //var url = "http://localhost:52839/api/Audits/GetDOAudits/" + thisMemberId;
+
+            var source =
+            {
+                datafields: [
+                    { name: 'MemberId' },
+                    { name: 'DataChanged' },
+                    { name: 'OldValue' },
+                    { name: 'NewValue' },
+                    { name: 'changeDate' }
+                ],
+
+                type: 'Get',
+                datatype: "json",
+                url: url
+            };
+
+            // create jqxNotesGrid
+            $("#jqxHistoryGrid").jqxGrid(
+                {
+                    width: '100%',
+                    height: 600,
+                    rowsheight: 60,
+                    source: source,
+                    columns: [
+                        { text: 'MemberId', datafield: 'MemberId', hidden: true },
+                        { text: 'Data Changed', datafield: 'DataChanged', width: '49%' },
+                        { text: 'Old Value', datafield: 'OldValue', width: '17%' },
+                        { text: 'New Value', datafield: 'NewValue', width: '17%' },
+                        { text: 'Date Changed', datafield: 'changeDate', width: '17%', cellsrenderer: DateTimeRender }
+                    ]
+                });
+        }
+
         function loadMember(PageMemberID) {
             var locationId = 0;
 
@@ -1141,6 +1178,7 @@
                     var acctId = $("#memberAcctId").html();
                     loadPoints(acctId, $("#acctPoints"));
                     loadCards();
+                    loadHistory();
                     $("#redemptionRow").css("visibility", "visible");
                 }
             });
@@ -1277,7 +1315,7 @@
                 <div style="margin-top:10px">
                     <table style="width:100%;" >
                         <tr>
-                            <td style="width:30%">Rate:</td>
+                            <td id="RateLabel" style="width:30%">Rate:</td>
                             <td style="width:70%"><div id="memberRate" style="float:right;" ></div></td>
                         </tr>
                     </table>
@@ -1291,6 +1329,7 @@
             <div style="margin-top:300px;width = 100%;">
                 <div style="float:left;margin-left:50px"><input type="button" id="changeEmail" value="Update Email"  /></div>
                 <div><input type="button" id="showRedemptionList" value="Redemptions" style="position:absolute;margin-left:50px;"  /></div>
+                <div><input type="button" id="showHistory" value="Expirations" style="position:absolute;margin-left:275px;"  /></div>
                 <div style="float:right;margin-right:50px"><input type="button" id="closeMemberInfo" value="Back" /></div>
             </div>
         </div>
@@ -1357,6 +1396,13 @@
             <div>
                 <input type="button" id="cancelInstructions" value="Close" />
             </div>
+        </div>
+    </div>
+
+    <div id="popupHistory" style="display: none;">
+        <div>History</div>
+        <div>
+            <div id="jqxHistoryGrid" style="margin-top:5px;"></div>
         </div>
     </div>
 

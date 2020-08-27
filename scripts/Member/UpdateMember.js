@@ -1,12 +1,13 @@
 ﻿function saveUpdateMemberInfo(phoneType, phoneNumber, thisMemberId, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2,
-                                     thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, thisMarketingMailerCode, RFR, IsActive) {
+    thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, thisMarketingMailerCode,
+    RFR, IsActive, thisOldDiscountOrganizationLocationId, thisMemberDiscountOrganizationId, thisMembershipNumber, thisDiscountOrganizationId, thisExpireDate, thisDiscountOrganizationStatus ) {
     if (RFR == true) {
         url = $("#apiDomain").val() + "members/" + thisMemberId + "?SendEmail=false";
     } else {
         url = $("#apiDomain").val() + "members/" + thisMemberId;
     }
 
-    var thisTEST = JSON.stringify({
+    var TESTViewBody = JSON.stringify({
         "UserName": thisUserName,
         "FirstName": thisFirstName,
         "LastName": thisLastName,
@@ -27,7 +28,13 @@
         "CompanyId": thisCompanyId,
         "MarketingCode": thisMarketingCode,
         "CorporateDiscountCode": thisMarketingMailerCode,
-        "IsActive": IsActive
+        "IsActive": IsActive,
+        "OldDiscountOrganizationLocationId": thisOldDiscountOrganizationLocationId,
+        "MemberDiscountOrganizationId": thisMemberDiscountOrganizationId,
+        "MembershipNumber": thisMembershipNumber,
+        "DiscountOrganizationId": thisDiscountOrganizationId,
+        "ExpireDate": thisExpireDate,
+        "DiscountOrganizationStatus": thisDiscountOrganizationStatus
     });
 
     //data = JSON.stringify({
@@ -91,7 +98,13 @@
                     "CompanyId": thisCompanyId,
                     "MarketingCode": thisMarketingCode,
                     "CorporateDiscountCode": thisMarketingMailerCode,
-                    "IsActive": IsActive
+                    "IsActive": IsActive,
+                    "OldDiscountOrganizationLocationId": thisOldDiscountOrganizationLocationId,
+                    "MemberDiscountOrganizationId": thisMemberDiscountOrganizationId,
+                    "MembershipNumber": thisMembershipNumber,
+                    "DiscountOrganizationId": thisDiscountOrganizationId,
+                    "ExpireDate": thisExpireDate,
+                    "DiscountOrganizationStatus": thisDiscountOrganizationStatus
                 }),
                 dataType: "json",
                 success: function () {
@@ -145,7 +158,13 @@
                     "CompanyId": thisCompanyId,
                     "MarketingCode": thisMarketingCode,
                     "CorporateDiscountCode": thisMarketingMailerCode,
-                    "IsActive": IsActive
+                    "IsActive": IsActive,
+                    "OldDiscountOrganizationLocationId": thisOldDiscountOrganizationLocationId,
+                    "MemberDiscountOrganizationId": thisMemberDiscountOrganizationId,
+                    "MembershipNumber": thisMembershipNumber,
+                    "DiscountOrganizationId": thisDiscountOrganizationId,
+                    "ExpireDate": thisExpireDate,
+                    "DiscountOrganizationStatus": thisDiscountOrganizationStatus
                 }),
                 dataType: "json",
                 success: function () {
@@ -202,7 +221,13 @@
                     "CompanyId": thisCompanyId,
                     "MarketingCode": thisMarketingCode,
                     "CorporateDiscountCode": thisMarketingMailerCode,
-                    "IsActive": IsActive
+                    "IsActive": IsActive,
+                    "OldDiscountOrganizationLocationId": thisOldDiscountOrganizationLocationId,
+                    "MemberDiscountOrganizationId": thisMemberDiscountOrganizationId,
+                    "MembershipNumber": thisMembershipNumber,
+                    "DiscountOrganizationId": thisDiscountOrganizationId,
+                    "ExpireDate": thisExpireDate,
+                    "DiscountOrganizationStatus": thisDiscountOrganizationStatus
                 }),
                 dataType: "json",
                 success: function () {
@@ -263,7 +288,13 @@
                     "CompanyId": thisCompanyId,
                     "MarketingCode": thisMarketingCode,
                     "CorporateDiscountCode": thisMarketingMailerCode,
-                    "IsActive": IsActive
+                    "IsActive": IsActive,
+                    "OldDiscountOrganizationLocationId": thisOldDiscountOrganizationLocationId,
+                    "MemberDiscountOrganizationId": thisMemberDiscountOrganizationId,
+                    "MembershipNumber": thisMembershipNumber,
+                    "DiscountOrganizationId": thisDiscountOrganizationId,
+                    "ExpireDate": thisExpireDate,
+                    "DiscountOrganizationStatus": thisDiscountOrganizationStatus
                 }),
                 dataType: "json",
                 success: function () {
@@ -328,7 +359,13 @@
                     "CompanyId": thisCompanyId,
                     "MarketingCode": thisMarketingCode,
                     "CorporateDiscountCode": thisMarketingMailerCode,
-                    "IsActive": IsActive
+                    "IsActive": IsActive,
+                    "OldDiscountOrganizationLocationId": thisOldDiscountOrganizationLocationId,
+                    "MemberDiscountOrganizationId": thisMemberDiscountOrganizationId,
+                    "MembershipNumber": thisMembershipNumber,
+                    "DiscountOrganizationId": thisDiscountOrganizationId,
+                    "ExpireDate": thisExpireDate,
+                    "DiscountOrganizationStatus": thisDiscountOrganizationStatus
                 }),
                 dataType: "json",
                 success: function () {

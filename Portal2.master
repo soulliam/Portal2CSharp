@@ -9,7 +9,7 @@
     
     <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
-    <script type="text/javascript" src="scripts/common.js"></script>
+    <script type="text/javascript" src="scripts/common.js?v=1"></script>
 
     
     <link rel="stylesheet" href="scripts/bootstrap.min.css">

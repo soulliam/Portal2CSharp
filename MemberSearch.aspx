@@ -7,7 +7,7 @@
     
     <link rel="stylesheet" href="/jqwidgets/styles/jqx.base.css" type="text/css" />
 
-    <script type="text/javascript" src="scripts/Member/UpdateMember.js"></script>
+    <script type="text/javascript" src="scripts/Member/UpdateMember.js?v=1"></script>
     <script type="text/javascript" src="scripts/Member/MemberReservation.js"></script>
 
     <script type="text/javascript" src="jqwidgets/jqxcore.js"></script>
@@ -37,6 +37,7 @@
     <script type="text/javascript" src="jqwidgets/jqxgrid.edit.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxdropdownbutton.js"></script>
     <script type="text/javascript" src="jqwidgets/jqxinput.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxMaskedInput.js"></script>
 
     <script type="text/javascript">
         var PageMemberID = 0;
@@ -54,6 +55,9 @@
 
         $(document).ready(function () {
             var lastKey;
+
+            //input masks
+            $("#DOMemberNumber").jqxMaskedInput({ mask: '###-###-##########' });
 
             //Hide search bar if you are not in one of these groups Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager Portal_Marketing Portal_Auditadmin
 
@@ -102,6 +106,7 @@
             // Create jqxMemberInfoTabs.***************************************************************
             $('#jqxMemberInfoTabs').jqxTabs({ width: '100%', position: 'top' });
             $('#settings div').css('margin-top', '10px');
+            $('#jqxAddressDOTab').jqxTabs({ width: '100%', height: '350px', position: 'top' });
 
             $('#jqxMemberInfoTabs').on('selected', function (event) {
 
@@ -127,7 +132,7 @@
                     $('#jqxMemberInfoTabs').jqxTabs({ animationType: 'none' });
                 }
             });
-
+            
             // Create jqxAccountTabs.***************************************************************
             $('#jqxAccountTabs').jqxTabs({ width: '100%', height: 570, position: 'top' });
             $('#settings div').css('margin-top', '10px');
@@ -166,7 +171,6 @@
             //#endregion
 
             //#region ButtonSetup
-
                 $("#btnSearch").jqxButton();
                 $("#btnClear").jqxButton();
 
@@ -1040,96 +1044,6 @@
                 });
             });
 
-            function updateMemberInfo () {
-                var thisUserName = $("#UserName").val();
-                var thisFirstName = $("#FirstName").val();
-                var thisLastName = $("#LastName").val();
-                var thisSuffix = "";
-                var thisEmailAddress = $("#EmailAddress").val();
-                var thisStreetAddress = $("#StreetAddress").val();
-                var thisStreetAddress2 = $("#StreetAddress2").val();
-                var thisCityName = $("#CityName").val();
-                var thisMarketingMailerCode = $("#MarketingMailerCode").val();
-
-                if ($("#stateCombo").jqxComboBox('getSelectedIndex') == -1) {
-                    var thisStateId = 0;
-                } else {
-                    var thisStateId = $("#stateCombo").jqxComboBox('getSelectedItem').value;
-                }
-
-                var thisZip = $("#Zip").val();
-                var thisCompany = $("#Company").val();
-
-                if ($("#titleCombo").jqxComboBox('getSelectedIndex') == 0 || $("#titleCombo").jqxComboBox('getSelectedIndex') == -1) {
-                    var thisTitleId = 0;
-                } else {
-                    var thisTitleId = $('#titleCombo').jqxComboBox('selectedIndex');;
-                }
-
-                var thisMarketingCode =  $("#MarketingCode").val();
-                var thisMemberId = $("#MemberId").val(); 
-
-                if ($("#homeLocationCombo").jqxComboBox('getSelectedIndex') == 0 || $("#homeLocationCombo").jqxComboBox('getSelectedIndex') == -1) {
-                    var thisLocationId = 0;
-                } else {
-                    var thisLocationId = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
-                }
-
-                if ($("#MailerCompanyComboID").val() == "" || $("#MailerCompanyCombo").val() == "") {
-                    var thisCompanyId = "";
-                } else {
-                    var thisCompanyId = $("#MailerCompanyComboID").val();
-                }
-               
-                var first = true;
-                var rows = $('#phoneGrid').jqxGrid('getrows');
-                
-                if (rows.length > 4) {
-                    swal("Only four phone numbers permitted!")
-                    return null;
-                }
-
-                var phoneType = new Array();
-                var phoneNumber = new Array();
-
-                for (var i = 0; i < rows.length; i++) {
-                    phoneType[i] = rows[i].PhoneTypeId;
-                    phoneNumber[i] = rows[i].Number;
-                }
-
-                var isRFR = false;
-
-                if (group.indexOf("Portal_RFR") > 0) {
-                    isRFR = true;
-                }
-
-                var thisGetEmail = $("#GetEmail").prop("checked");
-                var thisTravelAlert = $("#TravelAlert").prop("checked");
-                var thisEmailReceipts = $("#EmailReceipts").prop("checked");
-                var thisRedeemEmail = $("#RedeemEmail").prop("checked");
-                var thisProfileUpdateEmail = $("#ProfileUpdateEmail").prop("checked");
-                var thisReservationChangeEmail = $("#ReservationChangeEmail").prop("checked");
-                var thisReservationConfirmationEmail = $("#ReservationConfirmationEmail").prop("checked");
-                var thisReservationReminder = $("#ReservationReminder").prop("checked");
-
-                var thisIsActive = $("#IsActive").prop("checked");
-
-                saveEmailPrefs(thisMemberId, thisEmailReceipts, thisGetEmail, thisTravelAlert, thisRedeemEmail, thisProfileUpdateEmail, thisReservationChangeEmail, thisReservationConfirmationEmail, thisReservationReminder)
-
-                saveUpdateMemberInfo(phoneType, phoneNumber, thisMemberId, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2,
-                                     thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, thisMarketingMailerCode, isRFR, thisIsActive);
-
-                var thisLoggedinUsername = $("#txtLoggedinUsername").val();
-
-
-                PageMethods.LogMemberUpdate(thisLoggedinUsername, thisMemberId, '', '');
-
-                //SaveMarketingCode();
-
-                $("#editMember").trigger("click");
-                
-            };
-
             //show add card popup
             $("#addCard").on("click", function (event) {
                 $("#addCardWindow").css('display', 'block');
@@ -1931,6 +1845,7 @@
                     jQuery("#tabMemberInfo").find("input[type=text]").attr("disabled", true);
                     $("#stateCombo").jqxComboBox({ disabled: true });
                     $("#homeLocationCombo").jqxComboBox({ disabled: true });
+                    $("#DOCombo").jqxComboBox({ disabled: true });
                     $("#editMember").val("Edit");
                     $("#updateMemberInfo").css("visibility", "hidden");
                     $("#addPhone").jqxButton({ disabled: true });
@@ -1938,7 +1853,7 @@
                     //$("#MailerCompanyCombo").jqxComboBox({ disabled: true });
                     $("#MailerCompanyCombo").attr("disabled", true);
                     $('#phoneGrid').jqxGrid({ editable: false });
-
+                    $("#DOExpire").attr("disabled", true);
                     editMemberClick = false;
 
                 }
@@ -1953,11 +1868,14 @@
                     $("#addPhone").jqxButton({ disabled: false });
                     $("#deleteEmail").jqxButton({ disabled: false });
                     $('#phoneGrid').jqxGrid({ editable: true });
+                    $("#DOCombo").jqxComboBox({ disabled: false });
+                    $("#DOExpire").attr("disabled", false); 
 
-                    //if (group.indexOf("RFR") > -1 || group.indexOf("Portal_Superadmin") > -1) {
-                    //    //$("#MailerCompanyCombo").jqxComboBox({ disabled: false });
-                    //    $("#MailerCompanyCombo").attr("disabled", false);
-                    //}
+                    //stay disabled
+                    $("#assignedDO").attr('disabled', 'disabled');
+                    $("#assignedDOExpire").attr('disabled', 'disabled');
+                    //______________________________________________________________
+
 
                     editMemberClick = true;             
 
@@ -2112,7 +2030,7 @@
             $("#deleteEmail").jqxButton({ disabled: true });
             //$("#MailerCompanyCombo").jqxComboBox({ disabled: true });
             $("#MailerCompanyCombo").attr("disabled", true);
-            
+            $("#DOCombo").jqxComboBox({ disabled: true });
 
             // Setup Radio Buttons for simple Receipt Entry form+++++++++++++++++++++++++++++++++++++++++++++
             $("#jqxRadioTypeReceipt").jqxRadioButton({ groupName: 'ReceiptEntry', width: 100, height: 24, checked: true });
@@ -2131,6 +2049,7 @@
             loadReceiptLocationCombo();
             loadmanualEditTypesCombo();
             loadStatus();
+            loadDOCombo();
 
 
             //Security code is in scripts/common.js
@@ -2145,7 +2064,170 @@
             //#endregion
 
         });
-        
+
+        function updateMemberInfo() {
+            var thisUserName = $("#UserName").val();
+            var thisFirstName = $("#FirstName").val();
+            var thisLastName = $("#LastName").val();
+            var thisSuffix = "";
+            var thisEmailAddress = $("#EmailAddress").val();
+            var thisStreetAddress = $("#StreetAddress").val();
+            var thisStreetAddress2 = $("#StreetAddress2").val();
+            var thisCityName = $("#CityName").val();
+            var thisMarketingMailerCode = $("#MarketingMailerCode").val();
+            var thisGetEmail = $("#GetEmail").prop("checked");
+            var thisTravelAlert = $("#TravelAlert").prop("checked");
+            var thisEmailReceipts = $("#EmailReceipts").prop("checked");
+            var thisRedeemEmail = $("#RedeemEmail").prop("checked");
+            var thisProfileUpdateEmail = $("#ProfileUpdateEmail").prop("checked");
+            var thisReservationChangeEmail = $("#ReservationChangeEmail").prop("checked");
+            var thisReservationConfirmationEmail = $("#ReservationConfirmationEmail").prop("checked");
+            var thisReservationReminder = $("#ReservationReminder").prop("checked");
+            var thisIsActive = $("#IsActive").prop("checked");
+            var thisOldDiscountOrganizationLocationId = 0;
+            var thisMemberDiscountOrganizationId = $("#MemberDiscountOrganizationId").val();
+            var thisMembershipNumber = $("#DOMemberNumber").val();
+            var thisDiscountOrganizationId = $("#DOCombo").val();
+            var thisExpireDate = $("#DOExpire").val();
+            var thisDiscountOrganizationStatus = true;
+
+            if ($("#stateCombo").jqxComboBox('getSelectedIndex') == -1) {
+                var thisStateId = 0;
+            } else {
+                var thisStateId = $("#stateCombo").jqxComboBox('getSelectedItem').value;
+            }
+
+            var thisZip = $("#Zip").val();
+            var thisCompany = $("#Company").val();
+
+            if ($("#titleCombo").jqxComboBox('getSelectedIndex') == 0 || $("#titleCombo").jqxComboBox('getSelectedIndex') == -1) {
+                var thisTitleId = 0;
+            } else {
+                var thisTitleId = $('#titleCombo').jqxComboBox('selectedIndex');;
+            }
+
+            var thisMarketingCode = $("#MarketingCode").val();
+            var thisMemberId = $("#MemberId").val();
+
+            if ($("#homeLocationCombo").jqxComboBox('getSelectedIndex') == 0 || $("#homeLocationCombo").jqxComboBox('getSelectedIndex') == -1) {
+                var thisLocationId = 0;
+            } else {
+                var thisLocationId = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
+            }
+
+            if ($("#MailerCompanyComboID").val() == "" || $("#MailerCompanyCombo").val() == "") {
+                var thisCompanyId = "";
+            } else {
+                var thisCompanyId = $("#MailerCompanyComboID").val();
+            }
+
+            var first = true;
+            var rows = $('#phoneGrid').jqxGrid('getrows');
+
+            if (rows.length > 4) {
+                swal("Only four phone numbers permitted!")
+                return null;
+            }
+
+            var phoneType = new Array();
+            var phoneNumber = new Array();
+
+            for (var i = 0; i < rows.length; i++) {
+                phoneType[i] = rows[i].PhoneTypeId;
+                phoneNumber[i] = rows[i].Number;
+            }
+
+            var isRFR = false;
+
+            if (group.indexOf("Portal_RFR") > 0) {
+                isRFR = true;
+            }
+
+            if ($("#DOCombo").val() != '') {
+                var DONumber = $("#DOMemberNumber").val();
+                if (DONumber.includes("_")) {
+                    swal("DO Number must be 16 numbers long");
+                    $('#jqxLoader').jqxLoader('close');
+                    return;
+                }
+
+                if ($("#DOExpire").val() == '') {
+                    swal("Pick a Discount Orgnization Expiration Date.");
+                    $('#jqxLoader').jqxLoader('close');
+                    return;
+                }
+
+                $.when(DORateCheck(thisMemberId, thisCompanyId, thisDiscountOrganizationId, thisMarketingMailerCode, thisLocationId, thisEmailAddress).then(function (thisData) {
+                    if (thisData.result.data.IsPromoCode == false && thisData.result.data.IsDiscount == false  ) {
+                        updateMemberInfoFinal(thisMemberId, thisEmailReceipts, thisTravelAlert, thisRedeemEmail, thisProfileUpdateEmail, thisReservationChangeEmail, thisReservationConfirmationEmail, thisReservationReminder,
+                            phoneType, phoneNumber, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2, thisCityName, thisStateId, thisZip, thisCompany,
+                            thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, thisMarketingMailerCode, isRFR, thisIsActive, thisOldDiscountOrganizationLocationId,
+                            thisMemberDiscountOrganizationId, thisMembershipNumber, thisDiscountOrganizationId, thisExpireDate, thisDiscountOrganizationStatus);
+                    } else {
+                        swal(thisData.result.data.Message);
+                        $("#DOExpire").val('');
+                        $("#DOMemberNumber").val('___-___-__________');
+                        $("#DOCombo").jqxComboBox('selectIndex', 0);
+                        $('#jqxLoader').jqxLoader('close');
+                    }
+                }).fail(function (error) {
+                    alert("error " + error);
+                    $('#jqxLoader').jqxLoader('close');
+                    return;
+                })
+                );
+            } else {
+                updateMemberInfoFinal(thisMemberId, thisEmailReceipts, thisTravelAlert, thisRedeemEmail, thisProfileUpdateEmail, thisReservationChangeEmail, thisReservationConfirmationEmail, thisReservationReminder,
+                    phoneType, phoneNumber, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2, thisCityName, thisStateId, thisZip, thisCompany,
+                    thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, thisMarketingMailerCode, isRFR, thisIsActive);
+            }
+
+        };
+
+        function DORateCheck(thisMemberId, thisCompanyId, thisDiscountOrganizationId, thisMarketingMailerCode, thisLocationId, thisEmailAddress) {
+
+            var url = $("#apiDomain").val() + "discount-orgs/validate-aaa?LocationId=" + thisLocationId + "&DiscountOrganizationId=" + thisDiscountOrganizationId + "&MemberId=" + thisMemberId + "&EmailAddress=" + thisEmailAddress;
+           
+            return $.ajax({
+                type: "GET",
+                url: url,
+                beforeSend: function (jqXHR, settings) {
+                    jqXHR.setRequestHeader('AccessToken', $("#userGuid").val());
+                    jqXHR.setRequestHeader('ApplicationKey', $("#AK").val());
+                },
+                dataType: "json",
+                success: function (data) {
+                    
+                },
+                error: function (data) {
+                    swal("There was an issue getting the DO Rate Check information.");
+                }
+            });
+        }
+
+
+        function updateMemberInfoFinal(thisMemberId, thisEmailReceipts, thisTravelAlert, thisRedeemEmail, thisProfileUpdateEmail, thisReservationChangeEmail, thisReservationConfirmationEmail, thisReservationReminder,
+            phoneType, phoneNumber, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2, thisCityName, thisStateId, thisZip, thisCompany,
+            thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, thisMarketingMailerCode, isRFR, thisIsActive, thisOldDiscountOrganizationLocationId,
+            thisMemberDiscountOrganizationId, thisMembershipNumber, thisDiscountOrganizationId, thisExpireDate, thisDiscountOrganizationStatus) {
+            saveEmailPrefs(thisMemberId, thisEmailReceipts, thisGetEmail, thisTravelAlert, thisRedeemEmail, thisProfileUpdateEmail, thisReservationChangeEmail, thisReservationConfirmationEmail, thisReservationReminder)
+
+            saveUpdateMemberInfo(phoneType, phoneNumber, thisMemberId, thisUserName, thisFirstName, thisLastName, thisSuffix, thisEmailAddress, thisStreetAddress, thisStreetAddress2,
+                thisCityName, thisStateId, thisZip, thisCompany, thisTitleId, thisMarketingCode, thisLocationId, thisCompanyId, thisGetEmail, thisMarketingMailerCode, isRFR, thisIsActive,
+                thisOldDiscountOrganizationLocationId, thisMemberDiscountOrganizationId, thisMembershipNumber, thisDiscountOrganizationId, thisExpireDate, thisDiscountOrganizationStatus);
+
+            var thisLoggedinUsername = $("#txtLoggedinUsername").val();
+
+
+            PageMethods.LogMemberUpdate(thisLoggedinUsername, thisMemberId, '', '');
+
+            //SaveMarketingCode();
+
+            $("#editMember").trigger("click");
+        }
+
+
+
         //#region LoadGrids
 
         function LoadArchiveSearch() {
@@ -2205,7 +2287,9 @@
 
 
         function loadMemberList(acctNum, compareMemberId) {
-            
+
+            var urlTest = $("#apiDomain").val() + "accounts/" + acctNum + "/members";
+
             $.ajax({
                 type: 'GET',
                 url: $("#apiDomain").val() + "accounts/" + acctNum + "/members",
@@ -2883,6 +2967,40 @@
            
         }
 
+        function loadDO(PageMemberID) {
+            var url = $("#localApiDomain").val() + "DiscountOrganizations/GetMemberDO/" + PageMemberID;
+            //var url = "http://localhost:52839/api/DiscountOrganizations/GetMemberDO/" + PageMemberID;
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                dataType: "json",
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#MemberDiscountOrganizationId").val(data[0].MemberDiscountOrganizationId);
+                        var comboItem = $("#DOCombo").jqxComboBox('getItemByValue', data[0].DiscountOrganizationId);
+                        $("#DOCombo").jqxComboBox('selectItem', comboItem);
+                        $("#DOMemberNumber").val(data[0].MembershipNumber);
+                        $("#DOExpire").val(DateFormatForHTML5(data[0].ExpiresDatetime));
+                        var thisDay = new Date();
+                        var ExpDay = new Date(DateFormatForHTML5(data[0].ExpiresDatetime));
+
+                        if (thisDateDiff(thisDay, ExpDay, "Hours") <= 720) {
+                            $("#assignedDOExpire").css("color", "red");
+                            $("#assignedDO").css("color", "red");
+                            $("#AssignedDOExpire").css("color", "red");
+                            $("#AssignedDOLabel").css("color", "red");
+                        } else if (data[0].ExpiresDatetime.toString() != "") {
+                            loadRate("DO");
+                        }
+                    }
+                },
+                error: function (request, status, error) {
+                    swal("There was an issue getting the DO information.");
+                }
+            });
+        }
+
         function loadNotes(PageMemberID) {
             //Loads card list
             var parent = $("#jqxNotesGrid").parent();
@@ -2969,8 +3087,6 @@
             {
                 datafields: [
                     { name: 'MemberId' },
-                    { name: 'FirstName' },
-                    { name: 'LastName' },
                     { name: 'DataChanged' },
                     { name: 'OldValue' },
                     { name: 'NewValue' },
@@ -2998,15 +3114,13 @@
                 enabletooltips: true,
                 columnsresize: true,
                 columns: [
-                      { text: 'MemberId', datafield: 'MemberId', hidden: true },
-                      { text: 'FirstName', datafield: 'FirstName', width: '10%' },
-                      { text: 'LastName', datafield: 'LastName', width: '10%' },
-                      { text: 'DataChanged', datafield: 'DataChanged', width: '15%' },
-                      { text: 'OldValue', datafield: 'OldValue', width: '15%' },
-                      { text: 'NewValue', datafield: 'NewValue', width: '15%' },
-                      { text: 'Who', datafield: 'ChangeType', width: '10%' },
-                      { text: 'changeUser', datafield: 'changeUser', width: '10%' },
-                      { text: 'changeDate', datafield: 'changeDate', width: '15%', cellsrenderer: DateTimeRender }
+                    { text: 'MemberId', datafield: 'MemberId', hidden: true },
+                    { text: 'DataChanged', datafield: 'DataChanged', width: '26.6%' },
+                    { text: 'OldValue', datafield: 'OldValue', width: '14.6%' },
+                    { text: 'NewValue', datafield: 'NewValue', width: '14.6%' },
+                    { text: 'Who', datafield: 'ChangeType', width: '14.6%' },
+                    { text: 'changeUser', datafield: 'changeUser', width: '14.6%' },
+                    { text: 'changeDate', datafield: 'changeDate', width: '15%', cellsrenderer: DateTimeRender }
                 ]
             });
         }
@@ -3624,7 +3738,11 @@
 
         }
 
-        function loadRate() {
+        function loadMemberDO() {
+
+        }
+
+        function loadRate(DO) {
             $("#rateCombo").jqxComboBox('clearSelection');
             $("#rateCombo").jqxComboBox('clear');
             var parent = $("#rateCombo").parent();
@@ -3632,6 +3750,14 @@
 
             var thisCompanyId = glbCompanyId;
 
+            if (DO == "DO") {
+                var url = $("#localApiDomain").val() + "RateLists/GetRatesDO/";
+                //var url = "http://localhost:52839/api/RateLists/GetRatesDO/";
+            } else {
+                var url = $("#localApiDomain").val() + "RateLists/GetRates/" + thisCompanyId;
+                //var url = "http://localhost:52839/api/RateLists/GetRates/" + thisCompanyId;
+            }
+            
             $("<div id='rateCombo'></div>").appendTo(parent);
             var rateSource =
             {
@@ -3643,8 +3769,7 @@
                     { name: 'LocationId' },
                     { name: 'RateDisplay' }
                 ],
-                url: $("#localApiDomain").val() + "RateLists/GetRates/" + thisCompanyId,
-                //url: "http://localhost:52839/api/RateLists/GetRates/" + thisCompanyId,
+                url: url,
             };
 
             var rateSourceAdapter = new $.jqx.dataAdapter(rateSource);
@@ -3879,6 +4004,41 @@
                 selectedIndex: 0,
                 displayMember: "TitleName",
                 valueMember: "TitleId"
+            });
+            
+        }
+
+        function loadDOCombo() {
+            var DOSource =
+            {
+                datatype: "json",
+                type: "Get",
+                root: "data",
+                datafields: [
+                    { name: 'DiscountOrganizationName' },
+                    { name: 'DiscountOrganizationId' }
+                ],
+                beforeSend: function (jqXHR, settings) {
+                },
+                url: $("#localApiDomain").val() + "DiscountOrganizations/GetDiscountOrganizations/",
+                //url: "http://localhost:52839/api/DiscountOrganizations/GetDiscountOrganizations/",
+
+            };
+            var DODataAdapter = new $.jqx.dataAdapter(DOSource);
+            $("#DOCombo").jqxComboBox(
+                {
+                    theme: 'shinyblack',
+                    width: '100%',
+                    height: 24,
+                    source: DODataAdapter,
+                    selectedIndex: 0,
+                    displayMember: "DiscountOrganizationName",
+                    valueMember: "DiscountOrganizationId"
+                });
+
+            //Combobox insert placeholder
+            $("#DOCombo").on('bindingComplete', function (event) {
+                $("#DOCombo").jqxComboBox('insertAt', '', 0);
             });
             
         }
@@ -4211,7 +4371,6 @@
             });
         }
 
-
         function saveNote() {
             Date.prototype.toMMDDYYYYString = function () { return isNaN(this) ? 'NaN' : [this.getMonth() > 8 ? this.getMonth() + 1 : '0' + (this.getMonth() + 1), this.getDate() > 9 ? this.getDate() : '0' + this.getDate(), this.getFullYear()].join('/') }
             var thisDate = new Date().toMMDDYYYYString();
@@ -4433,6 +4592,13 @@
             $("#ReservationReminder").prop("checked", false);
             $("#reservationFeeCreditCombo").jqxComboBox("clear");
             $("#dropdownlistContentstatusCombo").children().css({ "background-color": "white" });
+            $("#assignedDOExpire").css("color", "black");
+            $("#assignedDO").css("color", "black");
+            $("#AssignedDOExpire").css("color", "black");
+            $("#AssignedDOLabel").css("color", "black");
+            $("#DOExpire").val('');
+            $("#DOMemberNumber").val('___-___-__________');
+            $("#DOCombo").jqxComboBox('selectIndex', 0);
         }
 
         function findMember(PageMemberID) {
@@ -4684,11 +4850,13 @@
                     loadMemberActivity(PageMemberID);
                     loadAccountActivity();
                     loadReferrals(PageMemberID);
+                    loadDO(PageMemberID);
 
                     $("#topPointsBalance").html(loadPoints(AccountId, $("#topPointsBalance")));
                     $("#topPointsBalanceAccountBar").html(loadPoints(AccountId, $("#topPointsBalanceAccountBar")));
                     //$("#topLocationAccountBar").html($("#homeLocationCombo").jqxComboBox('getSelectedItem').label);
                     loadRate();
+                    loadMemberDO();
                     
                 }
             });
@@ -5108,110 +5276,144 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="form-horizontal">
-                                        <div class="form-group">
-                                            <label for="AddressType" class="col-sm-3 col-md-4 control-label">Address Type:</label>
+                                    <div id='jqxAddressDOTab'>
+                                    <ul>
+                                        <li>Discount Org</li>
+                                        <li>Address Info</li>
+                                        <li>Contacts and Alerts</li>
+                                    </ul>
+                                    <div>
+                                        <div class="form-group" style="padding-top:40px">
+                                            <label for="DOCombo" class="col-sm-3 col-md-4 control-label">Discount Org:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="AddressType" placeholder="">
+                                                <div id="DOCombo"></div><input type="text" id="MemberDiscountOrganizationId" style="display:none" />
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="StreetAddress" class="col-sm-3 col-md-4 control-label">Address 1:</label>
+                                        <div class="form-group" style="padding-top:40px">
+                                            <label for="DOExpire" class="col-sm-3 col-md-4 control-label">Discount Org Expired Date:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="StreetAddress" placeholder="">
+                                                <input type='date' id="DOExpire" disabled />
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="StreetAddress2" class="col-sm-3 col-md-4 control-label">Address 2:</label>
+                                        <div class="form-group" style="padding-top:40px">
+                                            <label for="DOMemberNumber" class="col-sm-3 col-md-4 control-label">Membership Number:</label>
                                             <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="StreetAddress2" placeholder="">
+                                                <input type='text' id="DOMemberNumber"  disabled />
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="CityName" class="col-sm-3 col-md-4 control-label">City:</label>
-                                            <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="CityName" placeholder="">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="stateCombo" class="col-sm-3 col-md-4 control-label">State Id:</label>
-                                            <div class="col-sm-9 col-md-8">
-                                                <div id="stateCombo"></div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="Zip" class="col-sm-3 col-md-4 control-label">Zip:</label>
-                                            <div class="col-sm-9 col-md-8">
-                                                <input type="text" class="form-control" id="Zip" placeholder="Zip Code">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="GetEmail" class="col-sm-4 col-md-4 control-label">Newsletters:</label>
-                                            <div class="col-sm-2 col-md-2">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input type="checkbox" class="form-control communicationType " id="GetEmail" />
-                                                    </label>
+                                    </div>
+                                    <div>
+                                        <div class="form-horizontal">
+                                            <div class="form-group">
+                                                <label for="AddressType" class="col-sm-3 col-md-4 control-label">Address Type:</label>
+                                                <div class="col-sm-9 col-md-8">
+                                                    <input type="text" class="form-control" id="AddressType" placeholder="">
                                                 </div>
                                             </div>
-                                            <label for="TravelAlert" class="col-sm-4 col-md-4 control-label">Travel Alert:</label>
-                                            <div class="col-sm-2 col-md-2">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input type="checkbox" class="form-control communicationType" id="TravelAlert"  />
-                                                    </label>
+                                            <div class="form-group">
+                                                <label for="StreetAddress" class="col-sm-3 col-md-4 control-label">Address 1:</label>
+                                                <div class="col-sm-9 col-md-8">
+                                                    <input type="text" class="form-control" id="StreetAddress" placeholder="">
                                                 </div>
                                             </div>
-                                            <label for="EmailReceipts" class="col-sm-4 col-md-4 control-label">E-Receipts:</label>
-                                            <div class="col-sm-2 col-md-2">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input type="checkbox" class="form-control communicationType" id="EmailReceipts"  />
-                                                    </label>
+                                            <div class="form-group">
+                                                <label for="StreetAddress2" class="col-sm-3 col-md-4 control-label">Address 2:</label>
+                                                <div class="col-sm-9 col-md-8">
+                                                    <input type="text" class="form-control" id="StreetAddress2" placeholder="">
                                                 </div>
                                             </div>
-                                            <label for="RedeemEmail" class="col-sm-4 col-md-4 control-label">Redeem Email:</label>
-                                            <div class="col-sm-2 col-md-2">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input type="checkbox" class="form-control communicationType RFR MANAGER" id="RedeemEmail"  />
-                                                    </label>
+                                            <div class="form-group">
+                                                <label for="CityName" class="col-sm-3 col-md-4 control-label">City:</label>
+                                                <div class="col-sm-9 col-md-8">
+                                                    <input type="text" class="form-control" id="CityName" placeholder="">
                                                 </div>
                                             </div>
-                                            <label for="ProfileUpdateEmail" class="col-sm-4 col-md-4 control-label">Profile Update:</label>
-                                            <div class="col-sm-2 col-md-2">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input type="checkbox" class="form-control communicationType RFR MANAGER" id="ProfileUpdateEmail"  />
-                                                    </label>
+                                            <div class="form-group">
+                                                <label for="stateCombo" class="col-sm-3 col-md-4 control-label">State Id:</label>
+                                                <div class="col-sm-9 col-md-8">
+                                                    <div id="stateCombo"></div>
                                                 </div>
                                             </div>
-                                            <label for="ReservationChangeEmail" class="col-sm-4 col-md-4 control-label">Reservation Changes:</label>
-                                            <div class="col-sm-2 col-md-2">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input type="checkbox" class="form-control communicationType" id="ReservationChangeEmail"  />
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <label for="ReservationConfirmationEmail" class="col-sm-4 col-md-4 control-label">Reservation Confirm:</label>
-                                            <div class="col-sm-2 col-md-2">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input type="checkbox" class="form-control communicationType" id="ReservationConfirmationEmail"  />
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <label for="ReservationReminder" class="col-sm-4 col-md-4 control-label">Reservation Remind:</label>
-                                            <div class="col-sm-2 col-md-2">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input type="checkbox" class="form-control communicationType" id="ReservationReminder"  />
-                                                    </label>
+                                            <div class="form-group">
+                                                <label for="Zip" class="col-sm-3 col-md-4 control-label">Zip:</label>
+                                                <div class="col-sm-9 col-md-8">
+                                                    <input type="text" class="form-control" id="Zip" placeholder="Zip Code">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <div>
+                                        <div class="form-horizontal">
+                                            <div class="form-group">
+                                                <label for="GetEmail" class="col-sm-4 col-md-4 control-label">Newsletters:</label>
+                                                <div class="col-sm-2 col-md-2">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" class="form-control communicationType " id="GetEmail" />
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <label for="TravelAlert" class="col-sm-4 col-md-4 control-label">Travel Alert:</label>
+                                                <div class="col-sm-2 col-md-2">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" class="form-control communicationType" id="TravelAlert"  />
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <label for="EmailReceipts" class="col-sm-4 col-md-4 control-label">E-Receipts:</label>
+                                                <div class="col-sm-2 col-md-2">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" class="form-control communicationType" id="EmailReceipts"  />
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <label for="RedeemEmail" class="col-sm-4 col-md-4 control-label">Redeem Email:</label>
+                                                <div class="col-sm-2 col-md-2">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" class="form-control communicationType RFR MANAGER" id="RedeemEmail"  />
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <label for="ProfileUpdateEmail" class="col-sm-4 col-md-4 control-label">Profile Update:</label>
+                                                <div class="col-sm-2 col-md-2">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" class="form-control communicationType RFR MANAGER" id="ProfileUpdateEmail"  />
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <label for="ReservationChangeEmail" class="col-sm-4 col-md-4 control-label">Reservation Changes:</label>
+                                                <div class="col-sm-2 col-md-2">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" class="form-control communicationType" id="ReservationChangeEmail"  />
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <label for="ReservationConfirmationEmail" class="col-sm-4 col-md-4 control-label">Reservation Confirm:</label>
+                                                <div class="col-sm-2 col-md-2">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" class="form-control communicationType" id="ReservationConfirmationEmail"  />
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <label for="ReservationReminder" class="col-sm-4 col-md-4 control-label">Reservation Remind:</label>
+                                                <div class="col-sm-2 col-md-2">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" class="form-control communicationType" id="ReservationReminder"  />
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                    
                                 </div>
                             </div>
                             <div class="row">
