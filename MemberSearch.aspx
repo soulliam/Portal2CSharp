@@ -2985,7 +2985,7 @@
                         var thisDay = new Date();
                         var ExpDay = new Date(DateFormatForHTML5(data[0].ExpiresDatetime));
 
-                        if (thisDateDiff(thisDay, ExpDay, "Hours") <= 720) {
+                        if (thisDateDiff(thisDay, ExpDay, "Hours") <= -720) {
                             $("#assignedDOExpire").css("color", "red");
                             $("#assignedDO").css("color", "red");
                             $("#AssignedDOExpire").css("color", "red");

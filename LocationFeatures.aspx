@@ -52,7 +52,7 @@
                     var newImageUrl = $("#ImageUrl").val();
                     var newSubtext = $("#Subtext").val();
                     var newDetail = $("#Detail").val();
-                    var newDisplayOnLandingPage = $("#DisplayOnLandingPage").val();
+                    var newDisplayOnLandingPage = $("#DisplayOnLandingPage").is(':checked');
                     var newSortOrder = $("#SortOrder").val();
                     var newIconCSSClass = $("#IconCSSClass").val();
 
@@ -100,7 +100,7 @@
                         var newImageUrl = $("#ImageUrl").val();
                         var newSubtext = $("#Subtext").val();
                         var newDetail = $("#Detail").val();
-                        var newDisplayOnLandingPage = $("#DisplayOnLandingPage").val();
+                        var newDisplayOnLandingPage = $("#DisplayOnLandingPage").is(':checked');
                         var newSortOrder = $("#SortOrder").val();
                         var newIconCSSClass = $("#IconCSSClass").val();
 
@@ -220,7 +220,7 @@
                               $("#ImageUrl").val(dataRecord.ImageUrl);
                               $("#Subtext").val(dataRecord.Subtext);
                               $("#Detail").val(dataRecord.Detail);
-                              $("#DisplayOnLandingPage").val(dataRecord.DisplayOnLandingPage);
+                              $("#DisplayOnLandingPage").prop('checked', dataRecord.DisplayOnLandingPage);
                               $("#SortOrder").val(dataRecord.SortOrder);
                               $("#IconCSSClass").val(dataRecord.IconCSSClass);
                               // show the popup window.

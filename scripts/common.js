@@ -444,7 +444,8 @@ function thisDateDiff(date1, date2, Hours) {
     if (Hours == "Hours") {
         var diff = (date2.getTime() - date1.getTime()) / 1000;
         diff /= (60 * 60);
-        return Math.abs(Math.round(diff));
+        //return Math.abs(Math.round(diff));
+        return Math.round(diff);
     } else {
         dt1 = new Date(date1);
         dt2 = new Date(date2);

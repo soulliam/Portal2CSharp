@@ -961,7 +961,7 @@
                                   $("#siteManager").val(dataRecord.Manager);
                                   $("#ManagerEmail").val(dataRecord.ManagerEmail);
                                   $("#DailyRate").val(dataRecord.DailyRate);
-                                  $("#HourlyRate").val(dataRecord.DailyRate);
+                                  $("#HourlyRate").val(dataRecord.HourlyRate);
                                   $("#RateQualifications").val(dataRecord.RateQualifications);
                                   $("#RateText").val(dataRecord.RateText);
                                   $("#MemberRateText").val(dataRecord.MemberRateText);
@@ -1679,9 +1679,9 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label for="HourlyRate" class="col-sm-3 col-md-4 control-label">Hourly Rate:</label>
+                                                <label for="WebSiteHourlyRate" class="col-sm-3 col-md-4 control-label">Hourly Rate:</label>
                                                 <div class="col-sm-9 col-md-8">
-                                                    <input type="text" class="form-control" id="HourlyRate" />
+                                                    <input type="text" class="form-control" id="WebSiteHourlyRate" />
                                                 </div>
                                             </div>
                                             <div class="form-group">

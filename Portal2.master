@@ -101,6 +101,7 @@
                                 <li><a href="RedemptionSearch.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">Search Certificates</a></li>
                                 <li><a href="ReservationSearch.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">Search Reservations</a></li>
                                 <li><a href="ReservationGuestSearch.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">Search Guest Reservations</a></li>
+                                <li><a href="DiscountOrganizationSearch.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR Portal_Manager Portal_Asstmanager">Search Discount Organization</a></li>
                                 <li><a href="TransactionSearch.aspx" class="menuSecurity disabled Portal_Superadmin Portal_RFR">Transaction Search</a></li>
                                 <li><a href="PendingReceipts.aspx" class="menuSecurity disabled Portal_Superadmin Portal_Manager Portal_Asstmanager">Pending Receipts</a></li>
                                 <li><a href="MemberCompanyUpdate.aspx"  class="menuSecurity disabled Portal_Superadmin Portal_RFR">Update Members Company</a></li> 
