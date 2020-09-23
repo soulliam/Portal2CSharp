@@ -34,6 +34,12 @@
 
         $(document).ready(function () {
 
+            $("div.FPR_SearchLeft input:text").keypress(function (e) {
+                if (e.keyCode == 13) {
+                    loadGrid();
+                }
+            });
+
             //#region SetupButtons
             $("#btnSearch").jqxButton({ width: '100%', height: 26 });
             //#endregion

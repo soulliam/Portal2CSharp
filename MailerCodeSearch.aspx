@@ -38,6 +38,13 @@
         var group = '<%= Session["groupList"] %>';
 
         $(document).ready(function () {
+
+            $("div.FPR_SearchLeft input:text").keypress(function (e) {
+                if (e.keyCode == 13) {
+                    loadSearchResults();
+                }
+            });
+
             $("#btnSearch").jqxButton();
 
             $("#btnSearch").on("click", function (event) {

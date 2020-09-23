@@ -344,6 +344,25 @@
                     return;
                 }
 
+                var datePicked = new Date($("#reservationStartDate").val());
+                var today = new Date();
+
+                if (today > datePicked) {
+                    
+                    $("#popupReservation").jqxWindow('close');
+                    swal({
+                        title: 'The Start Date is in the past.',
+                        text: "Please check the start date.",
+                        type: 'warning',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    }).then(function () {
+                        $("#popupReservation").jqxWindow('open');
+                    });
+
+                    return;
+                }
+
                 $("#popupReservation").jqxWindow('close');
 
                 var thisLocationId = $("#reservationLocationCombo").jqxComboBox('getSelectedItem').value;
@@ -4599,6 +4618,7 @@
             $("#DOExpire").val('');
             $("#DOMemberNumber").val('___-___-__________');
             $("#DOCombo").jqxComboBox('selectIndex', 0);
+            $('#jqxReceiptEntryCalendar ').jqxDateTimeInput('setDate', new Date());
         }
 
         function findMember(PageMemberID) {
