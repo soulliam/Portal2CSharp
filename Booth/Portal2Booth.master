@@ -58,7 +58,7 @@
 </head>
 <body runat="server" ID="masterBody" style="overflow-x: hidden">
     <div class="wrapper">
-        <form runat="server">
+        <form id="thisform" runat="server">
             <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
             <asp:TextBox runat="server" ID="userGuid" style="display:none">172869AC62AD4B32861068767EDF2B47</asp:TextBox>
             <asp:TextBox runat="server" ID="tempUserGuid" style="display:none"></asp:TextBox>

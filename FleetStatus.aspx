@@ -636,9 +636,8 @@
                 //    }
                 //);
 
-                //var url = "http://localhost:52839/api/FleetStatuss/UpdateFleetStatus";
-
-                var url = $("#localApiDomain").val() + "FleetStatuss/UpdateFleetStatus";
+                var url = "http://localhost:52839/api/FleetStatuss/UpdateFleetStatus";
+                //var url = $("#localApiDomain").val() + "FleetStatuss/UpdateFleetStatus";
 
                 var postData = { 'FleetStatusID': data["FleetStatusID"], 'VehicleID': data["VehicleId"], 'FrontACStatus': data["FrontACStatus"], 'RearACStatus': data["RearACStatus"], 'LastExWash': thisLastExWash, 'LastInExWash': thisLastInExWash, 'OOSDate': thisOOSDate, 'EstReturn': thisEstReturn, 'Notes': data["Notes"], 'Status': data["Status"] }
 

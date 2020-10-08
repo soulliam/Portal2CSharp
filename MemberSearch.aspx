@@ -208,6 +208,7 @@
                 $("#UnDeleteCard").jqxButton();
                 $("#setCardPrimary").jqxButton();
                 $("#combineMemberCards").jqxButton();
+                $("#sendCard").jqxButton();
                 $("#unCombineMemberCards").jqxButton();
                 $("#saveCombineMember").jqxButton();
                 $("#cancelCombineMember").jqxButton();
@@ -436,7 +437,7 @@
                 }).then(function () {
                     var thisMemberId = $("#MemberId").val();
                     var url = $("#localApiDomain").val() + "Members/DeleteEmail/" + thisMemberId;
-
+                    
                     $.ajax({
                         type: "GET",
                         url: url,
@@ -447,7 +448,10 @@
                               'Your email has been deleted.',
                               'success'
                             )
+                            var thisEmailAddress = $("#EmailAddress").val();
+                            var thisLoggedinUsername = $("#txtLoggedinUsername").val();
                             $("#EmailAddress").val('');
+                            PageMethods.logEmailDeleted(thisLoggedinUsername, thisEmailAddress, thisMemberId);
                         },
                         error: function (request, status, error) {
                             swal(error);
@@ -1497,6 +1501,47 @@
                 })
             })
 
+            $("#sendCard").on("click", function (event) {
+                var getselectedrowindexes = $('#jqxCardGrid').jqxGrid('getselectedrowindexes');
+
+                if (getselectedrowindexes.length > 1) {
+                    swal("Only one card can be sent at a time.");
+                    return null;
+                }
+
+                if (getselectedrowindexes.length = 0) {
+                    swal("Please pick a card to send.");
+                    return null;
+                }
+
+                var selectedRowData = $('#jqxCardGrid').jqxGrid('getrowdata', getselectedrowindexes[0]);
+
+                var cardNumber = "62711601" + selectedRowData.FPNumber.replace("-", "");
+                var memberName = $("#FirstName").val() + " " + $("#LastName").val();
+                var memberSince = new Date($("#topMemberSince").html());
+                var memberSinceYear = memberSince.getFullYear();
+                var memberEmailAddress = $("#EmailAddress").val();
+
+                $("#popupSendCard").css('display', 'block');
+                $("#popupSendCard").css('visibility', 'hidden');
+
+                var offset = $("#jqxMemberInfoTabs").offset();
+                $("#popupSendCard").jqxWindow({ position: { x: '5%', y: '10%' } });
+                $('#popupSendCard').jqxWindow({ resizable: false });
+                $('#popupSendCard').jqxWindow({ draggable: true });
+                $('#popupSendCard').jqxWindow({ isModal: true });
+                $("#popupSendCard").css("visibility", "visible");
+                $('#popupSendCard').jqxWindow({ height: '500px', width: '590px' });
+                $('#popupSendCard').jqxWindow({ minHeight: '500px', width: '590px' });
+                $('#popupSendCard').jqxWindow({ maxHeight: '500px', width: '590px' });
+                $('#popupSendCard').jqxWindow({ showCloseButton: true });
+                $('#popupSendCard').jqxWindow({ animationType: 'combined' });
+                $('#popupSendCard').jqxWindow({ showAnimationDuration: 300 });
+                $('#popupSendCard').jqxWindow({ closeAnimationDuration: 500 });
+                $("#popupSendCard").jqxWindow('open');
+                document.getElementById('sendCardIFrame').src = './CardDisplay.aspx?cardNumber=' + cardNumber + '&memberName=' + memberName + '&memberSinceYear=' + memberSinceYear + '&memberEmailAddress=' + memberEmailAddress;
+            })
+
             //submit manual Edit manualEditSubmit
             $("#manualEditSubmit").on("click", function (event) {
                 Date.prototype.toMMDDYYYYString = function () { return isNaN(this) ? 'NaN' : [this.getMonth() > 8 ? this.getMonth() + 1 : '0' + (this.getMonth() + 1), this.getDate() > 9 ? this.getDate() : '0' + this.getDate(), this.getFullYear()].join('/') }
@@ -2068,8 +2113,6 @@
             loadReceiptLocationCombo();
             loadmanualEditTypesCombo();
             loadStatus();
-            loadDOCombo();
-
 
             //Security code is in scripts/common.js
             Security();
@@ -4028,6 +4071,8 @@
         }
 
         function loadDOCombo() {
+            var thisLocation = $("#homeLocationCombo").jqxComboBox('getSelectedItem').value;
+
             var DOSource =
             {
                 datatype: "json",
@@ -4039,8 +4084,8 @@
                 ],
                 beforeSend: function (jqXHR, settings) {
                 },
-                url: $("#localApiDomain").val() + "DiscountOrganizations/GetDiscountOrganizations/",
-                //url: "http://localhost:52839/api/DiscountOrganizations/GetDiscountOrganizations/",
+                url: $("#localApiDomain").val() + "DiscountOrganizations/GetDiscountOrganizations/" + thisLocation,
+                //url: "http://localhost:52839/api/DiscountOrganizations/GetDiscountOrganizations/" + thisLocation,
 
             };
             var DODataAdapter = new $.jqx.dataAdapter(DOSource);
@@ -4877,7 +4922,7 @@
                     //$("#topLocationAccountBar").html($("#homeLocationCombo").jqxComboBox('getSelectedItem').label);
                     loadRate();
                     loadMemberDO();
-                    
+                    loadDOCombo();
                 }
             });
         }
@@ -5668,14 +5713,15 @@
                                 <div class="col-sm-9 col-md-10">
                                     <div id="jqxCardGrid"></div>
                                 </div>
-                                <div class="col-sm-3 col-md-2">
-                                <input type="button" id="transferCard" value="Transfer" class="editor" style="display:none;" />
-                                <input type="button" id="deleteCard" value="Delete" class="editor" />
-                                <input type="button" id="UnDeleteCard" value="UnDelete" class="editor" />
-                                <input type="button" id="addCard" value="Add" class="editor" />
-                                <input type="button" id="setCardPrimary" value="Set as Primary" class="editor" />
-                                <input type="button" id="combineMemberCards" value="Combine Member Cards" class="RFR" />
-                                <table class="RFR" style="width:100%;"><tr><td style="padding:5px" colspan="2"><input type="button" id="unCombineMemberCards" value="Un-Combine" class="RFR" /></td></tr><tr><td style="padding:5px">Batch#</td><td style="padding:5px"><input id="unCombineBatch" type="text" class="RFR" /></td></tr></table>
+                                    <div class="col-sm-3 col-md-2">
+                                    <input type="button" id="transferCard" value="Transfer" class="editor" style="display:none;" />
+                                    <input type="button" id="deleteCard" value="Delete" class="editor" />
+                                    <input type="button" id="UnDeleteCard" value="UnDelete" class="editor" />
+                                    <input type="button" id="addCard" value="Add" class="editor" />
+                                    <input type="button" id="setCardPrimary" value="Set as Primary" class="editor" />
+                                    <input type="button" id="combineMemberCards" value="Combine Member Cards" class="RFR" />
+                                    <table class="RFR" style="width:100%;"><tr><td style="padding:5px" colspan="2"><input type="button" id="unCombineMemberCards" value="Un-Combine" class="RFR" /></td></tr><tr><td style="padding:5px">Batch#</td><td style="padding:5px"><input id="unCombineBatch" type="text" class="RFR" /></td></tr></table>
+                                    <input type="button" id="sendCard" value="Send Card" class="RFR" />
                                 </div>
                             </div>
                         </div>
@@ -5973,6 +6019,13 @@
         </div>
     </div>
 
+    <div id="popupSendCard" style="display: none;">
+        <div>Email Card</div>
+        <div style="margin-left:20px;margin-top:10px;overflow:visible;">
+            <iframe id="sendCardIFrame" style="border:none;width:600px;height:450px;" ></iframe>
+        </div>
+    </div>
+
     <%-- html for combine cards --%>
     <div id="popupCombineMembers" class="popupCombineMembers" style="display:none;border:1px solid black;">
         <div style="background-color:#ccc;width:100%;border-radius:9px 9px 0px 0px;font-weight:bold;text-align:center">Combine Members</div>
@@ -6047,6 +6100,5 @@
             </div>
         </div>
     </div>
-
 </asp:Content>
 

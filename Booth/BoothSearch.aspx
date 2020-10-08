@@ -91,6 +91,7 @@
 
             $("#btnSearch").jqxButton({ width: 100, height: 60 });
             $("#btnInstructions").jqxButton({ width: 100, height: 60 });
+            $("#btnReservations").jqxButton({ width: 160, height: 60 });
             $("#cancelInstructions").jqxButton({ width: 100, height: 50 });
             $("#btnSearchClear").jqxButton({ width: 100, height: 60 });
             $("#btnSearchEmail").jqxButton({ width: 240, height: 60 });
@@ -142,6 +143,10 @@
 
             $("#btnInstructions").on("click", function (event) {
                 showInstructions();
+            });
+
+            $("#btnReservations").on("click", function (event) {
+                showReservations();
             });
 
             $("#showHistory").on("click", function (event) {
@@ -1086,6 +1091,24 @@
             $("#popupInstructions").jqxWindow('open');
         }
 
+        function showReservations() {
+
+            $("#popupReservations").css('display', 'block');
+            $("#popupReservations").css('visibility', 'hidden');
+
+            $("#popupReservations").jqxWindow({ position: { x: '3%', y: '3%' } });
+            $('#popupReservations').jqxWindow({ isModal: true });
+            $("#popupReservations").css("visibility", "visible");
+            $('#popupReservations').jqxWindow({ height: '660px', width: '1120px' });
+            $('#popupReservations').jqxWindow({ maxHeight: '660px', maxWidth: '1180px' });
+            $('#popupReservations').jqxWindow({ showCloseButton: true });
+            $('#popupReservations').jqxWindow({ animationType: 'combined' });
+            $('#popupReservations').jqxWindow({ showAnimationDuration: 300 });
+            $('#popupReservations').jqxWindow({ closeAnimationDuration: 500 });
+            $("#popupReservations").jqxWindow('open');
+            $("#ReservationIFrame").attr('src', './ReservationReport.aspx?LocationId=' + $("#boothLocation").val());
+        }
+
         function showHistory(thisRedemptionId) {
 
             $("#popupHistory").css('display', 'block');
@@ -1250,10 +1273,16 @@
             <div class="col-sm-2">
                 <input type="button" id="btnSearchClear" value="Clear" />
             </div>
-            <div class="col-sm-7">
+            <div class="col-sm-5">
                 <input type="Number" id="txtSearchEmailFNameFPNumber" style="font-size:x-large;margin-top:10px;width: 45%;" placeholder="FPNumber" />
             
                 <input type="text" id="txtSearchLastName" style="font-size:x-large;margin-top:10px;width: 45%;" placeholder="Last Name"  />
+            </div>
+            <div class="col-sm-1">
+                <input type="button" id="btnReservations" value="Reservations" style="margin-right:10px;float;" />
+            </div>
+            <div class="col-sm-1">
+                <div>&nbsp;</div>
             </div>
             <div class="col-sm-1">
                 <input type="button" id="btnInstructions" value="Info" style="margin-right:10px;float;" />
@@ -1294,6 +1323,7 @@
         </div>
     </div>
 
+    <div id="jqxLoader"></div>
 
     <div id="popupLocation" style="display:none">
         <div>
@@ -1406,6 +1436,12 @@
         </div>
     </div>
 
-    <div id="jqxLoader"></div>
+    <div id="popupReservations" style="display: none;">
+        <div>Reservations</div>
+        <div>
+            <iframe id="ReservationIFrame" title="Reservations"  style="height: 2000px; width: 1050px"/>
+        </div>
+    </div>
+
 </asp:Content>
 

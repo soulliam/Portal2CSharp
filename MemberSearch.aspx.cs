@@ -83,8 +83,17 @@ public partial class MemberSearch : System.Web.UI.Page
                 while (sdr.Read())
                 {
                     Console.WriteLine(sdr["ErrorMessage"]);
+
+                    if (sdr["ErrorMessage"].ToString().Contains("points have been added"))
+                    {
+                        clsLogging LogReceiptEntry = new clsLogging();
+                        LogReceiptEntry.logChange(SubmittedBy, MemberId.ToString(), "0", "0", "Receipt Entry", "Receipt number " + Receipt.ToString(), -1);
+                    }
+
                     return Convert.ToString(sdr["ErrorMessage"]);
                 }
+
+                
             }
             cn.Close();
 
@@ -131,6 +140,13 @@ public partial class MemberSearch : System.Web.UI.Page
                 while (sdr.Read())
                 {
                     Console.WriteLine(sdr["ErrorMessage"]);
+
+                    if (sdr["ErrorMessage"].ToString().Contains("points have been added"))
+                    {
+                        clsLogging LogReceiptEntry = new clsLogging();
+                        LogReceiptEntry.logChange(SubmittedBy, MemberId.ToString(), "Entry - " + entryDate.ToString(), "Exit - " + exitDate.ToString(), "Receipt Entry", "Receipt Entered, Amount " + AmountPaid.ToString(), -1);
+                    }
+
                     return Convert.ToString(sdr["ErrorMessage"]);
                 }
             }
@@ -302,6 +318,24 @@ public partial class MemberSearch : System.Web.UI.Page
             clsLogging logSearch = new clsLogging();
 
             logSearch.logChange(thisUserName, thisMemberId, thisRedemptionId, thisCertificateId, "", "Redemption Return", logSearch.getBatch());
+
+            return "Sucsses";
+        }
+        catch (Exception ex)
+        {
+            return Convert.ToString(ex);
+        }
+    }
+
+    [System.Web.Services.WebMethod]
+    public static string logEmailDeleted(string thisUserName, string thisEmailAddress, string thisMemberId)
+    {
+        try
+        {
+
+            clsLogging logEmailDeleted = new clsLogging();
+
+            logEmailDeleted.logChange(thisUserName, thisMemberId, thisEmailAddress, "", "", "Email Deleted", logEmailDeleted.getBatch());
 
             return "Sucsses";
         }

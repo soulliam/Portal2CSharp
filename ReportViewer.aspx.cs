@@ -273,7 +273,8 @@ public partial class ReportViewer : System.Web.UI.Page
                
                 serverReport.ReportPath = reportLocation;
 
-                if (reportLocation.Contains("/NewManager/General/InvoiceDateRangeCategory") || reportLocation.Contains("/NewManager/General/InvoiceProcessDate"))
+                if (reportLocation.Contains("/NewManager/General/InvoiceDateRangeCategory") || 
+                    reportLocation.Contains("/NewManager/General/InvoiceProcessDate"))
                 {
                     ReportParameter[] parameters = new ReportParameter[1];
                     parameters[0] = new ReportParameter("LocationList", locationList);
