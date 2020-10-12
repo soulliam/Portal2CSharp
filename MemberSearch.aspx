@@ -1509,7 +1509,7 @@
                     return null;
                 }
 
-                if (getselectedrowindexes.length = 0) {
+                if (getselectedrowindexes.length == 0) {
                     swal("Please pick a card to send.");
                     return null;
                 }
@@ -5721,7 +5721,7 @@
                                     <input type="button" id="setCardPrimary" value="Set as Primary" class="editor" />
                                     <input type="button" id="combineMemberCards" value="Combine Member Cards" class="RFR" />
                                     <table class="RFR" style="width:100%;"><tr><td style="padding:5px" colspan="2"><input type="button" id="unCombineMemberCards" value="Un-Combine" class="RFR" /></td></tr><tr><td style="padding:5px">Batch#</td><td style="padding:5px"><input id="unCombineBatch" type="text" class="RFR" /></td></tr></table>
-                                    <input type="button" id="sendCard" value="Send Card" class="RFR" />
+                                    <input type="button" id="sendCard" value="Send Card" class="editor" />
                                 </div>
                             </div>
                         </div>

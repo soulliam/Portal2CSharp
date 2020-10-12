@@ -96,7 +96,7 @@ public partial class CardDisplay : System.Web.UI.Page
             }
 
             EmailQR.Attributes["src"] = "./EmailImages/" + reservationNumber + ".Jpeg";
-            EmailCard.Attributes["src"] = "./Images/CardImage.jpg";
+            EmailCard.Attributes["src"] = "./Images/CardImageTop.jpg";
             EmailCardBottom.Attributes["src"] = "./Images/CardImageBottom.jpg";
         }
     }
@@ -106,19 +106,19 @@ public partial class CardDisplay : System.Web.UI.Page
     {
         var path = HttpContext.Current.Server.MapPath("~\\EmailImages\\" + thisCard + ".Jpeg");
         var pathSend = HttpContext.Current.Server.MapPath("~\\EmailImages\\" + thisCard + "_Send.Jpeg");
-        var CardPath = HttpContext.Current.Server.MapPath("~\\Images\\CardImage.jpg");
+        var CardPathTop = HttpContext.Current.Server.MapPath("~\\Images\\CardImageTop.jpg");
         var CardPathBottom = HttpContext.Current.Server.MapPath("~\\Images\\CardImageBottom.jpg");
 
         MailMessage Mail = new MailMessage();
 
         Mail.From = new MailAddress("rfrteam@thefastpark.com");
-        Mail.To.Add("mgoode@thefastpark.com");
+        //Mail.To.Add("mgoode@thefastpark.com");
         //Mail.To.Add("mikegoode@gmail.com");
-        //Mail.To.Add(ToAddress);
+        Mail.To.Add(ToAddress);
         Mail.Subject = "FastPark Reservation";
         Mail.Body = "";
         LinkedResource LinkedImage = new LinkedResource(@pathSend);
-        LinkedResource LinkedImage2 = new LinkedResource(@CardPath);
+        LinkedResource LinkedImage2 = new LinkedResource(@CardPathTop);
         LinkedResource LinkedImage3 = new LinkedResource(@CardPathBottom);
         LinkedImage.ContentId = "MyPic";
         LinkedImage2.ContentId = "MyPic2";
